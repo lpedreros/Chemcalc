@@ -19,7 +19,7 @@ body {
 header {
   text-align: center;
   margin-bottom: 2em;
-  color: #61dafb; /* Header text color */
+  color: #bbbbbb; /* Header text color */
 }
 
 label {
@@ -68,7 +68,7 @@ label {
   font-size: 1.2em;
   font-weight: bold;
   margin-top: 2em;
-  color: #61dafb; /* Result label text color */
+  color: #bbbbbb; /* Previous grey live result text color */
 }
 
 #historyList {
@@ -86,4 +86,11 @@ label {
 /* Added style to align checkbox labels to the left */
 .checkbox-label {
   justify-content: flex-start;
+}
+
+/* Baby blue color for specific values */
+#recommendedPercentageValue,
+#mekpCCsValue,
+#mekpDropsValue {
+  color: #add8e6; /* Baby blue text color */
 }
