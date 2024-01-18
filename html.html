@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEKp Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>MEKp Calculator</h1>
+    </header>
+    
+    <!-- Resin Volume Section -->
+    <div>
+      <label for="resinVolume">Resin Volume:</label>
+      <input type="number" id="resinVolume">
+      <select id="volumeUnits">
+        <option value="cc">CCs</option>
+        <option value="oz">Ounces</option>
+        <option value="qt">Quart</option>
+        <option value="gal">Gallon</option>
+      </select>
+    </div>
+    
+    <!-- Ambient Temperature Section -->
+    <div>
+      <label for="ambientTemperature">Ambient Temperature:</label>
+      <input type="number" id="ambientTemperature">
+      <select id="tempUnits">
+        <option value="F">Fahrenheit</option>
+        <option value="C">Celsius</option>
+      </select>
+    </div>
+
+    <!-- Duratec, Make it Hot, Make it the Hottest Checkboxes -->
+    <label class="checkbox-label">
+      <input type="checkbox" id="duratecCheckbox"> Duratec?
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="makeItHotCheckbox"> Make it Hot!
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="makeItTheHottestCheckbox"> Make it the Hottest!
+    </label>
+
+    <!-- Result Labels -->
+    <div class="result-label">Recommended MEKp Percentage: <span id="recommendedPercentageValue">0</span>%</div>
+    <div class="result-label">MEKp CCs: <span id="mekpCCsValue">0</span></div>
+    <div class="result-label">MEKp Drops: <span id="mekpDropsValue">0</span></div>
+
+    <!-- History List -->
+    <ul id="historyList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
