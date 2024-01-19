@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEKp Mixing Calculator</title>
+    
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Include your custom CSS file (style.css) -->
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">MEKp Mixing Calculator</h1>
+        <form id="mixForm">
+            <div class="row">
+                <div class="form-group col-md-9">
+                    <input type="number" id="resinVolume" class="form-control grey-text" step="0.01" placeholder="Resin or Gel Coat Volume" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <select id="volumeUnits" class="form-control">
+                        <option value="oz">Ounces (oz)</option>
+                        <option value="qt">Quarts (qt)</option>
+                        <option value="liters">Liters (liters)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-9">
+                    <input type="number" id="ambientTemperature" class="form-control grey-text" placeholder="Ambient Temperature" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <select id="tempUnits" class="form-control">
+                        <option value="F">°F (Fahrenheit)</option>
+                        <option value="C">°C (Celsius)</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="duratecCheckbox">
+                        <label class="form-check-label" for="duratecCheckbox">Use Duratec?</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="makeItHotCheckbox">
+                        <label class="form-check-label" for="makeItHotCheckbox">Make it Hot?</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="makeItTheHottestCheckbox">
+                        <label class="form-check-label" for="makeItTheHottestCheckbox">Make it the Hottest?</label>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <select id="resultUnits" class="form-control">
+                        <option value="oz">Ounces (oz)</option>
+                        <option value="cc">Cubic Centimeters(cc))</option>
+                        <option value="gal">Gallons (gal)</option>
+                        <option value="liters">Liters (liters)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <button type="button" id="calculateButton" class="btn btn-primary">Calculate</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Result display -->
+        <h1 id="resultTitle" class="mt-4">Result</h1>
+        <div id="result" class="form-group">
+            <p>MEKp Percentage: <span id="resultMekpPercentage">0%</span></p>
+            <p>MEKp CCs: <span id="resultMekpCCs">0</span></p>
+            <p>MEKp Drops: <span id="resultMekpDrops">0</span></p>
+        </div>
+
+        <!-- History display -->
+        <h2 class="mt-4">History</h2>
+        <ul id="historyList"></ul>
+    </div>
+
+    <!-- Include Bootstrap JavaScript (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <!-- Include your custom JavaScript (script.js) -->
+    <script src="script.js"></script>
+</body>
+</html>
