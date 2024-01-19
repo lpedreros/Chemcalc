@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEKP Mixing Calculator</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="mekstyles.css">
+</head>
+<body>
+		<div class="container">
+			<h1 class="text-center mb-4">MEKP Mixing Calculator</h1>
+        <!-- Resin Volume Input and Unit -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="resinVolume">Resin Volume</label>
+                    <input type="number" id="resinVolume" class="form-control" placeholder="Enter volume">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="volumeUnit">Volume Unit</label>
+                    <select id="volumeUnit" class="form-control">
+                        <option value="ounces">Ounces</option>
+                        <option value="ccs">CCs</option>
+                        <option value="quarts">Quart</option>
+                        <option value="gallons">Gallon</option>
+                        <option value="liters">Liters</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ambient Temperature Input and Unit -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="ambientTemp">Ambient Temperature</label>
+                    <input type="number" id="ambientTemp" class="form-control" placeholder="Enter temperature">
+                </div>
+                <!-- Checkboxes -->
+                <div class="form-check">
+                    <input type="checkbox" id="usingDuratec" class="form-check-input">
+                    <label for="usingDuratec" class="form-check-label">Using Duratec?</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="makeItHot" class="form-check-input">
+                    <label for="makeItHot" class="form-check-label">Make it Hot!</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="makeItHottest" class="form-check-input">
+                    <label for="makeItHottest" class="form-check-label">Make it the Hottest!</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="tempUnit">Temp Unit</label>
+                    <select id="tempUnit" class="form-control">
+                        <option value="fahrenheit">Fahrenheit</option>
+                        <option value="celsius">Celsius</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Display -->
+        <div id="result" class="mt-3">
+            <p id="mekpPercentage">Recommended MEKp Percentage: </p>
+            <p id="mekpCcs">MEKp CCs: </p>
+            <p id="mekpDrops">MEKp Drops: </p>
+        </div>
+    </div>
+    <script src="mekscript.js"></script>
+</body>
+</html>
