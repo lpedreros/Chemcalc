@@ -49,3 +49,10 @@ body {
         max-width: 100%;
     }
 }
+
+#otherpages {
+	margin-top: 1em;
+	font-style: normal;
+	font-size: 1.5em;
+	font-weight: bold;
+}
