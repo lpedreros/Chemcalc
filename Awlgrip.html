@@ -3,67 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Awlgrip Paint Mix Calculator</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Custom CSS -->
-    <link href="awlgripstyle.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Awlgrip Mix Calculator</title>
+    <link rel="stylesheet" href="awlgripstyle.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Awlgrip Paint Mix Calculator</h1>
+        <h1 class="mb-4">Awlgrip Calc</h1>
         <form id="mixForm">
-            <div class="form-group">
-                <label for="paintType">Select Paint Type:</label>
-                <select id="paintType" class="form-control">
-                    <option value="awlcraft2000">Awlcraft 2000</option>
-                    <option value="awlgrip">AWLGRIP®</option>
-                    <option value="highBuild">High Build Epoxy Primer</option>
-                </select>
-            </div>
-
             <div class="form-group row">
-                <div class="col-9">
-                    <label for="inputValue">Enter Volume or Area:</label>
-                    <input type="number" id="inputValue" class="form-control" min="0" required>
-                </div>
-                <div class="col-3">
-                    <label for="unitType">Unit Type:</label>
-                    <select id="unitType" class="form-control">
-                        <option value="ounces">Ounces</option>
-                        <option value="quarts">Quarts</option>
-                        <option value="gallons">Gallons</option>
-                        <option value="ccs">CCs</option>
-                        <option value="liters">Liters</option>
+                <div class="col-md-6 col-12 mb-2">
+                    <label for="unitType">Volume/Area Units:</label>
+                    <select class="form-control" id="unitType">
                         <option value="squareFootage">Square Footage</option>
+                        <option value="gallons">Gallons</option>
+                        <option value="quarts">Quarts</option>
+                        <option value="liters">Liters</option>
+                        <option value="ounces">Ounces</option>
+                        <option value="ccs">Cubic Centimeters (cc)</option>
                     </select>
                 </div>
+                <div class="col-md-6 col-12 mb-2">
+                    <label for="inputValue">Volume or Area:</label>
+                    <input type="number" class="form-control" id="inputValue" required>
+                </div>
             </div>
-
             <div class="form-group">
-                <label for="resultUnitType">Result Units:</label>
-                <select id="resultUnitType" class="form-control">
-                    <option value="gallons">Gallons</option>
-                    <option value="liters">Liters</option>
-                    <option value="ounces">Ounces</option>
-                    <option value="quarts">Quarts</option>
-                    <option value="ccs">CCs</option>
+                <label for="paintType">Select Paint Type:</label>
+                <select class="form-control" id="paintType">
+                    <option value="awlcraft2000">Awlcraft2000</option>
+                    <option value="awlgrip">Awlgrip</option>
+                    <option value="highBuild">High Build Primer</option>
                 </select>
             </div>
-	       </form>
-
-        <div id="result" class="mt-3"></div>
-			<div id="otherpages" class="col-md-6">
-				<a href="index.html">MEKp Mix calculator</a>
-			</div>
-
+            <div class="form-group">
+                <label for="resultUnitType">Select Result Unit:</label>
+                <select class="form-control" id="resultUnitType">
+                    <option value="gallons">Gallons</option>
+                    <option value="quarts">Quarts</option>
+                    <option value="liters">Liters</option>
+                    <option value="ounces">Ounces</option>
+                    <option value="ccs">Cubic Centimeters (cc)</option>
+                </select>
+            </div>
+        </form>
+        <div id="result" class="mt-4">
+            <!-- Results will be displayed here -->
+        </div>
     </div>
-
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Custom JavaScript -->
     <script src="awlgripscript.js"></script>
 </body>
 </html>
