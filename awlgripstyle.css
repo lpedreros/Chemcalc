@@ -6,6 +6,12 @@ body {
     h1 {
 				text-align: center;
     }
+#otherpages {
+    margin-top: 1em;
+    font-style: normal;
+    font-size: 1.5em;
+    font-weight: bold;
+}
 
 .container {
     background-color: #2c2c2e; /* Slightly lighter than body for contrast */
