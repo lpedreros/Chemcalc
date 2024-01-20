@@ -27,6 +27,17 @@ document.addEventListener('DOMContentLoaded', function () {
         mekpPercentageDisplay.innerHTML = 'Recommended MEKp Percentage: <b>' + mekpValues.percentage.toFixed(2) + '%</b>';
         mekpCcsDisplay.innerHTML = 'MEKp CCs: <b>' + mekpValues.ccs.toFixed(2) + ' CCs</b>';
         mekpDropsDisplay.innerHTML = 'MEKp Drops: <b>' + mekpValues.drops.toFixed(0) + ' Drops</b>';
+			// New feature: Check for low temperature and advise
+				var tempAdviceDisplay = document.getElementById('tempAdvice'); // Add this line to your existing code
+				var thresholdTemp = 60; // Temperature threshold in Fahrenheit
+				var displayTempThreshold = tempUnit === 'celsius' ? convertFahrenheitToCelsius(thresholdTemp).toFixed(2) : thresholdTemp;
+				var tempUnitDisplay = tempUnit === 'celsius' ? 'C' : 'F';
+
+				if (ambientTemp < thresholdTemp) {
+						tempAdviceDisplay.innerHTML = 'Find a way to raise and maintain the substrate temperature to ' + displayTempThreshold + '°' + tempUnitDisplay + '.';
+				} else {
+						tempAdviceDisplay.innerHTML = ''; // Clear the message if the temperature is above the threshold
+				}
     }
 
     // Listen for input changes and update values
@@ -62,6 +73,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return temp; // Already in Fahrenheit
     }
+		function convertFahrenheitToCelsius(temp) {
+			return (temp - 32) * 5 / 9;
+	}
 
     function calculateMekp(volume, temp, usingDuratec, makeItHot, makeItHottest) {
         var basePercentage = usingDuratec ? 2 : 1; // Base percentage is 2% when Using Duratec is checked
