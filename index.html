@@ -10,6 +10,12 @@
 <body>
     <div class="container">
         <h1 class="text-center mb-4">MEKP Calc</h1>
+        <!-- Result Display -->
+        <div id="result" class="mt-3">
+            <p id="mekpPercentage">Recommended MEKp Percentage: </p>
+            <p id="mekpCcs">MEKp CCs: </p>
+            <p id="mekpDrops">MEKp Drops: </p>
+        </div>
 
         <!-- Volume Group -->
         <div class="group-container">
@@ -75,16 +81,18 @@
             </div>
         </div>
 
-        <!-- Result Display -->
-        <div id="result" class="mt-3">
-            <p id="mekpPercentage">Recommended MEKp Percentage: </p>
-            <p id="mekpCcs">MEKp CCs: </p>
-            <p id="mekpDrops">MEKp Drops: </p>
-        </div>
-        <div id="otherpages" class="col-md-6">
-            <a href="Awlgrip.html">Awlgrip Mix calculator</a>
-        </div>
-    </div>
+			 <!-- Links for Safety Guidelines and tips/tricks -->
+			<div class="group-container otherpages">
+				<div class="group-title">Tips and Safety</div>
+						<a href="mekp-safety.html">MEKp Safety Guidelines</a>
+				</div>
+
+				<!-- Additional Calcs -->
+		<div class="group-container otherpages">
+				<div class="group-title">Other Calcs</div>
+					<a href="Awlgrip.html">Awlgrip Mix calculator</a>
+				</div>
+		</div>
     <script src="mekscript.js"></script>
 </body>
 </html>
