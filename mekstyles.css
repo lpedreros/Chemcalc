@@ -5,9 +5,19 @@ body {
     margin: 1em;
 }
 
+a {
+		margin-top: 1em;
+		font-style: normal;
+		font-size: 1.5em;
+		font-weight: bold;
+}
+
+h1 {
+	font-size: 1.5em;
+}
 .container {
     background-color: #2c2c2e;
-    padding: 20px;
+    padding: 1em;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     margin-top: 50px;
@@ -16,14 +26,14 @@ body {
 
 .group-container {
     background-color: #333;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: .5em;
+    margin-top: 1em;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .group-title {
-    font-size: 1.2em;
+    font-size: 1.25em;
     font-weight: bold;
     color: #89CFF0;
     margin-bottom: 10px;
@@ -71,55 +81,45 @@ body {
     color: #ffffff;
     padding: 10px;
     border-left: 5px solid #0a84ff;
-    margin-top: 20px;
-}
-
-@media (max-width: 768px) {
-    .row > div {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-
-    .group-container {
-        padding: 10px;
-    }
-
-.otherpages {
-    margin-top: 1em;
-    font-style: normal;
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-/* Override for small screens */
-@media (max-width: 750px) {
-    .row > div {
-        flex: 0 0 50%; /* Each column takes up half the row */
-        max-width: 50%; /* Prevent columns from stacking */
-    }
-
-    .form-control, .form-check-input, .form-check-label {
-        font-size: 1em; /* Reduce font size for better fit */
-    }
-
-    .form-group label, .group-title {
-        font-size: 0.8em; /* Reduce font size for labels and titles */
-    }
-
-    .form-check {
-        margin-bottom: 0.5rem; /* Adjust spacing for checkboxes */
-    }
+    margin-top: 0;
 }
 
 .safety-content h2 {
-    color: #89CFF0;
-    margin-top: 15px;
+		color: #89CFF0;
+		margin-top: 15px;
 		font-size: 1.5em;
+}
+
+/* Override for small screens */
+@media (max-width: 575.98px) {
+	.container {
+				max-width: 100%; /* keeps .container at 100% */
 	}
 }
 
-a {
-    margin-top: 1em;
-    font-style: normal;
-    font-size: 1.5em;
-    font-weight: bold;
+@media (max-width: 767.98px) {
+    body {
+   					margin: 0em;
+				}
+
+		.container {
+						margin-top: 0;
+				}
+		.row > div {	
+						flex: 0 0 50%; /* Each column takes up half the row */
+						max-width: 50%; /* Prevent columns from stacking */
+				}
+
+		.form-control, .form-check-input, .form-check-label {
+						font-size: 1em; /* Reduce font size for better fit */
+				}
+
+		.form-group label, .group-title {
+						font-size: 1em; /* Reduce font size for labels and titles */
+				}
+
+		.form-check {
+						margin-bottom: 0.5rem; /* Adjust spacing for checkboxes */
+				}
+		}
+/* End override for small screens */
