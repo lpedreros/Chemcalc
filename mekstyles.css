@@ -115,3 +115,9 @@ body {
         margin-bottom: 0.5rem; /* Adjust spacing for checkboxes */
     }
 }
+
+.safety-content h2 {
+    color: #0a84ff;
+    margin-top: 15px;
+		font-size: 1.5em;
+}
