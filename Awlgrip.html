@@ -5,15 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Awlgrip Mix Calculator</title>
-    <link rel="stylesheet" href="awlgripstyle.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Awlgrip Calc</h1>
-        <form id="mixForm">
-            <div class="form-group row">
+    <div class="container">
+        <h1 class="text-center mb-4">Awlgrip Calc</h1>
+            <!-- Results will be displayed here -->
+			<div id="result" class="mt-4">
+            <!-- Results will be displayed here -->
+        </div>
+			<form id="mixForm">
+      	<div class="group-container"> 
+<!--Volume Group-->
+						<div class="form-group row">
                 <div class="col-md-6 col-12 mb-2">
-                    <label for="unitType">Volume/Area Units:</label>
+                    <label for="unitType" class="grouptitle">Volume/Area Units:</label>
                     <select class="form-control" id="unitType">
                         <option value="squareFootage">Square Footage</option>
                         <option value="gallons">Gallons</option>
@@ -28,7 +34,8 @@
                     <input type="number" class="form-control" id="inputValue" required>
                 </div>
             </div>
-            <div class="form-group">
+<!--Paint Type and result units-->
+						<div class="form-group">
                 <label for="paintType">Select Paint Type:</label>
                 <select class="form-control" id="paintType">
                     <option value="awlcraft2000">Awlcraft2000</option>
@@ -36,7 +43,7 @@
                     <option value="highBuild">High Build Primer</option>
                 </select>
             </div>
-            <div class="form-group">
+						<div class="form-group">
                 <label for="resultUnitType">Select Result Unit:</label>
                 <select class="form-control" id="resultUnitType">
                     <option value="gallons">Gallons</option>
@@ -46,14 +53,18 @@
                     <option value="ccs">Cubic Centimeters (cc)</option>
                 </select>
             </div>
-        </form>
-        <div id="result" class="mt-4">
-            <!-- Results will be displayed here -->
-        </div>
-			        <div id="otherpages" class="col-md-6">
-            <a href="index.html">MEKp Mix calculator</a>
-        </div>
-
+				</div>  
+			</form>
+<!-- Links for Safety Guidelines and tips/tricks -->
+			<div class="group-container">
+				<div class="group-title">Tips and Safety</div>
+						<a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a>
+				</div>
+<!-- Additional Calcs -->
+		<div class="group-container">
+				<div class="group-title">Other Calcs</div>
+					<a href="index.html">MEKp Mix calculator</a>
+				</div>
     </div>
     <script src="awlgripscript.js"></script>
 </body>
