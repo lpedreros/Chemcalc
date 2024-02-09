@@ -1,123 +1,102 @@
 function convertUnits(volume, fromUnit, toUnit) {
-    // Conversion logic with cubic centimeters (cc)
-    const gallonToCc = 3785.41; // 1 gallon is approximately 3785.41 cc
-    const literToCc = 1000; // 1 liter is 1000 cc
-    const quartToCc = 946.353; // 1 quart is approximately 946.353 cc
-    const ounceToCc = 29.5735; // 1 fluid ounce is approximately 29.5735 cc
-
-    switch (fromUnit) {
-        case 'gallons':
-            if (toUnit === 'liters') return volume * 3.78541;
-            if (toUnit === 'quarts') return volume * 4;
-            if (toUnit === 'ounces') return volume * 128;
-            if (toUnit === 'ccs') return volume * gallonToCc;
-            break;
-        case 'liters':
-            if (toUnit === 'gallons') return volume / 3.78541;
-            if (toUnit === 'quarts') return volume * 1.05669;
-            if (toUnit === 'ounces') return volume * 33.814;
-            if (toUnit === 'ccs') return volume * literToCc;
-            break;
-        case 'quarts':
-            if (toUnit === 'gallons') return volume / 4;
-            if (toUnit === 'liters') return volume * 0.946353;
-            if (toUnit === 'ounces') return volume * 32;
-            if (toUnit === 'ccs') return volume * quartToCc;
-            break;
-        case 'ounces':
-            if (toUnit === 'gallons') return volume / 128;
-            if (toUnit === 'liters') return volume * 0.0295735;
-            if (toUnit === 'quarts') return volume / 32;
-            if (toUnit === 'ccs') return volume * ounceToCc;
-            break;
-        case 'ccs':
-            if (toUnit === 'gallons') return volume / gallonToCc;
-            if (toUnit === 'liters') return volume / literToCc;
-            if (toUnit === 'quarts') return volume / quartToCc;
-            if (toUnit === 'ounces') return volume / ounceToCc;
-            break;
-        // Add other cases as needed
-    }
-    return volume; // Return the original volume for unhandled cases or same units
-}
-function calculatePaintCoverage(paintType, area) {
-    let coveragePerUnit;
-    switch (paintType) {
-        case 'awlcraft2000':
-            coveragePerUnit = 300; // square feet per gallon
-            break;
-        case 'awlgrip':
-            coveragePerUnit = 250; // square feet per gallon
-            break;
-        case 'highBuild':
-            coveragePerUnit = 200; // square feet per gallon
-            break;
-        default:
-            coveragePerUnit = 0;
-    }
-    return area / coveragePerUnit;
-}
-
-function calculatePaintNeeds(paintType, inputValue, unitType, resultUnitType) {
-    let paintVolumeInGallons, converter, reducer;
-
-    if (unitType === 'squareFootage') {
-        paintVolumeInGallons = calculatePaintCoverage(paintType, Number(inputValue));
-    } else {
-        paintVolumeInGallons = convertUnits(Number(inputValue), unitType, 'gallons');
-    }
-
-    // Initialize result object
-    let result = {
-        paint: 0,
-        converter: 0,
-        reducer: 0
+    const conversionRates = {
+        squareFootage: { ccs: 1 }, // Placeholder ratio, adjust as needed
+        gallons: { liters: 3.78541, quarts: 4, ounces: 128, ccs: 3785.41 },
+        liters: { gallons: 0.264172, quarts: 1.05669, ounces: 33.814, ccs: 1000 },
+        quarts: { gallons: 0.25, liters: 0.946353, ounces: 32, ccs: 946.353 },
+        ounces: { gallons: 0.0078125, liters: 0.0295735, quarts: 0.03125, ccs: 29.5735 },
+        ccs: { gallons: 0.000264172, liters: 0.001, quarts: 0.00105669, ounces: 0.033814 }
     };
 
-    switch (paintType) {
-        case 'awlcraft2000':
-            converter = paintVolumeInGallons / 2;
-            reducer = paintVolumeInGallons * 0.33; // up to 33%
-            break;
-        case 'awlgrip':
-            converter = paintVolumeInGallons;
-            reducer = paintVolumeInGallons * 0.25; // up to 25%
-            break;
-        case 'highBuild':
-            converter = paintVolumeInGallons;
-            reducer = 0; // No reducer needed
-            break;
+    let numericVolume = parseFloat(volume);
+    if (isNaN(numericVolume)) {
+        return "Conversion Error";
     }
 
-     result.paint = convertUnits(paintVolumeInGallons, 'gallons', resultUnitType);
-    result.converter = convertUnits(converter, 'gallons', resultUnitType);
-    result.reducer = convertUnits(reducer, 'gallons', resultUnitType);
-
-    return result; // Return the result object
+    return fromUnit === toUnit ? numericVolume.toFixed(2) : (numericVolume * (conversionRates[fromUnit][toUnit] || 0)).toFixed(2);
 }
 
-// Function to update results
+function calculatePaintCoverage(paintType, area, methodType) {
+    let coveragePerGallon;
+    switch (paintType) {
+        case '545primer':
+            coveragePerGallon = methodType === 'spray' ? 317.8 : 635.6; // Adjusted values based on data sheet
+            break;
+        case 'awlgrip':
+            coveragePerGallon = methodType === 'spray' ? 542.9 : 814.8; // Adjusted values based on data sheet
+            break;
+        case 'awlcraft2000':
+            coveragePerGallon = 725.2; // Adjusted values based on data sheet
+            break;
+        default:
+            return "Coverage Error";
+    }
+
+    return area ? (area / coveragePerGallon).toFixed(2) : "0.00";
+}
+
+function calculatePaintNeeds(paintType, inputValue, unitType, resultUnitType, methodType) {
+    let paintVolumeInCCs = convertUnits(inputValue.trim() === '' ? 0 : Number(inputValue), unitType, 'ccs');
+    if (paintVolumeInCCs === "Conversion Error") return { paint: "Error", converter: "Error", reducer: "Error" };
+
+    let converterRatio, reducerRatio;
+    switch (paintType) {
+        case '545primer':
+            converterRatio = 1; // 1:1 ratio
+            reducerRatio = methodType === 'spray' ? 0.25 : 0.15; // Adjusted based on data sheet
+            break;
+        case 'awlgrip':
+            converterRatio = methodType === 'spray' ? 1 : 0.5; // 1:1 for spray, 2:1 for roll
+            reducerRatio = methodType === 'spray' ? 0.25 : 0.20; // Adjusted based on data sheet
+            break;
+        case 'awlcraft2000':
+            converterRatio = 0.5; // 2:1 ratio for spray
+            reducerRatio = 0.33; // 33% reduction for spray
+            break;
+        default:
+            converterRatio = reducerRatio = 0; // Unsupported types/methods
+    }
+
+    let converterVolumeInCCs = paintVolumeInCCs * converterRatio;
+    let reducerVolumeInCCs = paintVolumeInCCs * reducerRatio;
+
+    return {
+        paint: convertUnits(paintVolumeInCCs, 'ccs', resultUnitType),
+        converter: convertUnits(converterVolumeInCCs, 'ccs', resultUnitType),
+        reducer: convertUnits(reducerVolumeInCCs, 'ccs', resultUnitType)
+    };
+}
+
 function updateResults() {
-    let paintType = document.getElementById('paintType').value;
-    let unitType = document.getElementById('unitType').value;
+    let methodType = document.getElementById('methodType').value;
+    let paintTypeSelect = document.getElementById('paintType');
+    let paintType = paintTypeSelect.value;
+		let unitType = document.getElementById('unitType').value;
     let resultUnitType = document.getElementById('resultUnitType').value;
     let inputValue = document.getElementById('inputValue').value;
 
-    let result = calculatePaintNeeds(paintType, inputValue, unitType, resultUnitType);
+    for (let option of paintTypeSelect.options) {
+        option.disabled = (option.value === 'awlcraft2000' && methodType === 'roll');
+    }
+    if (methodType === 'roll' && paintType === 'awlcraft2000') {
+        paintTypeSelect.value = 'awlgrip';
+        paintType = 'awlgrip';
+    }
 
-    // Format results with <strong> tags for bold text and wrap in <p> tags for each line
-    let resultText = `<p>Amount of paint needed: <strong>${result.paint.toFixed(2)} ${resultUnitType}</strong></p>`;
-    resultText += `<p>Converter: <strong>${result.converter.toFixed(2)} ${resultUnitType}</strong></p>`;
-    resultText += `<p>Reducer: <strong>${result.reducer.toFixed(2)} ${resultUnitType}</strong></p>`;
+    let result = calculatePaintNeeds(paintType, inputValue, unitType, resultUnitType, methodType);
 
-    document.getElementById('result').innerHTML = resultText;
+    document.getElementById('result').innerHTML = `
+        <p>Amount of paint needed: <strong>${result.paint} ${resultUnitType}</strong></p>
+        <p>Converter: <strong>${result.converter} ${resultUnitType}</strong></p>
+        <p>Reducer: <strong>${result.reducer} ${resultUnitType}</strong></p>`;
 }
 
-// Event listeners to update results when inputs change
+// Attach event listeners to form elements
+document.getElementById('methodType').addEventListener('change', updateResults);
 document.getElementById('paintType').addEventListener('change', updateResults);
 document.getElementById('unitType').addEventListener('change', updateResults);
 document.getElementById('resultUnitType').addEventListener('change', updateResults);
 document.getElementById('inputValue').addEventListener('input', updateResults);
 
-// Initial update of results
+// Initial call to update results based on default form values
 updateResults();

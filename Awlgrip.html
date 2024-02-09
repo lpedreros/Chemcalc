@@ -10,72 +10,85 @@
 <body>
     <div class="container">
         <h1 class="text-center mb-4">Awlgrip Calc</h1>
-            <!-- Results will be displayed here -->
-			<div id="result" class="mt-4">
+        <!-- Results will be displayed here -->
+        <div id="result" class="mt-4">
             <!-- Results will be displayed here -->
         </div>
-			<form id="mixForm">
-      	<div class="group-container"> 
-<!--Volume Group-->
-						<div class="form-group row">
-                <div class="col-md-6 col-12 mb-2">
-                    <label for="unitType" class="grouptitle">Volume/Area Units:</label>
-                    <select class="form-control" id="unitType">
-                        <option value="squareFootage">Square Footage</option>
+        <form id="mixForm">
+            <div class="group-container">
+                <!-- Spray or Roll Selection -->
+								<div class="form-group row">
+                    <div class="col-12 mb-2">
+                        <label for="methodType" class="grouptitle">Application Method:</label>
+                        <select class="form-control" id="methodType">
+                            <option value="spray">Spray</option>
+                            <option value="roll">Roll</option>
+                        </select>
+                    </div>
+                </div>
+								<div class="form-group">
+                    <label for="paintType">Select Paint Type:</label>
+                    <select class="form-control" id="paintType">
+                        <option value="awlcraft2000">Awlcraft2000</option>
+                        <option value="awlgrip">Awlgrip</option>
+                        <option value="545primer">545 Primer</option>
+                    </select>
+                </div>
+							
+
+                <!--Volume Group-->
+                <div class="form-group row">
+                    <div class="col-md-6 col-12 mb-2">
+                        <label for="unitType" class="grouptitle">Volume/Area Units:</label>
+                        <select class="form-control" id="unitType">
+                            <option value="squareFootage">Square Footage</option>
+                            <option value="gallons">Gallons</option>
+                            <option value="quarts">Quarts</option>
+                            <option value="liters">Liters</option>
+                            <option value="ounces">Ounces</option>
+                            <option value="ccs">Cubic Centimeters (cc)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-12 mb-2">
+                        <label for="inputValue">Volume or Area:</label>
+                        <input type="number" class="form-control" id="inputValue" required>
+                    </div>
+                </div>
+
+                <!-- Result units -->
+                <div class="form-group">
+                    <label for="resultUnitType">Select Result Unit:</label>
+                    <select class="form-control" id="resultUnitType">
                         <option value="gallons">Gallons</option>
                         <option value="quarts">Quarts</option>
                         <option value="liters">Liters</option>
-                        <option value="ounces">Ounces</option>
+                        <option value="ounces" selected>Ounces</option>
                         <option value="ccs">Cubic Centimeters (cc)</option>
                     </select>
                 </div>
-                <div class="col-md-6 col-12 mb-2">
-                    <label for="inputValue">Volume or Area:</label>
-                    <input type="number" class="form-control" id="inputValue" required>
+            </div>
+        </form>
+        <div class="row">
+            <!-- Links for Safety Guidelines and tips/tricks -->
+            <div class="col-md-6">
+                <div class="group-container">
+                    <div class="group-title">Tips and Safety</div>
+                    <p><a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a></p>
+                    <p><a href="https://specialtycoatings.brand.akzonobel.com/m/29f4b8c49efa05d0/original/Awlgrip_Topcoat_VOC_Compliant_US_only_eng_A4_20200611.pdf" target="_blank">Awlgrip Data Sheet</a></p>
+                    <p><a href="https://specialtycoatings.brand.akzonobel.com/m/65415b38d8d102a/original/Awlcraft_2000_eng_A4_20211018.pdf" target="_blank">Awlcraft2000 Data Sheet</a></p>
+                    <p><a href="https://specialtycoatings.brand.akzonobel.com/m/16c5bb914a6b7b71/original/545_Epoxy_Primer_eng_A4_20191018.pdf" target="_blank">545 Primer Data sheet</a></p>
+                    <p><a href="legal.html">Legal Disclaimer</a></p>
                 </div>
             </div>
-<!--Paint Type and result units-->
-						<div class="form-group">
-                <label for="paintType">Select Paint Type:</label>
-                <select class="form-control" id="paintType">
-                    <option value="awlcraft2000">Awlcraft2000</option>
-                    <option value="awlgrip">Awlgrip</option>
-                    <option value="highBuild">High Build Primer</option>
-                </select>
+            <!-- Other Calcs -->
+            <div class="col-md-6">
+                <div class="group-container">
+                    <div class="group-title">Other Calcs</div>
+                    <p><a href="index.html">MEKp Mix calculator</a></p>
+                </div>
             </div>
-						<div class="form-group">
-                <label for="resultUnitType">Select Result Unit:</label>
-                <select class="form-control" id="resultUnitType">
-                    <option value="gallons">Gallons</option>
-                    <option value="quarts">Quarts</option>
-                    <option value="liters">Liters</option>
-                    <option value="ounces">Ounces</option>
-                    <option value="ccs">Cubic Centimeters (cc)</option>
-                </select>
-            </div>
-				</div>  
-			</form>
-			<div class="row">
-<!-- Links for Safety Guidelines and tips/tricks -->
-				<div class="col-md-6">
-					<div class="group-container">
-						<div class="group-title">Tips and Safety</div>
-							<p><a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a></p>
-							<p><a href="https://specialtycoatings.brand.akzonobel.com/m/22045f1a07a0a787/original/Awlgrip_Topcoat_VOC_US_only_eng_usa_A4_20150918.pdf" target="_blank">Awlgrip Data Sheet</a></p>
-							<p><a href="https://specialtycoatings.brand.akzonobel.com/m/65415b38d8d102a/original/Awlcraft_2000_eng_A4_20211018.pdf" target="_blank">Awlcraft2000 Data Sheet</a></p>
-							<p><a href="https://specialtycoatings.brand.akzonobel.com/m/16c5bb914a6b7b71/original/545_Epoxy_Primer_eng_A4_20191018.pdf" target="_blank">545 Primer Data sheet</a></p>
-							<p><a href="legal.html">Legal Disclaimer</a></p>
-				</div>
-				</div>
-<!-- Other Calcs -->
-				<div class="col-md-6">
-					<div class="group-container">
-					<div class="group-title">Other Calcs</div>
-						<p><a href="index.html">MEKp Mix calculator</a></p>
-					</div>
-				</div>
-			</div>
-		</div>
+        </div>
+    </div>
     <script src="awlgripscript.js"></script>
 </body>
 </html>
