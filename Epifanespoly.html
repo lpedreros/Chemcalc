@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Epifanes Polyurethane Paint Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Epifanes Polyurethane Paint Calculator</h1>
+        <form id="epifanesForm">
+            <!-- Volume/Area Input -->
+            <div class="form-group">
+                <label for="inputValue">Volume or Area:</label>
+                <input type="number" class="form-control" id="inputValue" required>
+            </div>
+
+            <!-- Volume/Area Units -->
+            <div class="form-group">
+                <label for="unitType">Input Units:</label>
+                <select class="form-control" id="unitType">
+                    <option value="squareFootage">Square Footage</option>
+                    <option value="gallons">Gallons</option>
+                    <option value="quarts">Quarts</option>
+                    <option value="liters">Liters</option>
+                    <option value="ounces">Ounces</option>
+                    <option value="ccs">Cubic Centimeters (cc)</option>
+                </select>
+            </div>
+
+            <!-- Output Units -->
+            <div class="form-group">
+                <label for="outputUnitType">Output Units:</label>
+                <select class="form-control" id="outputUnitType">
+                    <option value="ccs">Cubic Centimeters (cc)</option>
+                    <option value="ounces">Ounces</option>
+                    <option value="liters">Liters</option>
+                    <option value="quarts">Quarts</option>
+                    <option value="gallons">Gallons</option>
+                    <option value="squareFootage">Square Footage</option>
+                </select>
+            </div>
+
+            <!-- Results Display -->
+            <div id="result" class="mt-4"></div>
+        </form>
+    </div>
+
+    <script src="epifanesScript.js"></script>
+</body>
+</html>
