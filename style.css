@@ -1,3 +1,7 @@
+/* ---------------------------
+   Base Styles (from your original styles.css)
+--------------------------- */
+
 body {
     background-color: #1c1c1e;
     color: #ffffff;
@@ -5,23 +9,26 @@ body {
     margin: 1em;
 }
 
-a {
-		margin-top: .5em;
-		font-style: normal;
-		font-size: 1.25em;
-		font-weight: bold;
+a, a:visited, a:hover, a:active {
+    margin-top: .5em;
+    font-style: normal;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #89CFF0;
 }
 
 h1 {
-	font-size: 1.5em;
+    font-size: 1.5em;
 }
+
+/* Combined container style */
 .container {
     background-color: #2c2c2e;
     padding: 1em;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    margin-top: 50px;
-    margin-bottom: 1em;
+    margin: 50px auto 1em;
+    max-width: 1200px;
 }
 
 .group-container {
@@ -65,6 +72,7 @@ h1 {
     margin-left: 0.4em;
     vertical-align: middle;
 }
+
 .btn-primary {
     background-color: #0a84ff;
     border: none;
@@ -76,10 +84,10 @@ h1 {
 }
 
 .row {
-	padding-top: 0;
-	/* [disabled]padding-right: 1em; */
-	/* [disabled]padding-left: 1em; */
-	padding-bottom: 0;
+    padding-top: 0;
+    /* [disabled]padding-right: 1em; */
+    /* [disabled]padding-left: 1em; */
+    padding-bottom: 0;
 }
 
 #result {
@@ -91,45 +99,152 @@ h1 {
 }
 
 .safety-content h2 {
-		color: #89CFF0;
-		margin-top: 15px;
-		font-size: 1.5em;
+    color: #89CFF0;
+    margin-top: 15px;
+    font-size: 1.5em;
 }
 
-/* Override for small screens */
+/* ---------------------------
+   Landing Page Specific Styles
+--------------------------- */
+
+/* Header Navigation */
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2em;
+}
+
+.nav {
+    margin-top: 1em;
+}
+
+.nav a {
+    margin: 0 0.75em;
+    text-decoration: none;
+    font-size: 1.25em;
+    color: #89CFF0;
+}
+
+.nav a:hover {
+    text-decoration: underline;
+}
+
+/* Hero Section */
+.hero {
+    background: url('hero-bg.jpg') no-repeat center center/cover;
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 2em;
+}
+
+.hero h2 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+}
+
+.hero p {
+    font-size: 1.25em;
+    margin-bottom: 1em;
+}
+
+/* Button Style for landing page call-to-action */
+.btn {
+    background-color: #0a84ff;
+    padding: 10px 20px;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.btn:hover {
+    background-color: #007aff;
+}
+
+/* Features Section */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 1em;
+    margin-bottom: 2em;
+}
+
+.feature {
+    flex: 1 1 30%;
+    max-width: 30%;
+    background-color: #2c2c2e;
+    padding: 1em;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.feature h3 {
+    color: #89CFF0;
+    margin-bottom: 0.5em;
+}
+
+.feature p {
+    font-size: 1em;
+    margin: 0;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 2em;
+    padding: 1em 0;
+    border-top: 1px solid #48484a;
+}
+
+/* ---------------------------
+   Responsive Media Queries
+--------------------------- */
+
+/* From original styles.css */
 @media (max-width: 575.98px) {
-	.container {
-				max-width: 100%; /* keeps .container at 100% */
-	}
-	
-	a {
-		font-size: 1.25em;
-	}
+    .container {
+        max-width: 100%; /* keeps .container at 100% */
+    }
+    
+    a {
+        font-size: 1.25em;
+    }
 }
 
 @media (max-width: 767.98px) {
     body {
-   					margin: 0em;
-				}
+        margin: 0em;
+    }
+    .container {
+        margin-top: 0;
+    }
+    .row > div {
+        flex: 0 0 100%; /* Each column takes up full width */
+        max-width: 100%; /* Prevent columns from stacking */
+    }
+    .form-control, .form-check-input, .form-check-label {
+        font-size: 1em; /* Reduce font size for better fit */
+    }
+    .form-group label, .group-title {
+        font-size: 1em; /* Reduce font size for labels and titles */
+    }
+    .form-check {
+        margin-bottom: 0.5rem; /* Adjust spacing for checkboxes */
+    }
+}
 
-		.container {
-						margin-top: 0;
-				}
-		.row > div {	
-						flex: 0 0 100%; /* Each column takes up half the row */
-						max-width: 100%; /* Prevent columns from stacking */
-				}
-
-		.form-control, .form-check-input, .form-check-label {
-						font-size: 1em; /* Reduce font size for better fit */
-				}
-
-		.form-group label, .group-title {
-						font-size: 1em; /* Reduce font size for labels and titles */
-				}
-
-		.form-check {
-						margin-bottom: 0.5rem; /* Adjust spacing for checkboxes */
-				}
-		}
-/* End override for small screens */
+/* Landing page responsive tweaks */
+@media (max-width: 767px) {
+    .features {
+        flex-direction: column;
+    }
+    .feature {
+        max-width: 100%;
+    }
+}
