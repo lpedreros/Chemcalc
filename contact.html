@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact - ChemCalc</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="container header">
+    <h1>ChemCalc</h1>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="calculators.html">Calculators</a>
+      <a href="fiberglass.html">Fiberglass Repair</a>
+      <a href="contact.html" class="active">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Contact Section -->
+  <section class="container contact">
+    <h2>Contact Us</h2>
+    <p>
+      Have questions or need a quote? Fill out the form below, and we’ll get back to you as soon as possible.
+    </p>
+    <form id="contactForm" action="submit_contact.php" method="post">
+      <div class="form-group">
+        <label for="name">First and Last Name</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Your Full Name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Your Email" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Your Phone Number" required />
+      </div>
+      <div class="form-group">
+        <label for="boatDetails">Year, Make, and Model of the Boat</label>
+        <input type="text" id="boatDetails" name="boatDetails" class="form-control" placeholder="e.g., 2010, Beneteau, Oceanis 35" required />
+      </div>
+      <div class="form-group">
+        <label for="hin">HIN Number</label>
+        <input type="text" id="hin" name="hin" class="form-control" placeholder="Your Boat's HIN Number" required />
+      </div>
+      <div class="form-group">
+        <label for="location">Boat Location Address</label>
+        <textarea id="location" name="location" class="form-control" rows="2" placeholder="Your Boat's Location" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="repairs">Short Description of the Repairs (Please send photos if available)</label>
+        <textarea id="repairs" name="repairs" class="form-control" rows="5" placeholder="Describe the repairs needed" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="availability">Times Available on Fridays to Look at the Boat</label>
+        <input type="text" id="availability" name="availability" class="form-control" placeholder="e.g., 10 AM - 2 PM" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="container footer">
+    <p>&copy; 2025 ChemCalc. All rights reserved.</p>
+  </footer>
+</body>
+</html>
