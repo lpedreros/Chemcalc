@@ -1,0 +1,11 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">  <header class="container header">
+    <h1>ChemCalc</h1>
+    <nav class="nav">
+      <a href="../index.html">Home</a>
+      <a href="../calculators.html">Calculators</a>
+      <a href="../services.html">Services</a>
+      <a href="../kits.html" class="active">Kits &amp; Materials</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+  </header>
