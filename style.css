@@ -268,3 +268,33 @@ h1 {
         max-width: 100%;
     }
 }
+
+/* Mobile-Friendly Header Menu */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #89CFF0;
+  font-size: 2em;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+  }
+  .nav.active {
+    display: flex;
+  }
+  .menu-toggle {
+    display: block;
+  }
+  /* Optional: Adjust header spacing for mobile */
+  .header {
+    position: relative;
+    padding: 1em;
+  }
+}
+
