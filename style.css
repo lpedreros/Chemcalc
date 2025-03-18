@@ -302,3 +302,30 @@ h1 {
         padding: 1em;
     }
 }
+
+/* Collapsible Sections */
+.collapsible {
+  background-color: #2c2c2e;
+  color: #89CFF0;
+  cursor: pointer;
+  padding: 0.5em;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 1.25em;
+  margin-top: 1em;
+}
+
+.collapsible:hover,
+.collapsible.active {
+  background-color: #48484a;
+}
+
+.content {
+  padding: 0 1em;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #333;
+}
