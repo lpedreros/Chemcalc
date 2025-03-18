@@ -1,13 +1,10 @@
-/* ---------------------------
-   Base Styles
---------------------------- */
+/* Base Styles */
 body {
     background-color: #1c1c1e;
     color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 1em;
 }
-
 a, a:visited, a:hover, a:active {
     margin-top: 0.5em;
     font-style: normal;
@@ -15,14 +12,11 @@ a, a:visited, a:hover, a:active {
     font-weight: bold;
     color: #89CFF0;
 }
-
 h1 {
     font-size: 1.5em;
 }
 
-/* ---------------------------
-   Container & Group
---------------------------- */
+/* Container & Layout */
 .container {
     background-color: #2c2c2e;
     padding: 1em;
@@ -31,256 +25,124 @@ h1 {
     margin: 50px auto 1em;
     max-width: 1200px;
 }
-
-.group-container {
-    background-color: #333;
-    padding: 0.5em;
-    margin-top: 1em;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.group-title {
-    font-size: 1.25em;
-    font-weight: bold;
-    color: #89CFF0;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-/* ---------------------------
-   Form Fields
---------------------------- */
-.form-group {
-    width: 100%;
-    margin-bottom: 1em;
-}
-
-.form-group label {
-    display: block;
-    color: #89CFF0;
-    margin-bottom: 0.5em;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.5em;
-    box-sizing: border-box;
-    background-color: #dcdcdc;
-    color: #333333;
-    border: 1px solid #6c757d;
-    font-weight: bold;
-    text-align: left;
-    font-family: inherit;
-    margin-bottom: 1em;
-}
-
-/* ---------------------------
-   Form Check Elements
---------------------------- */
-.form-check-input {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.form-check-label {
-    color: #ffffff;
-    margin-left: 0.4em;
-    vertical-align: middle;
-}
-
-/* ---------------------------
-   Buttons
---------------------------- */
-.btn-primary {
-    background-color: #0a84ff;
-    border: none;
-    margin-top: 1em;
-}
-
-.btn-primary:hover {
-    background-color: #007aff;
-}
-
-/* ---------------------------
-   Row & Result
---------------------------- */
-.row {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-#result {
-    background-color: #48484a;
-    color: #ffffff;
-    padding: 10px;
-    border-left: 5px solid #0a84ff;
-    margin-top: 0;
-}
-
-/* ---------------------------
-   Safety Content
---------------------------- */
-.safety-content h2 {
-    color: #89CFF0;
-    margin-top: 15px;
-    font-size: 1.5em;
-}
-
-/* ---------------------------
-   Header & Navigation
---------------------------- */
 .header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
     margin-bottom: 2em;
 }
-
 .nav {
-    margin-top: 1em;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: 1em;
 }
-
 .nav a {
     margin: 0 0.75em;
     text-decoration: none;
-    font-size: 1.25em;
     color: #89CFF0;
 }
-
 .nav a:hover {
     text-decoration: underline;
 }
 
-/* ---------------------------
-   Hero Section
---------------------------- */
-.hero {
-    background: url('hero-bg.jpg') no-repeat center center/cover;
-    padding: 60px 20px;
+/* Filter Buttons */
+.filter-buttons {
     text-align: center;
-    border-radius: 12px;
-    margin-bottom: 2em;
-}
-
-.hero h2 {
-    font-size: 2em;
-    margin-bottom: 0.5em;
-}
-
-.hero p {
-    font-size: 1.25em;
     margin-bottom: 1em;
 }
-
-/* ---------------------------
-   Button Style (General)
---------------------------- */
-.btn {
-    background-color: #0a84ff;
-    padding: 10px 20px;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    display: inline-block;
-}
-
-.btn:hover {
-    background-color: #007aff;
-}
-
-/* ---------------------------
-   Features Section
---------------------------- */
-.features {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 1em;
-    margin-bottom: 2em;
-}
-
-.feature {
-    flex: 1 1 30%;
-    max-width: 30%;
+.filter-btn {
     background-color: #2c2c2e;
-    padding: 1em;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-    text-align: center;
-}
-
-.feature h3 {
     color: #89CFF0;
-    margin-bottom: 0.5em;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 0.25em;
+    cursor: pointer;
+    font-size: 1.1em;
+    border-radius: 4px;
+}
+.filter-btn:hover,
+.filter-btn.active {
+    background-color: #48484a;
 }
 
-.feature p {
+/* Collapsible Sections */
+.collapsible {
+    background-color: #2c2c2e;
+    color: #89CFF0;
+    cursor: pointer;
+    padding: 0.75em;
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-size: 1.25em;
+    position: relative;
+    margin-top: 1em;
+    border-radius: 6px;
+}
+.collapsible::after {
+    content: "▼";
+    position: absolute;
+    right: 1em;
+}
+.collapsible:not(.active)::after {
+    content: "►";
+}
+.content {
+    padding: 0 1em;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #333;
+    border-radius: 6px;
+    margin-bottom: 1em;
+    max-height: none;
+}
+
+/* Star Toggle for Favorites */
+.star-toggle {
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-right: 0.5em;
+    user-select: none;
+}
+.star-toggle.my-favorite {
+    color: gold;
+}
+
+/* Visual Feedback for Filtering */
+.content ul li {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+}
+
+/* Search Input Styles */
+#search-input {
+    padding: 0.5em;
+    width: 80%;
+    max-width: 400px;
     font-size: 1em;
-    margin: 0;
+    border: 1px solid #48484a;
+    border-radius: 4px;
+    background-color: #2c2c2e;
+    color: #fff;
+}
+#search-input::placeholder {
+    color: #bbb;
 }
 
-/* ---------------------------
-   Footer
---------------------------- */
-.footer {
-    text-align: center;
-    margin-top: 2em;
-    padding: 1em 0;
-    border-top: 1px solid #48484a;
-}
-
-/* ---------------------------
-   Responsive Media Queries
---------------------------- */
-@media (max-width: 575.98px) {
-    .container {
-        max-width: 100%;
-    }
-    a {
-        font-size: 1.25em;
-    }
-}
-
-@media (max-width: 767.98px) {
-    body {
-        margin: 0;
-    }
-    .container {
-        margin-top: 0;
-    }
-    .row > div {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    .form-control, .form-check-input, .form-check-label {
-        font-size: 1em;
-    }
-    .form-group label, .group-title {
-        font-size: 1em;
-    }
-    .form-check {
-        margin-bottom: 0.5rem;
-    }
-}
-
-/* ---------------------------
-   Mobile-Friendly Header Menu
---------------------------- */
+/* Mobile-Friendly Menu */
 .menu-toggle {
     display: none;
     background: none;
     border: none;
     color: #89CFF0;
     font-size: 2em;
+    position: absolute;
+    top: 1em;
+    right: 1em;
     cursor: pointer;
 }
-
 @media (max-width: 767px) {
     .nav {
         display: none;
@@ -293,39 +155,23 @@ h1 {
     }
     .menu-toggle {
         display: block;
-        position: absolute;
-        top: 1em;
-        right: 1em;
-    }
-    .header {
-        position: relative;
-        padding: 1em;
     }
 }
 
-/* Collapsible Sections */
-.collapsible {
-  background-color: #2c2c2e;
-  color: #89CFF0;
-  cursor: pointer;
-  padding: 0.5em;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 1.25em;
-  margin-top: 1em;
+/* Responsive Media Queries */
+@media (max-width: 575.98px) {
+    .container {
+        max-width: 100%;
+    }
+    a {
+        font-size: 1.25em;
+    }
 }
-
-.collapsible:hover,
-.collapsible.active {
-  background-color: #48484a;
-}
-
-.content {
-  padding: 0 1em;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-  background-color: #333;
+@media (max-width: 767.98px) {
+    body {
+        margin: 0;
+    }
+    .container {
+        margin-top: 0;
+    }
 }

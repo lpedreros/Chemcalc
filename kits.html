@@ -16,299 +16,472 @@
 	</header>
 <!-- #EndLibraryItem -->
 	
-	<!-- Kits & Materials Section -->
+	<!-- Search Input -->
+  <div id="search-container" style="text-align:center; margin-bottom:1em;">
+    <input type="text" id="search-input" placeholder="Search kits..." />
+  </div>
+
+  <!-- Filter Buttons -->
+  <div id="filter-buttons" class="filter-buttons">
+    <button class="filter-btn active" data-filter="all">Show All</button>
+    <button class="filter-btn" data-filter="ppe">ppe</button>
+    <button class="filter-btn" data-filter="consumable">consumable</button>
+    <button class="filter-btn" data-filter="multi-pack">multi-pack</button>
+    <button class="filter-btn" data-filter="single-pack">single-pack</button>
+    <button class="filter-btn" data-filter="clean-and-prep">clean-and-prep</button>
+    <button class="filter-btn" data-filter="solvent">solvent</button>
+    <button class="filter-btn" data-filter="polyester">polyester</button>
+    <button class="filter-btn" data-filter="epoxy">epoxy</button>
+    <button class="filter-btn" data-filter="gel-coat">gel-coat</button>
+    <button class="filter-btn" data-filter="resin">resin</button>
+    <button class="filter-btn" data-filter="filling-and-fairing">filling-and-fairing</button>
+    <button class="filter-btn" data-filter="roll">roll</button>
+    <button class="filter-btn" data-filter="painting">painting</button>
+    <button class="filter-btn" data-filter="spray">spray</button>
+    <button class="filter-btn" data-filter="masking">masking</button>
+    <button class="filter-btn" data-filter="mixing">mixing</button>
+    <button class="filter-btn" data-filter="buff-and-polish">buff-and-polish</button>
+    <button class="filter-btn" data-filter="sanding">sanding</button>
+    <button class="filter-btn" data-filter="grinding">grinding</button>
+    <button class="filter-btn" data-filter="tool">tool</button>
+    <button class="filter-btn" data-filter="favorite">favorite</button>
+  </div>
+
   <section class="container">
     <h2>Recommended Repair Kits &amp; Materials</h2>
     <p>
       Below is our comprehensive list of recommended repair kits, materials, and tools. All affiliate links are provided for your convenience.
     </p>
 
-    <!-- Collapsible Section: PPE -->
-    <button class="collapsible">PPE</button>
-    <div class="content">
+    <!-- PPE -->
+    <button class="collapsible active">PPE</button>
+    <div class="content" style="max-height: none;">
       <ul>
-        <li>
+        <li data-tags="ppe, consumable">
           <a href="https://amzn.to/41GczFM" target="_blank">Latex Gloves</a>
           (Solvent-resistant gloves: avoid nitrile. If you're allergic to latex, wear non-latex gloves underneath.)
         </li>
-        <li>
-          <a href="https://amzn.to/4igVjxJ" target="_blank">DuPont Tyvek 400 TY122S Disposable Protective Coverall Hood and Boots, 25-Pack</a>
-          (Get 1 or 2 sizes bigger to reduce the chance of tearing.)
+        <li data-tags="ppe, consumable, multi-pack">
+          <a href="https://amzn.to/4igVjxJ" target="_blank">DuPont Tyvek 400 TY122S Disposable Protective Coverall Hood and Boots, 25-pack</a>
+          (Get 1 or 2 sizes bigger. This will reduce the chance of tearing)
         </li>
-        <li>
-          <a href="https://amzn.to/4kVO3ZO" target="_blank">DuPont Tyvek 400 TY122S Disposable Protective Coverall Hood and Boots, 1-Pack</a>
-          (Get 1 or 2 sizes bigger to reduce the chance of tearing.)
+        <li data-tags="ppe, consumable, single-pack">
+          <a href="https://amzn.to/4kVO3ZO" target="_blank">DuPont Tyvek 400 TY122S Disposable Protective Coverall Hood and Boots, 1-pack</a>
+          (Get 1 or 2 sizes bigger. This will reduce the chance of tearing)
         </li>
-        <li>
-          <a href="https://amzn.to/41p1b0I" target="_blank">Head Socks</a>
+        <li data-tags="ppe, consumable, multi-pack">
+          <a href="https://amzn.to/41p1b0I" target="_blank">Head socks</a>
         </li>
-        <li>
-          <a href="https://amzn.to/3DwLixu" target="_blank">3M Full Face Respirator (Medium, Model 6800)</a>
-          (Filter kit linked below)
+        <li data-tags="ppe">
+          <a href="https://amzn.to/3DwLixu" target="_blank">3M full face respirator (Medium, Model 6800. Filter kit linked below)</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4iQOkeF" target="_blank">3M Full Face Respirator (Large, Model 6800)</a>
-          (Filter kit linked below)
+        <li data-tags="ppe">
+          <a href="https://amzn.to/4iQOkeF" target="_blank">3M full face respirator (Large, Model 6800. Filter kit linked below)</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4hfIToB" target="_blank">3M Full Face Respirator (Medium, Model Ultimate FX FF-402)</a>
-          (Most comfortable for long periods. Filter kit linked below)
+        <li data-tags="ppe">
+          <a href="https://amzn.to/4hfIToB" target="_blank">3M full face respirator (Medium, Model Ultimate FX FF-402. Filter kit linked below)</a>
+          (most comfortable for long periods.)
         </li>
-        <li>
-          <a href="https://amzn.to/41RKHOQ" target="_blank">3M Full Face Respirator (Large, Model Ultimate FX FF-402)</a>
-          (Most comfortable for long periods. Filter kit linked below)
+        <li data-tags="ppe">
+          <a href="https://amzn.to/41RKHOQ" target="_blank">3M full face respirator (Large, Model Ultimate FX FF-402. Filter kit linked below)</a>
+          (most comfortable for long periods)
         </li>
       </ul>
     </div>
 
-    <!-- Collapsible Section: Mask Filter Kits & Accessories -->
-    <button class="collapsible">Mask Filter Kits &amp; Accessories</button>
-    <div class="content">
+    <!-- Mask Filter Kits & Accessories -->
+    <button class="collapsible active">Mask Filter Kits &amp; Accessories</button>
+    <div class="content" style="max-height: none;">
       <ul>
-        <li><a href="https://amzn.to/3DGQvmn" target="_blank">Organic Vapor Filters</a></li>
-        <li><a href="https://amzn.to/3Fw6xQl" target="_blank">Particulate Filter Retainers</a></li>
-        <li><a href="https://amzn.to/4kVNKhC" target="_blank">Particulate Filters</a></li>
-        <li><a href="https://amzn.to/4kTEkmH" target="_blank">3M Faceshield Cover for 6000 Series Respirators, 25-Pack</a></li>
-        <li><a href="https://amzn.to/4ixlkc6" target="_blank">3M Faceshield Cover for Ultimate FX Series Respirator, 5-Pack</a></li>
-      </ul>
-    </div>
-
-    <!-- Collapsible Section: Solvents / Cleaners -->
-    <button class="collapsible">Solvents / Cleaners</button>
-    <div class="content">
-      <ul>
-        <li>Acetone</li>
-        <li><a href="https://amzn.to/4izxOjj" target="_blank">Denatured Alcohol, 1 Gallon</a></li>
-        <li><a href="https://amzn.to/4ia9cxM" target="_blank">Lacquer Thinner, 1 Gallon</a></li>
-      </ul>
-    </div>
-
-    <!-- Collapsible Section: Resin Bases, Hardeners, and Activators -->
-    <button class="collapsible">Resin Bases, Hardeners, and Activators</button>
-    <div class="content">
-      <ul>
-        <li>MEKp (Polyester Resin and Gel Coat Activator)</li>
-        <li><a href="https://amzn.to/3FunL0L" target="_blank">Polyester Resin, 1-Gallon Kit (with MEKp)</a></li>
-        <li><a href="https://amzn.to/3FtFt4g" target="_blank">White Gel Coat, 1-Quart Kit (with Wax and MEKp)</a></li>
-        <li><a href="https://amzn.to/3FKR4Mn" target="_blank">White Gel Coat, 1-Gallon Kit (with Wax and MEKp)</a></li>
-        <li><a href="https://amzn.to/3DNMDjt" target="_blank">Epoxy Resin Base, 1 Gallon</a></li>
-        <li><a href="https://amzn.to/3DGSpU3" target="_blank">Epoxy Resin Hardener FAST, 1 Quart</a></li>
-        <li><a href="https://amzn.to/4issCxx" target="_blank">Epoxy Resin Hardener SLOW, 1 Quart</a></li>
-      </ul>
-    </div>
-
-    <!-- Collapsible Section: Fairing Compounds, Thickeners, and Other Chemicals -->
-    <button class="collapsible">Fairing Compounds, Thickeners, and Other Chemicals</button>
-    <div class="content">
-      <ul>
-        <li><a href="https://amzn.to/43Wpbei" target="_blank">Awlfair White Base, 1 Quart</a></li>
-        <li><a href="https://amzn.to/4bBuNwI" target="_blank">Awlfair Red Converter, 1 Quart</a></li>
-        <li>Awlfair FAST Red Converter, 1 Quart</li>
-        <li><a href="https://amzn.to/41zFVFL" target="_blank">Awlgrip Roll/Brush Reducer, 1 Quart</a></li>
-        <li><a href="https://amzn.to/4bTQLeg" target="_blank">Awlgrip Roll/Brush Converter, 1 Pint</a></li>
-        <li><a href="https://amzn.to/3FwKuZY" target="_blank">Awlcraft2000/Awlgrip Spray Reducer, 1 Quart</a></li>
-        <li><a href="https://amzn.to/42aSwk0" target="_blank">Awlcraft2000/Awlgrip Spray Converter, 1 Quart</a></li>
-        <li><a href="https://amzn.to/41p3QHK" target="_blank">PVA</a></li>
-        <li><a href="https://amzn.to/3FtykBc" target="_blank">3M Platinum Plus Filler, 1 Gallon</a></li>
-        <li><a href="https://amzn.to/4hijV87" target="_blank">Hardener for Filler, Blue, 4 Ounces</a></li>
-        <li><a href="https://amzn.to/4iwNPXi" target="_blank">Hardener for Filler, Red, 4 Ounces</a></li>
-        <li>
-          <a href="https://amzn.to/4bE5sCk" target="_blank">Fumed Silica</a>
-          (Thickener, Very Fine, Easy to Sand), 1 Quart
+        <li data-tags="ppe, consumable">
+          <a href="https://amzn.to/3DGQvmn" target="_blank">Organic Vapor filters</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4bFDLc7" target="_blank">Milled Fibers</a>
-          (Thickener, Heavier for Adhesive Applications), 1 Quart
+        <li data-tags="ppe, consumable">
+          <a href="https://amzn.to/3Fw6xQl" target="_blank">Particulate filter retainers</a>
         </li>
-        <li><a href="https://amzn.to/41vtWcg" target="_blank">3M Acrylic Putty, 1 Tube</a></li>
-        <li>
-          <a href="https://amzn.to/3FxYu5A" target="_blank">Splash Zone</a>
-          (Cures Underwater)
+        <li data-tags="ppe, consumable">
+          <a href="https://amzn.to/4kVNKhC" target="_blank">Particulate filters</a>
+        </li>
+        <li data-tags="ppe, consumable">
+          <a href="https://amzn.to/4kTEkmH" target="_blank">3M Faceshield Cover for 6000 series respirators, 25-Pack</a>
+        </li>
+        <li data-tags="ppe, consumable">
+          <a href="https://amzn.to/4ixlkc6" target="_blank">3M faceshield cover for Ultimate FX series respirator, 5-pack</a>
+        </li>
+        <li data-tags="ppe">
+          <a href="https://amzn.to/4bTO1xL" target="_blank">Hearing protection</a>
         </li>
       </ul>
     </div>
 
-    <!-- Collapsible Section: Consumables -->
-    <button class="collapsible">Consumables</button>
-    <div class="content">
+    <!-- SOLVENTS / CLEANERS -->
+    <button class="collapsible active">SOLVENTS / CLEANERS</button>
+    <div class="content" style="max-height: none;">
       <ul>
-        <li><a href="https://amzn.to/43P5LYL" target="_blank">Blue Tape, 1-Inch, 6-Pack</a></li>
-        <li><a href="https://amzn.to/3DAGOWC" target="_blank">Double-Sided Tape, 1-Inch</a></li>
-        <li><a href="https://amzn.to/4iTdB7Y" target="_blank">Guide Coat Kit</a></li>
-        <li><a href="https://amzn.to/4bFNI9C" target="_blank">Mixing Board</a></li>
-        <li><a href="https://amzn.to/4ixutBi" target="_blank">Mixing Sticks (Reusable)</a></li>
-        <li><a href="https://amzn.to/4kzZ2Z0" target="_blank">Rags</a></li>
-        <li><a href="https://amzn.to/41sWEKN" target="_blank">80-Grit Sanding Disc, 5-Inch, 50-Box</a></li>
-        <li><a href="https://amzn.to/41UrbBb" target="_blank">180-Grit Xtract Sanding Disc, 5-Inch, 50-Box</a></li>
-        <li><a href="https://amzn.to/4kuvKe6" target="_blank">320-Grit Xtract Sanding Disc, 5-Inch, 50-Box</a></li>
-        <li>400-Grit Sanding Disc, 5-Inch, 50-Box</li>
-        <li><a href="https://amzn.to/3DNPOrp" target="_blank">400-Grit Wetsand Paper, 50 Sheets</a></li>
-        <li><a href="https://amzn.to/41p5Hwc" target="_blank">800-Grit Wet Sand Paper, 50 Sheets</a></li>
-        <li><a href="https://amzn.to/4ifUp4M" target="_blank">1200-Grit Wet Sand Paper, 5 Sheets</a></li>
-        <li><a href="https://amzn.to/4ivoAVg" target="_blank">1200-Grit Wet Sand Paper, 50 Sheets</a></li>
-        <li><a href="https://amzn.to/4hkXlf5" target="_blank">1500-Grit Wet Sand Paper, 5 Sheets</a></li>
-        <li><a href="https://amzn.to/4kusLlT" target="_blank">1500-Grit Wet Sand Paper, 50 Sheets</a></li>
-        <li>2000-Grit Wet Sand Paper, 5 Sheets</li>
-        <li><a href="https://amzn.to/3FtKEkI" target="_blank">2000-Grit Wet Sand Paper, 50 Sheets</a></li>
-        <li><a href="https://amzn.to/4ktEbGD" target="_blank">Wet Sanding Paper, Assorted 1000, 1500, 2000, 2500</a></li>
-        <li><a href="https://amzn.to/4imXJuK" target="_blank">File Belts, 36-Grit</a></li>
-        <li>
-          <a href="https://amzn.to/3RaXaZ0" target="_blank">Masking Plastic, 24-Inch (with Dispenser)</a>
+        <li data-tags="clean-and-prep, solvent, polyester">
+          Acetone
         </li>
-        <li>
-          <a href="https://amzn.to/3RdrYZ3" target="_blank">Masking Plastic, 35-Inch</a>
+        <li data-tags="clean-and-prep, solvent, epoxy">
+          <a href="https://amzn.to/4izxOjj" target="_blank">Denatured Alcohol, 1 gallon</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4bA6GhM" target="_blank">Masking Plastic, 48-Inch (with Dispenser)</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4kVPFCU" target="_blank">Masking Plastic, 72-Inch</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4iA9OMY" target="_blank">Masking Paper, 6-Inch</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/3FA2qmx" target="_blank">Masking Paper, 12-Inch</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4kxxl2S" target="_blank">Preval, Single Pack</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4kw1dwv" target="_blank">Preval, 12-Pack</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4bx0Wp7" target="_blank">Disposable Paper Cups, 125-Pack</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4iaeQ2W" target="_blank">Disposable Plastic Cups with Lids, 100-Count</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/3FxZhDA" target="_blank">Reusable Silicone Cups, 3-Pack, Assorted Sizes</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4iwdorG" target="_blank">Color Tints, Assorted Colors</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4iwqogI" target="_blank">3M Perfect-it Rubbing Compound</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4i9sof0" target="_blank">3M Finesse-it Polishing Compound</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4igH1xg" target="_blank">Buffing Pads, 7-Inch</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4bCdmMu" target="_blank">Polishing Pads, 3-Inch</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4hw5vkZ" target="_blank">Polishing Pads, 6-Inch</a>
-        </li>
-        <li>3M Performance Atomizing Heads, Size 1.2, 5-Pack (For 3M Paint Gun, for Gel Coat Repairs)</li>
-        <li>
-          <a href="https://amzn.to/3XYhy3i" target="_blank">3M Performance Atomizing Heads, Size 1.4, 5-Pack (For 3M Paint Gun, for Gel Coat Repairs)</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4kCrUQg" target="_blank">3M Performance Atomizing Heads, Size 2.0, 5-Pack (For 3M Paint Gun, for Gel Coat Repairs)</a>
-        </li>
-        <li>
-          <a href="https://amzn.to/4ktEbGD" target="_blank">3M Green Corps Grinding Wheels, 5-Inch, 40-Grit, 20-Pack</a>
-          (My Favorite)
-        </li>
-        <li>
-          <a href="https://amzn.to/3RdrYZ3" target="_blank">3M Cubitron Grinding Wheels, 5-Inch, 36-Grit, 5-Pack</a>
-          (My Favorite)
+        <li data-tags="clean-and-prep, solvent">
+          <a href="https://amzn.to/4ia9cxM" target="_blank">Lacquer Thinner, 1 gallon</a>
         </li>
       </ul>
     </div>
 
-    <!-- Collapsible Section: Tools -->
-    <button class="collapsible">Tools</button>
-    <div class="content">
+    <!-- RESIN BASES, HARDENERS, AND ACTIVATORS -->
+    <button class="collapsible active">RESIN BASES, HARDENERS, AND ACTIVATORS</button>
+    <div class="content" style="max-height: none;">
       <ul>
-        <li>
-          <a href="https://amzn.to/4hGh4G0" target="_blank">Hand Masker</a>
+        <li data-tags="gel-coat, polyester">
+          MEKp (Polyester resin and gel coat activator)
         </li>
-        <li>
+        <li data-tags="polyester, resin">
+          <a href="https://amzn.to/3FunL0L" target="_blank">Polyester resin, 1 gallon kit (with MEKp)</a>
+        </li>
+        <li data-tags="polyester, gel-coat">
+          <a href="https://amzn.to/3FtFt4g" target="_blank">White Gel coat, 1quart kit (with wax and MEKp)</a>
+        </li>
+        <li data-tags="polyester, gel-coat">
+          <a href="https://amzn.to/3FKR4Mn" target="_blank">White Gel coat, 1gallon kit (with wax and MEKp)</a>
+        </li>
+        <li data-tags="epoxy, resin">
+          <a href="https://amzn.to/3DNMDjt" target="_blank">Epoxy resin base, 1 gallon</a>
+        </li>
+        <li data-tags="epoxy">
+          <a href="https://amzn.to/3DGSpU3" target="_blank">Epoxy resin hardener FAST, 1 quart</a>
+        </li>
+        <li data-tags="epoxy">
+          <a href="https://amzn.to/4issCxx" target="_blank">Epoxy resin hardener SLOW, 1 quart</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- FAIRING COMPOUNDS, THICKENERS, AND OTHER CHEMICALS -->
+    <button class="collapsible active">FAIRING COMPOUNDS, THICKENERS, AND OTHER CHEMICALS</button>
+    <div class="content" style="max-height: none;">
+      <ul>
+        <li data-tags="filling-and-fairing, epoxy">
+          <a href="https://amzn.to/43Wpbei" target="_blank">Awlfair white base, 1 quart</a>
+        </li>
+        <li data-tags="filling-and-fairing, epoxy">
+          <a href="https://amzn.to/4bBuNwI" target="_blank">Awlfair red converter, 1 quart</a>
+        </li>
+        <li data-tags="filling-and-fairing, epoxy">
+          Awlfair FAST red converter, 1 quart
+        </li>
+        <li data-tags="roll, painting">
+          <a href="https://amzn.to/41zFVFL" target="_blank">Awlgrip roll/brush reducer, 1 quart</a>
+        </li>
+        <li data-tags="roll, painting">
+          <a href="https://amzn.to/4bTQLeg" target="_blank">Awlgrip roll/brush converter, 1 pint</a>
+        </li>
+        <li data-tags="spray, painting">
+          <a href="https://amzn.to/3FwKuZY" target="_blank">Awlcraft2000/Awlgrip/545 Primer Spray Reducer, 1 quart</a>
+        </li>
+        <li data-tags="spray, painting">
+          <a href="https://amzn.to/42aSwk0" target="_blank">Awlcraft2000/Awlgrip/545 Primer Spray Converter, 1 quart</a>
+        </li>
+        <li data-tags="spray, roll, painting">
+          Awqlgrip 545 Primer Base, White, 1 quart
+        </li>
+        <li data-tags="spray, roll, painting">
+          Awqlgrip 545 Primer Base, Grey, 1 quart
+        </li>
+        <li data-tags="">
+          <a href="https://amzn.to/41p3QHK" target="_blank">PVA</a>
+        </li>
+        <li data-tags="filling-and-fairing, epoxy, polyester">
+          <a href="https://amzn.to/3FtykBc" target="_blank">3M Platinum Plus filler, 1 gallon</a>
+        </li>
+        <li data-tags="filling-and-fairing">
+          <a href="https://amzn.to/4hijV87" target="_blank">Hardener for filler, Blue, 4 ounces</a>
+        </li>
+        <li data-tags="filling-and-fairing">
+          <a href="https://amzn.to/4iwNPXi" target="_blank">Hardener for filler, Red, 4 ounces</a>
+        </li>
+        <li data-tags="filling-and-fairing, polyester, epoxy, resin, gel-coat">
+          <a href="https://amzn.to/4bE5sCk" target="_blank">Fumed Silica (thickener, very fine, easy to sand), 1 quart</a>
+        </li>
+        <li data-tags="filling-and-fairing, polyester, epoxy, resin, gel-coat">
+          <a href="https://amzn.to/4bFDLc7" target="_blank">Milled Fibers, (thickener, heavier for adhesive applications), 1 quart</a>
+        </li>
+        <li data-tags="filling-and-fairing">
+          <a href="https://amzn.to/41vtWcg" target="_blank">3M Acrylic Putty, 1 Tube</a>
+        </li>
+        <li data-tags="filling-and-fairing, epoxy">
+          <a href="https://amzn.to/3FxYu5A" target="_blank">Splash zone (cures underwater)</a>
+        </li>
+        <li data-tags="gel-coat, polyester">
+          <a href="https://amzn.to/41AaUBs" target="_blank">Duratec (resin and gel coat additive for tack-free curing)(My favorite)</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- CONSUMABLES -->
+    <button class="collapsible active">CONSUMABLES</button>
+    <div class="content" style="max-height: none;">
+      <ul>
+        <li data-tags="roll, painting, consumable, multi-pack">
+          Foam rollers, 4-inch, x-pack
+        </li>
+        <li data-tags="roll, painting, consumable, multi-pack">
+          Foam rollers, 6-inch, x-pack
+        </li>
+        <li data-tags="roll, painting, consumable, multi-pack">
+          Poly Resin Roller covers, X-inch
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep, multi-pack">
+          <a href="https://amzn.to/43P5LYL" target="_blank">Blue Tape, 1-inch, 6-pack</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep, multi-pack">
+          <a href="https://amzn.to/3DAGOWC" target="_blank">Double-sided tape, 1-inch</a>
+        </li>
+        <li data-tags="consumable, filling-and-fairing, sanding">
+          <a href="https://amzn.to/4iTdB7Y" target="_blank">Guide coat kit</a>
+        </li>
+        <li data-tags="consumable, filling-and-fairing, mixing">
+          <a href="https://amzn.to/4bFNI9C" target="_blank">Mixing board</a>
+        </li>
+        <li data-tags="consumable, mixing">
+          <a href="https://amzn.to/4ixutBi" target="_blank">Mixing sticks</a>
+          (reusable)
+        </li>
+        <li data-tags="consumable, clean-and-prep">
+          <a href="https://amzn.to/4kzZ2Z0" target="_blank">Rags</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/41sWEKN" target="_blank">80 grit sanding disc, 5-inch, 50-box</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/41UrbBb" target="_blank">180 grit Xtract sanding disc, 5-inch, 50-box</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/4kuvKe6" target="_blank">320 grit Xtract sanding disc, 5 inch, 50-box</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          400 grit sanding disc, 5-inch, 50-box
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/3DNPOrp" target="_blank">400 grit wetsand paper, 50 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/41p5Hwc" target="_blank">800 grit wet sand paper, 50 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/4ifUp4M" target="_blank">1200 grit wet sand paper, 5 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/4ivoAVg" target="_blank">1200 grit wet sand paper, 50 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/4hkXlf5" target="_blank">1500 grit wet sand paper, 5 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/4kusLlT" target="_blank">1500 grit wet sand paper, 50 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          2000 grit wet sand paper, 5 sheets
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/3FtKEkI" target="_blank">2000 grit wet sand paper, 50 sheets</a>
+        </li>
+        <li data-tags="sanding, consumable">
+          <a href="https://amzn.to/4ktEbGD" target="_blank">Wet sanding paper, assorted 1000, 1500, 2000, 2500</a>
+        </li>
+        <li data-tags="grinding, consumable">
+          <a href="https://amzn.to/4imXJuK" target="_blank">File belts, 36-grit</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep">
+          <a href="https://amzn.to/3RaXaZ0" target="_blank">Masking plastic, 24-inch (with dispenser)</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep">
+          <a href="https://amzn.to/3RdrYZ3" target="_blank">Masking plastic, 35 inch</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep">
+          <a href="https://amzn.to/4bA6GhM" target="_blank">Masking plastic, 48-inch (with dispenser)</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep">
+          <a href="https://amzn.to/4kVPFCU" target="_blank">Masking plastic, 72-inch</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep">
+          <a href="https://amzn.to/4iA9OMY" target="_blank">Masking paper, 6-inch</a>
+        </li>
+        <li data-tags="consumable, masking, clean-and-prep">
+          <a href="https://amzn.to/3FA2qmx" target="_blank">Masking paper, 12-inch</a>
+        </li>
+        <li data-tags="consumable, spray, painting, gel-coat, single-pack">
+          <a href="https://amzn.to/4kxxl2S" target="_blank">Preval</a>
+        </li>
+        <li data-tags="consumable, spray, painting, gel-coat, multi-pack">
+          <a href="https://amzn.to/4kw1dwv" target="_blank">Preval, 12-pack</a>
+        </li>
+        <li data-tags="consumable, mixing">
+          <a href="https://amzn.to/4bx0Wp7" target="_blank">Disposable Paper cups, 125-pack</a>
+        </li>
+        <li data-tags="consumable, mixing">
+          <a href="https://amzn.to/4iaeQ2W" target="_blank">Disposable Plastic cups with lids, 100-count</a>
+        </li>
+        <li data-tags="consumable, mixing">
+          <a href="https://amzn.to/3FxZhDA" target="_blank">Reusable silicone cups, 3-pack, assorted sizes</a>
+        </li>
+        <li data-tags="consumable, mixing, spray, painting, gel-coat">
+          <a href="https://amzn.to/4bYryPP" target="_blank">Spray Gun Cups, Lids and Liners Kit, 3 ounces</a>
+        </li>
+        <li data-tags="consumable, mixing, spray, painting, gel-coat">
+          <a href="https://amzn.to/4ilpcwT" target="_blank">Spray Gun Cups, Lids and Liners Kit, 6 ounces</a>
+        </li>
+        <li data-tags="consumable, mixing, spray, painting, gel-coat">
+          <a href="https://amzn.to/4iV1yah" target="_blank">Spray Gun Cups, Lids and Liners Kit, 13.5 ounces</a>
+        </li>
+        <li data-tags="consumable, mixing, spray, painting, gel-coat">
+          <a href="https://amzn.to/3XZmeG2" target="_blank">Spray Gun Cups, Lids and Liners Kit, 28 ounces</a>
+        </li>
+        <li data-tags="consumable, mixing">
+          <a href="https://amzn.to/4iwdorG" target="_blank">Color tints, assorted colors</a>
+        </li>
+        <li data-tags="consumable, buff-and-polish">
+          <a href="https://amzn.to/4iwqogI" target="_blank">3M Perfect-it rubbing compound</a>
+        </li>
+        <li data-tags="consumable, buff-and-polish">
+          <a href="https://amzn.to/4i9sof0" target="_blank">3M Finesse-it Polishing compound</a>
+        </li>
+        <li data-tags="consumable, buff-and-polish">
+          <a href="https://amzn.to/4igH1xg" target="_blank">Buffing pads, 7-inch</a>
+        </li>
+        <li data-tags="consumable, buff-and-polish">
+          <a href="https://amzn.to/4bCdmMu" target="_blank">Polishing Pads, 3-inch</a>
+        </li>
+        <li data-tags="consumable, buff-and-polish">
+          <a href="https://amzn.to/4hw5vkZ" target="_blank">Polishing Pads, 6-inch</a>
+        </li>
+        <li data-tags="consumable, accessory, painting, spray, gel-coat">
+          <a href="https://amzn.to/3XYhy3i" target="_blank">3M performance Atomizing heads Size 1.2, 5-pack (For 3M paint gun. For gel coat repairs)</a>
+        </li>
+        <li data-tags="consumable, accessory, painting, spray, gel-coat">
+          <a href="https://amzn.to/3XVwpvq" target="_blank">3M performance Atomizing heads Size 1.4 5-pack (For 3M paint gun. For gel coat repairs)</a>
+        </li>
+        <li data-tags="consumable, accessory, painting, spray, gel-coat">
+          <a href="https://amzn.to/4kCrUQg" target="_blank">3M performance Atomizing heads Size 2.0 5-pack (For 3M paint gun. For gel coat repairs)</a>
+        </li>
+        <li data-tags="grinding, favorite, consumable">
+          <a href="https://amzn.to/4ktEbGD" target="_blank">3M Green Coprs Grinding wheels, 5-inch, 40-grit, 20-pack</a>
+        </li>
+        <li data-tags="grinding, favorite, consumable">
+          <a href="https://amzn.to/3RdrYZ3" target="_blank">3M Cubitron Grinding Wheels, 5-inch, 36-grit, 5-pack</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- TOOLS -->
+    <button class="collapsible active">TOOLS</button>
+    <div class="content" style="max-height: none;">
+      <ul>
+        <li data-tags="tool, roll, painting, gel-coat">
+          Foam Roller Cage, 4-inch
+        </li>
+        <li data-tags="tool, roll, painting, gel-coat">
+          Foam Roller Cage, 6-inch
+        </li>
+        <li data-tags="tool, favorite">
+          <a href="https://amzn.to/4ifkPDF" target="_blank">Electric scissors for cutting fiberglass cloth</a>
+        </li>
+        <li data-tags="tool, favorite">
+          <a href="https://amzn.to/3FNiTUk" target="_blank">Portable workbench</a>
+        </li>
+        <li data-tags="tool">
+          <a href="https://amzn.to/4iY7Aad" target="_blank">Centipede workbench, 2x4</a>
+        </li>
+        <li data-tags="tool">
+          <a href="https://amzn.to/4l0SbHZ" target="_blank">Centipede workbench, 4x8</a>
+        </li>
+        <li data-tags="tool, favorite, clean-and-prep, masking">
+          <a href="https://amzn.to/4hGh4G0" target="_blank">Hand masker</a>
+        </li>
+        <li data-tags="tool, favorite, sanding, filling-and-fairing">
+          <a href="https://amzn.to/3FE5Cxq" target="_blank">3M Clean Sanding Blocks</a>
+        </li>
+        <li data-tags="tool, sanding, filling-and-fairing">
           <a href="https://amzn.to/4iaewRM" target="_blank">Sanding Blocks</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4kxxl2S" target="_blank">Preval, Single Pack</a>
+        <li data-tags="tool, sanding, filling-and-fairing, tool">
+          <a href="https://amzn.to/4bBBoXU" target="_blank">Linear Sanding Blocks, 12-inch</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4kw1dwv" target="_blank">Preval, 12-Pack</a>
+        <li data-tags="tool, sanding, filling-and-fairing">
+          <a href="https://amzn.to/3FAVDZM" target="_blank">Linear Sanding Blocks, assorted sizes</a>
         </li>
-        <li>
+        <li data-tags="single-pack, spray, painting, gel-coat">
+          <a href="https://amzn.to/4kxxl2S" target="_blank">Preval</a>
+        </li>
+        <li data-tags="multi-pack, spray, painting, gel-coat">
+          <a href="https://amzn.to/4kw1dwv" target="_blank">Preval, 12-pack</a>
+        </li>
+        <li data-tags="tool, spray, painting, gel-coat">
           <a href="https://amzn.to/41UgS01" target="_blank">Detail Paint Gun</a>
         </li>
-        <li>
+        <li data-tags="tool, spray, painting, gel-coat">
           <a href="https://amzn.to/3DORvEW" target="_blank">3M Performance Spray Gun Kit</a>
         </li>
-        <li>
+        <li data-tags="tool, spray, painting, gel-coat">
           <a href="https://amzn.to/43Xef07" target="_blank">3M Spray Gun Flow Control Valve</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4icDmAw" target="_blank">Milwaukee Cordless Compressor</a>
-          (My Favorite for Small Repairs)
+        <li data-tags="tool, cordless, spray, painting, gel-coat">
+          <a href="https://amzn.to/4icDmAw" target="_blank">Milwaukee cordless compressor (Great for mobile repairs)</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4iPGBgW" target="_blank">DeWalt Cordless Grinder</a>
+        <li data-tags="tool, cordless, grinding">
+          <a href="https://amzn.to/4iPGBgW" target="_blank">DeWalt cordless Grinder</a>
         </li>
-        <li>
-          <a href="https://amzn.to/3FvfoSq" target="_blank">Makita Corded File Sander</a>
+        <li data-tags="tool, corded, favorite, grinding">
+          <a href="https://amzn.to/3FvfoSq" target="_blank">Makita corded File sander</a>
         </li>
-        <li>
-          <a href="https://amzn.to/41MzVJB" target="_blank">Milwaukee Cordless File Sander</a>
-          (My Favorite)
+        <li data-tags="tool, cordless, grinding, favorite">
+          <a href="https://amzn.to/41MzVJB" target="_blank">Milwaukee cordless file sander</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4bSv5PB" target="_blank">5-Inch Festool Orbital Sander</a>
-          (My Favorite)
+        <li data-tags="tool, corded, sanding, favorite">
+          <a href="https://amzn.to/4bSv5PB" target="_blank">5 inch Festool orbital sander</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4kOQnld" target="_blank">5-Inch Festool Cordless/Corded Orbital Sander Kit</a>
-          (My Favorite)
+        <li data-tags="tool, corded, cordless, sanding, favorite">
+          <a href="https://amzn.to/4kOQnld" target="_blank">5 inch Festool Cordless/Corded orbital sander kit</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4bUHQt1" target="_blank">5-Inch DeWalt Corded Orbital Sander</a>
+        <li data-tags="tool, corded, sanding">
+          <a href="https://amzn.to/4bUHQt1" target="_blank">5 inch DeWalt corded orbital sander</a>
         </li>
-        <li>
-          <a href="https://amzn.to/43JWb9y" target="_blank">5-Inch Milwaukee Cordless Orbital Sander</a>
+        <li data-tags="tool, cordless, sanding">
+          <a href="https://amzn.to/43JWb9y" target="_blank">5 inch Milwaukee Cordless orbital sander</a>
         </li>
-        <li>
-          <a href="https://amzn.to/3R9VSgM" target="_blank">5-Inch DeWalt Cordless Orbital Sander (Tool Only)</a>
+        <li data-tags="tool, cordless, sanding">
+          <a href="https://amzn.to/3R9VSgM" target="_blank">5 inch DeWalt cordless orbital sander (tool only)</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4hyUb7m" target="_blank">5-Inch DeWalt Cordless Orbital Sander Kit</a>
+        <li data-tags="tool, cordless, sanding">
+          <a href="https://amzn.to/4hyUb7m" target="_blank">5 inch DeWalt cordless orbital sander kit</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4iO3h15" target="_blank">Rupes LHR15 Random Orbital Polisher</a>
+        <li data-tags="tool, corded, buff-and-polish, tool">
+          <a href="https://amzn.to/4iO3h15" target="_blank">Rupes LHR15 random orbital polisher</a>
         </li>
-        <li>
-          <a href="https://amzn.to/3DBB6DP" target="_blank">RUPES Cordless Random Orbital Polisher AND Mini iBrid Polisher Combo</a>
+        <li data-tags="tool, cordless, buff-and-polish">
+          <a href="https://amzn.to/3DBB6DP" target="_blank">RUPES Cordless random orbital polisher AND mini iBrid polisher combo</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4kPTeKP" target="_blank">SPTA Mini Car Polisher</a>
-          (Get in Those Tight Spots)
+        <li data-tags="tool, corded, buff-and-polish">
+          <a href="https://amzn.to/4kPTeKP" target="_blank">SPTA Mini car polisher (get in those tight spots)</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4iBT4Fi" target="_blank">DeWalt Corded Buffer</a>
+        <li data-tags="tool, corded, buff-and-polish">
+          <a href="https://amzn.to/4iBT4Fi" target="_blank">DeWalt corded buffer</a>
         </li>
-        <li>
-          <a href="https://amzn.to/4ijJnLF" target="_blank">Makita Corded Buffer</a>
+        <li data-tags="tool, corded, buff-and-polish">
+          <a href="https://amzn.to/4ijJnLF" target="_blank">Makita corded buffer</a>
         </li>
-        <li>
-          <a href="https://amzn.to/3DOPBUY" target="_blank">Milwaukee Cordless Buffer</a>
+        <li data-tags="tool, cordless, buff-and-polish">
+          <a href="https://amzn.to/3DOPBUY" target="_blank">Milwaukee cordless buffer</a>
         </li>
       </ul>
     </div>
+  </section>
 
-</section>
-
-  <!-- Footer Section -->
   <footer class="container footer">
     <p>&copy; 2025 ChemCalc. All rights reserved.</p>
   </footer>
-  
+
   <script src="main.js"></script>
 </body>
 </html>
