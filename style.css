@@ -1,7 +1,6 @@
 /* ---------------------------
-   Base Styles (from your original styles.css)
+   Base Styles
 --------------------------- */
-
 body {
     background-color: #1c1c1e;
     color: #ffffff;
@@ -10,7 +9,7 @@ body {
 }
 
 a, a:visited, a:hover, a:active {
-    margin-top: .5em;
+    margin-top: 0.5em;
     font-style: normal;
     font-size: 1.25em;
     font-weight: bold;
@@ -21,7 +20,9 @@ h1 {
     font-size: 1.5em;
 }
 
-/* Combined container style */
+/* ---------------------------
+   Container & Group
+--------------------------- */
 .container {
     background-color: #2c2c2e;
     padding: 1em;
@@ -33,7 +34,7 @@ h1 {
 
 .group-container {
     background-color: #333;
-    padding: .5em;
+    padding: 0.5em;
     margin-top: 1em;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -48,13 +49,11 @@ h1 {
 }
 
 /* ---------------------------
-   Form Field Changes
+   Form Fields
 --------------------------- */
-
 .form-group {
     width: 100%;
     margin-bottom: 1em;
-    display: block;
 }
 
 .form-group label {
@@ -71,16 +70,14 @@ h1 {
     color: #333333;
     border: 1px solid #6c757d;
     font-weight: bold;
-    /* Ensure text is left-aligned for multi-line fields */
     text-align: left;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: inherit;
     margin-bottom: 1em;
 }
 
 /* ---------------------------
-   Original Styles (unchanged)
+   Form Check Elements
 --------------------------- */
-
 .form-check-input {
     width: 20px;
     height: 20px;
@@ -93,6 +90,9 @@ h1 {
     vertical-align: middle;
 }
 
+/* ---------------------------
+   Buttons
+--------------------------- */
 .btn-primary {
     background-color: #0a84ff;
     border: none;
@@ -103,10 +103,11 @@ h1 {
     background-color: #007aff;
 }
 
+/* ---------------------------
+   Row & Result
+--------------------------- */
 .row {
     padding-top: 0;
-    /* [disabled]padding-right: 1em; */
-    /* [disabled]padding-left: 1em; */
     padding-bottom: 0;
 }
 
@@ -118,6 +119,9 @@ h1 {
     margin-top: 0;
 }
 
+/* ---------------------------
+   Safety Content
+--------------------------- */
 .safety-content h2 {
     color: #89CFF0;
     margin-top: 15px;
@@ -125,10 +129,8 @@ h1 {
 }
 
 /* ---------------------------
-   Landing Page Specific Styles
+   Header & Navigation
 --------------------------- */
-
-/* Header Navigation */
 .header {
     display: flex;
     flex-direction: column;
@@ -138,6 +140,9 @@ h1 {
 
 .nav {
     margin-top: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .nav a {
@@ -151,7 +156,9 @@ h1 {
     text-decoration: underline;
 }
 
-/* Hero Section */
+/* ---------------------------
+   Hero Section
+--------------------------- */
 .hero {
     background: url('hero-bg.jpg') no-repeat center center/cover;
     padding: 60px 20px;
@@ -170,7 +177,9 @@ h1 {
     margin-bottom: 1em;
 }
 
-/* Button Style for landing page call-to-action */
+/* ---------------------------
+   Button Style (General)
+--------------------------- */
 .btn {
     background-color: #0a84ff;
     padding: 10px 20px;
@@ -185,7 +194,9 @@ h1 {
     background-color: #007aff;
 }
 
-/* Features Section */
+/* ---------------------------
+   Features Section
+--------------------------- */
 .features {
     display: flex;
     flex-wrap: wrap;
@@ -214,7 +225,9 @@ h1 {
     margin: 0;
 }
 
-/* Footer */
+/* ---------------------------
+   Footer
+--------------------------- */
 .footer {
     text-align: center;
     margin-top: 2em;
@@ -225,13 +238,10 @@ h1 {
 /* ---------------------------
    Responsive Media Queries
 --------------------------- */
-
-/* From original styles.css */
 @media (max-width: 575.98px) {
     .container {
-        max-width: 100%; /* keeps .container at 100% */
+        max-width: 100%;
     }
-    
     a {
         font-size: 1.25em;
     }
@@ -239,62 +249,56 @@ h1 {
 
 @media (max-width: 767.98px) {
     body {
-        margin: 0em;
+        margin: 0;
     }
     .container {
         margin-top: 0;
     }
     .row > div {
-        flex: 0 0 100%; /* Each column takes up full width */
-        max-width: 100%; /* Prevent columns from stacking */
-    }
-    .form-control, .form-check-input, .form-check-label {
-        font-size: 1em; /* Reduce font size for better fit */
-    }
-    .form-group label, .group-title {
-        font-size: 1em; /* Reduce font size for labels and titles */
-    }
-    .form-check {
-        margin-bottom: 0.5rem; /* Adjust spacing for checkboxes */
-    }
-}
-
-/* Landing page responsive tweaks */
-@media (max-width: 767px) {
-    .features {
-        flex-direction: column;
-    }
-    .feature {
+        flex: 0 0 100%;
         max-width: 100%;
     }
+    .form-control, .form-check-input, .form-check-label {
+        font-size: 1em;
+    }
+    .form-group label, .group-title {
+        font-size: 1em;
+    }
+    .form-check {
+        margin-bottom: 0.5rem;
+    }
 }
 
-/* Mobile-Friendly Header Menu */
+/* ---------------------------
+   Mobile-Friendly Header Menu
+--------------------------- */
 .menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: #89CFF0;
-  font-size: 2em;
-  cursor: pointer;
+    display: none;
+    background: none;
+    border: none;
+    color: #89CFF0;
+    font-size: 2em;
+    cursor: pointer;
 }
 
 @media (max-width: 767px) {
-  .nav {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-  }
-  .nav.active {
-    display: flex;
-  }
-  .menu-toggle {
-    display: block;
-  }
-  /* Optional: Adjust header spacing for mobile */
-  .header {
-    position: relative;
-    padding: 1em;
-  }
+    .nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+    .nav.active {
+        display: flex;
+    }
+    .menu-toggle {
+        display: block;
+        position: absolute;
+        top: 1em;
+        right: 1em;
+    }
+    .header {
+        position: relative;
+        padding: 1em;
+    }
 }
-
