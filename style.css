@@ -91,6 +91,7 @@ h1 {
 }
 .content {
     padding: 0 1em;
+    padding-bottom: 1em; /* Added extra bottom padding to avoid cutting off content */
     overflow: hidden;
     transition: max-height 0.2s ease-out;
     background-color: #333;
