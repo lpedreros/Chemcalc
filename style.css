@@ -32,6 +32,12 @@ h1 {
     position: relative;
     margin-bottom: 2em;
 }
+.header h1 {
+  font-size: 2em;
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+}
 .nav {
     display: flex;
     flex-wrap: wrap;
@@ -199,4 +205,14 @@ h1 {
 }
 #custom-kit-options li {
   margin-bottom: 1em;
+}
+.powered-by img {
+  height: 1.5em;
+  width: auto;
+  vertical-align: middle;
+}
+.powered-by-header img {
+  height: 1.5em;
+  width: auto;
+  vertical-align: middle;
 }
