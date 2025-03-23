@@ -1,4 +1,15 @@
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><!-- Header Section -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DTECSH4N52');
+</script>
+
+<!-- Header Section -->
 	<header class="container header">
   <h1>ChemCalc</h1>
   <div class="powered-by-header">
