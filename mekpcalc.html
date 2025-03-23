@@ -1,126 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEKP Mixing Calculator</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEKP Mixing Calculator – ChemCalc</title>
+  <meta name="description" content="Calculate accurate MEKp mixing ratios for marine repairs with our MEKP Mixing Calculator at ChemCalc. Get precise measurements and temperature advice for optimal results." />
+  <meta name="keywords" content="MEKP Mixing Calculator, marine repair, chemical calculator, MEKp, ChemCalc" />
+  <link rel="canonical" href="https://chemcalc.co/mekpcalc.html" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="MEKP Mixing Calculator – ChemCalc" />
+  <meta property="og:description" content="Calculate accurate MEKp mixing ratios for marine repairs with our MEKP Mixing Calculator at ChemCalc." />
+  <meta property="og:url" content="https://chemcalc.co/mekpcalc.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MEKP Mixing Calculator – ChemCalc" />
+  <meta name="twitter:description" content="Calculate accurate MEKp mixing ratios for marine repairs with our MEKP Mixing Calculator at ChemCalc." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "MEKP Mixing Calculator – ChemCalc",
+    "url": "https://chemcalc.co/mekpcalc.html",
+    "description": "Calculate accurate MEKp mixing ratios for marine repairs with our MEKP Mixing Calculator at ChemCalc."
+  }
+  </script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DTECSH4N52');
+  </script>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png">
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
-<body><!-- #BeginLibraryItem "/Nav header.lbi" -->
-
-<!-- Header Section -->
-	<header class="container header">
-  <h1>ChemCalc</h1>
-  <div class="powered-by-header">
-    <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" />
-  </div>
-  <button class="menu-toggle">☰</button>
-  <nav id="mainNav" class="nav">
-    <a href="index.html" class="active">Home</a>
-    <a href="calculators.html">Calculators</a>
-    <a href="services.html">Services</a>
-    <a href="kits.html">Kits</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</header><!-- #EndLibraryItem --><div class="container">
-  <h1 class="text-center mb-4">MEKP Calc</h1>
-        <!-- Volume Group -->
+<body>
+  <!-- Header Section -->
+  <header class="container header text-center">
+    <h1>ChemCalc</h1>
+    <div class="powered-by-header mb-2">
+      <span>Powered by</span>
+      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
+    </div>
+    <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2">☰</button>
+    <nav id="mainNav" class="nav justify-content-center">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="calculators.html" class="nav-link">Calculators</a>
+      <a href="services.html" class="nav-link">Services</a>
+      <a href="kits.html" class="nav-link">Kits</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+  
+  <!-- Main Content Section -->
+  <main class="container">
+    <h1 class="text-center mb-4">MEKP Calc</h1>
+    
+    <!-- Resin Volume Group -->
+    <div class="group-container mb-4">
+      <div class="group-title">Resin Volume</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="resinVolume">Volume</label>
+            <input type="number" id="resinVolume" class="form-control" placeholder="Enter volume">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="volumeUnit">Unit</label>
+            <select id="volumeUnit" class="form-control">
+              <option value="ounces">Ounces</option>
+              <option value="ccs">CCs</option>
+              <option value="quarts">Quart</option>
+              <option value="gallons">Gallon</option>
+              <option value="liters">Liters</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Temperature Group -->
+    <div class="group-container mb-4">
+      <div class="group-title">Ambient Temperature</div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="ambientTemp">Temperature</label>
+            <input type="number" id="ambientTemp" class="form-control" placeholder="Enter temperature">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="tempUnit">Unit</label>
+            <select id="tempUnit" class="form-control">
+              <option value="fahrenheit">Fahrenheit</option>
+              <option value="celsius">Celsius</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Additional Options -->
+    <div class="group-container mb-4">
+      <div class="group-title">Additional Options</div>
+      <div class="form-check">
+        <input type="checkbox" id="usingDuratec" class="form-check-input">
+        <label for="usingDuratec" class="form-check-label">Using Duratec?</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="makeItHot" class="form-check-input">
+        <label for="makeItHot" class="form-check-label">Make it Hot!</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="makeItHottest" class="form-check-input">
+        <label for="makeItHottest" class="form-check-label">Make it the Hottest!</label>
+      </div>
+    </div>
+    
+    <!-- Result Display -->
+    <div id="result" class="mt-3 mb-4">
+      <p id="mekpPercentage">Recommended MEKp Percentage: </p>
+      <p id="mekpCcs">MEKp CCs: </p>
+      <p id="mekpDrops">MEKp Drops: </p>
+      <p id="tempAdvice"></p>
+    </div>
+    
+    <!-- Combined Row for Tips & Safety and Other Calcs -->
+    <div class="row mt-5">
+      <!-- Tips and Safety -->
+      <div class="col-md-6 mb-3">
         <div class="group-container">
-            <div class="group-title">Resin Volume</div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="resinVolume" class="">Volume</label>
-                        <input type="number" id="resinVolume" class="form-control" placeholder="Enter volume">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="volumeUnit">Unit</label>
-                        <select id="volumeUnit" class="form-control">
-                            <option value="ounces">Ounces</option>
-                            <option value="ccs">CCs</option>
-                            <option value="quarts">Quart</option>
-                            <option value="gallons">Gallon</option>
-                            <option value="liters">Liters</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+          <div class="group-title">Tips and Safety</div>
+          <p><a href="mekp-safety.html">MEKp Safety Guidelines</a></p>
+          <p><a href="http://www2.uwstout.edu/content/msds/PolyesterCatalyst_EagerPolymers_Jan2008.pdf" target="_blank">MEKp Data Sheet</a></p>
+          <p><a href="legal.html">Legal Disclaimer</a></p>
         </div>
-
-        <!-- Temperature Group -->
+      </div>
+      <!-- Other Calcs -->
+      <div class="col-md-6 mb-3">
         <div class="group-container">
-            <div class="group-title">Ambient Temperature</div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="ambientTemp">Temperature</label>
-                        <input type="number" id="ambientTemp" class="form-control" placeholder="Enter temperature">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="tempUnit">Unit</label>
-                        <select id="tempUnit" class="form-control">
-                            <option value="fahrenheit">Fahrenheit</option>
-                            <option value="celsius">Celsius</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+          <div class="group-title">Other Calcs</div>
+          <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
+          <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
         </div>
-
-        <!-- Additional Options -->
-        <div class="group-container">
-            <div class="group-title">Additional Options</div>
-            <div class="form-check">
-                <input type="checkbox" id="usingDuratec" class="form-check-input">
-                <label for="usingDuratec" class="form-check-label">Using Duratec?</label>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="makeItHot" class="form-check-input">
-                <label for="makeItHot" class="form-check-label">Make it Hot!</label>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="makeItHottest" class="form-check-input">
-                <label for="makeItHottest" class="form-check-label">Make it the Hottest!</label>
-            </div>
-        </div>
-        <!-- Result Display -->
-        <div id="result" class="mt-3">
-            <p id="mekpPercentage">Recommended MEKp Percentage: </p>
-            <p id="mekpCcs">MEKp CCs: </p>
-            <p id="mekpDrops">MEKp Drops: </p>
-						<p id="tempAdvice"></p> <!-- New element for temperature advice -->
-        </div>
-
-
-<!-- Combined Row for Tips & Safety and Other Calcs -->
-		<div class="row">
-    <!-- Tips and Safety -->
-			<div class="col-md-6">
-					<div class="group-container">
-							<div class="group-title">Tips and Safety</div>
-							<p><a href="mekp-safety.html">MEKp Safety Guidelines</a></p>
-							<p><a href="http://www2.uwstout.edu/content/msds/PolyesterCatalyst_EagerPolymers_Jan2008.pdf" target="_blank">MEKp Data Sheet</a></p>
-							<a href="legal.html">Legal Disclaimer</a>
-					</div>
-			</div>
-			<!-- Other Calcs -->
-			<div class="col-md-6">
-					<div class="group-container">
-							<div class="group-title">Other Calcs</div>
-							<p><a href="awlgrip.html">Awlgrip Mix calculator</a></p>
-							<p><a href="epifanespoly.html">Epifanes Poly Mix calculator</a></p>
-					</div>
-			</div>
-		</div>
-	</div>
-    <script src="mekscript.js"></script>
-<script src="main.js"></script>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Footer Section -->
+  <footer class="container footer text-center">
+    <p>&copy; 2025 ChemCalc. All rights reserved.</p>
+    <div class="powered-by">
+      <span>Powered by</span>
+      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
+    </div>
+  </footer>
+  
+  <!-- Bootstrap JS (with Popper.js and jQuery) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <!-- Custom JS -->
+  <script src="mekscript.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
