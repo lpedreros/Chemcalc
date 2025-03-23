@@ -1,87 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Epifanes Polyurethane Paint Calculator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Epifanes Polyurethane Paint Calculator – ChemCalc</title>
+  <meta name="description" content="Use our Epifanes Polyurethane Paint Calculator to determine precise mix ratios for your marine repair projects. Calculate accurate volumes and convert units effortlessly at ChemCalc." />
+  <meta name="keywords" content="Epifanes Polyurethane, Paint Calculator, Mix Calculator, marine repair, chemical calculator, ChemCalc" />
+  <link rel="canonical" href="https://chemcalc.co/epifanespoly.html" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Epifanes Polyurethane Paint Calculator – ChemCalc" />
+  <meta property="og:description" content="Calculate your Epifanes Polyurethane paint mix ratios accurately with our online calculator. Perfect for marine repair projects." />
+  <meta property="og:url" content="https://chemcalc.co/epifanespoly.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Epifanes Polyurethane Paint Calculator – ChemCalc" />
+  <meta name="twitter:description" content="Calculate your Epifanes Polyurethane paint mix ratios accurately with our online calculator at ChemCalc." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Epifanes Polyurethane Paint Calculator – ChemCalc",
+    "url": "https://chemcalc.co/epifanespoly.html",
+    "description": "Use our Epifanes Polyurethane Paint Calculator to determine precise mix ratios for marine repairs."
+  }
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DTECSH4N52');
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
-<body><!-- #BeginLibraryItem "/Nav header.lbi" --><!-- Header Section -->
+<body>
+  <!-- #BeginLibraryItem "/Nav header.lbi" -->
+	<!-- Header Section -->
 	<header class="container header">
-  <h1>ChemCalc</h1>
-  <div class="powered-by-header">
-    <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-White-Seal.png" alt="Think &amp; Engage Logo" />
-  </div>
-  <button class="menu-toggle">☰</button>
-  <nav id="mainNav" class="nav">
-    <a href="index.html" class="active">Home</a>
-    <a href="calculators.html">Calculators</a>
-    <a href="services.html">Services</a>
-    <a href="kits.html">Kits</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</header><!-- #EndLibraryItem --><div class="container">
-  <h1 class="text-center mb-4">Epifanes Polyurethane Paint Calculator</h1>
-        <form id="epifanesForm">
-            <!-- Volume/Area Input -->
-            <div class="form-group">
-                <label for="inputValue">Volume or Area:</label>
-                <input type="number" class="form-control" id="inputValue" required>
-            </div>
-
-            <!-- Volume/Area Units -->
-            <div class="form-group">
-                <label for="unitType">Input Units:</label>
-                <select class="form-control" id="unitType">
-                    <option value="squareFootage">Square Footage</option>
-                    <option value="gallons">Gallons</option>
-                    <option value="quarts">Quarts</option>
-                    <option value="liters">Liters</option>
-                    <option value="ounces">Ounces</option>
-                    <option value="ccs">Cubic Centimeters (cc)</option>
-                </select>
-            </div>
-
-            <!-- Output Units -->
-            <div class="form-group">
-                <label for="outputUnitType">Output Units:</label>
-                <select class="form-control" id="outputUnitType">
-                    <option value="ccs">Cubic Centimeters (cc)</option>
-                    <option value="ounces">Ounces</option>
-                    <option value="liters">Liters</option>
-                    <option value="quarts">Quarts</option>
-                    <option value="gallons">Gallons</option>
-                    <option value="squareFootage">Square Footage</option>
-                </select>
-            </div>
-
-            <!-- Results Display -->
-            <div id="result" class="mt-4"></div>
-        </form>
-        <div class="row">
-            <!-- Links for Safety Guidelines and tips/tricks -->
-            <div class="col-md-6">
-                <div class="group-container">
-                    <div class="group-title">Tips and Safety</div>
-                    <p><a href="https://www.epifanes.com/two-partpolyur/polyurethane?limit=12" target="_blank">Epifanes Polyurethane Product Specs</a></p>
-                    <p><a href="legal.html">Legal Disclaimer</a></p>
-                </div>
-            </div>
-            <!-- Other Calcs -->
-            <div class="col-md-6">
-                <div class="group-container">
-                    <div class="group-title">Other Calcs</div>
-                    <p><a href="mekpcalc.html">MEKp Mix calculator</a></p>
-										<p><a href="awlgrip.html">Awlgrip Mix calculator</a></p>
-                </div>
-            </div>
+		<h1>ChemCalc</h1>
+		<div class="powered-by-header"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" /> </div>
+		<button class="menu-toggle">☰</button>
+		<nav id="mainNav" class="nav"> <a href="index.html" class="active">Home</a> <a href="calculators.html">Calculators</a> <a href="services.html">Services</a> <a href="kits.html">Kits</a> <a href="about.html">About</a> <a href="contact.html">Contact</a> </nav>
+	</header>
+<!-- #EndLibraryItem -->
+	
+	<!-- Main Content Section -->
+  <main class="container">
+    <h1 class="text-center mb-4">Epifanes Polyurethane Paint Calculator</h1>
+    <form id="epifanesForm">
+      <!-- Volume/Area Input -->
+      <div class="form-group">
+        <label for="inputValue">Volume or Area:</label>
+        <input type="number" class="form-control" id="inputValue" required>
+      </div>
+      <!-- Volume/Area Units -->
+      <div class="form-group">
+        <label for="unitType">Input Units:</label>
+        <select class="form-control" id="unitType">
+          <option value="squareFootage">Square Footage</option>
+          <option value="gallons">Gallons</option>
+          <option value="quarts">Quarts</option>
+          <option value="liters">Liters</option>
+          <option value="ounces">Ounces</option>
+          <option value="ccs">Cubic Centimeters (cc)</option>
+        </select>
+      </div>
+      <!-- Output Units -->
+      <div class="form-group">
+        <label for="outputUnitType">Output Units:</label>
+        <select class="form-control" id="outputUnitType">
+          <option value="ccs">Cubic Centimeters (cc)</option>
+          <option value="ounces">Ounces</option>
+          <option value="liters">Liters</option>
+          <option value="quarts">Quarts</option>
+          <option value="gallons">Gallons</option>
+          <option value="squareFootage">Square Footage</option>
+        </select>
+      </div>
+      <!-- Results Display -->
+      <div id="result" class="mt-4">
+        <!-- Calculator results will be displayed here -->
+      </div>
+    </form>
+    
+    <!-- Additional Links Section -->
+    <div class="row mt-5">
+      <!-- Tips and Safety Links -->
+      <div class="col-md-6">
+        <div class="group-container">
+          <div class="group-title">Tips and Safety</div>
+          <p><a href="https://www.epifanes.com/two-partpolyur/polyurethane?limit=12" target="_blank">Epifanes Polyurethane Product Specs</a></p>
+          <p><a href="legal.html">Legal Disclaimer</a></p>
         </div>
+      </div>
+      <!-- Other Calculators Links -->
+      <div class="col-md-6">
+        <div class="group-container">
+          <div class="group-title">Other Calcs</div>
+          <p><a href="mekpcalc.html">MEKp Mix Calculator</a></p>
+          <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
+        </div>
+      </div>
     </div>
-
-    <script src="epifanesScript.js"></script>
+</main>
+  
+  <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+  <!-- Footer Section -->
+	<footer class="container footer">
+		<p>&copy; 2025 ChemCalc. All rights reserved.</p>
+		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" /> </div>
+	</footer>
+<!-- #EndLibraryItem -->
+	
+	<!-- Bootstrap JS (with Popper.js and jQuery) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Custom JS -->
+<script src="epifanesScript.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

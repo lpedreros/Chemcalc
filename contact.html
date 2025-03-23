@@ -4,32 +4,70 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact - ChemCalc</title>
+  <meta name="description" content="Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice. Contact us today for quality boat repair solutions." />
+  <meta name="keywords" content="Contact, ChemCalc, marine repair, boat repair, custom kits, consultations, expert advice" />
+  <link rel="canonical" href="https://chemcalc.co/contact.html" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Contact - ChemCalc" />
+  <meta property="og:description" content="Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice. Contact us today for quality boat repair solutions." />
+  <meta property="og:url" content="https://chemcalc.co/contact.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contact - ChemCalc" />
+  <meta name="twitter:description" content="Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact - ChemCalc",
+    "url": "https://chemcalc.co/contact.html",
+    "description": "Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice."
+  }
+  </script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DTECSH4N52');
+  </script>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png">
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header Section --><!-- #BeginLibraryItem "/Nav header.lbi" --><!-- Header Section -->
+  <!-- #BeginLibraryItem "/Nav header.lbi" -->
+	<!-- Header Section -->
 	<header class="container header">
-  <h1>ChemCalc</h1>
-  <div class="powered-by-header">
-    <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-White-Seal.png" alt="Think &amp; Engage Logo" />
-  </div>
-  <button class="menu-toggle">☰</button>
-  <nav id="mainNav" class="nav">
-    <a href="index.html" class="active">Home</a>
-    <a href="calculators.html">Calculators</a>
-    <a href="services.html">Services</a>
-    <a href="kits.html">Kits</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</header><!-- #EndLibraryItem --><!-- Contact Section -->
+		<h1>ChemCalc</h1>
+		<div class="powered-by-header"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" /> </div>
+		<button class="menu-toggle">☰</button>
+		<nav id="mainNav" class="nav"> <a href="index.html" class="active">Home</a> <a href="calculators.html">Calculators</a> <a href="services.html">Services</a> <a href="kits.html">Kits</a> <a href="about.html">About</a> <a href="contact.html">Contact</a> </nav>
+	</header>
+<!-- #EndLibraryItem -->
+	
+	<!-- Contact Section -->
   <section class="container contact">
     <h2>Contact Us</h2>
     <p>
       Have questions or need a quote? Fill out the form below, and we’ll get back to you as soon as possible.
     </p>
-    <form id="contactForm" action="https://formspree.io/f/yourFormID" method="post">
+    <form id="contactForm" action="https://formspree.io/f/xdkeobbl" method="post">
       <div class="form-group">
         <label for="name">First and Last Name</label>
         <input type="text" id="name" name="name" class="form-control" placeholder="Your Full Name" required />
@@ -64,9 +102,9 @@
       </div>
       <button type="submit" class="btn btn-primary">Send Message</button>
     </form>
-
+    
     <!-- Facebook Section -->
-    <section class="facebook-section" style="margin-top: 2em; text-align: center;">
+    <section class="facebook-section mt-4 text-center">
       <h3>Follow Us on Facebook</h3>
       <div id="fb-root"></div>
       <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v15.0"></script>
@@ -85,11 +123,20 @@
       </div>
     </section>
   </section>
-
+  
+  <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
   <!-- Footer Section -->
-  <footer class="container footer">
-    <p>&copy; 2025 ChemCalc. All rights reserved.</p>
-  </footer>
+	<footer class="container footer">
+		<p>&copy; 2025 ChemCalc. All rights reserved.</p>
+		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" /> </div>
+	</footer>
+<!-- #EndLibraryItem -->
+	
+	<!-- Bootstrap JS (with Popper.js and jQuery) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Custom JS -->
 <script src="main.js"></script>
 </body>
 </html>
