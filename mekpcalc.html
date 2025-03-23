@@ -49,6 +49,14 @@
   
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Additional design improvements for MEKP Calc page */
+    .group-container { margin-bottom: 1rem; }
+    .card-title { font-size: 1.25rem; font-weight: bold; }
+    /* Increase spacing between cards */
+    .card { margin-bottom: 1.5rem; }
+  </style>
 </head>
 <body>
   <!-- Header Section -->
@@ -73,95 +81,108 @@
   <main class="container">
     <h1 class="text-center mb-4">MEKP Calc</h1>
     
-    <!-- Resin Volume Group -->
-    <div class="group-container mb-4">
-      <div class="group-title">Resin Volume</div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="resinVolume">Volume</label>
-            <input type="number" id="resinVolume" class="form-control" placeholder="Enter volume">
+    <!-- Resin Volume Group Card -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Resin Volume</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="resinVolume">Volume</label>
+              <input type="number" id="resinVolume" class="form-control" placeholder="Enter volume">
+            </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="volumeUnit">Unit</label>
-            <select id="volumeUnit" class="form-control">
-              <option value="ounces">Ounces</option>
-              <option value="ccs">CCs</option>
-              <option value="quarts">Quart</option>
-              <option value="gallons">Gallon</option>
-              <option value="liters">Liters</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Temperature Group -->
-    <div class="group-container mb-4">
-      <div class="group-title">Ambient Temperature</div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="ambientTemp">Temperature</label>
-            <input type="number" id="ambientTemp" class="form-control" placeholder="Enter temperature">
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="tempUnit">Unit</label>
-            <select id="tempUnit" class="form-control">
-              <option value="fahrenheit">Fahrenheit</option>
-              <option value="celsius">Celsius</option>
-            </select>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="volumeUnit">Unit</label>
+              <select id="volumeUnit" class="form-control">
+                <option value="ounces">Ounces</option>
+                <option value="ccs">CCs</option>
+                <option value="quarts">Quart</option>
+                <option value="gallons">Gallon</option>
+                <option value="liters">Liters</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- Additional Options -->
-    <div class="group-container mb-4">
-      <div class="group-title">Additional Options</div>
-      <div class="form-check">
-        <input type="checkbox" id="usingDuratec" class="form-check-input">
-        <label for="usingDuratec" class="form-check-label">Using Duratec?</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="makeItHot" class="form-check-input">
-        <label for="makeItHot" class="form-check-label">Make it Hot!</label>
-      </div>
-      <div class="form-check">
-        <input type="checkbox" id="makeItHottest" class="form-check-input">
-        <label for="makeItHottest" class="form-check-label">Make it the Hottest!</label>
+    <!-- Ambient Temperature Group Card -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Ambient Temperature</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="ambientTemp">Temperature</label>
+              <input type="number" id="ambientTemp" class="form-control" placeholder="Enter temperature">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="tempUnit">Unit</label>
+              <select id="tempUnit" class="form-control">
+                <option value="fahrenheit">Fahrenheit</option>
+                <option value="celsius">Celsius</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
-    <!-- Result Display -->
-    <div id="result" class="mt-3 mb-4">
-      <p id="mekpPercentage">Recommended MEKp Percentage: </p>
-      <p id="mekpCcs">MEKp CCs: </p>
-      <p id="mekpDrops">MEKp Drops: </p>
-      <p id="tempAdvice"></p>
+    <!-- Additional Options Group Card -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Additional Options</h5>
+        <div class="form-check">
+          <input type="checkbox" id="usingDuratec" class="form-check-input">
+          <label for="usingDuratec" class="form-check-label">Using Duratec?</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="makeItHot" class="form-check-input">
+          <label for="makeItHot" class="form-check-label">Make it Hot!</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="makeItHottest" class="form-check-input">
+          <label for="makeItHottest" class="form-check-label">Make it the Hottest!</label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Result Display Card -->
+    <div class="card">
+      <div class="card-body">
+				<h5 class="card-title">Your mix results!</h5>
+        <p id="mekpPercentage">Recommended MEKp Percentage: </p>
+        <p id="mekpCcs">MEKp CCs: </p>
+        <p id="mekpDrops">MEKp Drops: </p>
+        <p id="tempAdvice"></p>
+      </div>
     </div>
     
     <!-- Combined Row for Tips & Safety and Other Calcs -->
     <div class="row mt-5">
       <!-- Tips and Safety -->
       <div class="col-md-6 mb-3">
-        <div class="group-container">
-          <div class="group-title">Tips and Safety</div>
-          <p><a href="mekp-safety.html">MEKp Safety Guidelines</a></p>
-          <p><a href="http://www2.uwstout.edu/content/msds/PolyesterCatalyst_EagerPolymers_Jan2008.pdf" target="_blank">MEKp Data Sheet</a></p>
-          <p><a href="legal.html">Legal Disclaimer</a></p>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tips and Safety</h5>
+            <p><a href="mekp-safety.html">MEKp Safety Guidelines</a></p>
+            <p><a href="http://www2.uwstout.edu/content/msds/PolyesterCatalyst_EagerPolymers_Jan2008.pdf" target="_blank">MEKp Data Sheet</a></p>
+            <p><a href="legal.html">Legal Disclaimer</a></p>
+          </div>
         </div>
       </div>
       <!-- Other Calcs -->
       <div class="col-md-6 mb-3">
-        <div class="group-container">
-          <div class="group-title">Other Calcs</div>
-          <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
-          <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Other Calcs</h5>
+            <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
+            <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
+          </div>
         </div>
       </div>
     </div>

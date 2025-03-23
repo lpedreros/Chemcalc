@@ -80,6 +80,11 @@ p {
 .filter-btn.active {
     background-color: #48484a;
 }
+.card {
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+	border: none;
+}
 
 /* Collapsible Sections */
 .collapsible {
