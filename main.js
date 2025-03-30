@@ -68,7 +68,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var items = document.querySelectorAll('.content ul li');
     items.forEach(function(item) {
       var tagsStr = item.getAttribute('data-tags') || "";
-      var tags = tagsStr.toLowerCase().split(',').map(function(t) { return t.trim(); });
+      // Remove any leading '#' from tags
+      var tags = tagsStr.toLowerCase().split(',').map(function(t) { return t.trim().replace(/^#/, ''); });
       var tagMatch = activeFilters.length === 0 || activeFilters.every(function(filter) {
         return tags.indexOf(filter) !== -1;
       });
