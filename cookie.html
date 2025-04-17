@@ -52,14 +52,14 @@
 </head>
 <body>
   <!-- Header -->
-  <header class="container header">
+<header class="container header">
     <h1>ChemCalc</h1>
     <div class="powered-by-header">
       <span>Powered by</span>
       <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo">
     </div>
     <button class="menu-toggle">☰</button>
-    <nav id="mainNav" class="nav">
+  <nav id="mainNav" class="nav">
       <a href="index.html">Home</a>
       <a href="calculators.html">Calculators</a>
       <a href="services.html">Services</a>
@@ -70,7 +70,7 @@
   </header>
 
   <!-- Main Content -->
-  <main class="container my-4">
+<main class="container my-4">
     <h1 class="text-center mb-4">Cookie Policy</h1>
     <p>Effective date: April 17, 2025</p>
     <p>We use cookies and similar technologies to enhance your experience on ChemCalc.</p>
@@ -85,27 +85,46 @@
     <p>You can disable cookies via your browser settings, but this may affect site functionality.</p>
   </main>
 
-  <!-- Donation Button & Modal (same as above) -->
-  <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal">Donate</button>
-  <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-    <!-- same modal markup -->
-  </div>
-
-  <!-- Footer -->
-  <footer class="footer text-center">
-    <div class="legal-links mb-2">
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/terms.html">Terms of Use</a> |
-      <a href="/cookie.html">Cookie Policy</a>
-    </div>
-    <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
-    <div class="powered-by">
-      <span>Powered by</span>
-      <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo">
-    </div>
-  </footer>
-
-  <!-- Scripts -->
+  <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+	<!-- Donation Button -->
+	<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
+	<!-- Donation Modal (updated with PayPal snippet) -->
+	<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
+				<div class="modal-header" style="border-bottom: 1px solid #48484a;">
+					<h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
+				</div>
+				<div class="modal-body">
+					<p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+					<p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+					<hr style="border-color: #48484a;">
+					<div class="donation-options">
+						<form action="https://www.paypal.com/donate" method="post" target="_top">
+							<input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+							<input type="hidden" name="no_recurring" value="0" />
+							<input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+							<input type="hidden" name="currency_code" value="USD" />
+							<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+							<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer" style="border-top: 1px solid #48484a;">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Footer Section -->
+	<footer class="footer text-center">
+		<div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
+		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
+		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
+	</footer>
+<!-- #EndLibraryItem -->
+	<!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
