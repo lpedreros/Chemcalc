@@ -17,8 +17,9 @@ h1 {
     font-size: 1.5em;
 }
 p {
-  text-align: left !important;
+    text-align: left !important;
 }
+
 /* Container & Layout */
 .container {
     background-color: #2c2c2e;
@@ -29,8 +30,10 @@ p {
     max-width: 1200px;
 }
 .container p, .container li {
-  text-align: left !important;
+    text-align: left !important;
 }
+
+/* Header & Nav */
 .header {
     display: flex;
     flex-direction: column;
@@ -39,10 +42,10 @@ p {
     margin-bottom: 2em;
 }
 .header h1 {
-  font-size: 2em;
-  text-align: center;
-  width: 100%;
-  margin: 0 auto;
+    font-size: 2em;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
 }
 .nav {
     display: flex;
@@ -58,6 +61,7 @@ p {
 .nav a:hover {
     text-decoration: underline;
 }
+
 /* Filter Buttons */
 .filter-buttons {
     text-align: center;
@@ -77,28 +81,33 @@ p {
 .filter-btn.active {
     background-color: #48484a;
 }
+
+/* Cards */
 .card {
-  background-color: rgba(0, 0, 0, 0.8);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  border: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border: none;
 }
+
+/* Donate Button */
 .fixed-donate-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1050;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  background-color: #89CFF0;
-  color: #1c1c1e;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  transition: background-color 0.3s ease;
-  white-space: nowrap;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    background-color: #89CFF0;
+    color: #1c1c1e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
 }
 .fixed-donate-btn:hover {
-  background-color: #70b8d0;
+    background-color: #70b8d0;
 }
+
 /* Collapsible Sections */
 .collapsible {
     background-color: #2c2c2e;
@@ -131,6 +140,7 @@ p {
     margin-bottom: 1em;
     max-height: none;
 }
+
 /* Footer Legal Links */
 .footer .legal-links {
     margin-bottom: 1em;
@@ -144,4 +154,99 @@ p {
 .footer .legal-links a:hover {
     text-decoration: underline;
 }
-/* ... rest of original CSS unchanged ... */
+
+/* Form Controls */
+.form-control {
+    background-color: #3a3a3c;
+    color: #ffffff;
+    border: 1px solid #6c757d;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #0a84ff;
+    border: none;
+    margin-top: 1em;
+}
+.btn-primary:hover {
+    background-color: #007aff;
+}
+
+/* Group Containers (Awlgrip merged) */
+.group-container {
+    background-color: #333;
+    padding: 0.5em;
+    margin-top: 1em;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.group-title {
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #89CFF0;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Form-check Styles */
+.form-check-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.form-check-label {
+    color: #ffffff;
+    margin-left: 0.4em;
+    vertical-align: middle;
+}
+
+/* Result Display Highlight */
+#result {
+    background-color: #48484a;
+    color: #ffffff;
+    padding: 10px;
+    border-left: 5px solid #0a84ff;
+    margin-top: 0;
+}
+
+/* Safety Content Headings */
+.safety-content h2,
+.safety-content h3 {
+    color: #89CFF0;
+    margin-top: 15px;
+    font-size: 1.5em;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 575.98px) {
+    .container {
+        max-width: 100%;
+    }
+    a {
+        font-size: 1.25em;
+    }
+}
+@media (max-width: 767.98px) {
+    body {
+        margin: 0;
+    }
+    .container {
+        margin-top: 0;
+    }
+    .row > div {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .form-control, .form-check-input, .form-check-label {
+        font-size: 1em;
+    }
+    .form-group label, .group-title {
+        font-size: 1em;
+    }
+    .form-check {
+        margin-bottom: 0.5rem;
+    }
+}
