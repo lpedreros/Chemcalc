@@ -1,105 +1,103 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var resinVolumeInput = document.getElementById('resinVolume');
-    var volumeUnitSelect = document.getElementById('volumeUnit');
-    var ambientTempInput = document.getElementById('ambientTemp');
-    var tempUnitSelect = document.getElementById('tempUnit');
-    var usingDuratecCheckbox = document.getElementById('usingDuratec');
-    var makeItHotCheckbox = document.getElementById('makeItHot');
-    var makeItHottestCheckbox = document.getElementById('makeItHottest');
-    var mekpPercentageDisplay = document.getElementById('mekpPercentage');
-    var mekpCcsDisplay = document.getElementById('mekpCcs');
-    var mekpDropsDisplay = document.getElementById('mekpDrops');
-    var tempAdviceDisplay = document.getElementById('tempAdvice'); // New element for temperature advice
+/* mekscript.js
+   --------------------------------------------
+   BoatDesign.net rule:
+     • 1% at >= 85 °F
+     • Add 0.5% for every 5 °F drop
+   Duratec toggle forces 2%.
+   Clamp between 1% and 3%. Twelve drops/oz floor.
+*/
+document.addEventListener('DOMContentLoaded', () => {
+  const resinVolInput  = document.getElementById('resinVolume');
+  const volumeUnitSel  = document.getElementById('volumeUnit');
+  const ambientTempInp = document.getElementById('ambientTemp');
+  const tempUnitSel    = document.getElementById('tempUnit');
+  const duratecChk     = document.getElementById('usingDuratec');
+  const pctSlider      = document.getElementById('customPercentage');
 
-    function updateMekpValues() {
-        var resinVolume = parseFloat(resinVolumeInput.value) || 0;
-        var ambientTemp = parseFloat(ambientTempInput.value) || 70; // default temperature
-        var volumeUnit = volumeUnitSelect.value;
-        var tempUnit = tempUnitSelect.value;
-        var usingDuratec = usingDuratecCheckbox.checked;
-        var makeItHot = makeItHotCheckbox.checked;
-        var makeItHottest = makeItHottestCheckbox.checked;
+  const recDisplay     = document.getElementById('mekpRecommended');
+  const pctDisplay     = document.getElementById('mekpPercentage');
+  const pctSource      = document.getElementById('pctSource');
+  const ccsDisplay     = document.getElementById('mekpCcs');
+  const dropsDisplay   = document.getElementById('mekpDrops');
+  const tempAdviceDisp = document.getElementById('tempAdvice');
+  const resinVolUnit   = document.getElementById('resinVolumeUnit');
 
-        resinVolume = convertVolumeToOunces(resinVolume, volumeUnit);
-        ambientTemp = convertTempToFahrenheit(ambientTemp, tempUnit);
+  /* ---------- helpers ---------- */
+  const unitAbbrev = u => ({
+    ounces: 'oz', pints: 'pt', quarts: 'qt', gallons: 'gal',
+    ccs: 'mL', mls: 'mL', liters: 'L'
+  }[u] || u);
 
-        var mekpValues = calculateMekp(resinVolume, ambientTemp, usingDuratec, makeItHot, makeItHottest);
+  const volToOz = (v, u) => ({
+    ounces: 1, pints: 16, quarts: 32, gallons: 128,
+    ccs: 0.033814, mls: 0.033814, liters: 33.814
+  }[u] || 1) * v;
 
-        mekpPercentageDisplay.innerHTML = 'Recommended MEKp Percentage: <b>' + mekpValues.percentage.toFixed(2) + '%</b>';
-        mekpCcsDisplay.innerHTML = 'MEKp CCs: <b>' + mekpValues.ccs.toFixed(2) + ' CCs</b>';
-        mekpDropsDisplay.innerHTML = 'MEKp Drops: <b>' + mekpValues.drops.toFixed(0) + ' Drops</b>';
+  const toF = (t, u) => (u === 'celsius' ? t * 9 / 5 + 32 : t);
+  const toC = t => (t - 32) * 5 / 9;
 
-        // New feature: Check for low temperature and advise
-        var thresholdTemp = 60; // Temperature threshold in Fahrenheit
-        var displayTempThreshold = tempUnit === 'celsius' ? convertFahrenheitToCelsius(thresholdTemp).toFixed(2) : thresholdTemp;
-        var tempUnitDisplay = tempUnit === 'celsius' ? 'C' : 'F';
+  function recommendedPct(tempF) {
+    if (duratecChk.checked) return 2;
+    if (tempF >= 85) return 1;
+    const steps = Math.ceil((85 - tempF) / 5);
+    return Math.min(3, 1 + steps * 0.5);
+  }
 
-        if (ambientTemp < thresholdTemp) {
-            tempAdviceDisplay.innerHTML = 'Find a way to raise and maintain the substrate temperature to ' + displayTempThreshold + '°' + tempUnitDisplay + '.';
-        } else {
-            tempAdviceDisplay.innerHTML = ''; // Clear the message if the temperature is above the threshold
-        }
+  /* ---------- main calc ---------- */
+  function calculate() {
+    const vol     = parseFloat(resinVolInput.value) || 0;
+    const ambTemp = parseFloat(ambientTempInp.value) || 70;
+    const volUnit = volumeUnitSel.value;
+    const tmpUnit = tempUnitSel.value;
+
+    const resinOz = volToOz(vol, volUnit);
+    const tempF   = toF(ambTemp, tmpUnit);
+
+    const recPct  = recommendedPct(tempF);
+    recDisplay.innerHTML =
+      'Recommended MEKp % (based on temperature): <b>' + recPct.toFixed(2) + '%</b>';
+
+    let usePct;
+    if (duratecChk.checked) {
+      pctSource.textContent = 'Duratec override';
+      usePct = 2;
+    } else {
+      pctSource.textContent = 'slider';
+      usePct = parseFloat(pctSlider.value) || 1;
     }
 
-    // Listen for input changes and update values
-    resinVolumeInput.addEventListener('input', updateMekpValues);
-    volumeUnitSelect.addEventListener('change', updateMekpValues);
-    ambientTempInput.addEventListener('input', updateMekpValues);
-    tempUnitSelect.addEventListener('change', updateMekpValues);
-    usingDuratecCheckbox.addEventListener('change', updateMekpValues);
-    makeItHotCheckbox.addEventListener('change', updateMekpValues);
-    makeItHottestCheckbox.addEventListener('change', updateMekpValues);
+    pctDisplay.innerHTML =
+      'Using ' + pctSource.textContent + ' value: <b>' + usePct.toFixed(2) + '%</b>';
 
-    // Initial update
-    updateMekpValues();
+    const ccsRaw   = (usePct / 100) * resinOz * 29.5735;
+    const dropsRaw = ccsRaw * 20;
+    const dropsMin = resinOz * 12;
+    const drops    = Math.max(dropsRaw, dropsMin);
 
-    function convertVolumeToOunces(volume, unit) {
-        switch (unit) {
-            case 'ccs':
-                return volume * 0.033814; // 1 CC = 0.033814 ounces
-            case 'quarts':
-                return volume * 32; // 1 Quart = 32 ounces
-            case 'gallons':
-                return volume * 128; // 1 Gallon = 128 ounces
-            case 'liters':
-                return volume * 33.814; // 1 Liter = 33.814 ounces
-            default:
-                return volume; // Already in ounces
-        }
-    }
+    ccsDisplay.innerHTML   = 'MEKp CCs: <b>' + ccsRaw.toFixed(2) + ' CCs</b>';
+    dropsDisplay.innerHTML = 'MEKp Drops: <b>' + drops.toFixed(0) + ' Drops</b>';
 
-    function convertTempToFahrenheit(temp, unit) {
-        if (unit === 'celsius') {
-            return (temp * 9 / 5) + 32;
-        }
-        return temp; // Already in Fahrenheit
-    }
+    const threshF = 60;
+    tempAdviceDisp.textContent =
+      tempF < threshF
+        ? 'Find a way to raise and maintain the substrate temperature to ' +
+          (tmpUnit === 'celsius' ? toC(threshF).toFixed(2) : threshF) +
+          '°' + (tmpUnit === 'celsius' ? 'C' : 'F') + '.'
+        : '';
 
-    function convertFahrenheitToCelsius(temp) {
-        return (temp - 32) * 5 / 9;
-    }
+    resinVolUnit.textContent = unitAbbrev(volUnit);
+  }
 
-    function calculateMekp(volume, temp, usingDuratec, makeItHot, makeItHottest) {
-        var basePercentage = usingDuratec ? 2 : 1; // Base percentage is 2% when Using Duratec is checked
-        if (temp < 70) {
-            basePercentage += 0.5; // Increase for temperatures below 70°F
-        }
-        if (temp > 70) {
-            basePercentage -= 0.25; // Decrease for temperatures above 70°F
-        }
-        if (makeItHot) {
-            basePercentage += 0.5;
-        }
-        if (makeItHottest) {
-            basePercentage += 1;
-        }
+  /* listeners */
+  ['input', 'change'].forEach(evt => {
+    resinVolInput .addEventListener(evt, calculate);
+    volumeUnitSel .addEventListener(evt, calculate);
+    ambientTempInp.addEventListener(evt, calculate);
+    tempUnitSel   .addEventListener(evt, calculate);
+    duratecChk    .addEventListener(evt, calculate);
+    pctSlider     .addEventListener(evt, calculate);
+  });
 
-        // Ensure MEKP percentage is within the specified range
-        basePercentage = Math.max(0.75, Math.min(basePercentage, 3));
-
-        var ccs = (basePercentage / 100) * volume * 29.5735; // Convert percentage to CCs
-        var drops = ccs * 20; // Approximate conversion of 1 CC to 20 drops
-
-        return { percentage: basePercentage, ccs: ccs, drops: drops };
-    }
+  calculate();
+  window.updateMekpValues = calculate; // allow init script to trigger recalcs
 });
