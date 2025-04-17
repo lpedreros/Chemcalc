@@ -11,17 +11,9 @@ a, a:visited, a:hover, a:active {
     font-size: 1.25em;
     font-weight: bold;
     color: #89CFF0;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
 }
 h1 {
     font-size: 1.5em;
-    margin: 0;
-}
-p {
-    text-align: left !important;
 }
 
 /* Container & Layout */
@@ -33,12 +25,14 @@ p {
     margin: 50px auto 1em;
     max-width: 1200px;
 }
-.container p,
+.container p {
+    text-align: left !important;
+}
 .container li {
     text-align: left !important;
 }
 
-/* Header */
+/* Header & Nav */
 .header {
     display: flex;
     flex-direction: column;
@@ -50,18 +44,8 @@ p {
     font-size: 2em;
     text-align: center;
     width: 100%;
-    margin: 0;
+    margin: 0 auto;
 }
-
-/* Logo Sizes */
-.powered-by-header img,
-.footer .powered-by img {
-    height: 1.5em;
-    width: auto;
-    vertical-align: middle;
-}
-
-/* Navigation */
 .nav {
     display: flex;
     flex-wrap: wrap;
@@ -70,34 +54,16 @@ p {
 }
 .nav a {
     margin: 0 0.75em;
+    text-decoration: none;
     color: #89CFF0;
 }
-
-/* Mobile Menu Toggle */
-.menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: #89CFF0;
-    font-size: 2em;
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    cursor: pointer;
+.nav a:hover {
+    text-decoration: underline;
 }
-@media (max-width: 767px) {
-    .nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        text-align: center;
-    }
-    .nav.active {
-        display: flex;
-    }
-    .menu-toggle {
-        display: block;
-    }
+.powered-by-header img {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
 }
 
 /* Filter Buttons */
@@ -156,9 +122,9 @@ p {
     border: none;
     text-align: left;
     font-size: 1.25em;
+    position: relative;
     margin-top: 1em;
     border-radius: 6px;
-    position: relative;
 }
 .collapsible::after {
     content: "▼";
@@ -179,7 +145,7 @@ p {
     max-height: none;
 }
 
-/* Favorites Star Toggle */
+/* Favorites Star */
 .star-toggle {
     cursor: pointer;
     font-size: 1.2em;
@@ -190,7 +156,7 @@ p {
     color: gold;
 }
 
-/* Filtering Feedback */
+/* Filter Animations */
 .content ul li {
     transition: opacity 0.3s ease, transform 0.3s ease;
     opacity: 1;
@@ -208,17 +174,52 @@ p {
     color: #fff;
 }
 #search-input::placeholder {
-
     color: #bbb;
 }
 
-/* Form Controls */
-.form-control {
-    background-color: #2c2c2e;
-    color: #ffffff;
-    border: 1px solid #48484a;
-    margin-bottom: 1em;
-    padding: 0.5em;
+/* Mobile Menu */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #89CFF0;
+    font-size: 2em;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    cursor: pointer;
+}
+@media (max-width: 767px) {
+    .nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+    .nav.active {
+        display: flex;
+    }
+    .menu-toggle {
+        display: block;
+    }
+}
+
+/* Responsive Queries */
+@media (max-width: 575.98px) {
+    .container {
+        max-width: 100%;
+    }
+    a {
+        font-size: 1.25em;
+    }
+}
+@media (max-width: 767.98px) {
+    body {
+        margin: 0;
+    }
+    .container {
+        margin-top: 0;
+    }
 }
 
 /* Custom Kit Options */
@@ -245,53 +246,38 @@ p {
     margin-bottom: 1em;
 }
 
-/* Footer Legal Links */
-.footer .legal-links {
-    margin-bottom: 1em;
-}
-.footer .legal-links a {
-    margin: 0 0.5em;
-    font-size: 0.9em;
-    color: #89CFF0;
-    text-decoration: none;
-}
-.footer .legal-links a:hover {
-    text-decoration: underline;
-}
-.footer .legal-links p {
-  text-align: center !important;
+/* Logos */
+.powered-by img,
+.powered-by-header img {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
 }
 
-/* Group Containers */
-.group-container {
-    background-color: #333;
-    padding: 0.5em;
-    margin-top: 1em;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.group-title {
-    font-size: 1.25em;
-    font-weight: bold;
-    color: #89CFF0;
-    margin-bottom: 10px;
+/* ==========================================================================
+   FOOTER – Centered and Matching Site Styles
+   ========================================================================== */
+.footer.text-center {
+    background-color: #2c2c2e;
+    padding: 1em;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin: 50px auto 1em;
+    max-width: 1200px;
     text-align: center;
 }
-
-/* Responsive Media Queries */
-@media (max-width: 575.98px) {
-    .container {
-        max-width: 100%;
-    }
-    a {
-        font-size: 1.25em;
-    }
+.footer.text-center .legal-links {
+    margin-bottom: 0.5em;
 }
-@media (max-width: 767.98px) {
-    body {
-        margin: 0;
-    }
-    .container {
-        margin-top: 0;
-    }
+.footer.text-center .legal-links a {
+    margin: 0 0.5em;
+    color: #89CFF0;
+    font-size: 1em;
+}
+.footer.text-center p {
+    margin: 0.5em 0;
+    font-size: 1em;
+}
+.footer.text-center .powered-by {
+    margin-top: 0.5em;
 }
