@@ -258,6 +258,9 @@ p {
 .footer .legal-links a:hover {
     text-decoration: underline;
 }
+.footer .legal-links p {
+  text-align: center !important;
+}
 
 /* Group Containers */
 .group-container {
