@@ -3,32 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services - ChemCalc</title>
-  <meta name="description" content="At ChemCalc, we offer high-quality marine repair services, training, kit subscriptions, and custom fabrication solutions to empower professionals and DIY enthusiasts." />
-  <meta name="keywords" content="marine repair services, DIY marine repair, custom fabrication, marine training, kit subscriptions, ChemCalc" />
-  <link rel="canonical" href="https://chemcalc.co/services.html" />
+  <title>Contact - ChemCalc</title>
+  <meta name="description" content="Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice. Contact us today for quality boat repair solutions." />
+  <meta name="keywords" content="Contact, ChemCalc, marine repair, boat repair, custom kits, consultations, expert advice" />
+  <link rel="canonical" href="https://chemcalc.co/contact.html" />
   
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Services - ChemCalc" />
-  <meta property="og:description" content="Discover high-quality marine repair services, hands-on training, kit subscriptions, and custom fabrication solutions at ChemCalc." />
-  <meta property="og:url" content="https://chemcalc.co/services.html" />
+  <meta property="og:title" content="Contact - ChemCalc" />
+  <meta property="og:description" content="Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice. Contact us today for quality boat repair solutions." />
+  <meta property="og:url" content="https://chemcalc.co/contact.html" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
   
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Services - ChemCalc" />
-  <meta name="twitter:description" content="Discover high-quality marine repair services, hands-on training, kit subscriptions, and custom fabrication solutions at ChemCalc." />
+  <meta name="twitter:title" content="Contact - ChemCalc" />
+  <meta name="twitter:description" content="Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice." />
   <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
   
   <!-- JSON-LD Schema Markup -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Services - ChemCalc",
-    "url": "https://chemcalc.co/services.html",
-    "description": "At ChemCalc, we offer high-quality marine repair services, training, kit subscriptions, and custom fabrication solutions to empower professionals and DIY enthusiasts."
+    "@type": "ContactPage",
+    "name": "Contact - ChemCalc",
+    "url": "https://chemcalc.co/contact.html",
+    "description": "Get in touch with ChemCalc for marine repair consultations, custom kit services, and expert advice."
   }
   </script>
   
@@ -48,9 +48,11 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body><!-- #BeginLibraryItem "/Nav header.lbi" -->
+<body>
+	
+<!-- #BeginLibraryItem "/Nav header.lbi" -->
 
 <!-- Header Section -->
 	<header class="container header">
@@ -68,29 +70,69 @@
     <a href="about.html">About</a>
     <a href="contact.html">Contact</a>
   </nav>
-</header><!-- #EndLibraryItem --><!-- Services Section -->
-  <section class="container services">
-    <h2>Our Services</h2>
+</header><!-- #EndLibraryItem -->
+	
+	<!-- Contact Section -->
+  <section class="container contact">
+    <h2>Contact Us</h2>
     <p>
-      At Think &amp; Engage, we provide a range of high-quality services tailored to marine repair professionals and DIY enthusiasts. Our expertise extends beyond exceptional repair work—we offer hands-on training, personalized tele-guiding sessions, and premium kit subscriptions designed to equip you with everything needed for your projects.
+      Have questions or need a quote? Fill out the form below, and we’ll get back to you as soon as possible.
     </p>
-    <ul>
-      <li>
-        <strong>Repair Services:</strong> Professional structural and cosmetic repairs using only the finest materials.
-      </li>
-      <li>
-        <strong>Training &amp; Tele-Guiding:</strong> Interactive, personalized sessions that empower you to handle repairs confidently.
-      </li>
-      <li>
-        <strong>Kit Subscriptions:</strong> Curated repair kits delivered to your door, featuring top-quality products recommended by experts.
-      </li>
-      <li>
-        <strong>Custom Fabrication:</strong> Unique solutions for specialized projects, including fish boxes, hatches, built-ins, and more.
-      </li>
-    </ul>
-    <p>
-      We pride ourselves on our commitment to excellence, ensuring every project meets the highest standards of quality. Interested in learning more? <a href="contact.html">Contact us</a> for a personalized consultation.
-    </p>
+    <form id="contactForm" action="https://formspree.io/f/xdkeobbl" method="post">
+      <div class="form-group">
+        <label for="name">First and Last Name</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Your Full Name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Your Email" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Your Phone Number" required />
+      </div>
+      <div class="form-group">
+        <label for="boatDetails">Year, Make, and Model of the Boat</label>
+        <input type="text" id="boatDetails" name="boatDetails" class="form-control" placeholder="e.g., 2010, Beneteau, Oceanis 35" required />
+      </div>
+      <div class="form-group">
+        <label for="hin">HIN Number</label>
+        <input type="text" id="hin" name="hin" class="form-control" placeholder="Your Boat's HIN Number" required />
+      </div>
+      <div class="form-group">
+        <label for="location">Boat Location Address</label>
+        <textarea id="location" name="location" class="form-control" rows="2" placeholder="Your Boat's Location" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="repairs">Short Description of the Repairs</label>
+        <textarea id="repairs" name="repairs" class="form-control" rows="5" placeholder="Describe the repairs needed" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="availability">Times Available on Fridays to Look at the Boat</label>
+        <input type="text" id="availability" name="availability" class="form-control" placeholder="e.g., 10 AM - 2 PM" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+    
+    <!-- Facebook Section -->
+    <section class="facebook-section mt-4 text-center">
+      <h3>Follow Us on Facebook</h3>
+      <div id="fb-root"></div>
+      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v15.0"></script>
+      <div class="fb-page"
+           data-href="https://www.facebook.com/thinkandengage"
+           data-tabs="timeline"
+           data-width=""
+           data-height=""
+           data-small-header="false"
+           data-adapt-container-width="true"
+           data-hide-cover="false"
+           data-show-facepile="true">
+        <blockquote cite="https://www.facebook.com/thinkandengage" class="fb-xfbml-parse-ignore">
+          <a href="https://www.facebook.com/thinkandengage">Think and Engage</a>
+        </blockquote>
+      </div>
+    </section>
   </section><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 
 <!-- Donation Button -->
@@ -131,20 +173,19 @@
 <!-- Footer Section -->
 <footer class="container footer text-center">
   <div class="legal-links">
-    <a href="Library/privacy.html">Privacy Policy</a> |
-    <a href="Library/terms.html">Terms of Use</a> |
-    <a href="Library/cookie.html">Cookie Policy</a>
+    <a href="../../Library/privacy.html">Privacy Policy</a> |
+    <a href="../../Library/terms.html">Terms of Use</a> |
+    <a href="../../Library/cookie.html">Cookie Policy</a>
   </div>
   <p>&copy; 2025 ChemCalc. All rights reserved.</p>
   <div class="powered-by">
     <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" />
+    <img src="../../images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" />
   </div>
 </footer><!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  
   <!-- Custom JS -->
 <script src="main.js"></script>
 </body>

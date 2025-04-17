@@ -3,35 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Epifanes Polyurethane Paint Calculator – ChemCalc</title>
-  <meta name="description" content="Use our Epifanes Polyurethane Paint Calculator to determine precise mix ratios for your marine repair projects. Calculate accurate volumes and convert units effortlessly at ChemCalc." />
-  <meta name="keywords" content="Epifanes Polyurethane, Paint Calculator, Mix Calculator, marine repair, chemical calculator, ChemCalc" />
-  <link rel="canonical" href="https://chemcalc.co/epifanespoly.html" />
-
+  <title>Awlgrip Mix Calculator – ChemCalc</title>
+  <meta name="description" content="Calculate your Awlgrip mix ratios easily with our Awlgrip Mix Calculator. Get accurate results for your marine repair projects with ChemCalc." />
+  <meta name="keywords" content="Awlgrip Mix Calculator, marine repair, chemical calculator, ChemCalc" />
+  <link rel="canonical" href="https://chemcalc.co/awlgrip.html" />
+  
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Epifanes Polyurethane Paint Calculator – ChemCalc" />
-  <meta property="og:description" content="Calculate your Epifanes Polyurethane paint mix ratios accurately with our online calculator. Perfect for marine repair projects." />
-  <meta property="og:url" content="https://chemcalc.co/epifanespoly.html" />
+  <meta property="og:title" content="Awlgrip Mix Calculator – ChemCalc" />
+  <meta property="og:description" content="Use our Awlgrip Mix Calculator to get precise mix ratios for your marine repair projects." />
+  <meta property="og:url" content="https://chemcalc.co/awlgrip.html" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
-
+  
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Epifanes Polyurethane Paint Calculator – ChemCalc" />
-  <meta name="twitter:description" content="Calculate your Epifanes Polyurethane paint mix ratios accurately with our online calculator at ChemCalc." />
+  <meta name="twitter:title" content="Awlgrip Mix Calculator – ChemCalc" />
+  <meta name="twitter:description" content="Calculate your Awlgrip mix ratios easily with our Awlgrip Mix Calculator." />
   <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
-
+  
   <!-- JSON-LD Schema Markup -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Epifanes Polyurethane Paint Calculator – ChemCalc",
-    "url": "https://chemcalc.co/epifanespoly.html",
-    "description": "Use our Epifanes Polyurethane Paint Calculator to determine precise mix ratios for marine repairs."
+    "name": "Awlgrip Mix Calculator – ChemCalc",
+    "url": "https://chemcalc.co/awlgrip.html",
+    "description": "Calculate your Awlgrip mix ratios easily with our Awlgrip Mix Calculator."
   }
   </script>
-
+  
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
   <script>
@@ -40,13 +40,13 @@
     gtag('js', new Date());
     gtag('config', 'G-DTECSH4N52');
   </script>
-
+  
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png">
-
+  
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+  
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -70,40 +70,60 @@
   </nav>
 </header><!-- #EndLibraryItem --><!-- Main Content Section -->
   <main class="container">
-    <h1 class="text-center mb-4">Epifanes Polyurethane Paint Calculator</h1>
-    <form id="epifanesForm">
-      <!-- Volume/Area Input -->
-      <div class="form-group">
-        <label for="inputValue">Volume or Area:</label>
-        <input type="number" class="form-control" id="inputValue" required>
-      </div>
-      <!-- Volume/Area Units -->
-      <div class="form-group">
-        <label for="unitType">Input Units:</label>
-        <select class="form-control" id="unitType">
-          <option value="squareFootage">Square Footage</option>
-          <option value="gallons">Gallons</option>
-          <option value="quarts">Quarts</option>
-          <option value="liters">Liters</option>
-          <option value="ounces">Ounces</option>
-          <option value="ccs">Cubic Centimeters (cc)</option>
-        </select>
-      </div>
-      <!-- Output Units -->
-      <div class="form-group">
-        <label for="outputUnitType">Output Units:</label>
-        <select class="form-control" id="outputUnitType">
-          <option value="ccs">Cubic Centimeters (cc)</option>
-          <option value="ounces">Ounces</option>
-          <option value="liters">Liters</option>
-          <option value="quarts">Quarts</option>
-          <option value="gallons">Gallons</option>
-          <option value="squareFootage">Square Footage</option>
-        </select>
-      </div>
-      <!-- Results Display -->
-      <div id="result" class="mt-4">
-        <!-- Calculator results will be displayed here -->
+    <h1 class="text-center mb-4">Awlgrip Mix Calculator</h1>
+    <form id="mixForm">
+      <div class="group-container">
+        <!-- Application Method Selection -->
+        <div class="form-group row">
+          <div class="col-12 mb-2">
+            <label for="methodType" class="grouptitle">Application Method:</label>
+            <select class="form-control" id="methodType">
+              <option value="spray">Spray</option>
+              <option value="roll">Roll</option>
+            </select>
+          </div>
+        </div>
+        <!-- Paint Type Selection -->
+        <div class="form-group">
+          <label for="paintType">Select Paint Type:</label>
+          <select class="form-control" id="paintType">
+            <option value="awlcraft2000">Awlcraft2000</option>
+            <option value="awlgrip">Awlgrip</option>
+            <option value="545primer">545 Primer</option>
+          </select>
+        </div>
+        <!-- Volume Group -->
+        <div class="form-group row">
+          <div class="col-md-6 col-12 mb-2">
+            <label for="unitType" class="grouptitle">Volume/Area Units:</label>
+            <select class="form-control" id="unitType">
+              <option value="squareFootage">Square Footage</option>
+              <option value="gallons">Gallons</option>
+              <option value="quarts">Quarts</option>
+              <option value="liters">Liters</option>
+              <option value="ounces">Ounces</option>
+              <option value="ccs">Cubic Centimeters (cc)</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-12 mb-2">
+            <label for="inputValue">Volume or Area:</label>
+            <input type="number" class="form-control" id="inputValue" required>
+          </div>
+        </div>
+        <!-- Result Unit Selection -->
+        <div class="form-group">
+          <label for="resultUnitType">Select Result Unit:</label>
+          <select class="form-control" id="resultUnitType">
+            <option value="gallons">Gallons</option>
+            <option value="quarts">Quarts</option>
+            <option value="liters">Liters</option>
+            <option value="ounces" selected>Ounces</option>
+            <option value="ccs">Cubic Centimeters (cc)</option>
+          </select>
+        </div>
+        <div id="result" class="mt-4">
+          <!-- Calculator results will be displayed here -->
+        </div>
       </div>
     </form>
     
@@ -113,7 +133,10 @@
       <div class="col-md-6">
         <div class="group-container">
           <div class="group-title">Tips and Safety</div>
-          <p><a href="https://www.epifanes.com/two-partpolyur/polyurethane?limit=12" target="_blank">Epifanes Polyurethane Product Specs</a></p>
+          <p><a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a></p>
+          <p><a href="https://specialtycoatings.brand.akzonobel.com/m/29f4b8c49efa05d0/original/Awlgrip_Topcoat_VOC_Compliant_US_only_eng_A4_20200611.pdf" target="_blank">Awlgrip Data Sheet</a></p>
+          <p><a href="https://specialtycoatings.brand.akzonobel.com/m/65415b38d8d102a/original/Awlcraft_2000_eng_A4_20211018.pdf" target="_blank">Awlcraft2000 Data Sheet</a></p>
+          <p><a href="https://specialtycoatings.brand.akzonobel.com/m/16c5bb914a6b7b71/original/545_Epoxy_Primer_eng_A4_20191018.pdf" target="_blank">545 Primer Data Sheet</a></p>
           <p><a href="legal.html">Legal Disclaimer</a></p>
         </div>
       </div>
@@ -122,7 +145,7 @@
         <div class="group-container">
           <div class="group-title">Other Calcs</div>
           <p><a href="mekpcalc.html">MEKp Mix Calculator</a></p>
-          <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
+          <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
         </div>
       </div>
     </div>
@@ -166,21 +189,21 @@
 <!-- Footer Section -->
 <footer class="container footer text-center">
   <div class="legal-links">
-    <a href="Library/privacy.html">Privacy Policy</a> |
-    <a href="Library/terms.html">Terms of Use</a> |
-    <a href="Library/cookie.html">Cookie Policy</a>
+    <a href="../../Library/privacy.html">Privacy Policy</a> |
+    <a href="../../Library/terms.html">Terms of Use</a> |
+    <a href="../../Library/cookie.html">Cookie Policy</a>
   </div>
   <p>&copy; 2025 ChemCalc. All rights reserved.</p>
   <div class="powered-by">
     <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" />
+    <img src="../../images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" />
   </div>
 </footer><!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <!-- Custom JS -->
-<script src="epifanesScript.js"></script>
+<script src="awlgripscript.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
