@@ -1,140 +1,134 @@
-const unitConversionRates = {
-  squareFootage: { ccs: 1 }, // Placeholder ratio, adjust as needed
-  gallons: { liters: 3.78541, quarts: 4, ounces: 128, ccs: 3785.41 },
-  liters: { gallons: 0.264172, quarts: 1.05669, ounces: 33.814, ccs: 1000 },
-  quarts: { gallons: 0.25, liters: 0.946353, ounces: 32, ccs: 946.353 },
-  ounces: { gallons: 0.0078125, liters: 0.0295735, quarts: 0.03125, ccs: 29.5735 },
-  ccs: { gallons: 0.000264172, liters: 0.001, quarts: 0.00105669, ounces: 0.033814 }
-};
-
-/**
- * Converts a volume from one unit to another.
- *
- * @param {number} volume - The volume to convert.
- * @param {string} fromUnit - The unit to convert from.
- * @param {string} toUnit - The unit to convert to.
- * @returns {number} The converted volume.
- */
-function convertUnits(volume, fromUnit, toUnit) {
-  let numericVolume = parseFloat(volume);
-  if (isNaN(numericVolume)) {
-    return "Conversion Error";
-  }
-
-  return fromUnit === toUnit ? numericVolume.toFixed(2) : (numericVolume * (unitConversionRates[fromUnit][toUnit] || 0)).toFixed(2);
-}
-
-/**
- * Calculates the coverage of a given paint type.
- *
- * @param {string} paintType - The paint type.
- * @param {number} area - The area to be painted.
- * @param {string} methodType - The application method.
- * @returns {number} The coverage in the selected result unit.
- */
-function calculatePaintCoverage(paintType, area, methodType) {
-  let coveragePerGallon;
-  switch (paintType) {
-    case '545primer':
-      coveragePerGallon = methodType === 'spray' ? 317.8 : 635.6; // Adjusted values based on data sheet
-      break;
-    case 'awlgrip':
-      coveragePerGallon = methodType === 'spray' ? 542.9 : 814.8; // Adjusted values based on data sheet
-      break;
-    case 'awlcraft2000':
-      coveragePerGallon = 725.2; // Adjusted values based on data sheet
-      break;
-    default:
-      return "Coverage Error";
-  }
-
-  return area ? (area / coveragePerGallon).toFixed(2) : "0.00";
-}
-
-/**
- * Calculates the paint needs for a given paint type, input value, unit type, result unit type, and method type.
- *
- * @param {string} paintType - The paint type.
- * @param {number} inputValue - The input value.
- * @param {string} unitType - The input unit type.
- * @param {string} resultUnitType - The result unit type.
- * @param {string} methodType - The application method.
- * @returns {object} The calculated paint needs, including the paint, converter, and reducer.
- */
-function calculatePaintNeeds(paintType, inputValue, unitType, resultUnitType, methodType) {
-  const inputValueNum = parseFloat(inputValue);
-  if (isNaN(inputValueNum)) {
-    return { paint: "Error", converter: "Error", reducer: "Error" };
-  }
-
-  let paintVolumeInCCs = convertUnits(inputValueNum, unitType, 'ccs');
-  if (paintVolumeInCCs === "Conversion Error") return { paint: "Error", converter: "Error", reducer: "Error" };
-
-  let converterRatio, reducerRatio;
-  switch (paintType) {
-    case '545primer':
-      converterRatio = 1; // 1:1 ratio
-      reducerRatio = methodType === 'spray' ? 0.25 : 0.15; // Adjusted based on data sheet
-      break;
-    case 'awlgrip':
-      converterRatio = methodType === 'spray' ? 1 : 0.5; // 1:1 for spray, 2:1 for roll
-      reducerRatio = methodType === 'spray' ? 0.25 : 0.20; // Adjusted based on data sheet
-      break;
-    case 'awlcraft2000':
-      converterRatio = 0.5; // 2:1 ratio for spray
-      reducerRatio = 0.33; // 33% reduction for spray
-      break;
-    default:
-      converterRatio = reducerRatio = 0; // Unsupported types/methods
-  }
-
-  let converterVolumeInCCs = paintVolumeInCCs * converterRatio;
-  let reducerVolumeInCCs = paintVolumeInCCs * reducerRatio;
-
-  return {
-    paint: convertUnits(paintVolumeInCCs, 'ccs', resultUnitType),
-    converter: convertUnits(converterVolumeInCCs, 'ccs', resultUnitType),
-    reducer: convertUnits(reducerVolumeInCCs, 'ccs', resultUnitType)
+/* awlgripscript.js – area-aware result-unit selector & mL (cc) label */
+document.addEventListener('DOMContentLoaded', () => {
+  /* unit sets */
+  const unitsFor = {
+    imperial: ['squareFootage','gallons','quarts','ounces'],
+    metric:   ['squareMeters','liters','ccs']
   };
-}
+  const labels = {
+    squareFootage:'ft²', squareMeters:'m²',
+    gallons:'Gallons', quarts:'Quarts', ounces:'Ounces',
+    liters:'Liters',  ccs:'mL (cc)'
+  };
 
-function updateResults() {
-  const methodType = document.getElementById('methodType').value;
-  const paintTypeSelect = document.getElementById('paintType');
-  const paintType = paintTypeSelect.value;
-		const inputValue = document.getElementById("inputValue");
-    const unitType = document.getElementById('unitType').value;
-    const resultUnitType = document.getElementById('resultUnitType').value;
+  /* coverage ft²/gal + coats */
+  const cov = {
+    awlgrip:{spray:{c:542.9,k:3},roll:{c:814.8,k:2}},
+    awlcraft2000:{spray:{c:725.2,k:3}},
+    '545primer':{spray:{c:317.8,k:2},roll:{c:635.6,k:2}}
+  };
 
-  for (let option of paintTypeSelect.options) {
-    option.disabled = (option.value === 'awlcraft2000' && methodType === 'roll');
+  /* DOM */
+  const sys=document.getElementById('unitSystem');
+  const inU=document.getElementById('unitType');
+  const resRow=document.getElementById('resultUnitRow');
+  const resU=document.getElementById('resultUnit');
+  const method=document.getElementById('methodType');
+  const paint=document.getElementById('paintType');
+  const val=document.getElementById('inputValue');
+  const outP=document.getElementById('resultPaint');
+  const outC=document.getElementById('resultConverter');
+  const outR=document.getElementById('resultReducer');
+  const outCov=document.getElementById('resultCoverage');
+
+  /* conversions */
+  const cv={
+    squareFootage:{ccs:1}, squareMeters:{ccs:1},
+    gallons:{liters:3.78541,quarts:4,ounces:128,ccs:3785.41},
+    liters:{gallons:0.264172,quarts:1.05669,ounces:33.814,ccs:1000},
+    quarts:{gallons:0.25,liters:0.946353,ounces:32,ccs:946.353},
+    ounces:{gallons:0.0078125,liters:0.0295735,quarts:0.03125,ccs:29.5735},
+    ccs:{gallons:0.000264172,liters:0.001,quarts:0.00105669,ounces:0.033814}
+  };
+  const convert=(v,f,t)=>{const n=+v;if(isNaN(n))return null;if(f===t)return n;const r=(cv[f]||{})[t];return r?n*r:null;};
+
+  /* ratios */
+  const ratios=(p,m)=>{
+    switch(p){
+      case'545primer':return{conv:1,red:m==='spray'?0.25:0.15};
+      case'awlgrip':return{conv:m==='spray'?1:0.5,red:m==='spray'?0.25:0.2};
+      case'awlcraft2000':return{conv:0.5,red:0.33};
+      default:return{conv:0,red:0};
+    }
+  };
+
+  /* populate dropdowns */
+  function populateLists(){
+    /* input list */
+    inU.innerHTML='';
+    unitsFor[sys.value].forEach(u=>inU.add(new Option(labels[u],u)));
+
+    /* result list = volume units only */
+    const volUnits = sys.value==='imperial'?['gallons','quarts','ounces']:['liters','ccs'];
+    resU.innerHTML='';
+    volUnits.forEach(u=>resU.add(new Option(labels[u],u)));
   }
 
-  let inputValueNum = parseFloat(inputValue.value);
-  if (isNaN(inputValueNum)) {
-    return;
+  /* show/hide result-unit row */
+  function toggleResRow(){
+    const isArea=['squareFootage','squareMeters'].includes(inU.value);
+    resRow.classList.toggle('d-none',!isArea);
   }
 
-  let result;
-  if (methodType === 'roll' && paintType === 'awlcraft2000') {
-    paintTypeSelect.value = 'awlgrip';
-    result = calculatePaintNeeds(paintType, inputValueNum, unitType, resultUnitType, methodType);
-  } else {
-    result = calculatePaintNeeds(paintType, inputValueNum, unitType, resultUnitType, methodType);
+  /* calc */
+  function calc(){
+    toggleResRow();
+    paint.querySelector('[value=\"awlcraft2000\"]').disabled=(method.value==='roll');
+
+    if(!val.value){reset();return;}
+    const inUnit=inU.value, sysType=sys.value;
+    const isArea=['squareFootage','squareMeters'].includes(inUnit);
+
+    /* volume in cc */
+    let cc;
+    if(isArea){
+      const ci=(cov[paint.value]||{})[method.value];
+      if(!ci){reset('—');return;}
+      const areaFt2=inUnit==='squareFootage'?+val.value:+val.value*10.7639;
+      const gallons=(areaFt2/ci.c)*ci.k;
+      cc=gallons*3785.41;
+    }else{
+      cc=convert(val.value,inUnit,'ccs');
+    }
+    if(cc===null){reset('Err');return;}
+
+    /* mix */
+    const {conv,red}=ratios(paint.value,method.value);
+    const convCC=cc*conv, redCC=cc*red;
+
+    /* output unit */
+    const outUnit=isArea?resU.value:inUnit;
+    const pVol=convert(cc,'ccs',outUnit)?.toFixed(2)??'Err';
+    const cVol=convert(convCC,'ccs',outUnit)?.toFixed(2)??'Err';
+    const rVol=convert(redCC,'ccs',outUnit)?.toFixed(2)??'Err';
+
+    outP.textContent=`Paint: ${pVol} ${labels[outUnit]}`;
+    outC.textContent=`Catalyst / Activator: ${cVol} ${labels[outUnit]}`;
+    outR.textContent=`Reducer: ${rVol} ${labels[outUnit]}`;
+
+    if(cov[paint.value]&&cov[paint.value][method.value]){
+      const d=cov[paint.value][method.value];
+      const covStr=sysType==='imperial'
+        ? `${d.c.toFixed(0)} ft²/gal`
+        : `${(d.c/10.7639).toFixed(0)} m²/L`;
+      outCov.textContent=`Coverage: ${covStr} • Recommended coats: ${d.k}`;
+    }else outCov.textContent='';
   }
 
-  document.getElementById('result').innerHTML = `
-        <p>Amount of paint needed: <strong>${result.paint} ${resultUnitType}</strong></p>
-        <p>Converter: <strong>${result.converter} ${resultUnitType}</strong></p>
-        <p>Reducer: <strong>${result.reducer} ${resultUnitType}</strong></p>`;
-}
+  const reset=(msg='—')=>{
+    outP.textContent=`Paint: ${msg}`;
+    outC.textContent=`Catalyst / Activator: ${msg}`;
+    outR.textContent=`Reducer: ${msg}`;
+    outCov.textContent='';
+  };
 
-// Attach event listeners to form elements
-document.getElementById('methodType').addEventListener('change', updateResults);
-document.getElementById('paintType').addEventListener('change', updateResults);
-document.getElementById('unitType').addEventListener('input', updateResults);
-document.getElementById('resultUnitType').addEventListener('input', updateResults);
-document.getElementById("inputValue").addEventListener("input", updateResults);
+  /* listeners */
+  sys.addEventListener('change',()=>{populateLists();calc();});
+  inU.addEventListener('change',calc);
+  resU.addEventListener('change',calc);
+  method.addEventListener('change',calc);
+  paint.addEventListener('change',calc);
+  val.addEventListener('input',calc);
 
-// Initial call to update results based on default form values
-updateResults();
+  populateLists();calc();
+});
