@@ -1,270 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Basic Meta & SEO -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fiberglass Cloth Resin Calculator – ChemCalc</title>
-  <meta name="description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements." />
-  <meta name="keywords" content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc" />
-  <link rel="canonical" href="https://chemcalc.co/fiberglass_calculator.html" />
+  <meta name="description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements."/>
+  <meta name="keywords"    content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc"/>
+  <link rel="canonical"    href="https://chemcalc.co/clothcalc.html"/>
 
-  <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Fiberglass Cloth Resin Calculator – ChemCalc" />
-  <meta property="og:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units." />
-  <meta property="og:url" content="https://chemcalc.co/fiberglass_calculator.html" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  <!-- Open Graph -->
+  <meta property="og:title"       content="Fiberglass Cloth Resin Calculator – ChemCalc"/>
+  <meta property="og:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units."/>
+  <meta property="og:url"         content="https://chemcalc.co/clothcalc.html"/>
+  <meta property="og:type"        content="website"/>
+  <meta property="og:image"       content="https://chemcalc.co/images/chemcalc-og.jpg"/>
 
-  <!-- Twitter Card Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Fiberglass Cloth Resin Calculator – ChemCalc" />
-  <meta name="twitter:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar." />
-  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image"/>
+  <meta name="twitter:title"       content="Fiberglass Cloth Resin Calculator – ChemCalc"/>
+  <meta name="twitter:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar."/>
+  <meta name="twitter:image"       content="https://chemcalc.co/images/chemcalc-og.jpg"/>
 
-  <!-- JSON-LD Schema Markup -->
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Fiberglass Cloth Resin Calculator – ChemCalc",
-    "url": "https://chemcalc.co/fiberglass_calculator.html",
-    "description": "Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar."
+    "@context":"https://schema.org",
+    "@type":"WebPage",
+    "name":"Fiberglass Cloth Resin Calculator – ChemCalc",
+    "url":"https://chemcalc.co/clothcalc.html",
+    "description":"Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar."
   }
   </script>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png">
+  <!-- Favicon & CSS -->
+  <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css">
-  
   <style>
-    .card{margin-bottom:1.5rem}.card-title{font-size:1.25rem;font-weight:600}.badge-info{background:#17a2b8}
-    .recommended-method {background-color: rgba(40, 167, 69, 0.1); border-left: 4px solid #28a745; padding: 10px;}
-    .result-label {font-weight: bold; color: #495057;}
-    .result-explanation {font-style: italic; color: #6c757d; font-size: 0.9rem; margin-top: 0.25rem;}
-    .weight-result {font-size: 1.25rem; font-weight: 700;}
-    .ratio-highlight {background-color: rgba(0, 123, 255, 0.1); border-left: 4px solid #007bff; padding: 10px; margin-top: 15px;}
-    .ratio-value {font-size: 1.15rem; font-weight: 600; color: #007bff;}
+    .card                { margin-bottom:1.5rem; }
+    .card-title          { font-size:1.25rem; font-weight:600; }
+    .badge-info          { background:#17a2b8; }
+    .recommended-method  { background:rgba(40,167,69,0.1); border-left:4px solid #28a745; padding:10px; }
+    .result-label        { font-weight:bold; color:#495057; }
+    .result-explanation  { font-style:italic; color:#6c757d; font-size:0.9rem; margin-top:0.25rem; }
+    .weight-result       { font-size:1.25rem; font-weight:700; }
+    .ratio-highlight     { background:rgba(0,123,255,0.1); border-left:4px solid #007bff; padding:10px; margin-top:15px; }
+    .ratio-value         { font-size:1.15rem; font-weight:600; color:#007bff; }
+
+    /* Hide elements in print */
+    @media print {
+      .no-print           { display:none !important; }
+      .d-print-block      { display:block !important; }
+      body                { margin:0; padding:0; }
+      h1, h2              { font-size:20pt; }
+      p, li               { font-size:12pt; }
+      .weight-result, .ratio-value { font-size:16pt; font-weight:bold; }
+    }
+    /* By default, print-only elements are hidden */
+    .d-print-block { display:none; }
   </style>
 </head>
+
 <body>
-  <!-- Header Section -->
-  <header class="container header text-center">
+  <!-- Header (included in print) -->
+  <header class="container header text-center no-print">
     <h1>ChemCalc</h1>
     <div class="powered-by-header">
       <span>Powered by</span>
-      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
+      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo"/>
     </div>
-    <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2">☰</button>
-    <nav id="mainNav" class="nav justify-content-center">
-      <a href="index.html" class="nav-link">Home</a>
+    <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2 no-print">☰</button>
+    <nav id="mainNav" class="nav justify-content-center no-print">
+      <a href="index.html"      class="nav-link">Home</a>
       <a href="calculators.html" class="nav-link">Calculators</a>
-      <a href="services.html" class="nav-link">Services</a>
-      <a href="kits.html" class="nav-link">Kits</a>
-      <a href="about.html" class="nav-link">About</a>
-      <a href="contact.html" class="nav-link">Contact</a>
+      <a href="services.html"    class="nav-link">Services</a>
+      <a href="kits.html"        class="nav-link">Kits</a>
+      <a href="about.html"       class="nav-link">About</a>
+      <a href="contact.html"     class="nav-link">Contact</a>
     </nav>
   </header>
 
-  <!-- Main Content Section -->
   <main class="container">
-    <h1 class="text-center mb-4">Fiberglass Cloth Resin Calculator</h1>
-
-    <!-- Measurement System -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Measurement System</h5>
-        <select id="unitSystem" class="form-control">
-          <option value="imperial" selected>Imperial (oz, ft², gal)</option>
-          <option value="metric">Metric (g, m², L)</option>
-        </select>
-      </div>
+    <!-- PRINT SUMMARY -->
+    <div id="printSummary" class="d-print-block mb-4">
+      <h2>Calculation Summary</h2>
+      <p>URL: <span id="printUrl"></span></p>
+      <p>Measurement System: <span id="printUnitSystem"></span></p>
+      <p>Material Type: <span id="printMaterialType"></span></p>
+      <p>Cloth Type: <span id="printClothType"></span></p>
+      <p>Resin Type: <span id="printResinType"></span></p>
+      <p>Surface Area: <span id="printSurfaceArea"></span> <span id="printAreaUnit"></span></p>
     </div>
 
-    <!-- Material Type -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Material Type</h5>
-        <select id="materialType" class="form-control">
-          <option value="fiberglass" selected>Fiberglass</option>
-          <option value="carbon">Carbon Fiber</option>
-          <option value="kevlar">Kevlar</option>
-        </select>
-      </div>
+    <!-- QR CODE FOR PRINT -->
+    <div id="printQrContainer" class="d-print-block text-center mb-4">
+      <img id="printQr" src="" alt="QR Code" width="100" height="100"/>
+      <p class="small">Scan to return to this calculator</p>
     </div>
 
-    <!-- Cloth Type -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Cloth Type</h5>
-        <select id="clothType" class="form-control"></select>
-        <small id="clothTypeHelp" class="form-text text-muted">Select the specific type of cloth you're using</small>
+    <!-- INPUT SECTION -->
+    <div id="inputSection" class="no-print">
+      <!-- 1. Measurement System -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Measurement System</h5>
+          <select id="unitSystem" class="form-control">
+            <option value="imperial" selected>Imperial (oz, ft², gal)</option>
+            <option value="metric">Metric (g, m², L)</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <!-- Resin Type -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Resin Type</h5>
-        <select id="resinType" class="form-control">
-          <option value="polyester" selected>Polyester Resin</option>
-          <option value="epoxy">Epoxy Resin</option>
-          <option value="vinylester">Vinylester Resin</option>
-        </select>
-        <small id="resinTypeHelp" class="form-text text-muted">Different resins have different saturation rates</small>
+      <!-- 2. Material Type -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Material Type</h5>
+          <select id="materialType" class="form-control">
+            <option value="fiberglass" selected>Fiberglass</option>
+            <option value="carbon">Carbon Fiber</option>
+            <option value="kevlar">Kevlar</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <!-- Surface Area -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Surface Area</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <input type="number" id="surfaceArea" class="form-control" placeholder="Enter area" min="0" step="0.01">
+      <!-- 3. Cloth Type + Thumbnail -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Cloth Type</h5>
+          <div class="d-flex align-items-center">
+            <select id="clothType" class="form-control"></select>
+            <img id="clothThumbnail"
+                 src="images/placeholder.svg"
+                 alt=""
+                 class="ml-3 img-fluid"
+                 width="60" height="60"/>
           </div>
-          <div class="col-md-6">
-            <select id="areaUnit" class="form-control"></select>
+          <small class="form-text text-muted">Select the specific type of cloth you're using</small>
+        </div>
+      </div>
+
+      <!-- 4. Resin Type -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Resin Type</h5>
+          <select id="resinType" class="form-control">
+            <option value="polyester" selected>Polyester Resin</option>
+            <option value="epoxy">Epoxy Resin</option>
+            <option value="vinylester">Vinylester Resin</option>
+          </select>
+          <small class="form-text text-muted">Different resins have different saturation rates</small>
+        </div>
+      </div>
+
+      <!-- 5. Surface Area -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Surface Area</h5>
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <input type="number"
+                     id="surfaceArea"
+                     class="form-control"
+                     placeholder="Enter area"
+                     min="0" step="0.01"/>
+            </div>
+            <div class="col-md-6 mb-2">
+              <select id="areaUnit" class="form-control"></select>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Result Units -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Result Units</h5>
-        <div class="row">
-          <div class="col-md-6">
-            <label for="volumeResultUnit">Volume Units</label>
-            <select id="volumeResultUnit" class="form-control"></select>
-          </div>
-          <div class="col-md-6">
-            <label for="weightResultUnit">Weight Units</label>
-            <select id="weightResultUnit" class="form-control"></select>
+      <!-- 6. Result Units -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Result Units</h5>
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label for="volumeResultUnit">Volume Units</label>
+              <select id="volumeResultUnit" class="form-control"></select>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="weightResultUnit">Weight Units</label>
+              <select id="weightResultUnit" class="form-control"></select>
+            </div>
           </div>
         </div>
       </div>
+    </div> <!-- end inputSection -->
+
+    <!-- 7. Print Button -->
+    <div class="text-center mb-3 no-print">
+      <button id="printButton" class="btn btn-secondary">Print Results</button>
     </div>
 
-    <!-- Results -->
+    <!-- 8. Results Card -->
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Your Resin Requirements</h5>
-        
+
         <div class="alert alert-info mb-3">
           <strong>Note:</strong> For most accurate results, measure resin by weight rather than volume.
         </div>
-        
+
         <div class="recommended-method mb-3">
           <div class="result-label">Recommended Method: Measure By Weight</div>
           <p id="resinWeight">Resin Weight: <span class="weight-result">—</span></p>
           <p class="result-explanation">Weight measurement provides the most consistent results and is preferred by professionals.</p>
         </div>
-        
+
         <div class="mb-3">
           <div class="result-label">Alternative Method: Measure By Volume</div>
-          <p id="resinVolume">Resin Volume: <span>—</span></p>
+          <p id="resinVolume">Resin Volume: <span class="weight-result">—</span></p>
           <p class="result-explanation">Volume can vary with temperature and between batches. Use only if weight measurement is not available.</p>
         </div>
-        
-        <p id="clothWeight">Cloth Weight: <span>—</span></p>
-        
-        <hr>
-        
+
+        <p id="clothWeight" class="result-label">Cloth Weight: <span class="weight-result">—</span></p>
+
+        <hr/>
+
         <div class="ratio-highlight">
           <div class="result-label">Resin-to-Cloth Ratio:</div>
           <p id="resinRatio"><span class="ratio-value">—</span></p>
           <p class="result-explanation">This ratio shows how much resin is needed relative to the cloth weight.</p>
         </div>
-        
+
         <p id="coverageInfo" class="small text-muted mt-3"></p>
-        
+
         <div id="whyDifferent" class="mt-3 small text-muted">
-          <p><strong>Why are volume and weight measurements so different?</strong><br>
-          Resin is less dense than water, so its volume measurement is much larger than its weight measurement. 
-          For example, 3 oz of resin by weight may equal about 41 fl oz by volume because resin is lightweight for its volume.</p>
+          <p><strong>Why are volume and weight measurements so different?</strong><br/>
+          Resin is less dense than water, so its volume measurement can be much larger than its weight measurement.</p>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Tips & Safety / Other Calcs -->
-  <div class="container">
-    <div class="row mt-4">
-      <div class="col-md-6 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Tips &amp; Safety</h5>
-            <p>Always work in a well-ventilated area when using resins</p>
-            <p>Use appropriate personal protective equipment</p>
-            <p><a href="legal.html">Legal Disclaimer</a></p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Other Calcs</h5>
-            <p><a href="mekpcalc.html">MEKp Mix Calculator</a></p>
-            <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
-            <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
-	<!-- Donation Button -->
-	<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
-	<!-- Donation Modal (updated with PayPal snippet) -->
-	<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-				<div class="modal-header" style="border-bottom: 1px solid #48484a;">
-					<h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
-				</div>
-				<div class="modal-body">
-					<p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
-					<p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
-					<hr style="border-color: #48484a;">
-					<div class="donation-options">
-						<form action="https://www.paypal.com/donate" method="post" target="_top">
-							<input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
-							<input type="hidden" name="no_recurring" value="0" />
-							<input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
-							<input type="hidden" name="currency_code" value="USD" />
-							<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-							<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-						</form>
-					</div>
-				</div>
-				<div class="modal-footer" style="border-top: 1px solid #48484a;">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Footer Section -->
-	<footer class="footer text-center">
-		<div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
-		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
-		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
-	</footer>
-<!-- #EndLibraryItem -->
-	
-	<!-- Bootstrap JS (with Popper.js and jQuery) -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  
-  <!-- Custom JS -->
   <script src="fiberglass_calculator.js"></script>
 </body>
 </html>
