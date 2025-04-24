@@ -254,9 +254,7 @@ h1 {
     vertical-align: middle;
 }
 
-/* ==========================================================================
-   FOOTER – Centered and Matching Site Styles
-   ========================================================================== */
+/* FOOTER – Centered and Matching Site Styles */
 .footer.text-center {
     background-color: #2c2c2e;
     padding: 1em;
@@ -280,4 +278,86 @@ h1 {
 }
 .footer.text-center .powered-by {
     margin-top: 0.5em;
+}
+
+/* === ClothCalc-specific styles === */
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.badge-info {
+    background-color: #17a2b8;
+}
+.recommended-method {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 4px solid #28a745;
+    padding: 10px;
+}
+.result-label {
+    font-weight: bold;
+    color: #495057;
+}
+.result-explanation {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+.weight-result {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.ratio-highlight {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-left: 4px solid #007bff;
+    padding: 10px;
+    margin-top: 15px;
+}
+.ratio-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #007bff;
+}
+
+/* Donation Modal Customizations */
+.modal-content-custom {
+    background-color: #2c2c2e;
+    color: #ffffff;
+    border: none;
+}
+.modal-header-custom {
+    border-bottom: 1px solid #48484a;
+}
+.modal-footer-custom {
+    border-top: 1px solid #48484a;
+}
+
+/* Print Styles */
+.no-print {
+    display: none !important;
+}
+.d-print-block {
+    display: none;
+}
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    .d-print-block {
+        display: block !important;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    h1, h2 {
+        font-size: 20pt;
+    }
+    p, li {
+        font-size: 12pt;
+    }
+    .weight-result, .ratio-value {
+        font-size: 16pt;
+        font-weight: bold;
+    }
 }
