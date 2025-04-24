@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiberglass Cloth Resin Calculator – ChemCalc</title>
+  <meta name="description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements." />
+  <meta name="keywords" content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc" />
+  <link rel="canonical" href="https://chemcalc.co/fiberglass_calculator.html" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Fiberglass Cloth Resin Calculator – ChemCalc" />
+  <meta property="og:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units." />
+  <meta property="og:url" content="https://chemcalc.co/fiberglass_calculator.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fiberglass Cloth Resin Calculator – ChemCalc" />
+  <meta name="twitter:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Fiberglass Cloth Resin Calculator – ChemCalc",
+    "url": "https://chemcalc.co/fiberglass_calculator.html",
+    "description": "Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar."
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    .card{margin-bottom:1.5rem}.card-title{font-size:1.25rem;font-weight:600}.badge-info{background:#17a2b8}
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="container header text-center">
+    <h1>ChemCalc</h1>
+    <div class="powered-by-header">
+      <span>Powered by</span>
+      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
+    </div>
+    <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2">☰</button>
+    <nav id="mainNav" class="nav justify-content-center">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="calculators.html" class="nav-link">Calculators</a>
+      <a href="services.html" class="nav-link">Services</a>
+      <a href="kits.html" class="nav-link">Kits</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Main Content Section -->
+  <main class="container">
+    <h1 class="text-center mb-4">Fiberglass Cloth Resin Calculator</h1>
+
+    <!-- Measurement System -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Measurement System</h5>
+        <select id="unitSystem" class="form-control">
+          <option value="imperial" selected>Imperial (oz, ft², gal)</option>
+          <option value="metric">Metric (g, m², L)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Material Type -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Material Type</h5>
+        <select id="materialType" class="form-control">
+          <option value="fiberglass" selected>Fiberglass</option>
+          <option value="carbon">Carbon Fiber</option>
+          <option value="kevlar">Kevlar</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Cloth Type -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Cloth Type</h5>
+        <select id="clothType" class="form-control"></select>
+        <small id="clothTypeHelp" class="form-text text-muted">Select the specific type of cloth you're using</small>
+      </div>
+    </div>
+
+    <!-- Resin Type -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Resin Type</h5>
+        <select id="resinType" class="form-control">
+          <option value="polyester" selected>Polyester Resin</option>
+          <option value="epoxy">Epoxy Resin</option>
+          <option value="vinylester">Vinylester Resin</option>
+        </select>
+        <small id="resinTypeHelp" class="form-text text-muted">Different resins have different saturation rates</small>
+      </div>
+    </div>
+
+    <!-- Surface Area -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Surface Area</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <input type="number" id="surfaceArea" class="form-control" placeholder="Enter area" min="0" step="0.01">
+          </div>
+          <div class="col-md-6">
+            <select id="areaUnit" class="form-control"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Your Resin Requirements</h5>
+        <p id="clothWeight">Cloth Weight: <span>—</span></p>
+        <p id="resinVolume">Resin Volume: <span>—</span></p>
+        <p id="resinWeight">Resin Weight: <span>—</span></p>
+        <hr>
+        <p id="resinRatio" class="small text-muted">Resin-to-cloth ratio: <span>—</span></p>
+        <p id="coverageInfo" class="small text-muted"></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Tips & Safety / Other Calcs -->
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tips &amp; Safety</h5>
+            <p>Always work in a well-ventilated area when using resins</p>
+            <p>Use appropriate personal protective equipment</p>
+            <p><a href="legal.html">Legal Disclaimer</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Other Calcs</h5>
+            <p><a href="mekpcalc.html">MEKp Mix Calculator</a></p>
+            <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
+            <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+	<!-- Donation Button -->
+	<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
+	<!-- Donation Modal (updated with PayPal snippet) -->
+	<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
+				<div class="modal-header" style="border-bottom: 1px solid #48484a;">
+					<h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
+				</div>
+				<div class="modal-body">
+					<p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+					<p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+					<hr style="border-color: #48484a;">
+					<div class="donation-options">
+						<form action="https://www.paypal.com/donate" method="post" target="_top">
+							<input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+							<input type="hidden" name="no_recurring" value="0" />
+							<input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+							<input type="hidden" name="currency_code" value="USD" />
+							<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+							<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer" style="border-top: 1px solid #48484a;">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Footer Section -->
+	<footer class="footer text-center">
+		<div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
+		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
+		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
+	</footer>
+<!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <!-- Custom JS -->
+  <script src="fiberglass_calculator.js"></script>
+</body>
+</html>
