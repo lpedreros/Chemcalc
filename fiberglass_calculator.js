@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const resinTypeSelect = document.getElementById('resinType');
   const surfaceAreaInput = document.getElementById('surfaceArea');
   const areaUnitSelect = document.getElementById('areaUnit');
+  const volumeResultUnitSelect = document.getElementById('volumeResultUnit');
+  const weightResultUnitSelect = document.getElementById('weightResultUnit');
   
   // Result Elements
   const clothWeightResult = document.getElementById('clothWeight').querySelector('span');
@@ -92,16 +94,24 @@ document.addEventListener('DOMContentLoaded', () => {
       imperial: {
         // To fluid ounces
         'fl oz': 1,
-        'cup': 8,
-        'pint': 16,
         'quart': 32,
         'gallon': 128
       },
       metric: {
         // To milliliters
         'mL': 1,
-        'L': 1000,
-        'cm³': 1
+        'cc': 1,
+        'L': 1000
+      }
+    },
+    // Weight conversions
+    weight: {
+      imperial: {
+        'oz': 1
+      },
+      metric: {
+        'g': 1,
+        'kg': 1000
       }
     },
     // Density of resins (for weight calculations)
@@ -135,6 +145,37 @@ document.addEventListener('DOMContentLoaded', () => {
       option.value = unit;
       option.textContent = unit;
       areaUnitSelect.appendChild(option);
+    });
+  }
+
+  // Initialize result unit options based on measurement system
+  function updateResultUnits() {
+    const system = unitSystemSelect.value;
+    
+    // Update volume result units
+    volumeResultUnitSelect.innerHTML = '';
+    const volumeUnits = system === 'imperial' 
+      ? ['fl oz', 'quart', 'gallon'] 
+      : ['mL', 'cc', 'L'];
+    
+    volumeUnits.forEach(unit => {
+      const option = document.createElement('option');
+      option.value = unit;
+      option.textContent = unit;
+      volumeResultUnitSelect.appendChild(option);
+    });
+    
+    // Update weight result units
+    weightResultUnitSelect.innerHTML = '';
+    const weightUnits = system === 'imperial' 
+      ? ['oz'] 
+      : ['g', 'kg'];
+    
+    weightUnits.forEach(unit => {
+      const option = document.createElement('option');
+      option.value = unit;
+      option.textContent = unit;
+      weightResultUnitSelect.appendChild(option);
     });
   }
 
@@ -241,42 +282,48 @@ document.addEventListener('DOMContentLoaded', () => {
     displayResults(totalClothWeight, resinVolume, resinWeight, resinRatio, system, clothData, resinType);
   }
   
+  // Convert volume to selected unit
+  function convertVolume(volume, fromUnit, toUnit, system) {
+    // All volumes are stored in base units (fl oz for imperial, mL for metric)
+    if (fromUnit === toUnit) return volume;
+    
+    // Get conversion factor
+    const factor = conversions.volume[system][toUnit];
+    if (!factor) return volume;
+    
+    return volume / factor;
+  }
+  
+  // Convert weight to selected unit
+  function convertWeight(weight, fromUnit, toUnit, system) {
+    // All weights are stored in base units (oz for imperial, g for metric)
+    if (fromUnit === toUnit) return weight;
+    
+    // Get conversion factor
+    const factor = conversions.weight[system][toUnit];
+    if (!factor) return weight;
+    
+    return weight / factor;
+  }
+  
   // Display calculation results
   function displayResults(clothWeight, resinVolume, resinWeight, ratio, system, clothData, resinType) {
+    // Get selected result units
+    const volumeUnit = volumeResultUnitSelect.value;
+    const weightUnit = weightResultUnitSelect.value;
+    
     // Format cloth weight
     const clothWeightFormatted = system === 'imperial' 
       ? clothWeight.toFixed(2) + ' oz' 
       : clothWeight.toFixed(2) + ' g';
     
-    // Format resin volume
-    let volumeUnit, volumeValue;
-    if (system === 'imperial') {
-      if (resinVolume < 32) {
-        volumeUnit = 'fl oz';
-        volumeValue = resinVolume;
-      } else if (resinVolume < 128) {
-        volumeUnit = 'cups';
-        volumeValue = resinVolume / 8;
-      } else {
-        volumeUnit = 'gallons';
-        volumeValue = resinVolume / 128;
-      }
-    } else {
-      if (resinVolume < 1000) {
-        volumeUnit = 'mL';
-        volumeValue = resinVolume;
-      } else {
-        volumeUnit = 'L';
-        volumeValue = resinVolume / 1000;
-      }
-    }
+    // Convert and format resin volume based on selected unit
+    const convertedVolume = convertVolume(resinVolume, system === 'imperial' ? 'fl oz' : 'mL', volumeUnit, system);
+    const resinVolumeFormatted = convertedVolume.toFixed(2) + ' ' + volumeUnit;
     
-    const resinVolumeFormatted = volumeValue.toFixed(2) + ' ' + volumeUnit;
-    
-    // Format resin weight
-    const resinWeightFormatted = system === 'imperial' 
-      ? resinWeight.toFixed(2) + ' oz' 
-      : resinWeight.toFixed(2) + ' g';
+    // Convert and format resin weight based on selected unit
+    const convertedWeight = convertWeight(resinWeight, system === 'imperial' ? 'oz' : 'g', weightUnit, system);
+    const resinWeightFormatted = convertedWeight.toFixed(2) + ' ' + weightUnit;
     
     // Update result elements
     clothWeightResult.textContent = clothWeightFormatted;
@@ -311,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listeners
   unitSystemSelect.addEventListener('change', () => {
     updateAreaUnits();
+    updateResultUnits();
     updateClothTypes();
     calculate();
   });
@@ -324,8 +372,11 @@ document.addEventListener('DOMContentLoaded', () => {
   resinTypeSelect.addEventListener('change', checkResinCompatibility);
   surfaceAreaInput.addEventListener('input', calculate);
   areaUnitSelect.addEventListener('change', calculate);
+  volumeResultUnitSelect.addEventListener('change', calculate);
+  weightResultUnitSelect.addEventListener('change', calculate);
 
   // Initialize the form
   updateAreaUnits();
+  updateResultUnits();
   updateClothTypes();
 });

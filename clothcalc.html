@@ -43,6 +43,9 @@
   
   <style>
     .card{margin-bottom:1.5rem}.card-title{font-size:1.25rem;font-weight:600}.badge-info{background:#17a2b8}
+    .recommended-method {background-color: rgba(40, 167, 69, 0.1); border-left: 4px solid #28a745; padding: 10px;}
+    .result-label {font-weight: bold; color: #495057;}
+    .result-explanation {font-style: italic; color: #6c757d; font-size: 0.9rem; margin-top: 0.25rem;}
   </style>
 </head>
 <body>
@@ -128,16 +131,55 @@
       </div>
     </div>
 
+    <!-- Result Units -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Result Units</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="volumeResultUnit">Volume Units</label>
+            <select id="volumeResultUnit" class="form-control"></select>
+          </div>
+          <div class="col-md-6">
+            <label for="weightResultUnit">Weight Units</label>
+            <select id="weightResultUnit" class="form-control"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Results -->
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Your Resin Requirements</h5>
+        
+        <div class="alert alert-info mb-3">
+          <strong>Note:</strong> For most accurate results, measure resin by weight rather than volume.
+        </div>
+        
+        <div class="recommended-method mb-3">
+          <div class="result-label">Recommended Method: Measure By Weight</div>
+          <p id="resinWeight">Resin Weight: <span>—</span></p>
+          <p class="result-explanation">Weight measurement provides the most consistent results and is preferred by professionals.</p>
+        </div>
+        
+        <div class="mb-3">
+          <div class="result-label">Alternative Method: Measure By Volume</div>
+          <p id="resinVolume">Resin Volume: <span>—</span></p>
+          <p class="result-explanation">Volume can vary with temperature and between batches. Use only if weight measurement is not available.</p>
+        </div>
+        
         <p id="clothWeight">Cloth Weight: <span>—</span></p>
-        <p id="resinVolume">Resin Volume: <span>—</span></p>
-        <p id="resinWeight">Resin Weight: <span>—</span></p>
+        
         <hr>
         <p id="resinRatio" class="small text-muted">Resin-to-cloth ratio: <span>—</span></p>
         <p id="coverageInfo" class="small text-muted"></p>
+        
+        <div id="whyDifferent" class="mt-3 small text-muted">
+          <p><strong>Why are volume and weight measurements so different?</strong><br>
+          Resin is less dense than water, so its volume measurement is much larger than its weight measurement. 
+          For example, 3 oz of resin by weight may equal about 41 fl oz by volume because resin is lightweight for its volume.</p>
+        </div>
       </div>
     </div>
   </main>
@@ -206,7 +248,9 @@
 		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
 		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
 	</footer>
-<!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
+<!-- #EndLibraryItem -->
+	
+	<!-- Bootstrap JS (with Popper.js and jQuery) -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
