@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const volumeResultUnitSelect = document.getElementById('volumeResultUnit');
   const weightResultUnitSelect = document.getElementById('weightResultUnit');
   const clothThumbnail         = document.getElementById('clothThumbnail');
+  const printButton            = document.getElementById('printButton');
 
   // Print summary elements
   const printUrlSpan           = document.getElementById('printUrl');
@@ -19,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const printSurfaceAreaSpan   = document.getElementById('printSurfaceArea');
   const printAreaUnitSpan      = document.getElementById('printAreaUnit');
   const printQrImage           = document.getElementById('printQr');
-  const printButton            = document.getElementById('printButton');
 
   // Results elements
   const clothWeightResult      = document.getElementById('clothWeight').querySelector('span');
@@ -28,58 +28,58 @@ document.addEventListener('DOMContentLoaded', () => {
   const resinRatioResult       = document.getElementById('resinRatio').querySelector('span');
   const coverageInfoElement    = document.getElementById('coverageInfo');
 
-  // Full Material Data
+  // Material & cloth data
   const materials = {
     fiberglass: {
       imperial: [
-        { id: 'csm_1.5', name: 'CSM - Chopped Strand Mat (1.5 oz/ft²)',              weight: 1.5,    unit: 'oz/ft²', ratios: { polyester: 2.0, epoxy: 2.0, vinylester: 2.0 } },
-        { id: 'fg_0.75', name: 'Style #106 - Lightweight Cloth (0.75 oz/yd²)',      weight: 0.75/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_1.5',  name: 'Style #108 - Lightweight Cloth (1.5 oz/yd²)',       weight: 1.5/9,  unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_4',    name: 'Style #1522 - Medium Weight (4 oz/yd²)',           weight: 4/9,    unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_5.6',  name: 'Style #3733 - Sailboat Cloth (5.6 oz/yd²)',        weight: 5.6/9,  unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_7.5',  name: 'Style #7532 - Heavy Weight (7.5 oz/yd²)',          weight: 7.5/9,  unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_10',   name: 'Style #7500 - Heavy Weight (10 oz/yd²)',          weight: 10/9,   unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'biaxial_1708', name: 'DBM 1708 - Biaxial (+/-45°, 17oz w/mat)',   weight: 17/9,   unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
-        { id: 'biaxial_1208', name: 'DBM 1208 - Biaxial (+/-45°, 12oz w/mat)',   weight: 12/9,   unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
-        { id: 'biaxial_1808', name: 'DBM 1808 - Biaxial (+/-45°, 18oz w/mat)',   weight: 18/9,   unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
-        { id: 'woven_roving_18', name: 'Woven Roving (18 oz/yd²)',              weight: 18/9,   unit: 'oz/ft²', ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'woven_roving_24', name: 'Woven Roving (24 oz/yd²)',              weight: 24/9,   unit: 'oz/ft²', ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } }
+        { id: 'csm_1.5',    name: 'CSM - Chopped Strand Mat (1.5 oz/ft²)',    weight: 1.5,    ratios: { polyester:2.0, epoxy:2.0, vinylester:2.0 } },
+        { id: 'fg_0.75',    name: 'Style #106 - Lightweight Cloth (0.75 oz/yd²)', weight:0.75/9, ratios: { polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_1.5',     name: 'Style #108 - Lightweight Cloth (1.5 oz/yd²)',  weight:1.5/9,  ratios: { polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_4',       name: 'Style #1522 - Medium Weight (4 oz/yd²)',      weight:4/9,    ratios: { polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_5.6',     name: 'Style #3733 - Sailboat Cloth (5.6 oz/yd²)',   weight:5.6/9,  ratios: { polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_7.5',     name: 'Style #7532 - Heavy Weight (7.5 oz/yd²)',     weight:7.5/9,  ratios: { polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_10',      name: 'Style #7500 - Heavy Weight (10 oz/yd²)',      weight:10/9,   ratios: { polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'biaxial_1708', name: 'DBM 1708 - Biaxial (+/-45°, 17 oz w/mat)', weight:17/9, ratios:{ polyester:3.0, epoxy:2.5, vinylester:2.8 } },
+        { id: 'biaxial_1208', name: 'DBM 1208 - Biaxial (+/-45°, 12 oz w/mat)', weight:12/9, ratios:{ polyester:3.0, epoxy:2.5, vinylester:2.8 } },
+        { id: 'biaxial_1808', name: 'DBM 1808 - Biaxial (+/-45°, 18 oz w/mat)', weight:18/9, ratios:{ polyester:3.0, epoxy:2.5, vinylester:2.8 } },
+        { id: 'woven_roving_18', name: 'Woven Roving (18 oz/yd²)',               weight:18/9, ratios:{ polyester:2.2, epoxy:1.8, vinylester:2.0 } },
+        { id: 'woven_roving_24', name: 'Woven Roving (24 oz/yd²)',               weight:24/9, ratios:{ polyester:2.2, epoxy:1.8, vinylester:2.0 } }
       ],
       metric: [
-        { id: 'csm_450',  name: 'CSM - Chopped Strand Mat (450 g/m²)',         weight: 450,    unit: 'g/m²',  ratios: { polyester: 2.0, epoxy: 2.0, vinylester: 2.0 } },
-        { id: 'fg_25',    name: 'Style #106 - Lightweight Cloth (25 g/m²)',    weight: 25,     unit: 'g/m²',  ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_50',    name: 'Style #108 - Lightweight Cloth (50 g/m²)',    weight: 50,     unit: 'g/m²',  ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_135',   name: 'Style #1522 - Medium Weight (135 g/m²)',      weight: 135,    unit: 'g/m²',  ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_190',   name: 'Style #3733 - Sailboat Cloth (190 g/m²)',     weight: 190,    unit: 'g/m²',  ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_255',   name: 'Style #7532 - Heavy Weight (255 g/m²)',       weight: 255,    unit: 'g/m²',  ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_340',   name: 'Style #7500 - Heavy Weight (340 g/m²)',       weight: 340,    unit: 'g/m²',  ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'biaxial_580', name: 'DBM 1708 - Biaxial (+/-45°, 580 g/m²)',   weight: 580,    unit: 'g/m²',  ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
-        { id: 'biaxial_400', name: 'DBM 1208 - Biaxial (+/-45°, 400 g/m²)',   weight: 400,    unit: 'g/m²',  ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
-        { id: 'biaxial_600', name: 'DBM 1808 - Biaxial (+/-45°, 600 g/m²)',   weight: 600,    unit: 'g/m²',  ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
-        { id: 'woven_roving_600', name: 'Woven Roving (600 g/m²)',            weight: 600,    unit: 'g/m²',  ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'woven_roving_800', name: 'Woven Roving (800 g/m²)',            weight: 800,    unit: 'g/m²',  ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } }
+        { id: 'csm_450',    name: 'CSM - Chopped Strand Mat (450 g/m²)',      weight:450, ratios:{ polyester:2.0, epoxy:2.0, vinylester:2.0 } },
+        { id: 'fg_25',      name: 'Style #106 - Lightweight Cloth (25 g/m²)', weight:25,  ratios:{ polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_50',      name: 'Style #108 - Lightweight Cloth (50 g/m²)', weight:50,  ratios:{ polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_135',     name: 'Style #1522 - Medium Weight (135 g/m²)',   weight:135, ratios:{ polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_190',     name: 'Style #3733 - Sailboat Cloth (190 g/m²)',  weight:190, ratios:{ polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_255',     name: 'Style #7532 - Heavy Weight (255 g/m²)',    weight:255, ratios:{ polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'fg_340',     name: 'Style #7500 - Heavy Weight (340 g/m²)',    weight:340, ratios:{ polyester:2.5, epoxy:2.0, vinylester:2.3 } },
+        { id: 'biaxial_580', name: 'DBM 1708 - Biaxial (+/-45°, 580 g/m²)',   weight:580, ratios:{ polyester:3.0, epoxy:2.5, vinylester:2.8 } },
+        { id: 'biaxial_400', name: 'DBM 1208 - Biaxial (+/-45°, 400 g/m²)',   weight:400, ratios:{ polyester:3.0, epoxy:2.5, vinylester:2.8 } },
+        { id: 'biaxial_600', name: 'DBM 1808 - Biaxial (+/-45°, 600 g/m²)',   weight:600, ratios:{ polyester:3.0, epoxy:2.5, vinylester:2.8 } },
+        { id: 'woven_roving_600', name: 'Woven Roving (600 g/m²)',             weight:600, ratios:{ polyester:2.2, epoxy:1.8, vinylester:2.0 } },
+        { id: 'woven_roving_800', name: 'Woven Roving (800 g/m²)',             weight:800, ratios:{ polyester:2.2, epoxy:1.8, vinylester:2.0 } }
       ]
     },
     carbon: {
       imperial: [
-        { id: 'carbon_5.7', name: '3K Plain Weave (5.7 oz/yd²)',            weight: 5.7/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'carbon_5.8', name: '3K 2x2 Twill Weave (5.8 oz/yd²)',       weight: 5.8/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'carbon_9',   name: 'Unidirectional (9 oz/yd²)',            weight: 9/9,   unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.5, vinylester: 1.8 } }
+        { id: 'carbon_5.7', name: '3K Plain Weave (5.7 oz/yd²)',     weight:5.7/9, ratios:{ polyester:0, epoxy:1.8, vinylester:2.0 } },
+        { id: 'carbon_5.8', name: '3K 2×2 Twill (5.8 oz/yd²)',      weight:5.8/9, ratios:{ polyester:0, epoxy:1.8, vinylester:2.0 } },
+        { id: 'carbon_9',   name: 'Unidirectional (9 oz/yd²)',      weight:9/9,   ratios:{ polyester:0, epoxy:1.5, vinylester:1.8 } }
       ],
       metric: [
-        { id: 'carbon_193', name: '3K Plain Weave (193 g/m²)',            weight: 193, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'carbon_197', name: '3K 2x2 Twill Weave (197 g/m²)',       weight: 197, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'carbon_305', name: 'Unidirectional (305 g/m²)',           weight: 305, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.5, vinylester: 1.8 } }
+        { id: 'carbon_193', name: '3K Plain Weave (193 g/m²)',     weight:193, ratios:{ polyester:0, epoxy:1.8, vinylester:2.0 } },
+        { id: 'carbon_197', name: '3K 2×2 Twill (197 g/m²)',      weight:197, ratios:{ polyester:0, epoxy:1.8, vinylester:2.0 } },
+        { id: 'carbon_305', name: 'Unidirectional (305 g/m²)',    weight:305, ratios:{ polyester:0, epoxy:1.5, vinylester:1.8 } }
       ]
     },
     kevlar: {
       imperial: [
-        { id: 'kevlar_5',        name: 'Kevlar Plain Weave (5 oz/yd²)',          weight: 5/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 2.2, vinylester: 2.5 } },
-        { id: 'kevlar_carbon_6', name: 'Kevlar/Carbon Hybrid (6 oz/yd²)',      weight: 6/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 2.0, vinylester: 2.3 } }
+        { id: 'kevlar_5',        name: 'Kevlar Plain Weave (5 oz/yd²)',           weight:5/9, ratios:{ polyester:0, epoxy:2.2, vinylester:2.5 } },
+        { id: 'kevlar_carbon_6', name: 'Kevlar/Carbon Hybrid (6 oz/yd²)',         weight:6/9, ratios:{ polyester:0, epoxy:2.0, vinylester:2.3 } }
       ],
       metric: [
-        { id: 'kevlar_170',       name: 'Kevlar Plain Weave (170 g/m²)',       weight: 170, unit: 'g/m²', ratios: { polyester: 0, epoxy: 2.2, vinylester: 2.5 } },
-        { id: 'kevlar_carbon_200',name: 'Kevlar/Carbon Hybrid (200 g/m²)',    weight: 200, unit: 'g/m²', ratios: { polyester: 0, epoxy: 2.0, vinylester: 2.3 } }
+        { id: 'kevlar_170',       name: 'Kevlar Plain Weave (170 g/m²)',         weight:170, ratios:{ polyester:0, epoxy:2.2, vinylester:2.5 } },
+        { id: 'kevlar_carbon_200',name: 'Kevlar/Carbon Hybrid (200 g/m²)',       weight:200, ratios:{ polyester:0, epoxy:2.0, vinylester:2.3 } }
       ]
     }
   };
@@ -137,10 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
     validateResinCompatibility();
   }
 
-  // Update thumbnail image
+  // Update thumbnail image (relative path)
   function updateThumbnail() {
     const id = clothTypeSelect.value;
-    clothThumbnail.src = `/images/${id}.svg`;
+    clothThumbnail.src = `images/${id}.svg`;
     clothThumbnail.alt = clothTypeSelect.selectedOptions[0].text;
   }
 
@@ -156,37 +156,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Convert values
+  // Convert volume
   function convertVolume(v, from, to, sys) {
     return (v / conversions.volume[sys][to]).toFixed(2);
   }
+
+  // Convert weight
   function convertWeight(w, from, to, sys) {
     return (w / conversions.weight[sys][to]).toFixed(2);
   }
 
-  // Main calculate()
+  // Main calculation
   function calculate() {
     const mat     = materialTypeSelect.value;
     const sys     = unitSystemSelect.value;
     const clothId = clothTypeSelect.value;
     const resin   = resinTypeSelect.value;
-    const area    = parseFloat(surfaceAreaInput.value)||0;
+    const area    = parseFloat(surfaceAreaInput.value) || 0;
     const aUnit   = areaUnitSelect.value;
-    if(!clothId||area<=0) { resetResults(); return; }
+    if(!clothId || area <= 0) { resetResults(); return; }
 
     // Area → standard
     const stdArea = area * conversions.area[sys][aUnit];
+
     // Cloth weight
-    const cloth   = materials[mat][sys].find(c=>c.id===clothId);
+    const cloth   = materials[mat][sys].find(c => c.id===clothId);
     const cWeight = cloth.weight * stdArea;
-    // Resin ratio
+
+    // Resin ratio & weight
     const ratio   = cloth.ratios[resin];
     const rWeight = cWeight * ratio;
+
+    // Density & volume
     const density = conversions.density[sys][resin];
-    // Volume
     const rVolume = sys==='imperial'
-      ? rWeight / (density * (1/128)) // oz→fl oz
-      : rWeight / density;            // g→mL
+      ? rWeight / (density * (1/128))  // oz to fl oz
+      : rWeight / density;             // g to mL
 
     // Display cloth weight
     clothWeightResult.textContent = sys==='imperial'
@@ -203,10 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     resinWeightResult.textContent =
       `${convertWeight(rWeight, sys==='imperial'?'oz':'g', wtU, sys)} ${wtU}`;
 
-    // Ratio
+    // Display ratio
     resinRatioResult.textContent = `${ratio.toFixed(1)}:1`;
 
-    // Coverage info (optional)
     coverageInfoElement.textContent = '';
 
     // Update thumbnail & print summary
@@ -214,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePrintSummary();
   }
 
-  // Reset results
+  // Reset results if invalid
   function resetResults() {
     clothWeightResult.textContent = '—';
     resinVolumeResult.textContent = '—';
@@ -223,20 +227,20 @@ document.addEventListener('DOMContentLoaded', () => {
     coverageInfoElement.textContent = '';
   }
 
-  // Update print-only summary & QR
+  // Update print-only summary & QR code
   function updatePrintSummary() {
-    printUrlSpan.textContent           = window.location.href;
-    printUnitSystemSpan.textContent    = unitSystemSelect.selectedOptions[0].text;
-    printMaterialTypeSpan.textContent  = materialTypeSelect.selectedOptions[0].text;
-    printClothTypeSpan.textContent     = clothTypeSelect.selectedOptions[0].text;
-    printResinTypeSpan.textContent     = resinTypeSelect.selectedOptions[0].text;
-    printSurfaceAreaSpan.textContent   = surfaceAreaInput.value;
-    printAreaUnitSpan.textContent      = areaUnitSelect.value;
+    printUrlSpan.textContent         = window.location.href;
+    printUnitSystemSpan.textContent  = unitSystemSelect.selectedOptions[0].text;
+    printMaterialTypeSpan.textContent= materialTypeSelect.selectedOptions[0].text;
+    printClothTypeSpan.textContent   = clothTypeSelect.selectedOptions[0].text;
+    printResinTypeSpan.textContent   = resinTypeSelect.selectedOptions[0].text;
+    printSurfaceAreaSpan.textContent = surfaceAreaInput.value;
+    printAreaUnitSpan.textContent    = areaUnitSelect.value;
     printQrImage.src = 
       `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(window.location.href)}`;
   }
 
-  // Print button handler
+  // Print button
   printButton.addEventListener('click', () => {
     updatePrintSummary();
     window.print();
@@ -249,8 +253,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateClothTypes();
     calculate();
   });
-  materialTypeSelect.addEventListener('change', () => { updateClothTypes(); calculate(); });
-  clothTypeSelect.addEventListener('change', calculate);
+  materialTypeSelect.addEventListener('change', () => {
+    updateClothTypes();
+    calculate();
+  });
+  clothTypeSelect.addEventListener('change', () => {
+    updateThumbnail();
+    calculate();
+  });
   resinTypeSelect.addEventListener('change', calculate);
   surfaceAreaInput.addEventListener('input', calculate);
   areaUnitSelect.addEventListener('change', calculate);
