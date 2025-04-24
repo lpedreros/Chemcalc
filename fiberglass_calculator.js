@@ -30,45 +30,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const materials = {
     fiberglass: {
       imperial: [
-        { id: 'csm_1.5', name: 'Chopped Strand Mat (1.5 oz/ft²)', weight: 1.5, unit: 'oz/ft²', ratios: { polyester: 2.0, epoxy: 2.0, vinylester: 2.0 } },
-        { id: 'fg_0.75', name: 'Lightweight Cloth (0.75 oz/yd²)', weight: 0.75/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_1.5', name: 'Lightweight Cloth (1.5 oz/yd²)', weight: 1.5/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_4', name: 'Medium Weight Cloth (4 oz/yd²)', weight: 4/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_5.6', name: 'Medium Weight Cloth (5.6 oz/yd²)', weight: 5.6/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_7.5', name: 'Heavy Weight Cloth (7.5 oz/yd²)', weight: 7.5/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_10', name: 'Heavy Weight Cloth (10 oz/yd²)', weight: 10/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'biaxial_17', name: 'Biaxial Cloth (17 oz/yd²)', weight: 17/9, unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } }
+        { id: 'csm_1.5', name: 'CSM - Chopped Strand Mat (1.5 oz/ft²)', weight: 1.5, unit: 'oz/ft²', ratios: { polyester: 2.0, epoxy: 2.0, vinylester: 2.0 } },
+        { id: 'fg_0.75', name: 'Style #106 - Lightweight Cloth (0.75 oz/yd²)', weight: 0.75/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_1.5', name: 'Style #108 - Lightweight Cloth (1.5 oz/yd²)', weight: 1.5/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_4', name: 'Style #1522 - Medium Weight (4 oz/yd²)', weight: 4/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_5.6', name: 'Style #3733 - Sailboat Cloth (5.6 oz/yd²)', weight: 5.6/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_7.5', name: 'Style #7532 - Heavy Weight (7.5 oz/yd²)', weight: 7.5/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_10', name: 'Style #7500 - Heavy Weight (10 oz/yd²)', weight: 10/9, unit: 'oz/ft²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'biaxial_1708', name: 'DBM 1708 - Biaxial (+/-45°, 17oz w/mat)', weight: 17/9, unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
+        { id: 'biaxial_1208', name: 'DBM 1208 - Biaxial (+/-45°, 12oz w/mat)', weight: 12/9, unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
+        { id: 'biaxial_1808', name: 'DBM 1808 - Biaxial (+/-45°, 18oz w/mat)', weight: 18/9, unit: 'oz/ft²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
+        { id: 'woven_roving_18', name: 'Woven Roving (18 oz/yd²)', weight: 18/9, unit: 'oz/ft²', ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } },
+        { id: 'woven_roving_24', name: 'Woven Roving (24 oz/yd²)', weight: 24/9, unit: 'oz/ft²', ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } }
       ],
       metric: [
-        { id: 'csm_450', name: 'Chopped Strand Mat (450 g/m²)', weight: 450, unit: 'g/m²', ratios: { polyester: 2.0, epoxy: 2.0, vinylester: 2.0 } },
-        { id: 'fg_25', name: 'Lightweight Cloth (25 g/m²)', weight: 25, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_50', name: 'Lightweight Cloth (50 g/m²)', weight: 50, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_135', name: 'Medium Weight Cloth (135 g/m²)', weight: 135, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_190', name: 'Medium Weight Cloth (190 g/m²)', weight: 190, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_255', name: 'Heavy Weight Cloth (255 g/m²)', weight: 255, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'fg_340', name: 'Heavy Weight Cloth (340 g/m²)', weight: 340, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
-        { id: 'biaxial_580', name: 'Biaxial Cloth (580 g/m²)', weight: 580, unit: 'g/m²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } }
+        { id: 'csm_450', name: 'CSM - Chopped Strand Mat (450 g/m²)', weight: 450, unit: 'g/m²', ratios: { polyester: 2.0, epoxy: 2.0, vinylester: 2.0 } },
+        { id: 'fg_25', name: 'Style #106 - Lightweight Cloth (25 g/m²)', weight: 25, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_50', name: 'Style #108 - Lightweight Cloth (50 g/m²)', weight: 50, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_135', name: 'Style #1522 - Medium Weight (135 g/m²)', weight: 135, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_190', name: 'Style #3733 - Sailboat Cloth (190 g/m²)', weight: 190, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_255', name: 'Style #7532 - Heavy Weight (255 g/m²)', weight: 255, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'fg_340', name: 'Style #7500 - Heavy Weight (340 g/m²)', weight: 340, unit: 'g/m²', ratios: { polyester: 2.5, epoxy: 2.0, vinylester: 2.3 } },
+        { id: 'biaxial_580', name: 'DBM 1708 - Biaxial (+/-45°, 580 g/m²)', weight: 580, unit: 'g/m²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
+        { id: 'biaxial_400', name: 'DBM 1208 - Biaxial (+/-45°, 400 g/m²)', weight: 400, unit: 'g/m²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
+        { id: 'biaxial_600', name: 'DBM 1808 - Biaxial (+/-45°, 600 g/m²)', weight: 600, unit: 'g/m²', ratios: { polyester: 3.0, epoxy: 2.5, vinylester: 2.8 } },
+        { id: 'woven_roving_600', name: 'Woven Roving (600 g/m²)', weight: 600, unit: 'g/m²', ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } },
+        { id: 'woven_roving_800', name: 'Woven Roving (800 g/m²)', weight: 800, unit: 'g/m²', ratios: { polyester: 2.2, epoxy: 1.8, vinylester: 2.0 } }
       ]
     },
     carbon: {
       imperial: [
-        { id: 'carbon_5.7', name: 'Plain Weave (5.7 oz/yd²)', weight: 5.7/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'carbon_5.8', name: 'Twill Weave (5.8 oz/yd²)', weight: 5.8/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
+        { id: 'carbon_5.7', name: '3K Plain Weave (5.7 oz/yd²)', weight: 5.7/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
+        { id: 'carbon_5.8', name: '3K 2x2 Twill Weave (5.8 oz/yd²)', weight: 5.8/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
         { id: 'carbon_9', name: 'Unidirectional (9 oz/yd²)', weight: 9/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 1.5, vinylester: 1.8 } }
       ],
       metric: [
-        { id: 'carbon_193', name: 'Plain Weave (193 g/m²)', weight: 193, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
-        { id: 'carbon_197', name: 'Twill Weave (197 g/m²)', weight: 197, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
+        { id: 'carbon_193', name: '3K Plain Weave (193 g/m²)', weight: 193, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
+        { id: 'carbon_197', name: '3K 2x2 Twill Weave (197 g/m²)', weight: 197, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.8, vinylester: 2.0 } },
         { id: 'carbon_305', name: 'Unidirectional (305 g/m²)', weight: 305, unit: 'g/m²', ratios: { polyester: 0, epoxy: 1.5, vinylester: 1.8 } }
       ]
     },
     kevlar: {
       imperial: [
-        { id: 'kevlar_5', name: 'Plain Weave (5 oz/yd²)', weight: 5/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 2.2, vinylester: 2.5 } },
+        { id: 'kevlar_5', name: 'Kevlar Plain Weave (5 oz/yd²)', weight: 5/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 2.2, vinylester: 2.5 } },
         { id: 'kevlar_carbon_6', name: 'Kevlar/Carbon Hybrid (6 oz/yd²)', weight: 6/9, unit: 'oz/ft²', ratios: { polyester: 0, epoxy: 2.0, vinylester: 2.3 } }
       ],
       metric: [
-        { id: 'kevlar_170', name: 'Plain Weave (170 g/m²)', weight: 170, unit: 'g/m²', ratios: { polyester: 0, epoxy: 2.2, vinylester: 2.5 } },
+        { id: 'kevlar_170', name: 'Kevlar Plain Weave (170 g/m²)', weight: 170, unit: 'g/m²', ratios: { polyester: 0, epoxy: 2.2, vinylester: 2.5 } },
         { id: 'kevlar_carbon_200', name: 'Kevlar/Carbon Hybrid (200 g/m²)', weight: 200, unit: 'g/m²', ratios: { polyester: 0, epoxy: 2.0, vinylester: 2.3 } }
       ]
     }
