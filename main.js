@@ -11,9 +11,11 @@ document.addEventListener("DOMContentLoaded", function() {
   // Collapsible sections
   var coll = document.querySelectorAll(".collapsible");
   coll.forEach(function(button) {
-    button.classList.add("active");
+    // start everything collapsed
+    button.classList.remove("active");
     var content = button.nextElementSibling;
-    content.style.maxHeight = content.scrollHeight + "px";
+    content.style.maxHeight = "0px";
+
     button.addEventListener("click", function() {
       this.classList.toggle("active");
       if (content.style.maxHeight && content.style.maxHeight !== "0px") {
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (filter === 'all') {
         activeFilters = [];
         filterButtons.forEach(function(b) {
-          if(b.getAttribute('data-filter').toLowerCase() !== 'all'){
+          if (b.getAttribute('data-filter').toLowerCase() !== 'all') {
             b.classList.remove('active');
           }
         });
@@ -68,15 +70,13 @@ document.addEventListener("DOMContentLoaded", function() {
     var items = document.querySelectorAll('.content ul li');
     items.forEach(function(item) {
       var tagsStr = item.getAttribute('data-tags') || "";
-      // Remove any leading '#' from tags
       var tags = tagsStr.toLowerCase().split(',').map(function(t) { return t.trim().replace(/^#/, ''); });
       var tagMatch = activeFilters.length === 0 || activeFilters.every(function(filter) {
         return tags.indexOf(filter) !== -1;
       });
       var text = item.textContent.toLowerCase();
       var searchMatch = searchQuery === "" || text.indexOf(searchQuery) !== -1;
-      var visible = tagMatch && searchMatch;
-      if (visible) {
+      if (tagMatch && searchMatch) {
         item.style.display = "";
         setTimeout(function() {
           item.style.opacity = "1";
@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
       star.innerHTML = "☆";
     }
     item.insertBefore(star, item.firstChild);
+
     if (!star.classList.contains('my-favorite')) {
       star.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -144,10 +145,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+  // Load saved favorites
   var savedFavorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
   if (savedFavorites.length > 0) {
-    var listItems = document.querySelectorAll('.content ul li');
-    listItems.forEach(function(item) {
+    var savedItems = document.querySelectorAll('.content ul li');
+    savedItems.forEach(function(item) {
       var linkElem = item.querySelector('a');
       if (linkElem && savedFavorites.indexOf(linkElem.href) !== -1) {
         var star = item.querySelector('.star-toggle');
