@@ -188,6 +188,7 @@ h1 {
     top: 1em;
     right: 1em;
     cursor: pointer;
+    transition: transform 0.3s ease; /* 3.2 Animated menu toggle */
 }
 @media (max-width: 767px) {
     .nav {
@@ -202,25 +203,27 @@ h1 {
     .menu-toggle {
         display: block;
     }
+    .nav.active + .menu-toggle { transform: rotate(90deg); } /* 3.2 */
 }
 
 /* Responsive Queries */
 @media (max-width: 575.98px) {
-    .container {
-        max-width: 100%;
-    }
-    a {
-        font-size: 1.25em;
-    }
-}
-@media (max-width: 767.98px) {
     body {
         margin: 0;
     }
     .container {
         margin-top: 0;
     }
+    a {
+        font-size: 1.25em;
+    }
+    /* 2.2 Full-width form controls on small screens */
+    .form-control { width: 100% !important; }
 }
+
+/* Quick Wins Touch-spacing */
+.filter-btn { margin-bottom: 1rem; } /* 2.3 */
+.content ul li { margin-bottom: 0.75rem; } /* 2.3 */
 
 /* Custom Kit Options */
 #custom-kit-options {
