@@ -2,21 +2,42 @@
 <html lang="en">
 <head>
   <!-- Basic Meta & SEO -->
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<meta name="theme-color" content="#2c2c2e">
-  <title>Fiberglass Cloth Resin Calculator – ChemCalc</title>
-  <meta name="description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements."/>
-  <meta name="keywords" content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc"/>
-  <link rel="canonical" href="https://chemcalc.co/fiberglass_calculator.html"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="manifest" href="/manifest.json">
+  <title>Fiberglass Cloth Resin Calculator – ChemCalc</title>
+  <meta name="description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements." />
+  <meta name="keywords" content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc" />
+  <link rel="canonical" href="https://chemcalc.co/clothcalc.html" />
 
-  <!-- Open Graph / Twitter / JSON-LD omitted for brevity -->
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Fiberglass Cloth Resin Calculator – ChemCalc" />
+  <meta property="og:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements." />
+  <meta property="og:url" content="https://chemcalc.co/clothcalc.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fiberglass Cloth Resin Calculator – ChemCalc" />
+  <meta name="twitter:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Fiberglass Cloth Resin Calculator – ChemCalc",
+    "url": "https://chemcalc.co/clothcalc.html",
+    "description": "Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements."
+  }
+  </script>
 
   <!-- Favicon & CSS -->
-  <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png"/>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
@@ -25,16 +46,16 @@
     <h1>ChemCalc</h1>
     <div class="powered-by-header mb-2">
       <span>Powered by</span>
-      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"/>
+      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think & Engage Logo" />
     </div>
     <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2 d-print-none">☰</button>
     <nav id="mainNav" class="nav justify-content-center d-print-none">
-      <a href="index.html"      class="nav-link">Home</a>
+      <a href="index.html" class="nav-link">Home</a>
       <a href="calculators.html" class="nav-link">Calculators</a>
-      <a href="services.html"    class="nav-link">Services</a>
-      <a href="kits.html"        class="nav-link">Kits</a>
-      <a href="about.html"       class="nav-link">About</a>
-      <a href="contact.html"     class="nav-link">Contact</a>
+      <a href="services.html" class="nav-link">Services</a>
+      <a href="kits.html" class="nav-link">Kits</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="contact.html" class="nav-link">Contact</a>
     </nav>
   </header>
 
@@ -52,7 +73,7 @@
 
     <!-- Print-only QR (hidden on screen, shown in print) -->
     <div id="printQrContainer" class="d-none d-print-block text-center mb-4">
-      <img id="printQr" src="" alt="QR Code" width="100" height="100"/>
+      <img id="printQr" src="" alt="QR Code" width="100" height="100" />
       <p class="small">Scan to return to this calculator</p>
     </div>
 
@@ -87,11 +108,7 @@
           <h5 class="card-title">Cloth Type</h5>
           <div class="d-flex align-items-center">
             <select id="clothType" class="form-control"></select>
-            <img id="clothThumbnail"
-                 src="images/placeholder.svg"
-                 alt=""
-                 class="ml-3 img-fluid"
-                 width="60" height="60"/>
+            <img id="clothThumbnail" src="images/placeholder.svg" alt="" class="ml-3 img-fluid" width="60" height="60" />
           </div>
           <small class="form-text text-muted">Select the specific type of cloth you’re using</small>
         </div>
@@ -116,7 +133,7 @@
           <h5 class="card-title">Surface Area</h5>
           <div class="row">
             <div class="col-md-6 mb-2">
-              <input type="number" id="surfaceArea" class="form-control" placeholder="Enter area" min="0" step="0.01"/>
+              <input type="number" id="surfaceArea" class="form-control" placeholder="Enter area" min="0" step="0.01" />
             </div>
             <div class="col-md-6 mb-2">
               <select id="areaUnit" class="form-control"></select>
@@ -186,22 +203,28 @@
 <div class="container d-print-none mt-4">
     <div class="row">
       <div class="col-md-6 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Tips &amp; Safety</h5>
-            <p>Always work in a well-ventilated area when using resins</p>
-            <p>Use appropriate personal protective equipment</p>
-            <p><a href="legal.html">Legal Disclaimer</a></p>
+        <!-- Collapsible Usage Tips -->
+        <button class="collapsible">Tips &amp; Safety</button>
+        <div class="content">
+          <div class="card">
+            <div class="card-body">
+              <p>Always work in a well-ventilated area when using resins</p>
+              <p>Use appropriate personal protective equipment</p>
+              <p><a href="legal.html">Legal Disclaimer</a></p>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-md-6 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Other Calcs</h5>
-            <p><a href="mekpcalc.html">MEKp Mix Calculator</a></p>
-            <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
-            <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
+        <!-- Other Calculators Links -->
+        <button class="collapsible">Other Calcs</button>
+        <div class="content">
+          <div class="card">
+            <div class="card-body">
+              <p><a href="mekpcalc.html">MEKP Mix Calculator</a></p>
+              <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
+              <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
+            </div>
           </div>
         </div>
       </div>
@@ -246,9 +269,14 @@
 		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
 		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
 	</footer>
-<!-- #EndLibraryItem -->
-	
-	<!-- JS Scripts -->
+<!-- #EndLibraryItem --><!-- Bootstrap JS & Main Script -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="main.js"></script>
+  <!-- Lazy-load & Responsive Images Loader -->
+<script src="/js/lazy-responsive.js"></script>
+  <!-- Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
@@ -256,11 +284,5 @@
         .catch(err => console.error('SW registration failed:', err));
     }
   </script>
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="fiberglass_calculator.js"></script>
-<script src="main.js"></script>
-<script src="lazy-responsive.js"></script>
 </body>
 </html>
