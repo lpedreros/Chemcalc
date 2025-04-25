@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="manifest" href="/manifest.json">
   <title>Epifanes Polyurethane Paint Calculator – ChemCalc</title>
   <meta name="description" content="Use our Epifanes Polyurethane Paint Calculator to determine precise mix ratios for your marine repair projects. Calculate accurate volumes and convert units effortlessly at ChemCalc." />
   <meta name="keywords" content="Epifanes Polyurethane, Paint Calculator, Mix Calculator, marine repair, chemical calculator, ChemCalc" />
@@ -50,7 +51,9 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body><!-- #BeginLibraryItem "/Nav header.lbi" -->
+<body>
+	
+	<!-- #BeginLibraryItem "/Nav header.lbi" -->
 
 <!-- Header Section -->
 	<header class="container header">
@@ -68,7 +71,9 @@
     <a href="about.html">About</a>
     <a href="contact.html">Contact</a>
   </nav>
-</header><!-- #EndLibraryItem --><!-- Main Content Section -->
+</header><!-- #EndLibraryItem -->
+	
+	<!-- Main Content Section -->
   <main class="container">
     <h1 class="text-center mb-4">Epifanes Polyurethane Paint Calculator</h1>
     <form id="epifanesForm">
@@ -177,8 +182,17 @@
     <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
   </div>
 </footer>
-<!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- #EndLibraryItem -->
+	
+	<!-- Bootstrap JS (with Popper.js and jQuery) -->
+	<script>
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('/sw.js')
+			.then(reg => console.log('ServiceWorker registered:', reg))
+			.catch(err => console.error('SW registration failed:', err));
+	}
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <!-- Custom JS -->

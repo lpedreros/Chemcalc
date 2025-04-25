@@ -4,6 +4,7 @@
   <!-- Meta & SEO -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="manifest" href="/manifest.json">
   <title>MEKP Mixing Calculator – ChemCalc</title>
   <meta name="description" content="Professional MEKP calculator. Temp‑based recommendation, Duratec auto‑override, precise drops/CCs, fun UI." />
   <meta name="keywords" content="MEKP Mixing Calculator, marine repair, chemical calculator, MEKp, Duratec, ChemCalc" />
@@ -146,6 +147,13 @@
 <!-- #EndLibraryItem -->
 	
 	<!-- JS: correct order ensures init runs after main script -->
+<script>
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/sw.js')
+		.then(reg => console.log('ServiceWorker registered:', reg))
+		.catch(err => console.error('SW registration failed:', err));
+}
+</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
