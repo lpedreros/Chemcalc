@@ -91,6 +91,7 @@ h1 {
     background-color: rgba(0, 0, 0, 0.8);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     border: none;
+    margin-bottom: 1.5rem;
 }
 
 /* Donate Button */
@@ -320,6 +321,51 @@ h1 {
     font-size: 1.15rem;
     font-weight: 600;
     color: #007bff;
+}
+
+/* Batch Calculator Styles */
+.layer-card {
+    border-left: 4px solid #6c757d;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(108, 117, 125, 0.05);
+}
+.layer-card.active {
+    border-left-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
+}
+.layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.layer-title {
+    font-weight: 600;
+    margin: 0;
+}
+.layer-actions {
+    display: flex;
+    gap: 5px;
+}
+.batch-totals {
+    background-color: rgba(52, 58, 64, 0.1);
+    border-left: 4px solid #343a40;
+    padding: 15px;
+    margin-top: 20px;
+}
+.calculator-mode-toggle {
+    margin-bottom: 20px;
+}
+.calculator-mode-toggle .btn {
+    width: 50%;
+}
+.calculator-mode-toggle .btn.active {
+    font-weight: bold;
+}
+.batch-layer-list {
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 /* Donation Modal Customizations */
