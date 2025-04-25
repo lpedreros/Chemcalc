@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="manifest" href="/manifest.json">
   <title>ChemCalc – Marine Repair Kits, Calculators &amp; Expert Advice</title>
   <meta name="description" content="ChemCalc provides advanced chemical calculators, curated marine repair kits, and expert repair guides to help professionals and DIY enthusiasts achieve quality boat repairs and maintenance.">
   <meta name="keywords" content="marine repair kits, chemical calculators, boat repair, marine maintenance, fiberglass repair, gel coat repair, custom repair kits, DIY marine repair">
@@ -153,7 +154,14 @@
   </div>
 </footer>
 <!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script>
+	if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/sw.js')
+		.then(reg => console.log('ServiceWorker registered:', reg))
+		.catch(err => console.error('SW registration failed:', err));
+	}
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- Custom JS -->
