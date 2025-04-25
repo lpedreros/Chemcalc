@@ -9,27 +9,88 @@
   <meta name="keywords" content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc"/>
   <link rel="canonical" href="https://chemcalc.co/clothcalc.html"/>
 
-  <!-- Open Graph / Twitter / JSON-LD omitted for brevity -->
+  <!-- Open Graph -->
+  <meta property="og:title" content="Fiberglass Cloth Resin Calculator – ChemCalc"/>
+  <meta property="og:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements."/>
+  <meta property="og:image" content="https://chemcalc.co/images/og-fiberglass-calculator.jpg"/>
+  <meta property="og:url" content="https://chemcalc.co/clothcalc.html"/>
+  <meta property="og:type" content="website"/>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Fiberglass Cloth Resin Calculator – ChemCalc"/>
+  <meta name="twitter:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar."/>
+  <meta name="twitter:image" content="https://chemcalc.co/images/twitter-fiberglass-calculator.jpg"/>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Fiberglass Cloth Resin Calculator",
+    "description": "Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "ChemCalc",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://chemcalc.co/images/logo.png"
+      }
+    }
+  }
+  </script>
 
   <!-- Favicon & CSS -->
   <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png"/>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="style.css"/>
+  
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="manifest.json"/>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
 </head>
 
 <body>
-  <!-- #BeginLibraryItem "/Nav header.lbi" -->
-	<!-- Header Section -->
-	<header class="container header">
-		<h1>ChemCalc</h1>
-		<div class="powered-by-header"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" /> </div>
-		<button class="menu-toggle">☰</button>
-		<nav id="mainNav" class="nav"> <a href="index.html" class="active">Home</a> <a href="calculators.html">Calculators</a> <a href="services.html">Services</a> <a href="kits.html">Kits</a> <a href="about.html">About</a> <a href="contact.html">Contact</a> </nav>
-	</header>
-<!-- #EndLibraryItem -->
-<main class="container">
-  <!-- Calculator Mode Toggle -->
-  <div class="calculator-mode-toggle mb-3 d-print-none">
+  <!-- Header (visible on screen, hidden on print) -->
+  <header class="container header text-center d-print-none">
+    <h1>ChemCalc</h1>
+    <div class="powered-by-header mb-2">
+      <span>Powered by</span>
+      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"/>
+    </div>
+    <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2 d-print-none">☰</button>
+    <nav id="mainNav" class="nav justify-content-center d-print-none">
+      <a href="index.html"      class="nav-link">Home</a>
+      <a href="calculators.html" class="nav-link">Calculators</a>
+      <a href="services.html"    class="nav-link">Services</a>
+      <a href="kits.html"        class="nav-link">Kits</a>
+      <a href="about.html"       class="nav-link">About</a>
+      <a href="contact.html"     class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Calculator Mode Toggle -->
+    <div class="calculator-mode-toggle mb-3 d-print-none">
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-primary active">
           <input type="radio" name="calculatorMode" id="singleLayerMode" checked> Single Layer
@@ -252,7 +313,7 @@
             <button id="addLayerBtn" class="btn btn-primary">+ Add Layer</button>
           </div>
           <div class="card-body">
-            <div id="layersList" class="batch-layer-list">
+            <div id="layersList" class="batch-layer-list" style="overflow-x: hidden;">
               <!-- Layers will be added here by JavaScript -->
             </div>
           </div>
@@ -353,19 +414,20 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Tips &amp; Safety</h5>
-            <p>Always work in a well-ventilated area when using resins</p>
-            <p>Use appropriate personal protective equipment</p>
-            <p><a href="legal.html">Legal Disclaimer</a></p>
+            <p>Always work in a well-ventilated area and wear appropriate protective equipment when working with resins.</p>
+            <p>For best results, maintain a temperature between 65-75°F (18-24°C) during application and curing.</p>
           </div>
         </div>
       </div>
       <div class="col-md-6 mb-3">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Other Calcs</h5>
-            <p><a href="mekpcalc.html">MEKp Mix Calculator</a></p>
-            <p><a href="awlgrip.html">Awlgrip Mix Calculator</a></p>
-            <p><a href="epifanespoly.html">Epifanes Poly Mix Calculator</a></p>
+            <h5 class="card-title">Other Calculators</h5>
+            <ul class="list-unstyled">
+              <li><a href="mekpcalc.html">MEKp Calculator</a></li>
+              <li><a href="epifanespoly.html">Epifanes Poly Calculator</a></li>
+              <li><a href="awlgrip.html">Awlgrip Calculator</a></li>
+            </ul>
           </div>
         </div>
       </div>
@@ -373,50 +435,49 @@
   </div>
 
   <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
-  <!-- Donation Button -->
-  <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
-  <!-- Donation Modal (updated with PayPal snippet) -->
-  <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-        <div class="modal-header" style="border-bottom: 1px solid #48484a;">
-          <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
-        </div>
-        <div class="modal-body">
-          <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
-          <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
-          <hr style="border-color: #48484a;">
-          <div class="donation-options">
-            <form action="https://www.paypal.com/donate" method="post" target="_top">
-              <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
-              <input type="hidden" name="no_recurring" value="0" />
-              <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
-              <input type="hidden" name="currency_code" value="USD" />
-              <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-              <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-            </form>
-          </div>
-        </div>
-        <div class="modal-footer" style="border-top: 1px solid #48484a;">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Footer Section -->
-  <footer class="footer text-center">
-    <div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
-    <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
-    <div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
-  </footer>
-  <!-- #EndLibraryItem -->
-  
-  <!-- JS Scripts -->
+	<!-- Donation Button -->
+	<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
+	<!-- Donation Modal (updated with PayPal snippet) -->
+	<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
+				<div class="modal-header" style="border-bottom: 1px solid #48484a;">
+					<h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
+				</div>
+				<div class="modal-body">
+					<p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+					<p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+					<hr style="border-color: #48484a;">
+					<div class="donation-options">
+						<form action="https://www.paypal.com/donate" method="post" target="_top">
+							<input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+							<input type="hidden" name="no_recurring" value="0" />
+							<input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+							<input type="hidden" name="currency_code" value="USD" />
+							<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+							<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer" style="border-top: 1px solid #48484a;">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Footer Section -->
+	<footer class="footer text-center">
+		<div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
+		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
+		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
+	</footer>
+<!-- #EndLibraryItem -->
+	
+	<!-- JavaScript -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="fiberglass_calculator.js"></script>
-  <script src="main.js"></script>
 </body>
 </html>
