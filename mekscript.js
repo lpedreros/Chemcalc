@@ -1,4 +1,4 @@
-// mekscript.js - v4 (Fixes auto-update issue by correcting element IDs)
+// mekscript.js - v5 (Fixes unit dropdown update bug)
 
 document.addEventListener("DOMContentLoaded", () => {
   // Get elements using correct IDs from mekpcalc.html
@@ -32,28 +32,49 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to update volume unit options based on system
   function updateVolumeUnits() {
     const selectedSystem = unitSystemSelect.value;
+    const currentVolumeUnitValue = volumeUnitSelect.value; // Store current selection if possible
     volumeUnitSelect.innerHTML = ""; // Clear existing options
     let options = [];
+    let defaultUnit = "";
+
     if (selectedSystem === "imperial") {
       options = [
         { value: "oz", text: "Fluid Ounces (fl oz)" },
         { value: "quart", text: "Quarts (qt)" },
         { value: "gallon", text: "Gallons (gal)" },
       ];
-      document.getElementById("resinVolumeUnit").textContent = "oz"; // Update placeholder hint
+      defaultUnit = "oz";
+      // Update placeholder hint if element exists
+      const resinVolumeUnitSpan = document.getElementById("resinVolumeUnit");
+      if (resinVolumeUnitSpan) resinVolumeUnitSpan.textContent = "oz"; 
     } else { // metric
       options = [
         { value: "ml", text: "Milliliters (mL/cc)" },
         { value: "liter", text: "Liters (L)" },
       ];
-      document.getElementById("resinVolumeUnit").textContent = "mL"; // Update placeholder hint
+      defaultUnit = "ml";
+      // Update placeholder hint if element exists
+      const resinVolumeUnitSpan = document.getElementById("resinVolumeUnit");
+      if (resinVolumeUnitSpan) resinVolumeUnitSpan.textContent = "mL"; 
     }
+    
+    let unitFound = false;
     options.forEach(opt => {
       const option = document.createElement("option");
       option.value = opt.value;
       option.textContent = opt.text;
       volumeUnitSelect.appendChild(option);
+      if (opt.value === currentVolumeUnitValue) {
+          option.selected = true; // Try to keep the previous selection if it exists in the new list
+          unitFound = true;
+      }
     });
+
+    // If the previously selected unit is not in the new list, select the default for the system
+    if (!unitFound) {
+        volumeUnitSelect.value = defaultUnit;
+    }
+
     // Trigger calculation update after changing units
     calculateMEKP(); 
   }
@@ -87,14 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
       customPercentageSlider.disabled = true;
     } else {
       customPercentageSlider.disabled = false;
-      // Use slider value if it's been interacted with (or default)
+      // Use slider value
       mekpPercentage = customPercentage;
       percentageSource = "slider";
-      
-      // Fallback to temperature calculation if slider is at default and temp is valid
-      // (Original logic seemed to prioritize temp if slider wasn't manually set - keeping similar behavior)
-      // Let's simplify: Always use the slider unless Duratec is checked.
-      // The user can adjust the slider based on temp recommendations.
     }
     
     // Update pctSource span
@@ -160,7 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const linksToShow = ["mekp", "polyester_resin_gallon", "latex_gloves", "mixing_sticks", "disposable_paper_cups"];
 
     linksToShow.forEach(key => {
-      const linkData = affiliateLinksData[key];
+      // Check if the key exists directly in affiliateLinksData
+      const linkData = affiliateLinksData[key]; 
       if (linkData) {
         const li = document.createElement("li");
         const a = document.createElement("a");
@@ -170,13 +187,30 @@ document.addEventListener("DOMContentLoaded", () => {
         a.rel = "noopener noreferrer sponsored";
         li.appendChild(a);
         affiliateLinksList.appendChild(li);
+      } else {
+          // Fallback: Search for the key within the affiliateLinksData object (if structured differently)
+          // This part might need adjustment based on the actual structure of affiliate_links.js
+          for (const category in affiliateLinksData) {
+              if (affiliateLinksData[category][key]) {
+                  const nestedLinkData = affiliateLinksData[category][key];
+                  const li = document.createElement("li");
+                  const a = document.createElement("a");
+                  a.href = nestedLinkData.url;
+                  a.textContent = nestedLinkData.name;
+                  a.target = "_blank";
+                  a.rel = "noopener noreferrer sponsored";
+                  li.appendChild(a);
+                  affiliateLinksList.appendChild(li);
+                  break; // Found it, stop searching this category
+              }
+          }
       }
     });
   }
 
   // Event listeners for automatic calculation
   const inputsToWatch = [
-    unitSystemSelect,
+    // unitSystemSelect, // Removed from here, handled separately below
     resinVolumeInput,
     volumeUnitSelect,
     ambientTempInput,
@@ -192,21 +226,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // *** FIX: Add specific event listener for unit system changes ***
+  if (unitSystemSelect) {
+      unitSystemSelect.addEventListener("change", updateVolumeUnits);
+  }
+
   // Initial setup
   updateVolumeUnits(); // Set initial volume units and trigger calculation
-  calculateMEKP(); // Initial calculation
+  // calculateMEKP(); // calculateMEKP is called by updateVolumeUnits, no need to call twice
 
   // --- Print Functionality ---
   const printButton = document.getElementById("printButton");
   const qrCodeContainer = document.getElementById("printQrCode");
 
   if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
-    printButton.addEventListener("click", () => {
+    printButton.addEventListener("click", (event) => { // Added event parameter
+      event.preventDefault(); // Prevent potential form submission if button is inside a form
       const pageUrl = window.location.href;
       qrCodeContainer.innerHTML = ""; // Clear previous QR code
       new QRCode(qrCodeContainer, {
         text: pageUrl,
-        width: 100,
+        width: 100, // Keep original size unless requested otherwise
         height: 100,
         colorDark : "#000000",
         colorLight : "#ffffff",
