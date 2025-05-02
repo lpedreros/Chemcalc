@@ -5,8 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="/manifest.json">
+  <!-- SEO: More specific title -->
   <title>MEKP Calculator for Polyester Resin &amp; Gelcoat | ChemCalc</title>
-  <meta name="description" content="Calculate the precise amount of MEKP catalyst needed for polyester resin or gelcoat based on volume and temperature. Ensure proper curing with ChemCalc's free MEKP calculator. Features Duratec override and custom percentage options.">
+  <!-- SEO: Updated description -->
+  <meta name="description" content="Calculate the precise amount of MEKP catalyst needed for polyester resin or gelcoat based on volume and temperature. Features Duratec override and custom percentage options.">
+  <!-- SEO: Keywords -->
   <meta name="keywords" content="MEKP calculator, catalyst calculator, polyester resin, gelcoat, marine repair, chemical calculator, MEKp percentage, Duratec, ChemCalc">
   <link rel="canonical" href="https://chemcalc.co/mekpcalc.html" />
 
@@ -22,13 +25,13 @@
   <meta name="twitter:description" content="Calculate precise MEKP amounts based on resin/gelcoat volume and temperature. Includes Duratec override." />
   <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
 
-  <!-- JSON-LD (Updated Schema) -->
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": ["WebPage", "WebApplication"],
-    "name": "MEKP Calculator for Polyester Resin & Gelcoat | ChemCalc",
-    "description": "Calculate the precise amount of MEKP catalyst needed for polyester resin or gelcoat based on volume and temperature. Ensure proper curing with ChemCalc's free MEKP calculator. Features Duratec override and custom percentage options.",
+    "@type": "WebApplication",
+    "name": "MEKP Calculator",
+    "description": "Calculate the precise amount of MEKP catalyst needed for polyester resin or gelcoat based on volume and temperature.",
     "url": "https://chemcalc.co/mekpcalc.html",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "All",
@@ -36,43 +39,6 @@
     "offers": {
       "@type": "Offer",
       "price": "0"
-    },
-    "mainEntity": {
-      "@type": "HowTo",
-      "name": "How to Use the MEKP Calculator",
-      "description": "Calculate the correct MEKP catalyst amount for polyester resin or gelcoat.",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "name": "Select Measurement System",
-          "text": "Choose between Imperial (oz, qt, gal, °F) or Metric (mL, L, °C) units.",
-          "url": "https://chemcalc.co/mekpcalc.html#unitSystem"
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Enter Resin/Gelcoat Volume",
-          "text": "Input the total volume of resin or gelcoat you are mixing and select the corresponding unit (e.g., oz, qt, gal, mL, L).",
-          "url": "https://chemcalc.co/mekpcalc.html#resinVolume"
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Enter Ambient Temperature",
-          "text": "Input the current ambient temperature and select Fahrenheit or Celsius. This helps determine the recommended MEKP percentage.",
-          "url": "https://chemcalc.co/mekpcalc.html#ambientTemp"
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Adjust MEKP Percentage (Optional)",
-          "text": "Optionally, check the box if using Duratec 904-001 (locks MEKP at 2%) or use the slider to set a custom percentage between 1% and 3%. Otherwise, the calculator uses a percentage based on temperature.",
-          "url": "https://chemcalc.co/mekpcalc.html#customPercentage"
-        },
-        {
-          "@type": "HowToStep",
-          "name": "View Results",
-          "text": "The calculator automatically displays the recommended MEKP percentage, the percentage used for calculation, and the required MEKP amount in CCs and drops.",
-          "url": "https://chemcalc.co/mekpcalc.html#mekpRecommended"
-        }
-      ]
     }
   }
   </script>
@@ -103,44 +69,32 @@
     <h1>ChemCalc</h1>
     <div class="powered-by-header"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" /> </div>
     <button class="menu-toggle">☰</button>
-    <nav id="mainNav" class="nav">
-      <a href="index.html">Home</a>
-      <a href="calculators.html" class="active">Calculators</a> <!-- Assuming this is part of calculators section -->
-      <a href="services.html">Services</a>
-      <a href="kits.html">Kits</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+    <nav id="mainNav" class="nav"> <a href="index.html">Home</a> <a href="calculators.html" class="active">Calculators</a> <a href="services.html">Services</a> <a href="kits.html">Kits</a> <a href="about.html">About</a> <a href="contact.html">Contact</a> </nav>
   </header>
 <!-- #EndLibraryItem -->
 <main class="container">
   <h1 class="text-center mb-4">MEKP Calculator</h1>
   <p class="text-center text-muted mb-4">For Polyester Resins &amp; Gelcoats</p>
 
-  <!-- Placeholder for supporting content (Step 005) -->
-  <!-- <section class="mb-4">
-    <p>Introductory paragraph explaining MEKP, its importance, factors affecting ratios (temp), and how this calculator helps...</p>
-  </section> -->
-
   <!-- Measurement System -->
-  <div class="card" id="unitSystemCard"><div class="card-body"><h5 class="card-title">Measurement System</h5>
+  <div class="card"><div class="card-body"><h5 class="card-title">Measurement System</h5>
     <select id="unitSystem" class="form-control"><option value="imperial" selected>Imperial</option><option value="metric">Metric</option></select>
   </div></div>
 
   <!-- Resin Volume -->
-  <div class="card" id="resinVolumeCard"><div class="card-body"><h5 class="card-title">Resin / Gelcoat Volume</h5>
+  <div class="card"><div class="card-body"><h5 class="card-title">Resin / Gelcoat Volume</h5>
     <div class="row"><div class="col-md-6"><input type="number" id="resinVolume" class="form-control" placeholder="Enter volume"><small id="resinVolumeUnit" class="form-text text-muted">oz</small></div>
       <div class="col-md-6"><select id="volumeUnit" class="form-control"></select></div></div>
   </div></div>
 
   <!-- Ambient Temperature -->
-  <div class="card" id="ambientTempCard"><div class="card-body"><h5 class="card-title">Ambient Temperature</h5>
+  <div class="card"><div class="card-body"><h5 class="card-title">Ambient Temperature</h5>
     <div class="row"><div class="col-md-6"><input type="number" id="ambientTemp" class="form-control" placeholder="Enter temperature"></div>
       <div class="col-md-6"><select id="tempUnit" class="form-control"><option value="fahrenheit" selected>Fahrenheit</option><option value="celsius">Celsius</option></select></div></div>
   </div></div>
 
   <!-- MEKP Percentage & Duratec -->
-  <div class="card" id="mekpPercentageCard"><div class="card-body"><h5 class="card-title">MEKP Percentage</h5>
+  <div class="card"><div class="card-body"><h5 class="card-title">MEKP Percentage</h5>
     <div class="custom-control custom-switch mb-3"><input type="checkbox" class="custom-control-input" id="usingDuratec"><label class="custom-control-label" for="usingDuratec">Using Duratec 904‑001 Additive? <span class="badge badge-info ml-1">Auto 2%</span></label></div>
     <small id="duratecHelp" class="form-text text-muted mb-3">Check if using Duratec Hi-Gloss Additive to lock MEKP at 2%. Slider disabled.</small>
     <label for="customPercentage">Custom Percentage (optional): <span id="customPercentageValue">1%</span></label>
@@ -148,7 +102,7 @@
   </div></div>
 
   <!-- Results -->
-  <div class="card printable-section" id="resultsCard"><div class="card-body">
+  <div class="card printable-section"><div class="card-body">
     <h5 class="card-title">Your MEKP Mix Results</h5>
     <p id="mekpRecommended">Recommended MEKP % (based on temperature):</p>
     <p id="mekpPercentage">Using <span id="pctSource">slider</span> value:</p>
@@ -156,11 +110,12 @@
     <p id="mekpDrops">MEKP Drops:</p>
     <p id="tempAdvice" class="text-danger"></p>
 
-    <!-- Affiliate Links Placeholder (Step 006) -->
+    <!-- Affiliate Links Placeholder -->
     <div id="affiliateLinksContainer">
       <h6>Related Products:</h6>
       <ul id="affiliateLinksList"></ul>
       <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+     
     </div>
 
     <!-- Print Button and QR Code Placeholder -->
@@ -239,18 +194,19 @@
 
   <!-- JS: correct order ensures init runs after main script -->
 <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js")
-    .then(reg => console.log("ServiceWorker registered:", reg))
-    .catch(err => console.error("SW registration failed:", err));
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(reg => console.log('ServiceWorker registered:', reg))
+    .catch(err => console.error('SW registration failed:', err));
 }
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- Load affiliate links data first -->
-<script src="affiliate_links.js"></script>
+<script src="affiliate_links.js"></script> 
 <script src="mekscript.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
+
