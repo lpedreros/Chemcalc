@@ -1,484 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Basic Meta & SEO -->
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fiberglass Cloth Resin Calculator – ChemCalc</title>
-  <meta name="description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements."/>
-  <meta name="keywords" content="Fiberglass Cloth, Resin Calculator, Carbon Fiber, Kevlar, marine repair, chemical calculator, ChemCalc"/>
-  <link rel="canonical" href="https://chemcalc.co/clothcalc.html"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO: Title optimized -->
+    <title>Fiberglass Resin Calculator - ChemCalc</title>
+    <!-- SEO: Description optimized -->
+    <meta name="description" content="Calculate precise resin amounts (Polyester, Vinylester, Epoxy) for Fiberglass, Carbon Fiber, or Kevlar projects. Considers area, layers, material type, and temperature.">
+    <meta name="keywords" content="fiberglass calculator, resin calculator, composite calculator, polyester resin, vinylester resin, epoxy resin, carbon fiber, kevlar, boat building, marine repair, ChemCalc">
+    <link rel="canonical" href="https://chemcalc.co/clothcalc.html"> <!-- SEO: Updated canonical URL -->
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Fiberglass Cloth Resin Calculator – ChemCalc"/>
-  <meta property="og:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar. Supports imperial and metric units with resin-specific requirements."/>
-  <meta property="og:image" content="https://chemcalc.co/images/og-fiberglass-calculator.jpg"/>
-  <meta property="og:url" content="https://chemcalc.co/clothcalc.html"/>
-  <meta property="og:type" content="website"/>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Print Styles -->
+    <link rel="stylesheet" href="print_style_fix_v4.css" media="print">
+    <!-- Favicon -->
+    <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png"> <!-- Updated path based on other files -->
+    <link rel="apple-touch-icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png"> <!-- Assuming same image for apple touch icon -->
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="Fiberglass Cloth Resin Calculator – ChemCalc"/>
-  <meta name="twitter:description" content="Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar."/>
-  <meta name="twitter:image" content="https://chemcalc.co/images/twitter-fiberglass-calculator.jpg"/>
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Fiberglass Cloth Saturation Calculator | ChemCalc"> <!-- Updated Title -->
+    <meta property="og:description" content="Calculate precise resin needs for fiberglass, carbon fiber, and Kevlar projects based on material, area, layers, and temperature.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://chemcalc.co/clothcalc.html"> <!-- SEO: Updated OG URL -->
+    <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg"> <!-- Using consistent OG image -->
+    <meta property="og:image:alt" content="ChemCalc Fiberglass Calculator Interface">
+    <meta property="og:site_name" content="ChemCalc">
 
-  <!-- JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Fiberglass Cloth Resin Calculator",
-    "description": "Calculate precise resin volumes needed for fiberglass cloth, carbon fiber, and Kevlar.",
-    "applicationCategory": "UtilityApplication",
-    "operatingSystem": "Any",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "ChemCalc",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://chemcalc.co/images/logo.png"
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="Fiberglass Cloth Saturation Calculator | ChemCalc" /> <!-- Updated Title -->
+   <meta name="twitter:description" content="Calculate precise resin needs for fiberglass, carbon fiber, and Kevlar projects.">
+    <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg"> <!-- Using consistent Twitter image -->
+    <!-- <meta name="twitter:site" content="@YourTwitterHandle"> --> <!-- Removed if no handle provided -->
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Fiberglass Cloth Saturation Calculator",
+      "description": "Calculates the required amount of resin (Polyester, Vinylester, Epoxy) for laminating fiberglass, carbon fiber, or Kevlar materials, considering layers, dimensions, material type, resin type, and temperature.",
+      "url": "https://chemcalc.co/clothcalc.html", // <!-- SEO: Updated URL -->
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Tested on modern browsers.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      },
+      "creator": {
+        "@type": "Organization", // Or Person
+        "name": "ChemCalc"
       }
     }
-  }
-  </script>
+    </script>
 
-  <!-- Favicon & CSS -->
-  <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png"/>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
-  
-  <!-- Web App Manifest -->
-  <link rel="manifest" href="manifest.json"/>
-  
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js').then(function(registration) {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function(err) {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-      });
-    }
-  </script>
+<!-- Adsense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1179454606770448"
+     crossorigin="anonymous"></script>
+  <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+</script>
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 </head>
-
 <body>
-  <!-- Header (visible on screen, hidden on print) -->
-  <header class="container header text-center d-print-none">
-    <h1>ChemCalc</h1>
-    <div class="powered-by-header mb-2">
-      <span>Powered by</span>
-      <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"/>
-    </div>
-    <button class="menu-toggle btn btn-secondary d-block d-md-none mb-2 d-print-none">☰</button>
-    <nav id="mainNav" class="nav justify-content-center d-print-none">
-      <a href="index.html"      class="nav-link">Home</a>
-      <a href="calculators.html" class="nav-link">Calculators</a>
-      <a href="services.html"    class="nav-link">Services</a>
-      <a href="kits.html"        class="nav-link">Kits</a>
-      <a href="about.html"       class="nav-link">About</a>
-      <a href="contact.html"     class="nav-link">Contact</a>
-    </nav>
-  </header>
 
-  <main class="container">
-    <!-- Calculator Mode Toggle -->
-    <div class="calculator-mode-toggle mb-3 d-print-none">
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-outline-primary active">
-          <input type="radio" name="calculatorMode" id="singleLayerMode" checked> Single Layer
-        </label>
-        <label class="btn btn-outline-primary">
-          <input type="radio" name="calculatorMode" id="batchMode"> Batch Calculator
-        </label>
-      </div>
-    </div>
+<!-- AdSense AMP -->
+  <amp-auto-ads type="adsense"
+        data-ad-client="ca-pub-1179454606770448">
+</amp-auto-ads>
 
-    <!-- Print-only Summary (hidden on screen, shown in print) -->
-    <div id="printSummary" class="d-none d-print-block mb-4">
-      <h2>Calculation Summary</h2>
-      <p>URL: <span id="printUrl"></span></p>
-      <p>Measurement System: <span id="printUnitSystem"></span></p>
-      <p>Material Type: <span id="printMaterialType"></span></p>
-      <p>Cloth Type: <span id="printClothType"></span></p>
-      <p>Resin Type: <span id="printResinType"></span></p>
-      <p>Surface Area: <span id="printSurfaceArea"></span> <span id="printAreaUnit"></span></p>
-    </div>
+    <!-- #BeginLibraryItem "/Nav header.lbi" -->
+    <!-- Header Section -->
+    <header class="container header">
+        <h1>ChemCalc</h1>
+<div class="powered-by-header"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" /> </div>
+        <button class="menu-toggle">☰</button>
+        <nav id="mainNav" class="nav"> <a href="index.html">Home</a> <a href="calculators.html" class="active">Calculators</a> <a href="services.html">Services</a> <a href="kits.html">Kits</a> <a href="about.html">About</a> <a href="contact.html">Contact</a> </nav>
+    </header>
+    <!-- #EndLibraryItem -->
 
-    <!-- Print-only QR (hidden on screen, shown in print) -->
-    <div id="printQrContainer" class="d-none d-print-block text-center mb-4">
-      <img id="printQr" src="" alt="QR Code" width="100" height="100"/>
-      <p class="small">Scan to return to this calculator</p>
-    </div>
+    <main class="container">
+        <h1 class="text-center my-4">Fiberglass Cloth Saturation Calculator</h1> <!-- Updated Title -->
+        <p class="text-center text-muted mb-4">For Fiberglass, Carbon Fiber &amp; Kevlar Laminates</p>
 
-    <!-- Single Layer Calculator -->
-    <div id="singleLayerCalculator" class="calculator-section">
-      <!-- Input Sections (visible on screen, hidden in print) -->
-      <div id="inputSection" class="d-print-none">
-        <!-- Measurement System -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Measurement System</h5>
-            <select id="unitSystem" class="form-control">
-              <option value="imperial" selected>Imperial (oz, ft², gal)</option>
-              <option value="metric">Metric (g, m², L)</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- Material Type -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Material Type</h5>
-            <select id="materialType" class="form-control">
-              <option value="fiberglass" selected>Fiberglass</option>
-              <option value="carbon">Carbon Fiber</option>
-              <option value="kevlar">Kevlar</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- Cloth Type + Thumbnail -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Cloth Type</h5>
-            <div class="d-flex align-items-center">
-              <select id="clothType" class="form-control"></select>
-              <img id="clothThumbnail"
-                   src="images/placeholder.svg"
-                   alt=""
-                   class="ml-3 img-fluid"
-                   width="60" height="60"/>
+            <!-- Project Dimensions Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Project Dimensions</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="length" class="form-label">Length</label>
+                            <input type="number" class="form-control" id="length" required min="0" step="any" placeholder="e.g., 48">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="width" class="form-label">Width</label>
+                            <input type="number" class="form-control" id="width" required min="0" step="any" placeholder="e.g., 24">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="units" class="form-label">Units</label>
+                            <select id="units" class="form-control">
+                                <option value="in">Inches</option>
+                                <option value="ft">Feet</option>
+                                <option value="cm">Centimeters</option>
+                                <option value="m">Meters</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Project Dimensions Card -->
+
+            <!-- Resin & Temperature Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Resin &amp; Temperature</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="resin-type" class="form-label">Resin Type</label>
+                            <select id="resin-type" class="form-control">
+                                <option value="polyester">Polyester</option>
+                                <option value="vinylester">Vinylester</option>
+                                <option value="epoxy">Epoxy</option>
+                                <!-- Add more resin types if needed -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temperature" class="form-label">Ambient Temperature (<span id="temp-unit-label">°C</span>)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="temperature" value="20" step="any">
+                                <div class="input-group-text">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="temp-unit-toggle">
+                                        <label class="form-check-label" for="temp-unit-toggle">°F</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Resin & Temperature Card -->
+
+            <!-- Material Layers Card -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Material Layers</h5>
+                    <div id="layers-container">
+                        <!-- Layer 1 (default) -->
+                        <div class="layer mb-3 border p-3 rounded">
+                            <h6 class="layer-title">Layer 1</h6> <!-- Using h6 for sub-heading within card -->
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="material-type-1" class="form-label">Material Type</label>
+                                    <select id="material-type-1" class="form-control material-type">
+                                        <option value="csm_0.75">CSM (0.75 oz/sq ft) - Chopped Strand Mat</option>
+                                        <option value="csm_1.5" selected>CSM (1.5 oz/sq ft) - Chopped Strand Mat</option>
+                                        <option value="csm_2.0">CSM (2.0 oz/sq ft) - Chopped Strand Mat</option>
+                                        <option value="wr_18">Woven Roving (18 oz/sq yd)</option>
+                                        <option value="wr_24">Woven Roving (24 oz/sq yd)</option>
+                                        <option value="combo_1708">Combination Mat (1708 Biax +/-45, 17 oz/sq yd)</option>
+                                        <option value="combo_1808">Combination Mat (1808 Biax 0/90, 18 oz/sq yd)</option>
+                                        <option value="cloth_4">Cloth (4 oz/sq yd)</option>
+                                        <option value="cloth_6">Cloth (6 oz/sq yd)</option>
+                                        <option value="cloth_10">Cloth (10 oz/sq yd)</option>
+                                        <option value="carbon_5.7">Carbon Fiber (5.7 oz / 200 gsm)</option>
+                                        <option value="carbon_11">Carbon Fiber (11 oz / 370 gsm)</option>
+                                        <option value="kevlar_5">Kevlar (5 oz / 170 gsm)</option>
+                                        <!-- Add more materials as needed -->
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm mt-2 remove-layer-btn" style="display: none;">Remove Layer</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-layer-btn" class="btn btn-success">+ Add Layer</button>
+                </div>
+            </div> <!-- End Material Layers Card -->
+
+            <!-- Cost Estimation Card -->
+             <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Cost Estimation (Optional)</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="resin-cost" class="form-label">Resin Cost per Unit</label>
+                            <input type="number" class="form-control" id="resin-cost" min="0" step="any" placeholder="e.g., 45.50">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="resin-cost-unit" class="form-label">Cost Unit</label>
+                            <select id="resin-cost-unit" class="form-control">
+                                <option value="gal">USD per Gallon</option>
+                                <option value="liter">USD per Liter</option>
+                                <option value="lb">USD per Pound</option>
+                                <option value="kg">USD per Kilogram</option>
+                                <!-- Add other currencies/units if needed -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Cost Estimation Card -->
+
+
+        <!-- Results Card -->
+        <div id="results" class="card mt-4 printable-section">
+            <div class="card-body">
+                <!-- Result Unit Selection (Moved Above Title) -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="result-system" class="form-label">Measurement System</label>
+                        <select id="result-system" class="form-control">
+                            <option value="metric">Metric (kg, L, m²)</option>
+                            <option value="imperial">Imperial (lbs, gal, ft²)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="result-volume-unit" class="form-label">Volume Unit</label>
+                        <select id="result-volume-unit" class="form-control">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                </div>
+                <h5 class="card-title">Results</h5>
+                <div id="results-content">
+                    <p>Total Area: <span id="total-area"></span></p>
+                    <p>Cloth:Resin Ratio (by weight): <span id="cloth-resin-ratio"></span></p>
+                    <p><strong>Total Resin (Volume): <span id="resin-volume" class="fw-bold"></span></strong></p>
+                    <p><strong>Total Resin (Weight): <span id="resin-weight" class="fw-bold fs-5"></span></strong></p>
+                    <p>Hardener/Catalyst: <span id="hardener-amount"></span></p>
+                    <p>Estimated Working Time: <span id="working-time"></span></p>
+                    <p>Estimated Cost: <span id="estimated-cost"></span></p>
+                    <!-- MEKP Results Section (Hidden by default) -->
+                    <div id="mekp-results-container" style="display: none;" class="mt-3 border-top pt-3">
+                        <h6>MEKP Catalyst Details (for Polyester/Vinylester):</h6>
+                        <p>Recommended MEKP %: <span id="mekp-percentage"></span></p>
+                        <p>MEKP Volume: <span id="mekp-ccs"></span></p>
+                        <p>MEKP Drops: <span id="mekp-drops"></span></p>
+                    </div>
+                    <!-- Add more results as needed -->
+                </div>
+                <!-- Affiliate Links Placeholder -->
+                <div id="affiliateLinksContainer">
+                  <h6>Related Products:</h6>
+                  <ul id="affiliateLinksList"></ul>
+                  <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+                </div>
+                <!-- Print Button and QR Code Placeholder -->
+                <div class="mt-3 d-print-none">
+                    <button id="printButton" class="btn btn-secondary">Print Results</button>
+                </div>
+                <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
             </div>
-            <small class="form-text text-muted">Select the specific type of cloth you're using</small>
-          </div>
-        </div>
+        </div> <!-- End Results Card -->
 
-        <!-- Resin Type -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Resin Type</h5>
-            <select id="resinType" class="form-control">
-              <option value="polyester" selected>Polyester Resin</option>
-              <option value="epoxy">Epoxy Resin</option>
-              <option value="vinylester">Vinylester Resin</option>
-            </select>
-            <small class="form-text text-muted">Different resins have different saturation rates</small>
-          </div>
-        </div>
-
-        <!-- Surface Area -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Surface Area</h5>
-            <div class="row">
-              <div class="col-md-6 mb-2">
-                <input type="number" id="surfaceArea" class="form-control" placeholder="Enter area" min="0" step="0.01"/>
-              </div>
-              <div class="col-md-6 mb-2">
-                <select id="areaUnit" class="form-control"></select>
+        <!-- Tips & Safety / Other Calcs -->
+        <div class="row mt-4">
+          <div class="col-md-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Tips &amp; Safety</h5>
+                <p>Always work in a well-ventilated area and wear appropriate personal protective equipment (PPE) such as gloves, eye protection, and a respirator when working with resins and solvents.</p>
+                <p>Refer to the specific Technical Data Sheet (TDS) and Safety Data Sheet (SDS) for the materials you are using for detailed handling, safety, and application instructions.</p>
+                <p><a href="legal.html">Legal Disclaimer</a></p>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Result Units -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Result Units</h5>
-            <div class="row">
-              <div class="col-md-6 mb-2">
-                <label for="volumeResultUnit">Volume Units</label>
-                <select id="volumeResultUnit" class="form-control"></select>
-              </div>
-              <div class="col-md-6 mb-2">
-                <label for="weightResultUnit">Weight Units</label>
-                <select id="weightResultUnit" class="form-control"></select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Print Button (screen only) -->
-      <div class="text-center mb-3 d-print-none">
-        <button id="printButton" class="btn btn-secondary">Print Results</button>
-      </div>
-
-      <!-- Results (always visible) -->
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Your Resin Requirements</h5>
-          <div class="alert alert-info mb-3">
-            <strong>Note:</strong> For most accurate results, measure resin by weight rather than volume.
-          </div>
-
-          <div class="recommended-method mb-3">
-            <div class="result-label">Recommended Method: Measure By Weight</div>
-            <p id="resinWeight">Resin Weight: <span class="weight-result">—</span></p>
-            <p class="result-explanation">Weight measurement provides the most consistent results and is preferred by professionals.</p>
-          </div>
-
-          <div class="mb-3">
-            <div class="result-label">Alternative Method: Measure By Volume</div>
-            <p id="resinVolume">Resin Volume: <span class="weight-result">—</span></p>
-            <p class="result-explanation">Volume can vary with temperature and between batches. Use only if weight measurement is not available.</p>
-          </div>
-
-          <p id="clothWeight" class="result-label">Cloth Weight: <span class="weight-result">—</span></p>
-          <hr/>
-
-          <div class="ratio-highlight">
-            <div class="result-label">Resin-to-Cloth Ratio:</div>
-            <p id="resinRatio"><span class="ratio-value">—</span></p>
-            <p class="result-explanation">This ratio shows how much resin is needed relative to the cloth weight.</p>
-          </div>
-
-          <p id="coverageInfo" class="small text-muted mt-3"></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Batch Calculator -->
-    <div id="batchCalculator" class="calculator-section" style="display: none;">
-      <!-- Batch Calculator Inputs -->
-      <div class="d-print-none">
-        <!-- Measurement System -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Measurement System</h5>
-            <select id="batchUnitSystem" class="form-control">
-              <option value="imperial" selected>Imperial (oz, ft², gal)</option>
-              <option value="metric">Metric (g, m², L)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Resin Type -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Resin Type</h5>
-            <select id="batchResinType" class="form-control">
-              <option value="polyester" selected>Polyester Resin</option>
-              <option value="epoxy">Epoxy Resin</option>
-              <option value="vinylester">Vinylester Resin</option>
-            </select>
-            <small class="form-text text-muted">Different resins have different saturation rates</small>
-          </div>
-        </div>
-
-        <!-- Surface Area -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Project Surface Area</h5>
-            <div class="row">
-              <div class="col-md-6 mb-2">
-                <input type="number" id="batchSurfaceArea" class="form-control" placeholder="Enter area" min="0" step="0.01" value="1"/>
-              </div>
-              <div class="col-md-6 mb-2">
-                <select id="batchAreaUnit" class="form-control"></select>
+          <div class="col-md-6 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Other Calculators</h5>
+                <p><a href="mekpcalc.html">MEKP Mix Calculator</a></p>
+                <p><a href="awlgrip.html">Awlgrip Paint Mix Calculator</a></p>
+                <p><a href="epifanespoly.html">Epifanes Polyurethane Mix Calculator</a></p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Result Units -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Result Units</h5>
-            <div class="row">
-              <div class="col-md-6 mb-2">
-                <label for="batchVolumeResultUnit">Volume Units</label>
-                <select id="batchVolumeResultUnit" class="form-control"></select>
-              </div>
-              <div class="col-md-6 mb-2">
-                <label for="batchWeightResultUnit">Weight Units</label>
-                <select id="batchWeightResultUnit" class="form-control"></select>
-              </div>
+    </main>
+
+    <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+    <!-- Donation Button -->
+    <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
+    <!-- Donation Modal (updated with PayPal snippet) -->
+    <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
+          <div class="modal-header" style="border-bottom: 1px solid #48484a;">
+            <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
+          </div>
+          <div class="modal-body">
+            <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+            <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+            <hr style="border-color: #48484a;">
+            <div class="donation-options">
+              <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+                <input type="hidden" name="no_recurring" value="0" />
+                <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+                <input type="hidden" name="currency_code" value="USD" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+              </form>
             </div>
           </div>
-        </div>
-
-        <!-- Layers Section -->
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Layers</h5>
-            <button id="addLayerBtn" class="btn btn-primary">+ Add Layer</button>
-          </div>
-          <div class="card-body">
-            <div id="layersList" class="batch-layer-list" style="overflow-x: hidden;">
-              <!-- Layers will be added here by JavaScript -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Batch Results -->
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Project Totals</h5>
-          <div class="alert alert-info mb-3">
-            <strong>Note:</strong> For most accurate results, measure resin by weight rather than volume.
-          </div>
-
-          <div class="recommended-method mb-3">
-            <div class="result-label">Recommended Method: Measure By Weight</div>
-            <p id="batchTotalResinWeight">Total Resin Weight: <span class="weight-result">—</span></p>
-            <p class="result-explanation">Weight measurement provides the most consistent results and is preferred by professionals.</p>
-          </div>
-
-          <div class="mb-3">
-            <div class="result-label">Alternative Method: Measure By Volume</div>
-            <p id="batchTotalResinVolume">Total Resin Volume: <span class="weight-result">—</span></p>
-            <p class="result-explanation">Volume can vary with temperature and between batches. Use only if weight measurement is not available.</p>
-          </div>
-
-          <p id="batchTotalClothWeight" class="result-label">Total Cloth Weight: <span class="weight-result">—</span></p>
-          <hr/>
-
-          <div class="ratio-highlight">
-            <div class="result-label">Average Resin-to-Cloth Ratio:</div>
-            <p id="batchAverageRatio"><span class="ratio-value">—</span></p>
-            <p class="result-explanation">This ratio shows how much resin is needed relative to the cloth weight.</p>
-          </div>
-
-          <div id="batchEfficiency" class="efficiency-highlight mt-3">
-            <div class="result-label">Multi-Layer Efficiency:</div>
-            <p><span class="efficiency-value">—</span></p>
-            <p class="efficiency-note">Multiple layers require less resin due to reduced roller/brush absorption between layers.</p>
+          <div class="modal-footer" style="border-top: 1px solid #48484a;">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
+    <!-- Footer Section -->
+    <footer class="footer text-center">
+      <div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
+      <p class="mb-2">&copy; <span id="year"></span> ChemCalc. All rights reserved.</p>
+      <div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
+    </footer>
+    <!-- #EndLibraryItem -->
 
-    <!-- Layer Template (hidden) -->
-    <template id="layerTemplate">
-      <div class="layer-card mb-3">
-        <div class="layer-header d-flex justify-content-between align-items-center mb-2">
-          <h6 class="mb-0">Layer <span class="layer-number">1</span></h6>
-          <button class="btn btn-sm btn-danger remove-layer-btn">Remove</button>
-        </div>
-        <div class="layer-body">
-          <div class="row mb-2">
-            <div class="col-md-6 mb-2">
-              <label class="form-label">Material</label>
-              <select class="form-control layer-material">
-                <option value="fiberglass">Fiberglass</option>
-                <option value="carbon">Carbon Fiber</option>
-                <option value="kevlar">Kevlar</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label">Cloth Type</label>
-              <select class="form-control layer-cloth-type">
-                <!-- Populated by JavaScript -->
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4">
-              <div class="layer-result">
-                <label>Cloth Weight:</label>
-                <span class="layer-cloth-weight">—</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="layer-result">
-                <label>Resin Volume:</label>
-                <span class="layer-resin-volume">—</span>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="layer-result">
-                <label>Resin Weight:</label>
-                <span class="layer-resin-weight">—</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-  </main>
-
-  <!-- Tips & Safety / Other Calcs (screen only) -->
-  <div class="container d-print-none mt-4">
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Tips &amp; Safety</h5>
-            <p>Always work in a well-ventilated area and wear appropriate protective equipment when working with resins.</p>
-            <p>For best results, maintain a temperature between 65-75°F (18-24°C) during application and curing.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Other Calculators</h5>
-            <ul class="list-unstyled">
-              <li><a href="mekpcalc.html">MEKp Calculator</a></li>
-              <li><a href="epifanespoly.html">Epifanes Poly Calculator</a></li>
-              <li><a href="awlgrip.html">Awlgrip Calculator</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
-	<!-- Donation Button -->
-	<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
-	<!-- Donation Modal (updated with PayPal snippet) -->
-	<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-				<div class="modal-header" style="border-bottom: 1px solid #48484a;">
-					<h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
-				</div>
-				<div class="modal-body">
-					<p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
-					<p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
-					<hr style="border-color: #48484a;">
-					<div class="donation-options">
-						<form action="https://www.paypal.com/donate" method="post" target="_top">
-							<input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
-							<input type="hidden" name="no_recurring" value="0" />
-							<input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
-							<input type="hidden" name="currency_code" value="USD" />
-							<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-							<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-						</form>
-					</div>
-				</div>
-				<div class="modal-footer" style="border-top: 1px solid #48484a;">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Footer Section -->
-	<footer class="footer text-center">
-		<div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
-		<p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
-		<div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
-	</footer>
-<!-- #EndLibraryItem -->
-	
-	<!-- JavaScript -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="fiberglass_calculator.js"></script>
-	<script src="main.js"></script>
+    <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .then(reg => console.log("ServiceWorker registered:", reg))
+        .catch(err => console.error("SW registration failed:", err));
+    }
+    // Simple year update for footer
+    document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+    <!-- Load affiliate links data first -->
+    <script src="affiliate_links.js"></script>
+    <!-- Load main calculator script -->
+    <script src="clothcalc.js"></script>
+    <!-- Bootstrap JS (ensure Popper.js is loaded if needed by Bootstrap v4) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Load general site script -->
+    <script src="main.js"></script>
 </body>
 </html>
+

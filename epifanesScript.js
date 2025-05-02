@@ -1,58 +1,159 @@
-const unitConversionRates = {
-    squareFootage: { ccs: 1, gallons: 0.00629, quarts: 0.02517, liters: 0.02382, ounces: 0.133, ccs: 29.5735 },
-    gallons: { squareFootage: 159, quarts: 4, liters: 3.78541, ounces: 128, ccs: 3785.41 },
-    quarts: { squareFootage: 39.75, gallons: 0.25, liters: 0.946353, ounces: 32, ccs: 946.353 },
-    liters: { squareFootage: 42.01, gallons: 0.264172, quarts: 1.05669, ounces: 33.814, ccs: 1000 },
-    ounces: { squareFootage: 7.5, gallons: 0.0078125, liters: 0.0295735, quarts: 0.03125, ccs: 29.5735 },
-    ccs: { squareFootage: 0.25, gallons: 0.000264172, liters: 0.001, quarts: 0.00105669, ounces: 0.033814 }
-};
+/* epifanesScript.js - Calculates mix ratios for Epifanes Polyurethane (2:1) and displays affiliate links */
 
-function convertUnits(volume, fromUnit, toUnit) {
-    let numericVolume = parseFloat(volume);
-    if (isNaN(numericVolume)) {
-        return "Conversion Error";
+document.addEventListener("DOMContentLoaded", () => {
+  const totalVolumeInput = document.getElementById("totalVolume");
+  const volumeUnitSelect = document.getElementById("volumeUnit");
+  const resultBaseDisplay = document.getElementById("resultBase");
+  const resultHardenerDisplay = document.getElementById("resultHardener");
+  const resultThinnerDisplay = document.getElementById("resultThinner");
+  const affiliateLinksList = document.getElementById("affiliateLinksList"); // Added for affiliate links
+
+  // Conversion factors TO ccs (mL)
+  const toCcs = {
+    ccs: 1,
+    ounces: 29.5735,
+    liters: 1000,
+    quarts: 946.353,
+    gallons: 3785.41,
+  };
+
+  // Conversion factors FROM ccs (mL)
+  const fromCcs = {
+    ccs: 1,
+    ounces: 1 / 29.5735,
+    liters: 1 / 1000,
+    quarts: 1 / 946.353,
+    gallons: 1 / 3785.41,
+  };
+
+  function formatNumber(number) {
+    // Avoid formatting if input is invalid
+    if (isNaN(number) || number === null) {
+        return "--";
     }
-    return fromUnit === toUnit ? numericVolume : (numericVolume * (unitConversionRates[fromUnit][toUnit] || 0));
-}
+    // Show more precision for smaller units like oz and ccs
+    const unit = volumeUnitSelect.value;
+    const fractionDigits = (unit === "ounces" || unit === "ccs") ? 1 : 2;
+    return number.toLocaleString("en-US", {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    });
+  }
 
-function formatNumber(number) {
-    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
-}
+  /* --- Affiliate Link Display Logic --- */
+  function displayAffiliateLinks() {
+    if (!affiliateLinksList || typeof affiliateLinksData === "undefined") {
+      console.error("Affiliate links container or data not found.");
+      return;
+    }
 
-function calculateEpifanes() {
-    const inputValue = parseFloat(document.getElementById('inputValue').value);
-    const inputUnitType = document.getElementById('unitType').value;
-    const outputUnitType = document.getElementById('outputUnitType').value;
+    affiliateLinksList.innerHTML = ""; // Clear previous links
+    const linksToShowKeys = new Set();
 
-    let coverageArea;
-    if (inputUnitType === 'squareFootage') {
-        coverageArea = inputValue; // Use input as coverage area for square footage
+    // Add General Supplies (Epifanes specific links not found in affiliate_links.js)
+    if (affiliateLinksData["latex_gloves"]) linksToShowKeys.add("latex_gloves");
+    if (affiliateLinksData["mixing_sticks"]) linksToShowKeys.add("mixing_sticks");
+    if (affiliateLinksData["disposable_paper_cups"]) linksToShowKeys.add("disposable_paper_cups");
+    if (affiliateLinksData["foam_rollers"]) linksToShowKeys.add("foam_rollers"); // Often used for varnish/paint
+    if (affiliateLinksData["chip_brushes"]) linksToShowKeys.add("chip_brushes");
+    if (affiliateLinksData["blue_tape"]) linksToShowKeys.add("blue_tape");
+    if (affiliateLinksData["rags"]) linksToShowKeys.add("rags");
+
+    // Render the links
+    if (linksToShowKeys.size > 0) {
+      linksToShowKeys.forEach((key) => {
+        const linkData = affiliateLinksData[key];
+        if (linkData) {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = linkData.url;
+          a.textContent = linkData.name;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer sponsored";
+          li.appendChild(a);
+          affiliateLinksList.appendChild(li);
+        }
+      });
     } else {
-        // Convert input volume to equivalent coverage area
-        let totalVolumeCCs = convertUnits(inputValue, inputUnitType, 'ccs');
-        coverageArea = totalVolumeCCs / (750 / 120); // Convert total volume to coverage area
+      affiliateLinksList.innerHTML = "<li>No relevant products found. Check Kits page.</li>";
+    }
+  }
+
+  function calculateEpifanes() {
+    const totalVolumeValue = parseFloat(totalVolumeInput.value) || 0;
+    const unit = volumeUnitSelect.value;
+
+    if (totalVolumeValue <= 0) {
+      resultBaseDisplay.textContent = "Component A (Base): --";
+      resultHardenerDisplay.textContent = "Component B (Hardener): --";
+      if (affiliateLinksList) affiliateLinksList.innerHTML = ""; // Clear links if input is invalid
+      return;
     }
 
-    let totalVolumeCCs = coverageArea * (750 / 120);
-    const volumeA = totalVolumeCCs * (2/3); // Component A volume
-    const volumeB = totalVolumeCCs * (1/3); // Component B volume
+    // Convert total desired volume to ccs
+    const totalVolumeCcs = totalVolumeValue * (toCcs[unit] || 0);
 
-    // Convert volumes to output units
-    const volumeAInOutputUnits = convertUnits(volumeA, 'ccs', outputUnitType);
-    const volumeBInOutputUnits = convertUnits(volumeB, 'ccs', outputUnitType);
+    if (totalVolumeCcs <= 0) {
+        resultBaseDisplay.textContent = "Component A (Base): Error";
+        resultHardenerDisplay.textContent = "Component B (Hardener): Error";
+        if (affiliateLinksList) affiliateLinksList.innerHTML = "";
+        return;
+    }
 
-    const coverageAreaFormatted = formatNumber(coverageArea);
-    const volumeAFormatted = formatNumber(volumeAInOutputUnits);
-    const volumeBFormatted = formatNumber(volumeBInOutputUnits);
+    // Epifanes Polyurethane is 2:1 by volume (Base:Hardener)
+    const baseVolumeCcs = totalVolumeCcs * (2 / 3);
+    const hardenerVolumeCcs = totalVolumeCcs * (1 / 3);
 
-    document.getElementById('result').innerHTML = `
-        <p>Approximate coverage area: <strong>${coverageAreaFormatted} sq. ft.</strong></p>
-        <p>Component A (Paint): <strong>${volumeAFormatted} ${outputUnitType}</strong></p>
-        <p>Component B (Catalyst): <strong>${volumeBFormatted} ${outputUnitType}</strong></p>`;
-}
+    // Convert back to the selected output unit
+    const baseVolumeOutput = baseVolumeCcs * (fromCcs[unit] || 0);
+    const hardenerVolumeOutput = hardenerVolumeCcs * (fromCcs[unit] || 0);
 
-document.getElementById('inputValue').addEventListener('input', calculateEpifanes);
-document.getElementById('unitType').addEventListener('change', calculateEpifanes);
-document.getElementById('outputUnitType').addEventListener('change', calculateEpifanes);
+    // Display results
+    resultBaseDisplay.innerHTML = `Component A (Base): <strong>${formatNumber(baseVolumeOutput)} ${unit}</strong>`;
+    resultHardenerDisplay.innerHTML = `Component B (Hardener): <strong>${formatNumber(hardenerVolumeOutput)} ${unit}</strong>`;
+    resultThinnerDisplay.textContent = "Thinner (Optional): Use Epifanes Polyurethane Thinner (Brush or Spray) as needed, typically 0-5% for brushing, 5-15% for spraying. Refer to TDS.";
 
-calculateEpifanes(); // Initial calculation on page load
+    // Update affiliate links
+    displayAffiliateLinks();
+  }
+
+  // Add event listeners
+  totalVolumeInput.addEventListener("input", calculateEpifanes);
+  volumeUnitSelect.addEventListener("change", calculateEpifanes);
+
+  // Initial calculation on page load
+  calculateEpifanes();
+});
+
+
+
+
+  // --- Print Functionality ---
+  const printButton = document.getElementById("printButton");
+  const qrCodeContainer = document.getElementById("printQrCode");
+
+  if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
+    printButton.addEventListener("click", (event) => { // Add event parameter
+      event.preventDefault(); // Prevent default button behavior (form submission)
+      const pageUrl = window.location.href;
+      qrCodeContainer.innerHTML = ""; // Clear previous QR code
+      new QRCode(qrCodeContainer, {
+        text: pageUrl,
+        width: 100, // Base size, CSS handles print enlargement
+        height: 100,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+
+      // Timeout to allow QR code rendering before print dialog
+      setTimeout(() => {
+          window.print();
+      }, 250); // Adjust delay if needed
+    });
+  } else {
+      if (!printButton) console.error("Print button not found");
+      if (!qrCodeContainer) console.error("QR code container not found");
+      if (typeof QRCode === "undefined") console.error("QRCode library not loaded");
+  }
+

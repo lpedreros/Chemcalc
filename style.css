@@ -284,7 +284,7 @@ h1 {
     margin-top: 0.5em;
 }
 
-/* === ClothCalc-specific styles === */
+/* === Calculator & Shared Styles === */
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -299,7 +299,7 @@ h1 {
 }
 .result-label {
     font-weight: bold;
-    color: #495057;
+    color: #495057; /* Consider adjusting for dark theme if needed */
 }
 .result-explanation {
     font-style: italic;
@@ -307,10 +307,14 @@ h1 {
     font-size: 0.9rem;
     margin-top: 0.25rem;
 }
+
+/* Weight Result Emphasis (ClothCalc) */
 .weight-result {
     font-size: 1.25rem;
     font-weight: 700;
 }
+
+/* Ratio Highlight (ClothCalc) */
 .ratio-highlight {
     background-color: rgba(0, 123, 255, 0.1);
     border-left: 4px solid #007bff;
@@ -323,7 +327,7 @@ h1 {
     color: #007bff;
 }
 
-/* Batch Calculator Styles */
+/* Batch Calculator Styles (ClothCalc) */
 .layer-card {
     border-left: 4px solid #6c757d;
     margin-bottom: 10px;
@@ -368,6 +372,30 @@ h1 {
     overflow-y: auto;
 }
 
+/* Affiliate Links Section (Shared) */
+#affiliateLinksContainer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #48484a;
+}
+#affiliateLinksContainer h6 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+#affiliateLinksContainer ul {
+    list-style: none;
+    padding-left: 0;
+}
+#affiliateLinksContainer li {
+    margin-bottom: 0.25rem;
+}
+.affiliate-disclosure-inline {
+    font-size: 0.8em;
+    color: #adb5bd;
+    display: block;
+    margin-top: 0.5rem;
+}
+
 /* Donation Modal Customizations */
 .modal-content-custom {
     background-color: #2c2c2e;
@@ -410,3 +438,5 @@ h1 {
         font-weight: bold;
     }
 }
+
+
