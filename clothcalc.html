@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- SEO: Title optimized -->
-    <title>Fiberglass Cloth Saturation Calculator - ChemCalc</title>
+    <title>Fiberglass Resin Calculator - ChemCalc</title>
     <!-- SEO: Description optimized -->
     <meta name="description" content="Calculate precise resin amounts (Polyester, Vinylester, Epoxy) for Fiberglass, Carbon Fiber, or Kevlar projects. Considers area, layers, material type, and temperature.">
     <meta name="keywords" content="fiberglass calculator, resin calculator, composite calculator, polyester resin, vinylester resin, epoxy resin, carbon fiber, kevlar, boat building, marine repair, ChemCalc">
@@ -87,7 +87,21 @@
         <h1 class="text-center my-4">Fiberglass Cloth Saturation Calculator</h1> <!-- Updated Title -->
         <p class="text-center text-muted mb-4">For Fiberglass, Carbon Fiber &amp; Kevlar Laminates</p>
 
-
+            <!-- Measurement System Selection Card (Moved to Top) -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Measurement System</h5>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="result-system" class="form-label">Choose System</label>
+                            <select id="result-system" class="form-control">
+                                <option value="metric">Metric (kg, L, m², cm, gsm)</option>
+                                <option value="imperial">Imperial (lbs, gal, ft², in, oz)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Measurement System Selection Card -->
 
             <!-- Project Dimensions Card -->
             <div class="card mb-3">
@@ -127,6 +141,7 @@
                                 <option value="vinylester">Vinylester</option>
                                 <option value="epoxy">Epoxy</option>
                                 <!-- Add more resin types if needed -->
+
                             </select>
                             <!-- Epoxy Mix Ratio Dropdown (Initially Hidden) -->
                             <div id="epoxy-ratio-container" class="mt-2" style="display: none;">
@@ -183,6 +198,20 @@
                                         <option value="carbon_5.7">Carbon Fiber (5.7 oz / 200 gsm)</option>
                                         <option value="carbon_11">Carbon Fiber (11 oz / 370 gsm)</option>
                                         <option value="kevlar_5">Kevlar (5 oz / 170 gsm)</option>
+                                        <!-- Metric Options -->
+                                        <option value="csm_225gsm">CSM (225 gsm) - Chopped Strand Mat</option>
+                                        <option value="csm_450gsm">CSM (450 gsm) - Chopped Strand Mat</option>
+                                        <option value="csm_600gsm">CSM (600 gsm) - Chopped Strand Mat</option>
+                                        <option value="wr_600gsm">Woven Roving (600 gsm)</option>
+                                        <option value="wr_800gsm">Woven Roving (800 gsm)</option>
+                                        <option value="combo_800gsm">Combination Mat (800 gsm)</option>
+                                        <option value="combo_850gsm">Combination Mat (850 gsm)</option>
+                                        <option value="cloth_135gsm">Cloth (135 gsm)</option>
+                                        <option value="cloth_200gsm">Cloth (200 gsm)</option>
+                                        <option value="cloth_340gsm">Cloth (340 gsm)</option>
+                                        <option value="carbon_200gsm">Carbon Fiber (200 gsm)</option>
+                                        <option value="carbon_370gsm">Carbon Fiber (370 gsm)</option>
+                                        <option value="kevlar_170gsm">Kevlar (170 gsm)</option>
                                         <!-- Add more materials as needed -->
                                     </select>
                                 </div>
@@ -221,21 +250,16 @@
         <!-- Results Card -->
         <div id="results" class="card mt-4 printable-section">
             <div class="card-body">
-                <!-- Result Unit Selection (Moved Above Title) -->
+                <!-- Result Volume Unit Selection (Remains here) -->
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="result-system" class="form-label">Measurement System</label>
-                        <select id="result-system" class="form-control">
-                            <option value="metric">Metric (kg, L, m²)</option>
-                            <option value="imperial">Imperial (lbs, gal, ft²)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="result-volume-unit" class="form-label">Volume Unit</label>
+                        <label for="result-volume-unit" class="form-label">Result Volume Unit</label>
                         <select id="result-volume-unit" class="form-control">
                             <!-- Options populated by JS -->
                         </select>
                     </div>
+                    <!-- Placeholder column to maintain layout if needed -->
+                    <div class="col-md-6"></div>
                 </div>
                 <h5 class="card-title">Results</h5>
                 <div id="results-content">
@@ -243,109 +267,74 @@
                     <p>Cloth:Resin Ratio (by weight): <span id="cloth-resin-ratio"></span></p>
                     <p><strong>Total Resin (Volume): <span id="resin-volume" class="fw-bold"></span></strong></p>
                     <p><strong>Total Resin (Weight): <span id="resin-weight" class="fw-bold fs-5"></span></strong></p>
-                    <p>Hardener/Catalyst: <span id="hardener-amount"></span></p>
-                    <p>Estimated Working Time: <span id="working-time"></span></p>
-                    <p>Estimated Cost: <span id="estimated-cost"></span></p>
-                    <!-- MEKP Results Section (Hidden by default) -->
-                    <div id="mekp-results-container" style="display: none;" class="mt-3 border-top pt-3">
-                        <h6>MEKP Catalyst Details (for Polyester/Vinylester):</h6>
-                        <p>Recommended MEKP %: <span id="mekp-percentage"></span></p>
-                        <p>MEKP Volume: <span id="mekp-ccs"></span></p>
-                        <p>MEKP Drops: <span id="mekp-drops"></span></p>
+                    <p>Hardener/Catalyst Amount: <span id="hardener-amount"></span></p>
+                    <!-- MEKP Specific Results (Initially Hidden) -->
+                    <div id="mekp-results-container" style="display: none; margin-left: 1em;">
+                        <p class="mb-0">MEKP Percentage: <span id="mekp-percentage"></span></p>
+                        <p class="mb-0">MEKP Volume: <span id="mekp-ccs"></span></p>
+                        <p class="mb-0">MEKP Drops: <span id="mekp-drops"></span></p>
                     </div>
-                    <!-- Waste Factor Note -->
-                    <p class="text-muted small mt-2">Results include a 15% waste factor.</p>
+                    <p>Estimated Working Time: <span id="working-time"></span></p>
+                    <p>Estimated Resin Cost: <span id="estimated-cost"></span></p>
                 </div>
-                <!-- Affiliate Links Placeholder -->
-                <div id="affiliateLinksContainer">
-                  <h6>Related Products:</h6>
-                  <ul id="affiliateLinksList"></ul>
-                  <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
-                </div>
-                <!-- Print Button and QR Code Placeholder -->
-                <div class="mt-3 d-print-none">
-                    <button id="printButton" class="btn btn-secondary">Print Results</button>
-                </div>
-                <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
             </div>
         </div> <!-- End Results Card -->
 
-        <!-- Tips & Safety / Other Calcs -->
-        <div class="row mt-4">
-          <div class="col-md-6 mb-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Tips &amp; Safety</h5>
-                <p>Always work in a well-ventilated area and wear appropriate personal protective equipment (PPE) such as gloves, eye protection, and a respirator when working with resins and solvents.</p>
-                <p>Refer to the specific Technical Data Sheet (TDS) and Safety Data Sheet (SDS) for the materials you are using for detailed instructions and safety precautions.</p>
-                <p>Ensure accurate measurements and thorough mixing of resin and hardener/catalyst for proper curing.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Other Calculators</h5>
-                <ul class="list-unstyled">
-                  <li><a href="mekpcalc.html">MEKp Catalyst Calculator</a></li>
-                  <li><a href="awlgrip.html">Awlgrip Paint Calculator</a></li>
-                  <li><a href="epifanespoly.html">Epifanes Polyurethane Calculator</a></li>
+        <!-- Affiliate Links Section -->
+        <div id="affiliateLinksContainer" class="card mt-4" style="display: none;">
+            <div class="card-body">
+                <h5 class="card-title">Recommended Products</h5>
+                <ul id="affiliateLinksList">
+                    <!-- Links will be populated by JS -->
                 </ul>
-              </div>
             </div>
-          </div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="card mt-4">
+            <div class="card-body text-center">
+                <h5 class="card-title">Share this Calculator</h5>
+                <div id="qrcode" style="width:100px; height:100px; margin:auto;"></div>
+            </div>
         </div>
 
     </main>
 
-    <!-- #BeginLibraryItem "/Library/Footer.lbi" -->
-    <!-- Donation Button -->
-    <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
-    <!-- Donation Modal (updated with PayPal snippet) -->
-    <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-          <div class="modal-header" style="border-bottom: 1px solid #48484a;">
-            <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
-          </div>
-          <div class="modal-body">
-            <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
-            <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
-            <hr style="border-color: #48484a;">
-            <div class="donation-options">
-              <form action="https://www.paypal.com/donate" method="post" target="_top">
-                <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
-                <input type="hidden" name="no_recurring" value="0" />
-                <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-              </form>
-            </div>
-          </div>
-          <div class="modal-footer" style="border-top: 1px solid #48484a;">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- #BeginLibraryItem "/Footer.lbi" -->
     <!-- Footer Section -->
     <footer class="container footer">
-        <p>&copy; 2024 ChemCalc. All rights reserved.</p>
-        <p><a href="legal.html">Legal &amp; Privacy</a></p>
+        <div class="row">
+            <div class="col-md-4">
+                <h4>ChemCalc</h4>
+                <p>Your resource for chemical calculations and marine solutions.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Quick Links</h4>
+                <ul class="list-unstyled"> <li><a href="index.html">Home</a></li> <li><a href="calculators.html">Calculators</a></li> <li><a href="services.html">Services</a></li> <li><a href="kits.html">Kits</a></li> <li><a href="about.html">About</a></li> <li><a href="contact.html">Contact</a></li> <li><a href="legal.html">Legal</a></li> </ul>
+            </div>
+            <div class="col-md-4">
+                <h4>Powered By</h4>
+                <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" class="footer-logo" />
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p>&copy; 2024 ChemCalc. All rights reserved.</p>
+        </div>
     </footer>
     <!-- #EndLibraryItem -->
 
-    <!-- Bootstrap JS and Popper.js -->
+    <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Custom JS -->
     <script src="clothcalc.js"></script>
-    <script src="affiliate_links.js"></script>
-    <script src="main.js"></script> <!-- Assuming main.js handles nav toggle -->
-
+    <!-- QR Code Generation -->
+    <script type="text/javascript">
+        new QRCode(document.getElementById("qrcode"), window.location.href);
+    </script>
+    <!-- Navigation JS -->
+    <script src="main.js"></script>
 </body>
 </html>
 
