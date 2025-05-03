@@ -1,6 +1,7 @@
-// clothcalc.js - v12 (Fix Material Filtering & Bugs)
+// clothcalc.js - v12.7.6 (Fix affiliate links - remove automatic default list inclusion)
 
 document.addEventListener("DOMContentLoaded", () => {
+
   const form = document.getElementById("resin-calculator-form");
   const layersContainer = document.getElementById("layers-container");
   const addLayerBtn = document.getElementById("add-layer-btn");
@@ -37,44 +38,52 @@ document.addEventListener("DOMContentLoaded", () => {
   const mekpDropsEl = document.getElementById("mekp-drops");
   const clothResinRatioEl = document.getElementById("cloth-resin-ratio");
 
+  // Print Summary Elements
+  const printTimestampEl = document.getElementById("print-timestamp");
+  const printSystemEl = document.getElementById("print-system");
+  const printDimensionsEl = document.getElementById("print-dimensions");
+  const printResinEl = document.getElementById("print-resin");
+  const printTempEl = document.getElementById("print-temp");
+  const printLayersEl = document.getElementById("print-layers");
+
   let layerCount = 1;
   let isFahrenheit = false;
   let currentResultUnitSystem = "metric";
   let lastCalculatedResults = null;
 
-  // --- Material Data (Resin Ratio by Weight, Density in g/cm³) ---
+  // --- Material Data ---
   const materialData = {
     // Imperial
-    "csm_0.75": { ratio: 1.5, density: 1.5, system: 'imperial' },
-    "csm_1.5": { ratio: 1.5, density: 1.5, system: 'imperial' },
-    "csm_2.0": { ratio: 1.5, density: 1.5, system: 'imperial' },
-    wr_18: { ratio: 1.0, density: 1.8, system: 'imperial' },
-    wr_24: { ratio: 1.0, density: 1.8, system: 'imperial' },
-    combo_1708: { ratio: 1.2, density: 1.6, system: 'imperial' },
-    combo_1808: { ratio: 1.2, density: 1.6, system: 'imperial' },
-    cloth_4: { ratio: 1.0, density: 1.9, system: 'imperial' },
-    cloth_6: { ratio: 1.0, density: 1.9, system: 'imperial' },
-    cloth_10: { ratio: 1.0, density: 1.9, system: 'imperial' },
-    "carbon_5.7": { ratio: 0.8, density: 1.7, system: 'imperial' },
-    "carbon_11": { ratio: 0.8, density: 1.7, system: 'imperial' },
-    "kevlar_5": { ratio: 1.0, density: 1.44, system: 'imperial' },
+    "csm_0.75": { ratio: 1.5, density: 1.5, system: 'imperial', name: 'CSM (0.75 oz/sq ft)', weight: 0.75, unit: 'oz/sq ft', type: 'fiberglass' },
+    "csm_1.5": { ratio: 1.5, density: 1.5, system: 'imperial', name: 'CSM (1.5 oz/sq ft)', weight: 1.5, unit: 'oz/sq ft', type: 'fiberglass' },
+    "csm_2.0": { ratio: 1.5, density: 1.5, system: 'imperial', name: 'CSM (2.0 oz/sq ft)', weight: 2.0, unit: 'oz/sq ft', type: 'fiberglass' },
+    wr_18: { ratio: 1.0, density: 1.8, system: 'imperial', name: 'Woven Roving (18 oz/sq yd)', weight: 18, unit: 'oz/sq yd', type: 'fiberglass' },
+    wr_24: { ratio: 1.0, density: 1.8, system: 'imperial', name: 'Woven Roving (24 oz/sq yd)', weight: 24, unit: 'oz/sq yd', type: 'fiberglass' },
+    combo_1708: { ratio: 1.2, density: 1.6, system: 'imperial', name: 'Combination Mat (1708)', weight: 24, unit: 'oz/sq yd', type: 'fiberglass' },
+    combo_1808: { ratio: 1.2, density: 1.6, system: 'imperial', name: 'Combination Mat (1808)', weight: 25, unit: 'oz/sq yd', type: 'fiberglass' },
+    cloth_4: { ratio: 1.0, density: 1.9, system: 'imperial', name: 'Cloth (4 oz/sq yd)', weight: 4, unit: 'oz/sq yd', type: 'fiberglass' },
+    cloth_6: { ratio: 1.0, density: 1.9, system: 'imperial', name: 'Cloth (6 oz/sq yd)', weight: 6, unit: 'oz/sq yd', type: 'fiberglass' },
+    cloth_10: { ratio: 1.0, density: 1.9, system: 'imperial', name: 'Cloth (10 oz/sq yd)', weight: 10, unit: 'oz/sq yd', type: 'fiberglass' },
+    "carbon_5.7": { ratio: 0.8, density: 1.7, system: 'imperial', name: 'Carbon Fiber (5.7 oz)', weight: 5.7, unit: 'oz/sq yd', type: 'carbon' },
+    "carbon_11": { ratio: 0.8, density: 1.7, system: 'imperial', name: 'Carbon Fiber (11 oz)', weight: 11, unit: 'oz/sq yd', type: 'carbon' },
+    "kevlar_5": { ratio: 1.0, density: 1.44, system: 'imperial', name: 'Kevlar (5 oz)', weight: 5, unit: 'oz/sq yd', type: 'kevlar' },
     // Metric
-    "csm_225gsm": { ratio: 1.5, density: 1.5, system: 'metric' },
-    "csm_450gsm": { ratio: 1.5, density: 1.5, system: 'metric' },
-    "csm_600gsm": { ratio: 1.5, density: 1.5, system: 'metric' },
-    "wr_600gsm": { ratio: 1.0, density: 1.8, system: 'metric' },
-    "wr_800gsm": { ratio: 1.0, density: 1.8, system: 'metric' },
-    "combo_800gsm": { ratio: 1.2, density: 1.6, system: 'metric' },
-    "combo_850gsm": { ratio: 1.2, density: 1.6, system: 'metric' },
-    "cloth_135gsm": { ratio: 1.0, density: 1.9, system: 'metric' },
-    "cloth_200gsm": { ratio: 1.0, density: 1.9, system: 'metric' },
-    "cloth_340gsm": { ratio: 1.0, density: 1.9, system: 'metric' },
-    "carbon_200gsm": { ratio: 0.8, density: 1.7, system: 'metric' },
-    "carbon_370gsm": { ratio: 0.8, density: 1.7, system: 'metric' },
-    "kevlar_170gsm": { ratio: 1.0, density: 1.44, system: 'metric' }
+    "csm_225gsm": { ratio: 1.5, density: 1.5, system: 'metric', name: 'CSM (225 gsm)', weight: 225, unit: 'gsm', type: 'fiberglass' },
+    "csm_450gsm": { ratio: 1.5, density: 1.5, system: 'metric', name: 'CSM (450 gsm)', weight: 450, unit: 'gsm', type: 'fiberglass' },
+    "csm_600gsm": { ratio: 1.5, density: 1.5, system: 'metric', name: 'CSM (600 gsm)', weight: 600, unit: 'gsm', type: 'fiberglass' },
+    "wr_600gsm": { ratio: 1.0, density: 1.8, system: 'metric', name: 'Woven Roving (600 gsm)', weight: 600, unit: 'gsm', type: 'fiberglass' },
+    "wr_800gsm": { ratio: 1.0, density: 1.8, system: 'metric', name: 'Woven Roving (800 gsm)', weight: 800, unit: 'gsm', type: 'fiberglass' },
+    "combo_800gsm": { ratio: 1.2, density: 1.6, system: 'metric', name: 'Combination Mat (800 gsm)', weight: 800, unit: 'gsm', type: 'fiberglass' },
+    "combo_850gsm": { ratio: 1.2, density: 1.6, system: 'metric', name: 'Combination Mat (850 gsm)', weight: 850, unit: 'gsm', type: 'fiberglass' },
+    "cloth_135gsm": { ratio: 1.0, density: 1.9, system: 'metric', name: 'Cloth (135 gsm)', weight: 135, unit: 'gsm', type: 'fiberglass' },
+    "cloth_200gsm": { ratio: 1.0, density: 1.9, system: 'metric', name: 'Cloth (200 gsm)', weight: 200, unit: 'gsm', type: 'fiberglass' },
+    "cloth_340gsm": { ratio: 1.0, density: 1.9, system: 'metric', name: 'Cloth (340 gsm)', weight: 340, unit: 'gsm', type: 'fiberglass' },
+    "carbon_200gsm": { ratio: 0.8, density: 1.7, system: 'metric', name: 'Carbon Fiber (200 gsm)', weight: 200, unit: 'gsm', type: 'carbon' },
+    "carbon_370gsm": { ratio: 0.8, density: 1.7, system: 'metric', name: 'Carbon Fiber (370 gsm)', weight: 370, unit: 'gsm', type: 'carbon' },
+    "kevlar_170gsm": { ratio: 1.0, density: 1.44, system: 'metric', name: 'Kevlar (170 gsm)', weight: 170, unit: 'gsm', type: 'kevlar' }
   };
 
-  // --- Resin Data (Density in g/cm³, Base Working Time in minutes at 20C) ---
+  // --- Resin Data ---
   const resinData = {
     polyester: { density: 1.1, baseWorkingTime: 30, tempSensitivityFactor: 0.07 },
     vinylester: { density: 1.1, baseWorkingTime: 30, tempSensitivityFactor: 0.07 },
@@ -83,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Unit Conversion Factors ---
   const unitsToSqMeters = { in: 0.00064516, ft: 0.092903, cm: 0.0001, m: 1 };
-  const ozSqFtToKgSqM = 0.030515;
+  const ozSqFtToKgSqM = 0.30515;
   const ozSqYdToKgSqM = 0.033906;
   const gsmToKgSqM = 0.001;
   const kgToLb = 2.20462;
@@ -96,8 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const sqMeterToSqFeet = 10.7639;
   const mlToFlOz = 0.033814;
   const mlPerDrop = 0.05;
-  const mekpDensity = 1.1; // g/cm³
-  const approxEpoxyHardenerDensity = 1.0; // g/cm³ (approximation for volume calcs)
+  const mekpDensity = 1.1;
+  const approxEpoxyHardenerDensity = 1.0;
 
   // --- Temperature Conversion Functions ---
   function celsiusToFahrenheit(celsius) {
@@ -111,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Update Input Options Based on System ---
   function updateInputOptions() {
     if (!resultSystemSelect || !unitsSelect || !resinCostUnitSelect) return;
-    const system = resultSystemSelect.value; // 'metric' or 'imperial'
+    const system = resultSystemSelect.value;
 
     // Filter Dimension Units
     const currentDimUnit = unitsSelect.value;
@@ -153,10 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateMaterialOptions();
   }
 
-  // --- Update Material Options Based on System (Revised Logic) ---
+  // --- Update Material Options Based on System ---
   function updateMaterialOptions() {
     if (!resultSystemSelect || !layersContainer) return;
-    const targetSystem = resultSystemSelect.value; // 'metric' or 'imperial'
+    const targetSystem = resultSystemSelect.value;
     const materialSelects = layersContainer.querySelectorAll('.material-type');
 
     materialSelects.forEach(select => {
@@ -167,10 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let i = 0; i < select.options.length; i++) {
         const option = select.options[i];
         const optionValue = option.value;
-        const materialInfo = materialData[optionValue]; // Get data based on value
+        const materialInfo = materialData[optionValue];
         let isVisible = false;
 
-        // Check if material data exists and matches the target system
         if (materialInfo && materialInfo.system === targetSystem) {
             isVisible = true;
         }
@@ -179,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isVisible) {
           if (firstVisibleOptionValue === null) {
-            firstVisibleOptionValue = optionValue; // Store the first valid option
+            firstVisibleOptionValue = optionValue;
           }
           if (optionValue === currentSelectedValue) {
             currentSelectionVisible = true;
@@ -187,15 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // If the currently selected option is now hidden, select the first visible one
       if (!currentSelectionVisible && firstVisibleOptionValue) {
         select.value = firstVisibleOptionValue;
       }
-      // If no options are visible (error state), maybe log it or handle it
       if (firstVisibleOptionValue === null) {
           console.error("No material options available for the selected system!");
-          // Optionally clear the selection or set to a default/placeholder
-          // select.value = ""; // Or some default value if applicable
       }
     });
   }
@@ -217,16 +221,14 @@ document.addEventListener("DOMContentLoaded", () => {
               <option value="ml">Milliliters (mL/cc)</option>
           `;
       }
-      resultVolumeUnitSelect.removeEventListener("change", displayResultsInSelectedUnits);
-      resultVolumeUnitSelect.addEventListener("change", displayResultsInSelectedUnits);
   }
 
   // --- Handle Result System Change ---
   function handleResultSystemChange() {
       currentResultUnitSystem = resultSystemSelect.value;
       populateResultUnitOptions();
-      updateInputOptions(); // Update ALL input dropdowns (dimensions, cost, materials)
-      calculateResin(); // Recalculate with new system defaults
+      updateInputOptions();
+      calculateResin();
   }
 
   // --- Initial Setup for Result Units & Inputs ---
@@ -234,9 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!resultSystemSelect) return;
       resultSystemSelect.value = currentResultUnitSystem;
       populateResultUnitOptions();
-      updateInputOptions(); // Initial filtering of ALL input options
-      resultSystemSelect.removeEventListener("change", handleResultSystemChange);
-      resultSystemSelect.addEventListener("change", handleResultSystemChange);
+      updateInputOptions();
   }
 
   // --- Toggle Epoxy Ratio Dropdown Visibility ---
@@ -249,571 +249,552 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   }
 
-  // Event Listeners for automatic calculation
-  const inputsToWatch = [
-    lengthInput, widthInput, unitsSelect, resinTypeSelect,
-    epoxyMixRatioSelect,
-    temperatureInput, resinCostInput, resinCostUnitSelect
-    // resultSystemSelect is handled separately by handleResultSystemChange
-  ];
-
-  inputsToWatch.forEach(input => {
-    if (input) {
-      const eventType = (input.tagName === "SELECT") ? "change" : "input";
-      input.addEventListener(eventType, calculateResin);
-    }
-  });
-
-  // Special listener for resin type to toggle epoxy ratio dropdown
-  if (resinTypeSelect) {
-      resinTypeSelect.addEventListener("change", () => {
-          toggleEpoxyRatioVisibility();
-          calculateResin(); // Recalculate when resin type changes
-      });
-  }
-
-  if (tempUnitToggle) {
-      tempUnitToggle.addEventListener("change", () => {
-        isFahrenheit = tempUnitToggle.checked;
-        const currentTempValue = parseFloat(temperatureInput.value);
-        if (!isNaN(currentTempValue)) {
-            if (isFahrenheit) {
-              tempUnitLabel.textContent = "°F";
-              temperatureInput.value = celsiusToFahrenheit(currentTempValue).toFixed(1);
-            } else {
-              tempUnitLabel.textContent = "°C";
-              temperatureInput.value = fahrenheitToCelsius(currentTempValue).toFixed(1);
-            }
-        } else {
-             temperatureInput.value = isFahrenheit ? "68" : "20";
-             tempUnitLabel.textContent = isFahrenheit ? "°F" : "°C";
-        }
-        calculateResin();
-      });
-  }
-
-  // --- Add Layer Functionality ---
-  if (addLayerBtn) {
-      addLayerBtn.addEventListener("click", () => {
-        layerCount++;
-        const firstLayer = layersContainer.querySelector(".layer");
-        if (!firstLayer) return;
-        const newLayer = firstLayer.cloneNode(true);
-        newLayer.querySelector(".layer-title").textContent = `Layer ${layerCount}`;
-        newLayer.querySelectorAll("[id]").forEach((el) => {
-          const oldId = el.id;
-          if (oldId) {
-              const newId = oldId.replace(/-\d+$/, `-${layerCount}`);
-              el.id = newId;
-              if (el.classList.contains("material-type")) {
-                  el.addEventListener("change", calculateResin);
-              }
+  // --- Handler Functions for Specific Actions ---
+  function handleTempUnitToggle() {
+      isFahrenheit = tempUnitToggle.checked;
+      const currentTempValue = parseFloat(temperatureInput.value);
+      if (!isNaN(currentTempValue)) {
+          if (isFahrenheit) {
+            tempUnitLabel.textContent = "°F";
+            temperatureInput.value = celsiusToFahrenheit(currentTempValue).toFixed(1);
+          } else {
+            tempUnitLabel.textContent = "°C";
+            temperatureInput.value = fahrenheitToCelsius(currentTempValue).toFixed(1);
           }
-        });
-        newLayer.querySelectorAll("[for]").forEach((el) => {
-          const oldFor = el.htmlFor;
-          if (oldFor) {
-              el.htmlFor = oldFor.replace(/-\d+$/, `-${layerCount}`);
-          }
-        });
-        newLayer.querySelectorAll("[name]").forEach((el) => {
-            const oldName = el.name;
-            if(oldName) {
-                el.name = oldName.replace(/-\d+$/, `-${layerCount}`);
-            }
-        });
-
-        const materialSelect = newLayer.querySelector(".material-type");
-        // No need to set selectedIndex = 0, let updateMaterialOptions handle it
-
-        const removeBtn = newLayer.querySelector(".remove-layer-btn");
-        if (removeBtn) {
-            removeBtn.style.display = "inline-block";
-            removeBtn.addEventListener("click", () => {
-              if (layersContainer.children.length > 1) {
-                newLayer.remove();
-                updateLayerTitles();
-                calculateResin();
-              }
-            });
-        }
-        layersContainer.appendChild(newLayer);
-        updateLayerTitles();
-        updateMaterialOptions(); // Filter options for the newly added layer
-        calculateResin();
-      });
+      } else {
+           temperatureInput.value = isFahrenheit ? "68" : "20";
+           tempUnitLabel.textContent = isFahrenheit ? "°F" : "°C";
+      }
+      calculateResin();
   }
 
-  function updateLayerTitles() {
-    const layers = layersContainer.querySelectorAll(".layer");
-    layers.forEach((layer, index) => {
-      layer.querySelector(".layer-title").textContent = `Layer ${index + 1}`;
-      const removeBtn = layer.querySelector(".remove-layer-btn");
+  function handleAddLayer() {
+      layerCount++;
+      const firstLayer = layersContainer.querySelector(".layer");
+      if (!firstLayer) return;
+      const newLayer = firstLayer.cloneNode(true);
+      newLayer.querySelector(".layer-title").textContent = `Layer ${layersContainer.children.length + 1}`;
+
+      // Update IDs and names for uniqueness
+      newLayer.querySelectorAll("[id]").forEach((el) => {
+        const oldId = el.id;
+        if (oldId) {
+            const baseId = oldId.replace(/-\d+$/, '');
+            el.id = `${baseId}-${layerCount}`;
+        }
+      });
+      newLayer.querySelectorAll("[for]").forEach((el) => {
+        const oldFor = el.htmlFor;
+        if (oldFor) {
+            const baseFor = oldFor.replace(/-\d+$/, '');
+            el.htmlFor = `${baseFor}-${layerCount}`;
+        }
+      });
+      newLayer.querySelectorAll("[name]").forEach((el) => {
+          const oldName = el.name;
+          if(oldName) {
+              const baseName = oldName.replace(/-\d+$/, '');
+              el.name = `${baseName}-${layerCount}`;
+          }
+      });
+
+      const newMaterialSelect = newLayer.querySelector('.material-type');
+      if (newMaterialSelect) {
+          updateMaterialOptions(); // Ensure it shows correct options for current system
+      }
+
+      const removeBtn = newLayer.querySelector('.remove-layer-btn');
       if (removeBtn) {
-          removeBtn.style.display = (index === 0 && layers.length === 1) ? "none" : "inline-block";
+          removeBtn.style.display = 'inline-block';
       }
-    });
-    layerCount = layers.length;
+
+      layersContainer.appendChild(newLayer);
+      updateRemoveButtonVisibility();
+      calculateResin();
   }
 
-  function setupInitialLayer(){
-      const firstLayerSelect = layersContainer.querySelector(".material-type");
-      if(firstLayerSelect) {
-          firstLayerSelect.addEventListener("change", calculateResin);
+  function handleRemoveLayer(event) {
+      const layerToRemove = event.target.closest('.layer');
+      if (layerToRemove && layersContainer.children.length > 1) {
+          layerToRemove.remove();
+          renumberLayers();
+          updateRemoveButtonVisibility();
+          calculateResin();
       }
-      updateLayerTitles();
-      // updateMaterialOptions(); // Called by setupInitialUnitsAndInputs
   }
 
-  // --- Calculation Logic ---
+  function renumberLayers() {
+      const layers = layersContainer.querySelectorAll('.layer');
+      layers.forEach((layer, index) => {
+          layer.querySelector('.layer-title').textContent = `Layer ${index + 1}`;
+      });
+  }
+
+  function updateRemoveButtonVisibility() {
+      const layers = layersContainer.querySelectorAll('.layer');
+      layers.forEach((layer, index) => {
+          const removeBtn = layer.querySelector('.remove-layer-btn');
+          if (removeBtn) {
+              removeBtn.style.display = layers.length > 1 ? 'inline-block' : 'none';
+          }
+      });
+  }
+
+  // --- Main Calculation Function ---
   function calculateResin() {
-    console.log("calculateResin called - v12"); // Debug log
-    const length = parseFloat(lengthInput.value) || 0;
-    const width = parseFloat(widthInput.value) || 0;
-    const unit = unitsSelect.value;
+
+    // Get values
+    const lengthVal = lengthInput.value;
+    const widthVal = widthInput.value;
+    const length = parseFloat(lengthVal);
+    const width = parseFloat(widthVal);
+
+    const units = unitsSelect.value;
     const resinType = resinTypeSelect.value;
-    const epoxyMixRatioValue = epoxyMixRatioSelect ? epoxyMixRatioSelect.value : null;
-    const tempInputVal = parseFloat(temperatureInput.value) || (isFahrenheit ? 68 : 20);
-    const tempC = isFahrenheit ? fahrenheitToCelsius(tempInputVal) : tempInputVal;
-    const resinCostInputVal = parseFloat(resinCostInput.value) || 0;
-    const resinCostUnit = resinCostUnitSelect.value;
+    const epoxyRatioValue = epoxyMixRatioSelect.value;
+    let temperature = parseFloat(temperatureInput.value);
+    const cost = parseFloat(resinCostInput.value);
+    const costUnit = resinCostUnitSelect.value;
+    const system = resultSystemSelect.value;
 
-    // Validate dimension unit consistency
-    const currentSystem = resultSystemSelect.value;
-    const isMetricDimUnit = unit === 'cm' || unit === 'm';
-    if ((currentSystem === 'metric' && !isMetricDimUnit) || (currentSystem === 'imperial' && isMetricDimUnit)) {
-        console.warn("Dimension unit inconsistent with selected system. Recalculating after unit update.");
-    }
-
-    if (length <= 0 || width <= 0) {
-      clearResults(true);
-      resultsSection.style.display = "block";
+    // Validate inputs
+    if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
+      if (resultsSection) resultsSection.style.display = "none";
+      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
       lastCalculatedResults = null;
       return;
     }
 
-    resultsSection.style.display = "block";
+    if (isNaN(temperature)) {
+        temperature = isFahrenheit ? 68 : 20;
+    }
+    const tempCelsius = isFahrenheit ? fahrenheitToCelsius(temperature) : temperature;
 
-    const areaSqM = length * width * unitsToSqMeters[unit];
-    let totalMaterialWeightKg = 0;
-    let totalBaseResinWeightKg = 0;
-    const selectedMaterials = [];
-    const selectedRatios = [];
-    const multiLayerEfficiencyFactor = 0.85;
+    // Calculate area
+    const areaMultiplier = unitsToSqMeters[units];
+    const areaSqMeters = length * width * areaMultiplier;
 
+    // Calculate total cloth and resin weight & track material types used
+    let totalClothWeightKg = 0;
+    let totalResinWeightKg = 0;
     const layers = layersContainer.querySelectorAll(".layer");
+    let layerDetails = [];
+    const materialTypesUsed = new Set(); // Track types like 'fiberglass', 'carbon', 'kevlar'
+
     layers.forEach((layer, index) => {
       const materialSelect = layer.querySelector(".material-type");
-      if (!materialSelect) return;
       const materialKey = materialSelect.value;
-      selectedMaterials.push(materialKey);
-      const data = materialData[materialKey];
+      const material = materialData[materialKey];
 
-      // Check if the selected material data exists
-      if (!data) {
-        console.warn(`Material data not found: ${materialKey}`);
-        return; // Skip this layer if data is missing
-      }
-      // We assume updateMaterialOptions has already filtered correctly based on system
-      selectedRatios.push(data.ratio);
-
-      let materialWeightKgSqM = 0;
-      const selectedOptionText = materialSelect.options[materialSelect.selectedIndex]?.text || "";
-      const weightMatch = selectedOptionText.match(/(\d*\.?\d+)\s*oz\/(sq ft|sq yd)|(\d*\.?\d+)\s*gsm/i);
-
-      if (weightMatch) {
-        if (weightMatch[1] && weightMatch[2]) { // Imperial oz
-          const weightOz = parseFloat(weightMatch[1]);
-          const areaUnit = weightMatch[2].toLowerCase();
-          materialWeightKgSqM = areaUnit === "sq ft" ? weightOz * ozSqFtToKgSqM : weightOz * ozSqYdToKgSqM;
-        } else if (weightMatch[3]) { // Metric gsm
-          const weightGsm = parseFloat(weightMatch[3]);
-          materialWeightKgSqM = weightGsm * gsmToKgSqM;
-        }
+      if (!material || typeof material.weight !== 'number' || !material.unit || typeof material.ratio !== 'number') {
+        console.error(`Invalid or incomplete material data for key: ${materialKey} in layer ${index + 1}`);
+        layerDetails.push(`${materialSelect.options[materialSelect.selectedIndex].text} (Error)`);
+        return;
       }
 
-      if (materialWeightKgSqM > 0) {
-        const layerMaterialWeightKg = materialWeightKgSqM * areaSqM;
-        totalMaterialWeightKg += layerMaterialWeightKg;
+      // Track the type of material used (e.g., 'fiberglass', 'carbon')
+      if (material.type) {
+          materialTypesUsed.add(material.type);
+      }
 
-        let layerBaseResinWeightKg = layerMaterialWeightKg * data.ratio;
-        if (index > 0) {
-            layerBaseResinWeightKg *= multiLayerEfficiencyFactor;
-        }
-        totalBaseResinWeightKg += layerBaseResinWeightKg;
-
+      let layerMaterialWeightKgSqM = 0;
+      if (material.unit === 'oz/sq ft') {
+        layerMaterialWeightKgSqM = material.weight * ozSqFtToKgSqM;
+      } else if (material.unit === 'oz/sq yd') {
+        layerMaterialWeightKgSqM = material.weight * ozSqYdToKgSqM;
+      } else if (material.unit === 'gsm') {
+        layerMaterialWeightKgSqM = material.weight * gsmToKgSqM;
       } else {
-        console.warn(`Could not parse weight for material: ${materialKey} from text: "${selectedOptionText}"`);
+        console.error(`Unknown material unit: ${material.unit} for key: ${materialKey}`);
+        layerDetails.push(`${material.name} (Unknown Unit)`);
+        return;
       }
+
+      if (isNaN(layerMaterialWeightKgSqM) || layerMaterialWeightKgSqM < 0) {
+        console.error(`Invalid calculated material weight for key: ${materialKey}`);
+        layerMaterialWeightKgSqM = 0;
+      }
+
+      const layerClothWeightKg = areaSqMeters * layerMaterialWeightKgSqM;
+      if (isNaN(layerClothWeightKg)) {
+        console.error(`Invalid layer cloth weight calculated for key: ${materialKey}`);
+        layerDetails.push(`${material.name} (Calc Error)`);
+        return;
+      }
+
+      const layerResinWeightKg = layerClothWeightKg * material.ratio;
+      if (isNaN(layerResinWeightKg)) {
+        console.error(`Invalid layer resin weight calculated for key: ${materialKey}`);
+        layerDetails.push(`${material.name} (Calc Error)`);
+        return;
+      }
+
+      totalClothWeightKg += layerClothWeightKg;
+      totalResinWeightKg += layerResinWeightKg;
+      layerDetails.push(material.name);
     });
 
-    const wasteFactor = 1.15;
-    totalBaseResinWeightKg *= wasteFactor;
-
-    const selectedResin = resinData[resinType];
-    if (!selectedResin) {
-        console.error(`Resin data not found for type: ${resinType}`);
-        clearResults();
+    if (totalResinWeightKg <= 0 || isNaN(totalResinWeightKg)) {
+        if (resultsSection) resultsSection.style.display = "none";
+        if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
         lastCalculatedResults = null;
         return;
     }
-    const resinDensityKgL = selectedResin.density;
-    const totalBaseResinVolumeL = totalBaseResinWeightKg / resinDensityKgL;
 
-    // --- Calculate Hardener/Catalyst (Metric) ---
-    let hardenerWeightKg = null;
-    let hardenerVolumeL = null;
-    let mekpPercentage = null;
-    let mekpVolumeMl = null;
-    let mekpDrops = null;
-    let totalMixedResinWeightKg = totalBaseResinWeightKg;
-    let totalMixedResinVolumeL = totalBaseResinVolumeL;
-    let hardenerRatio = null;
-    let hardenerRatioType = null; // 'w' or 'v'
+    // Calculate resin volume
+    const selectedResin = resinData[resinType];
+    const resinDensityGramsPerML = selectedResin.density;
+    const resinVolumeLiters = (totalResinWeightKg * 1000) / resinDensityGramsPerML / 1000;
 
-    if (resinType === "epoxy" && epoxyMixRatioValue) {
-        const ratioMatch = epoxyMixRatioValue.match(/(\d+):(\d+)([wv])/);
-        if (ratioMatch) {
-            const resinPart = parseFloat(ratioMatch[1]);
-            const hardenerPart = parseFloat(ratioMatch[2]);
-            hardenerRatioType = ratioMatch[3];
-            hardenerRatio = hardenerPart / resinPart;
+    // Calculate hardener/MEKP
+    let hardenerAmount = 0;
+    let hardenerUnit = "";
+    let mekpPercentage = 0;
+    let mekpCcs = 0;
+    let mekpDrops = 0;
 
-            if (hardenerRatioType === 'w') { // Ratio by Weight
-                hardenerWeightKg = totalBaseResinWeightKg * hardenerRatio;
-                hardenerVolumeL = hardenerWeightKg / approxEpoxyHardenerDensity; // Approx volume
-                totalMixedResinWeightKg = totalBaseResinWeightKg + hardenerWeightKg;
-                totalMixedResinVolumeL = totalBaseResinVolumeL + hardenerVolumeL;
-            } else { // Ratio by Volume
-                hardenerVolumeL = totalBaseResinVolumeL * hardenerRatio;
-                hardenerWeightKg = hardenerVolumeL * approxEpoxyHardenerDensity; // Approx weight
-                totalMixedResinWeightKg = totalBaseResinWeightKg + hardenerWeightKg;
-                totalMixedResinVolumeL = totalBaseResinVolumeL + hardenerVolumeL;
-            }
-        } else {
-            console.error("Invalid epoxy mix ratio format:", epoxyMixRatioValue);
+    if (resinType === "epoxy") {
+      if (mekpResultsContainer) mekpResultsContainer.style.display = "none";
+      const ratioParts = epoxyRatioValue.split(":");
+      const resinPart = parseFloat(ratioParts[0]);
+      const hardenerPart = parseFloat(ratioParts[1]);
+
+      if (!isNaN(resinPart) && !isNaN(hardenerPart) && resinPart > 0) {
+        if (epoxyRatioValue.includes("Volume")) {
+          const hardenerVolumeLiters = (resinVolumeLiters / resinPart) * hardenerPart;
+          hardenerAmount = hardenerVolumeLiters;
+          hardenerUnit = "L";
+        } else { // Assume ratio is by weight
+          const hardenerWeightKg = (totalResinWeightKg / resinPart) * hardenerPart;
+          hardenerAmount = (hardenerWeightKg * 1000) / approxEpoxyHardenerDensity / 1000;
+          hardenerUnit = "L";
         }
-    } else if (resinType === "polyester" || resinType === "vinylester") {
-      // MEKP calculation (based on BASE resin weight)
-      mekpPercentage = 1.5;
-      if (tempC >= 29.4) mekpPercentage = 1.0;
-      else if (tempC >= 23.9) mekpPercentage = 1.5;
-      else if (tempC >= 18.3) mekpPercentage = 2.0;
-      else if (tempC >= 15.6) mekpPercentage = 2.5;
-      else mekpPercentage = 3.0;
-      mekpPercentage = Math.max(1.0, Math.min(3.0, mekpPercentage));
-      const mekpWeightKg = totalBaseResinWeightKg * (mekpPercentage / 100);
-      mekpVolumeMl = (mekpWeightKg / mekpDensity) * 1000;
-      mekpDrops = mekpVolumeMl / mlPerDrop;
-      // For display purposes, treat MEKP as the "hardener"
-      hardenerWeightKg = mekpWeightKg;
-      hardenerVolumeL = mekpVolumeMl / 1000;
+      }
+    } else { // Polyester or Vinylester
+      if (mekpResultsContainer) mekpResultsContainer.style.display = "block";
+      mekpPercentage = Math.max(1, Math.min(3, 1.5 + (20 - tempCelsius) * 0.1));
+      const mekpWeightGrams = (totalResinWeightKg * 1000) * (mekpPercentage / 100);
+      mekpCcs = mekpWeightGrams / mekpDensity;
+      mekpDrops = mekpCcs / mlPerDrop;
+      hardenerAmount = mekpCcs;
+      hardenerUnit = "mL";
     }
 
-    // --- Calculate Working Time ---
-    const baseWorkingTime = selectedResin.baseWorkingTime;
-    const tempSensitivityFactor = selectedResin.tempSensitivityFactor;
-    const workingTimeMinutes = baseWorkingTime * Math.exp((20 - tempC) * tempSensitivityFactor);
+    // Calculate working time
+    const tempDiff = tempCelsius - 20;
+    const workingTime = selectedResin.baseWorkingTime * Math.exp(-selectedResin.tempSensitivityFactor * tempDiff);
 
-    // --- Calculate Cost ---
+    // Calculate cost
     let estimatedCost = 0;
-    if (resinCostInputVal > 0) {
-        let costPerKg = 0;
-        // Validate cost unit consistency
-        const isMetricCostUnit = resinCostUnit === 'liter' || resinCostUnit === 'kg';
-        if ((currentSystem === 'metric' && !isMetricCostUnit) || (currentSystem === 'imperial' && isMetricCostUnit)) {
-             console.warn("Cost unit inconsistent with selected system. Cost calculation may be inaccurate.");
+    if (!isNaN(cost) && cost > 0) {
+        let costPerLiter = 0;
+        if (costUnit === 'gallon') {
+            costPerLiter = cost / literToGallon / gallonToQuart / quartToFlOz * literToFlOz;
+        } else if (costUnit === 'quart') {
+            costPerLiter = cost / literToQuart / quartToFlOz * literToFlOz;
+        } else if (costUnit === 'liter') {
+            costPerLiter = cost;
+        } else if (costUnit === 'kg') {
+            costPerLiter = cost * resinDensityGramsPerML;
+        } else if (costUnit === 'lb') {
+            costPerLiter = (cost / kgToLb) * resinDensityGramsPerML;
         }
-
-        switch (resinCostUnit) {
-            case 'gal': costPerKg = resinCostInputVal / (literToGallon * resinDensityKgL); break;
-            case 'liter': costPerKg = resinCostInputVal / resinDensityKgL; break;
-            case 'lb': costPerKg = resinCostInputVal * kgToLb; break;
-            case 'kg': costPerKg = resinCostInputVal; break;
-        }
-        // Cost based on TOTAL mixed resin weight (including hardener/catalyst)
-        estimatedCost = totalMixedResinWeightKg * costPerKg;
+        estimatedCost = resinVolumeLiters * costPerLiter;
     }
 
-    // --- Store Results (Metric Base Units) ---
+    // Store results
     lastCalculatedResults = {
-      areaSqM,
-      totalBaseResinWeightKg,
-      totalBaseResinVolumeL,
-      hardenerWeightKg,
-      hardenerVolumeL,
-      totalMixedResinWeightKg,
-      totalMixedResinVolumeL,
-      mekpPercentage,
-      mekpVolumeMl,
-      mekpDrops,
-      workingTimeMinutes,
-      estimatedCost,
-      resinType,
-      epoxyMixRatioValue,
-      hardenerRatioType,
-      tempC,
-      selectedRatios
+      system: system,
+      areaSqMeters: areaSqMeters,
+      resinVolumeLiters: resinVolumeLiters,
+      totalResinWeightKg: totalResinWeightKg,
+      totalClothWeightKg: totalClothWeightKg,
+      hardenerAmountBase: hardenerAmount,
+      hardenerUnitBase: hardenerUnit,
+      mekpPercentage: mekpPercentage,
+      mekpCcs: mekpCcs,
+      mekpDrops: mekpDrops,
+      workingTime: workingTime,
+      estimatedCost: estimatedCost,
+      materialTypesUsed: materialTypesUsed, // Store the set of material types
+      printTimestamp: new Date().toLocaleString(),
+      printSystem: system === 'metric' ? 'Metric' : 'Imperial',
+      printDimensions: `${length} ${unitsSelect.options[unitsSelect.selectedIndex].text} x ${width} ${unitsSelect.options[unitsSelect.selectedIndex].text}`,
+      printResin: resinTypeSelect.options[resinTypeSelect.selectedIndex].text + (resinType === 'epoxy' ? ` (${epoxyRatioValue})` : ''),
+      printTemp: `${temperature.toFixed(1)} ${isFahrenheit ? '°F' : '°C'}`,
+      printLayers: layerDetails.join(', ')
     };
 
-    // --- Display Results ---
+    // Display results
     displayResultsInSelectedUnits();
-    updateAffiliateLinks(selectedMaterials, resinType);
+    updateAffiliateLinks(resinType, materialTypesUsed);
+    updatePrintSummary();
+
+    // Make results visible
+    if (resultsSection) resultsSection.style.display = "block";
+    if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
   }
+
+  // --- Helper: Format Volume ---
+  function formatVolume(volumeLiters, targetUnit, system) {
+      let value = 0;
+      let unit = targetUnit;
+      let note = "";
+
+      if (system === "imperial") {
+          const volumeGal = volumeLiters * literToGallon;
+          const volumeQt = volumeLiters * literToQuart;
+          const volumeFlOz = volumeLiters * literToFlOz;
+
+          if (targetUnit === "gal") {
+              if (volumeGal < 0.25 && volumeQt >= 1) {
+                  value = volumeQt;
+                  unit = "qt";
+                  note = " (shown in qt as result < 0.25 gal)";
+              } else if (volumeGal < 0.25 && volumeQt < 1) {
+                  value = volumeFlOz;
+                  unit = "fl oz";
+                  note = " (shown in fl oz as result < 1 qt)";
+              } else {
+                  value = volumeGal;
+                  unit = "gal";
+              }
+          } else if (targetUnit === "qt") {
+              if (volumeQt < 1) {
+                  value = volumeFlOz;
+                  unit = "fl oz";
+                  note = " (shown in fl oz as result < 1 qt)";
+              } else {
+                  value = volumeQt;
+                  unit = "qt";
+              }
+          } else { // targetUnit === "floz"
+              value = volumeFlOz;
+              unit = "fl oz";
+          }
+      } else { // Metric
+          const volumeML = volumeLiters * 1000;
+          if (targetUnit === "l") {
+              if (volumeLiters < 1) {
+                  value = volumeML;
+                  unit = "mL";
+                  note = " (shown in mL as result < 1 L)";
+              } else {
+                  value = volumeLiters;
+                  unit = "l";
+              }
+          } else { // targetUnit === "ml"
+              value = volumeML;
+              unit = "mL";
+          }
+      }
+      const precision = (unit === "fl oz" || unit === "mL") ? 2 : 3;
+      return `${value.toFixed(precision)} ${unit}${note}`;
+  }
+
+  // --- Helper: Format Weight ---
+ function formatWeight(weightKg, system) {
+    let value = 0;
+    let unit = "";
+    if (system === "imperial") {
+        const weightLb = weightKg * kgToLb;
+        const weightOz = weightLb * lbToOz;
+        if (weightLb < 1) {
+            value = weightOz;
+            unit = "oz";
+        } else {
+            value = weightLb;
+            unit = "lb";
+        }
+    } else { // Metric
+        const weightG = weightKg * 1000;
+        if (weightKg < 1) {
+            value = weightG;
+            unit = "g";
+        } else {
+            value = weightKg;
+            unit = "kg";
+        }
+    }
+    const precision = (unit === "oz" || unit === "g") ? 2 : 3;
+    return `${value.toFixed(precision)} ${unit}`;
+}
+
 
   // --- Display Results in Selected Units ---
   function displayResultsInSelectedUnits() {
-    if (!lastCalculatedResults || !resultsContent) {
-        clearResults();
+    if (!lastCalculatedResults) {
+        if (totalAreaEl) totalAreaEl.textContent = '-';
+        if (resinVolumeEl) resinVolumeEl.textContent = '-';
+        if (resinWeightEl) resinWeightEl.textContent = '-';
+        if (hardenerAmountEl) hardenerAmountEl.textContent = '-';
+        if (workingTimeEl) workingTimeEl.textContent = '-';
+        if (estimatedCostEl) estimatedCostEl.textContent = '-';
+        if (clothResinRatioEl) clothResinRatioEl.textContent = '-';
+        if (mekpPercentageEl) mekpPercentageEl.textContent = '-';
+        if (mekpCcsEl) mekpCcsEl.textContent = '-';
+        if (mekpDropsEl) mekpDropsEl.textContent = '-';
         return;
     }
 
-    const system = resultSystemSelect.value;
+    const { system, areaSqMeters, resinVolumeLiters, totalResinWeightKg, totalClothWeightKg,
+            hardenerAmountBase, hardenerUnitBase, mekpPercentage, mekpCcs, mekpDrops,
+            workingTime, estimatedCost } = lastCalculatedResults;
+
     const selectedVolumeUnit = resultVolumeUnitSelect.value;
-    const { areaSqM, totalBaseResinWeightKg, totalBaseResinVolumeL, hardenerWeightKg, hardenerVolumeL, totalMixedResinWeightKg, totalMixedResinVolumeL, mekpPercentage, mekpVolumeMl, mekpDrops, workingTimeMinutes, estimatedCost, resinType, epoxyMixRatioValue, hardenerRatioType, tempC, selectedRatios } = lastCalculatedResults;
 
-    let displayArea, displayAreaUnit, areaPrecision;
-    let displayWeight, displayWeightUnit, weightPrecision;
-    let displayVolume, displayVolumeUnit, volumePrecision;
-    let displayHardener, displayHardenerUnit, hardenerPrecision;
-    let displayCost, costPrecision;
+    // Update textContent of existing elements
+    if (totalAreaEl) {
+        const areaDisplay = system === 'metric' ? `${areaSqMeters.toFixed(3)} m²` : `${(areaSqMeters * sqMeterToSqFeet).toFixed(2)} ft²`;
+        totalAreaEl.textContent = areaDisplay;
+    } else { console.error("totalAreaEl not found!"); }
 
-    if (system === "imperial") {
-      displayArea = areaSqM * sqMeterToSqFeet;
-      displayAreaUnit = "ft²";
-      areaPrecision = 2;
+    if (resinVolumeEl) {
+        const volumeText = formatVolume(resinVolumeLiters, selectedVolumeUnit, system);
+        resinVolumeEl.textContent = volumeText;
+    } else { console.error("resinVolumeEl not found!"); }
 
-      displayWeight = totalMixedResinWeightKg * kgToLb;
-      displayWeightUnit = "lbs";
-      weightPrecision = 2;
-      if (displayWeight < 1.0 && displayWeight > 0) {
-          displayWeight *= lbToOz;
-          displayWeightUnit = "oz";
-          weightPrecision = 1;
-      }
+    if (resinWeightEl) {
+        const weightText = formatWeight(totalResinWeightKg, system);
+        resinWeightEl.textContent = weightText;
+    } else { console.error("resinWeightEl not found!"); }
 
-      let initialDisplayVolume, initialDisplayHardener;
-      switch (selectedVolumeUnit) {
-        case "gal":
-          initialDisplayVolume = totalMixedResinVolumeL * literToGallon;
-          displayVolumeUnit = "gal";
-          initialDisplayHardener = hardenerVolumeL * literToGallon;
-          displayHardenerUnit = "gal";
-          volumePrecision = 2;
-          hardenerPrecision = 2;
-          // Auto-switch gal to qt
-          if (initialDisplayVolume < 1.0 && initialDisplayVolume > 0) {
-              initialDisplayVolume *= gallonToQuart;
-              displayVolumeUnit = "qt";
-              initialDisplayHardener *= gallonToQuart;
-              displayHardenerUnit = "qt";
-              // Auto-switch qt to fl oz
-              if (initialDisplayVolume < 1.0 && initialDisplayVolume > 0) {
-                  initialDisplayVolume *= quartToFlOz;
-                  displayVolumeUnit = "fl oz";
-                  initialDisplayHardener *= quartToFlOz;
-                  displayHardenerUnit = "fl oz";
-                  volumePrecision = 1;
-                  hardenerPrecision = 1;
-              }
-          }
-          break;
-        case "qt":
-          initialDisplayVolume = totalMixedResinVolumeL * literToQuart;
-          displayVolumeUnit = "qt";
-          initialDisplayHardener = hardenerVolumeL * literToQuart;
-          displayHardenerUnit = "qt";
-          volumePrecision = 2;
-          hardenerPrecision = 2;
-          // Auto-switch qt to fl oz
-          if (initialDisplayVolume < 1.0 && initialDisplayVolume > 0) {
-              initialDisplayVolume *= quartToFlOz;
-              displayVolumeUnit = "fl oz";
-              initialDisplayHardener *= quartToFlOz;
-              displayHardenerUnit = "fl oz";
-              volumePrecision = 1;
-              hardenerPrecision = 1;
-          }
-          break;
-        case "floz":
-        default:
-          initialDisplayVolume = totalMixedResinVolumeL * literToFlOz;
-          displayVolumeUnit = "fl oz";
-          initialDisplayHardener = hardenerVolumeL * literToFlOz;
-          displayHardenerUnit = "fl oz";
-          volumePrecision = 1;
-          hardenerPrecision = 1;
-          break;
-      }
-      displayVolume = initialDisplayVolume;
-      displayHardener = initialDisplayHardener;
-
-      displayCost = estimatedCost;
-      costPrecision = 2;
-
-    } else { // Metric
-      displayArea = areaSqM;
-      displayAreaUnit = "m²";
-      areaPrecision = 2;
-
-      displayWeight = totalMixedResinWeightKg;
-      displayWeightUnit = "kg";
-      weightPrecision = 2;
-      if (displayWeight < 1.0 && displayWeight > 0) {
-          displayWeight *= 1000;
-          displayWeightUnit = "g";
-          weightPrecision = 1;
-      }
-
-      let initialDisplayVolume, initialDisplayHardener;
-      switch (selectedVolumeUnit) {
-        case "ml":
-          initialDisplayVolume = totalMixedResinVolumeL * 1000;
-          displayVolumeUnit = "mL";
-          initialDisplayHardener = hardenerVolumeL * 1000;
-          displayHardenerUnit = "mL";
-          volumePrecision = 1;
-          hardenerPrecision = 1;
-          break;
-        case "l":
-        default:
-          initialDisplayVolume = totalMixedResinVolumeL;
-          displayVolumeUnit = "L";
-          initialDisplayHardener = hardenerVolumeL;
-          displayHardenerUnit = "L";
-          volumePrecision = 2;
-          hardenerPrecision = 2;
-          // Auto-switch L to mL
-          if (initialDisplayVolume < 1.0 && initialDisplayVolume > 0) {
-              initialDisplayVolume *= 1000;
-              displayVolumeUnit = "mL";
-              initialDisplayHardener *= 1000;
-              displayHardenerUnit = "mL";
-              volumePrecision = 1;
-              hardenerPrecision = 1;
-          }
-          break;
-      }
-      displayVolume = initialDisplayVolume;
-      displayHardener = initialDisplayHardener;
-
-      displayCost = estimatedCost;
-      costPrecision = 2;
-    }
-
-    // --- Update DOM Elements ---
-    totalAreaEl.textContent = `${displayArea.toFixed(areaPrecision)} ${displayAreaUnit}`;
-    resinVolumeEl.textContent = `${displayVolume.toFixed(volumePrecision)} ${displayVolumeUnit}`;
-    resinWeightEl.textContent = `${displayWeight.toFixed(weightPrecision)} ${displayWeightUnit}`;
-
-    // Cloth:Resin Ratio Display (Average)
-    if (selectedRatios.length > 0 && totalBaseResinWeightKg > 0) { // Ensure we have ratios and resin weight
-        const avgRatio = selectedRatios.reduce((sum, ratio) => sum + ratio, 0) / selectedRatios.length;
-        // Calculate ratio based on total material weight and total BASE resin weight (before hardener)
-        const totalMaterialWeight = totalBaseResinWeightKg / avgRatio; // Estimate total material weight based on average ratio
-        const calculatedRatio = totalBaseResinWeightKg / totalMaterialWeight;
-        clothResinRatioEl.textContent = `~1:${calculatedRatio.toFixed(1)}`; // Display calculated ratio
-    } else {
-        clothResinRatioEl.textContent = "N/A";
-    }
-
-    // Hardener/Catalyst Display
-    if (resinType === "epoxy" && hardenerWeightKg !== null) {
-        const ratioText = epoxyMixRatioValue ? `(${epoxyMixRatioValue.replace('w', ' by weight').replace('v', ' by volume')})` : '';
-        if (hardenerRatioType === 'w') {
-            let hardenerWeightDisplay = system === 'imperial' ? hardenerWeightKg * kgToLb : hardenerWeightKg;
-            let hardenerWeightUnit = system === 'imperial' ? 'lbs' : 'kg';
-            let hardenerWeightPrecision = 2;
-            if (system === 'imperial' && hardenerWeightDisplay < 1.0 && hardenerWeightDisplay > 0) {
-                hardenerWeightDisplay *= lbToOz;
-                hardenerWeightUnit = 'oz';
-                hardenerWeightPrecision = 1;
-            } else if (system === 'metric' && hardenerWeightDisplay < 1.0 && hardenerWeightDisplay > 0) {
-                hardenerWeightDisplay *= 1000;
-                hardenerWeightUnit = 'g';
-                hardenerWeightPrecision = 1;
-            }
-            hardenerAmountEl.textContent = `${hardenerWeightDisplay.toFixed(hardenerWeightPrecision)} ${hardenerWeightUnit} ${ratioText}`;
-        } else { // Volume
-             hardenerAmountEl.textContent = `${displayHardener.toFixed(hardenerPrecision)} ${displayHardenerUnit} ${ratioText}`;
+    if (hardenerAmountEl) {
+        let hardenerDisplay = "N/A";
+        if (hardenerUnitBase === "L") {
+            hardenerDisplay = formatVolume(hardenerAmountBase, selectedVolumeUnit, system);
+        } else if (hardenerUnitBase === "mL") {
+            hardenerDisplay = formatVolume(hardenerAmountBase / 1000, selectedVolumeUnit, system);
         }
-        mekpResultsContainer.style.display = "none";
-    } else if ((resinType === "polyester" || resinType === "vinylester") && mekpPercentage !== null) {
-        hardenerAmountEl.textContent = `See MEKP details below`;
-        mekpPercentageEl.textContent = `${mekpPercentage.toFixed(1)}%`;
-        // Always show MEKP in mL (cc) and drops, regardless of system
-        mekpCcsEl.textContent = `${mekpVolumeMl.toFixed(1)} mL (cc)`;
-        mekpDropsEl.textContent = `${Math.round(mekpDrops)} drops`;
-        mekpResultsContainer.style.display = "block";
-    } else {
-        hardenerAmountEl.textContent = "N/A";
-        mekpResultsContainer.style.display = "none";
+        hardenerAmountEl.textContent = hardenerDisplay;
+    } else { console.error("hardenerAmountEl not found!"); }
+
+    if (mekpResultsContainer && mekpResultsContainer.style.display === "block") {
+        if (mekpPercentageEl) { mekpPercentageEl.textContent = `${mekpPercentage.toFixed(1)}%`; } else { console.error("mekpPercentageEl not found!"); }
+        if (mekpCcsEl) { mekpCcsEl.textContent = `${mekpCcs.toFixed(2)} cc`; } else { console.error("mekpCcsEl not found!"); }
+        if (mekpDropsEl) { mekpDropsEl.textContent = `${Math.round(mekpDrops)} drops`; } else { console.error("mekpDropsEl not found!"); }
     }
 
-    // Working Time Display
-    const tempDisplay = system === 'imperial' ? celsiusToFahrenheit(tempC).toFixed(1) + '°F' : tempC.toFixed(1) + '°C';
-    workingTimeEl.textContent = `${Math.round(workingTimeMinutes)} minutes (@ ${tempDisplay})`;
+    if (workingTimeEl) {
+        const timeText = `${Math.round(workingTime)} minutes`;
+        workingTimeEl.textContent = timeText;
+    } else { console.error("workingTimeEl not found!"); }
 
-    // Cost Display
-    const currencySymbol = system === 'imperial' ? '$' : ''; // Basic assumption for now
-    estimatedCostEl.textContent = estimatedCost > 0 ? `${currencySymbol}${displayCost.toFixed(costPrecision)}` : "N/A";
+    if (estimatedCostEl) {
+        const costText = estimatedCost > 0 ? `$${estimatedCost.toFixed(2)}` : "N/A";
+        estimatedCostEl.textContent = costText;
+    } else { console.error("estimatedCostEl not found!"); }
 
-    resultsContent.style.display = "block";
+    if (clothResinRatioEl) {
+        const overallRatio = totalClothWeightKg > 0 ? (totalResinWeightKg / totalClothWeightKg).toFixed(2) : 'N/A';
+        const ratioText = totalClothWeightKg > 0 ? `1 : ${overallRatio} (by weight)` : "N/A";
+        clothResinRatioEl.textContent = ratioText;
+    } else { console.error("clothResinRatioEl not found!"); }
   }
 
-  // --- Clear Results ---
-  function clearResults(showPlaceholder = false) {
-    if (!resultsContent) return;
-    if (showPlaceholder) {
-        totalAreaEl.textContent = "--";
-        resinVolumeEl.textContent = "--";
-        resinWeightEl.textContent = "--";
-        hardenerAmountEl.textContent = "--";
-        workingTimeEl.textContent = "--";
-        estimatedCostEl.textContent = "--";
-        clothResinRatioEl.textContent = "--";
-        mekpResultsContainer.style.display = "none";
-        resultsContent.style.display = "block"; // Keep placeholder visible
-    } else {
-        resultsContent.style.display = "none";
-    }
-    if (affiliateLinksList) affiliateLinksList.innerHTML = '';
-    if (affiliateLinksContainer) affiliateLinksContainer.style.display = 'none';
+  // --- Update Print Summary ---
+  function updatePrintSummary() {
+      if (!lastCalculatedResults || !printTimestampEl) return;
+      printTimestampEl.textContent = lastCalculatedResults.printTimestamp;
+      printSystemEl.textContent = lastCalculatedResults.printSystem;
+      printDimensionsEl.textContent = lastCalculatedResults.printDimensions;
+      printResinEl.textContent = lastCalculatedResults.printResin;
+      printTempEl.textContent = lastCalculatedResults.printTemp;
+      printLayersEl.textContent = lastCalculatedResults.printLayers;
   }
 
-  // --- Affiliate Link Logic (Placeholder) ---
-  function updateAffiliateLinks(materials, resin) {
-    if (!affiliateLinksContainer || !affiliateLinksList) return;
-    // Basic example: Show generic links based on resin type
-    let linksHtml = '';
-    if (resin === 'polyester' || resin === 'vinylester') {
-        linksHtml += '<li><a href="#" target="_blank">Buy Polyester/Vinylester Resin</a></li>';
-        linksHtml += '<li><a href="#" target="_blank">Buy MEKP Catalyst</a></li>';
-    } else if (resin === 'epoxy') {
-        linksHtml += '<li><a href="#" target="_blank">Buy Epoxy Resin & Hardener</a></li>';
-    }
-    // Add links based on materials (e.g., CSM, Carbon)
-    if (materials.some(m => m.includes('csm'))) {
-        linksHtml += '<li><a href="#" target="_blank">Buy Chopped Strand Mat</a></li>';
-    }
-    if (materials.some(m => m.includes('carbon'))) {
-        linksHtml += '<li><a href="#" target="_blank">Buy Carbon Fiber Cloth</a></li>';
-    }
+  // --- Affiliate Link Logic ---
+  function updateAffiliateLinks(resinType, materialTypesUsed) {
+    if (typeof chemcalcAffiliateLinks !== 'undefined' && affiliateLinksList) {
+      const alwaysShowLinks = chemcalcAffiliateLinks.alwaysShow || [];
+      const resinSpecificLinks = chemcalcAffiliateLinks[resinType] || [];
+      const dynamicLinks = chemcalcAffiliateLinks.dynamic || {};
+      // const defaultLinks = chemcalcAffiliateLinks.default || []; // REMOVED: Don't automatically include all defaults
 
-    if (linksHtml) {
-        affiliateLinksList.innerHTML = linksHtml;
-        affiliateLinksContainer.style.display = 'block';
+      // Determine which dynamic cloth links to add based on materials used
+      const dynamicLinksToShow = [];
+      if (materialTypesUsed) { // Check if the set exists
+          if (materialTypesUsed.has('fiberglass') && dynamicLinks.fiberglass_cloth) {
+              dynamicLinksToShow.push(dynamicLinks.fiberglass_cloth);
+          }
+          if (materialTypesUsed.has('carbon') && dynamicLinks.carbon_fiber) {
+              dynamicLinksToShow.push(dynamicLinks.carbon_fiber);
+          }
+          if (materialTypesUsed.has('kevlar') && dynamicLinks.kevlar) {
+              dynamicLinksToShow.push(dynamicLinks.kevlar);
+          }
+          // Add more checks here if more dynamic cloth types are added
+      }
+
+      // Combine links: Always show + Resin Specific + Dynamic
+      let linksToShow = [...alwaysShowLinks, ...resinSpecificLinks, ...dynamicLinksToShow];
+
+      // REMOVED: Logic that added defaultLinks automatically
+      // linksToShow = [...linksToShow, ...defaultLinks];
+
+      // Remove duplicates (based on URL, simple approach)
+      const uniqueLinks = [];
+      const seenUrls = new Set();
+      for (const link of linksToShow) {
+          if (link && link.url && !seenUrls.has(link.url)) {
+              uniqueLinks.push(link);
+              seenUrls.add(link.url);
+          }
+      }
+
+      affiliateLinksList.innerHTML = uniqueLinks.map(link =>
+        `<li><a href="${link.url}" target="_blank" rel="noopener sponsored">${link.text}</a></li>`
+      ).join('');
+
+    } else if (affiliateLinksList) {
+      affiliateLinksList.innerHTML = '<li>Affiliate links not available.</li>';
     } else {
-        affiliateLinksList.innerHTML = '';
-        affiliateLinksContainer.style.display = 'none';
+        console.error("affiliateLinksList element not found!");
     }
-    // TODO: Integrate with actual affiliate_links.js data
   }
 
-  // --- Initial Setup ---
-  setupInitialUnitsAndInputs(); // Renamed function
-  setupInitialLayer();
+  // --- EVENT DELEGATION SETUP ---
+  if (form) {
+      form.addEventListener('input', (event) => {
+          if (event.target.matches('#length, #width, #temperature, #resin-cost')) {
+              calculateResin();
+          }
+      });
+
+      form.addEventListener('change', (event) => {
+          if (event.target.matches('#units, #resin-type, #epoxy-mix-ratio, #resin-cost-unit, .material-type')) {
+              calculateResin();
+          }
+          else if (event.target.matches('#result-system')) {
+              handleResultSystemChange();
+          }
+          else if (event.target.matches('#result-volume-unit')) {
+              displayResultsInSelectedUnits(); // Only redisplay, don't recalculate
+          }
+          else if (event.target.matches('#temp-unit-toggle')) {
+              handleTempUnitToggle();
+          }
+          if (event.target.matches('#resin-type')) {
+              toggleEpoxyRatioVisibility();
+          }
+      });
+
+      form.addEventListener('click', (event) => {
+          if (event.target.matches('#add-layer-btn')) {
+              handleAddLayer();
+          }
+          else if (event.target.matches('.remove-layer-btn')) {
+              handleRemoveLayer(event);
+          }
+      });
+  } else {
+      console.error("Form element not found!");
+  }
+
+  // --- Initial Setup Calls ---
+  setupInitialUnitsAndInputs();
   toggleEpoxyRatioVisibility();
+  updateRemoveButtonVisibility();
   calculateResin(); // Initial calculation on load
 
 });
