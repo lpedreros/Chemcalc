@@ -1,163 +1,257 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // Mobile menu toggle
-  var menuToggle = document.querySelector('.menu-toggle');
-  var nav = document.getElementById('mainNav');
-  if (menuToggle && nav) {
-    menuToggle.addEventListener('click', function() {
-      nav.classList.toggle('active');
-    });
-  }
+    const productListContainer = document.getElementById("product-list-container");
+    const filterButtonsContainer = document.getElementById("filter-buttons");
+    const searchInput = document.getElementById("search-input");
 
-  // Collapsible sections
-  var coll = document.querySelectorAll(".collapsible");
-  coll.forEach(function(button) {
-    // start everything collapsed
-    button.classList.remove("active");
-    var content = button.nextElementSibling;
-    content.style.maxHeight = "0px";
-
-    button.addEventListener("click", function() {
-      this.classList.toggle("active");
-      if (content.style.maxHeight && content.style.maxHeight !== "0px") {
-        content.style.maxHeight = "0px";
-      } else {
-        content.style.maxHeight = content.scrollHeight + "px";
-      }
-    });
-  });
-
-  // Filtering functionality
-  var activeFilters = [];
-  var searchQuery = '';
-
-  var filterButtons = document.querySelectorAll('.filter-btn');
-  filterButtons.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var filter = this.getAttribute('data-filter').toLowerCase();
-      if (filter === 'all') {
-        activeFilters = [];
-        filterButtons.forEach(function(b) {
-          if (b.getAttribute('data-filter').toLowerCase() !== 'all') {
-            b.classList.remove('active');
-          }
-        });
-        this.classList.add('active');
-      } else {
-        this.classList.toggle('active');
-        document.querySelector('.filter-btn[data-filter="all"]').classList.remove('active');
-        if (this.classList.contains('active')) {
-          activeFilters.push(filter);
-        } else {
-          activeFilters = activeFilters.filter(function(f) { return f !== filter; });
+    // Function to fetch and inject product list HTML
+    async function loadProductList() {
+        try {
+            const response = await fetch("new_kits_product_list.html");
+            if (!response.ok) {
+                console.error("Failed to load product list HTML. Status:", response.status);
+                productListContainer.innerHTML = "<p class=\"text-danger\">Error loading product list. Please try again later.</p>";
+                return;
+            }
+            const html = await response.text();
+            productListContainer.innerHTML = html;
+            initializePageFunctions(); // Call functions that depend on the product list being loaded
+        } catch (error) {
+            console.error("Error fetching product list:", error);
+            productListContainer.innerHTML = "<p class=\"text-danger\">Error loading product list. Please check your connection or contact support.</p>";
         }
-        if (activeFilters.length === 0) {
-          document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
-        }
-      }
-      updateItemVisibility();
-    });
-  });
-
-  var searchInput = document.getElementById('search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', function() {
-      searchQuery = this.value.toLowerCase();
-      updateItemVisibility();
-    });
-  }
-
-  function updateItemVisibility() {
-    var items = document.querySelectorAll('.content ul li');
-    items.forEach(function(item) {
-      var tagsStr = item.getAttribute('data-tags') || "";
-      var tags = tagsStr.toLowerCase().split(',').map(function(t) { return t.trim().replace(/^#/, ''); });
-      var tagMatch = activeFilters.length === 0 || activeFilters.every(function(filter) {
-        return tags.indexOf(filter) !== -1;
-      });
-      var text = item.textContent.toLowerCase();
-      var searchMatch = searchQuery === "" || text.indexOf(searchQuery) !== -1;
-      if (tagMatch && searchMatch) {
-        item.style.display = "";
-        setTimeout(function() {
-          item.style.opacity = "1";
-          item.style.transform = "scale(1)";
-        }, 10);
-      } else {
-        item.style.opacity = "0";
-        item.style.transform = "scale(0.95)";
-        setTimeout(function() {
-          item.style.display = "none";
-        }, 300);
-      }
-    });
-  }
-
-  // Affiliate click tracking using Google Analytics (if available)
-  var affiliateLinks = document.querySelectorAll('a[target="_blank"]');
-  affiliateLinks.forEach(function(link) {
-    link.addEventListener('click', function() {
-      if (typeof gtag === 'function') {
-        gtag('event', 'click', {
-          'event_category': 'Affiliate',
-          'event_label': this.href
-        });
-      }
-      console.log("Affiliate link clicked: " + this.href);
-    });
-  });
-
-  // Favorites toggle
-  var listItems = document.querySelectorAll('.content ul li');
-  listItems.forEach(function(item) {
-    var star = document.createElement('span');
-    star.classList.add('star-toggle');
-    var tags = item.getAttribute('data-tags') ? item.getAttribute('data-tags').toLowerCase() : "";
-    if (tags.indexOf('favorite') !== -1) {
-      star.innerHTML = "★";
-      star.classList.add('my-favorite');
-    } else {
-      star.innerHTML = "☆";
     }
-    item.insertBefore(star, item.firstChild);
 
-    if (!star.classList.contains('my-favorite')) {
-      star.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (this.classList.contains('user-favorite')) {
-          this.classList.remove('user-favorite');
-          this.innerHTML = "☆";
-        } else {
-          this.classList.add('user-favorite');
-          this.innerHTML = "★";
+    function initializePageFunctions() {
+        // Collapsible sections
+        const collapsibles = productListContainer.querySelectorAll(".collapsible");
+        collapsibles.forEach(button => {
+            button.classList.remove("active"); // Start collapsed
+            const content = button.nextElementSibling;
+            if (content && content.classList.contains("content")) {
+                content.style.maxHeight = "0px";
+            }
+
+            button.addEventListener("click", function() {
+                this.classList.toggle("active");
+                const currentContent = this.nextElementSibling;
+                if (currentContent && currentContent.classList.contains("content")) {
+                    if (currentContent.style.maxHeight && currentContent.style.maxHeight !== "0px") {
+                        currentContent.style.maxHeight = "0px";
+                    } else {
+                        currentContent.style.maxHeight = currentContent.scrollHeight + "px";
+                    }
+                }
+            });
+        });
+
+        // Dynamically generate filter buttons
+        const allTags = new Set();
+        const itemsForTagExtraction = productListContainer.querySelectorAll(".content ul li");
+        itemsForTagExtraction.forEach(item => {
+            const tagsStr = item.getAttribute("data-tags") || "";
+            tagsStr.toLowerCase().split(",").forEach(tag => {
+                const trimmedTag = tag.trim().replace(/^#/, "");
+                if (trimmedTag) allTags.add(trimmedTag);
+            });
+        });
+
+        // Clear existing buttons except "Show All"
+        while (filterButtonsContainer.children.length > 1) {
+            filterButtonsContainer.removeChild(filterButtonsContainer.lastChild);
         }
-        var linkElem = item.querySelector('a');
-        if (linkElem) {
-          var link = linkElem.href;
-          var favorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
-          if (this.classList.contains('user-favorite')) {
-            if (favorites.indexOf(link) === -1) favorites.push(link);
-          } else {
-            favorites = favorites.filter(function(fav) { return fav !== link; });
-          }
-          localStorage.setItem('userFavorites', JSON.stringify(favorites));
-        }
-      });
+        
+        Array.from(allTags).sort().forEach(tag => {
+            const button = document.createElement("button");
+            button.className = "filter-btn btn btn-outline-secondary";
+            button.setAttribute("data-filter", tag);
+            button.textContent = tag;
+            filterButtonsContainer.appendChild(button);
+        });
+
+        // Re-attach event listeners to all filter buttons (including dynamically added ones)
+        const filterButtons = filterButtonsContainer.querySelectorAll(".filter-btn");
+        filterButtons.forEach(btn => {
+            btn.addEventListener("click", function() {
+                const filter = this.getAttribute("data-filter").toLowerCase();
+                if (filter === "all") {
+                    activeFilters = [];
+                    filterButtons.forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                } else {
+                    this.classList.toggle("active");
+                    filterButtonsContainer.querySelector(".filter-btn[data-filter=\"all\"]").classList.remove("active");
+                    if (this.classList.contains("active")) {
+                        activeFilters.push(filter);
+                    } else {
+                        activeFilters = activeFilters.filter(f => f !== filter);
+                    }
+                    if (activeFilters.length === 0 && !filterButtonsContainer.querySelector(".filter-btn[data-filter=\"all\"]").classList.contains("active")) {
+                        filterButtonsContainer.querySelector(".filter-btn[data-filter=\"all\"]").classList.add("active");
+                    }
+                }
+                updateItemVisibility();
+            });
+        });
+        
+        // Initialize favorites after items are loaded
+        initializeFavorites();
+        // Initial display update
+        updateItemVisibility(); 
     }
-  });
 
-  // Load saved favorites
-  var savedFavorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
-  if (savedFavorites.length > 0) {
-    var savedItems = document.querySelectorAll('.content ul li');
-    savedItems.forEach(function(item) {
-      var linkElem = item.querySelector('a');
-      if (linkElem && savedFavorites.indexOf(linkElem.href) !== -1) {
-        var star = item.querySelector('.star-toggle');
-        if (star && !star.classList.contains('my-favorite')) {
-          star.classList.add('user-favorite');
-          star.innerHTML = "★";
+    let activeFilters = [];
+    let searchQuery = "";
+
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            searchQuery = this.value.toLowerCase().trim();
+            updateItemVisibility();
+        });
+    }
+
+    function updateItemVisibility() {
+        if (!productListContainer.querySelector(".content ul li")) return; // Don't run if no items loaded
+
+        const items = productListContainer.querySelectorAll(".content ul li");
+        const sections = productListContainer.querySelectorAll(".collapsible");
+
+        items.forEach(item => {
+            const tagsStr = item.getAttribute("data-tags") || "";
+            const tags = tagsStr.toLowerCase().split(",").map(t => t.trim().replace(/^#/, ""));
+            const name = (item.querySelector("a")?.textContent || item.textContent).toLowerCase();
+            const descriptionNode = item.querySelector("em");
+            const description = descriptionNode ? descriptionNode.textContent.toLowerCase() : "";
+
+            const tagMatch = activeFilters.length === 0 || activeFilters.every(filter => tags.includes(filter));
+            
+            const searchMatch = searchQuery === "" || 
+                                name.includes(searchQuery) || 
+                                description.includes(searchQuery) || 
+                                tags.some(tag => tag.includes(searchQuery));
+
+            if (tagMatch && searchMatch) {
+                item.style.display = "";
+                item.style.opacity = "1";
+                item.style.transform = "scale(1)";
+            } else {
+                item.style.opacity = "0";
+                item.style.transform = "scale(0.95)";
+                // Delay display none for transition effect if desired, but direct is simpler
+                item.style.display = "none"; 
+            }
+        });
+
+        sections.forEach(button => {
+            const content = button.nextElementSibling;
+            if (content && content.classList.contains("content")) {
+                const visibleItemsInSection = Array.from(content.querySelectorAll("ul li")).filter(li => li.style.display !== "none");
+                
+                if (visibleItemsInSection.length > 0) {
+                    if (!button.classList.contains("active")) {
+                        // Only auto-expand if search/filter is active, not on initial load (unless user wants this)
+                        if(searchQuery !== "" || activeFilters.length > 0){
+                            button.classList.add("active");
+                            content.style.maxHeight = content.scrollHeight + "px";
+                        }
+                    } else {
+                         // If already active, ensure maxHeight is correct (e.g. if items were added/removed dynamically affecting scrollHeight)
+                         content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                } else {
+                    if (button.classList.contains("active")) {
+                        button.classList.remove("active");
+                        content.style.maxHeight = "0px";
+                    }
+                }
+            }
+        });
+    }
+
+    function initializeFavorites() {
+        const listItems = productListContainer.querySelectorAll(".content ul li");
+        listItems.forEach(item => {
+            const star = document.createElement("span");
+            star.classList.add("star-toggle");
+            const tags = item.getAttribute("data-tags") ? item.getAttribute("data-tags").toLowerCase() : "";
+            const isPreFavorite = tags.includes("favorite"); // Check for pre-defined favorites
+
+            if (isPreFavorite) {
+                star.innerHTML = "★"; // Filled star for pre-defined favorites
+                star.classList.add("my-favorite"); // Indicates it's a site-defined favorite
+            } else {
+                star.innerHTML = "☆"; // Empty star for others
+            }
+            
+            // Insert star before the link/text content of the li
+            const firstChild = item.firstChild;
+            item.insertBefore(star, firstChild);
+
+            // Add click listener only if it's not a pre-defined favorite
+            if (!isPreFavorite) {
+                star.addEventListener("click", function(e) {
+                    e.stopPropagation(); // Prevent li click if any
+                    this.classList.toggle("user-favorite");
+                    this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
+                    
+                    const linkElem = item.querySelector("a");
+                    if (linkElem) {
+                        const link = linkElem.href;
+                        let favorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
+                        if (this.classList.contains("user-favorite")) {
+                            if (!favorites.includes(link)) favorites.push(link);
+                        } else {
+                            favorites = favorites.filter(fav => fav !== link);
+                        }
+                        localStorage.setItem("userFavoritesChemCalc", JSON.stringify(favorites));
+                    }
+                });
+            }
+        });
+
+        // Load saved user favorites from localStorage
+        const savedFavorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
+        if (savedFavorites.length > 0) {
+            listItems.forEach(item => {
+                const linkElem = item.querySelector("a");
+                if (linkElem && savedFavorites.includes(linkElem.href)) {
+                    const star = item.querySelector(".star-toggle:not(.my-favorite)"); // Only target non-pre-defined favorites
+                    if (star) {
+                        star.classList.add("user-favorite");
+                        star.innerHTML = "★";
+                    }
+                }
+            });
         }
-      }
+    }
+
+    // Affiliate click tracking
+    productListContainer.addEventListener("click", function(event) {
+        let targetElement = event.target;
+        // Traverse up the DOM tree to find an anchor tag if the click was on a child element
+        while (targetElement != null && targetElement.tagName !== "A") {
+            targetElement = targetElement.parentElement;
+        }
+
+        if (targetElement && targetElement.tagName === "A" && targetElement.hasAttribute("target") && targetElement.getAttribute("target") === "_blank") {
+            if (typeof gtag === "function") {
+                gtag("event", "click", {
+                    "event_category": "Affiliate Link",
+                    "event_label": targetElement.href,
+                    "value": targetElement.textContent.trim()
+                });
+            }
+            console.log("Affiliate link clicked: " + targetElement.href);
+        }
     });
-  }
+    
+    // Footer Year
+    const currentYearSpan = document.getElementById("currentYear");
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+    }
+
+    // Initial load of product list
+    loadProductList();
+
 });
+
