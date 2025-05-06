@@ -554,5 +554,9 @@ const affiliateLinksData = {
   "milwaukee_cordless_buffer": {
     "name": "Milwaukee cordless buffer",
     "url": "https://amzn.to/3DOPBUY"
+  },
+  "3m_performance_spray_gun_kit_1": {
+    "name": "3M Performance Spray Gun Kit",
+    "url": "https://amzn.to/3DORvEW"
   }
 };

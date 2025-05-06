@@ -1,4 +1,4 @@
-/* awlgripscript.js - v5 (Updates Affiliate Links for Base Colors) */
+/* awlgripscript.js - v8 (Corrects 3M Spray Gun Kit affiliate link key to full version) */
 document.addEventListener("DOMContentLoaded", () => {
   /* unit sets */
   const unitsFor = {
@@ -15,14 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ccs: "mL (cc)",
     feet: "Feet (ft)",
     meters: "Meters (m)",
-    inches: "Inches (in)", // Added for dimension input
-    cm: "Centimeters (cm)" // Added for dimension input
+    inches: "Inches (in)", 
+    cm: "Centimeters (cm)" 
   };
 
   /* coverage ft²/gal + coats */
   const cov = {
     awlgrip: { spray: { c: 542.9, k: 3 }, roll: { c: 814.8, k: 2 } },
-    awlcraft2000: { spray: { c: 725.2, k: 3 } }, // No roll option for Awlcraft 2000
+    awlcraft2000: { spray: { c: 725.2, k: 3 } }, 
     "545primer": { spray: { c: 317.8, k: 2 }, roll: { c: 635.6, k: 2 } },
   };
 
@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputMethodRadios = document.querySelectorAll("input[name=\"inputMethod\"]");
   const areaVolumeInputsDiv = document.getElementById("areaVolumeInputs");
   const lengthWidthInputsDiv = document.getElementById("lengthWidthInputs");
-  const inU = document.getElementById("unitType"); // For direct area/volume
-  const val = document.getElementById("inputValue"); // For direct area/volume
+  const inU = document.getElementById("unitType"); 
+  const val = document.getElementById("inputValue"); 
   const lengthInput = document.getElementById("length");
   const widthInput = document.getElementById("width");
   const dimensionUnitSelect = document.getElementById("dimensionUnit");
@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const outR = document.getElementById("resultReducer");
   const outCov = document.getElementById("resultCoverage");
   const affiliateLinksList = document.getElementById("affiliateLinksList"); 
-  const affiliateLinksContainer = document.getElementById("affiliateLinksContainer"); // Added
-  const resultsCard = document.querySelector(".card.mt-4"); // Get the results card
+  const affiliateLinksContainer = document.getElementById("affiliateLinksContainer"); 
+  const resultsCard = document.querySelector(".card.mt-4"); 
 
   /* conversions */
   const cv = {
@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
     quarts: { gallons: 0.25, liters: 0.946353, ounces: 32, ccs: 946.353 },
     ounces: { gallons: 0.0078125, liters: 0.0295735, quarts: 0.03125, ccs: 29.5735 },
     ccs: { gallons: 0.000264172, liters: 0.001, quarts: 0.00105669, ounces: 0.033814 },
-    // Dimension conversions to base unit (feet or meters)
     feet: { meters: 0.3048, inches: 12 },
     meters: { feet: 3.28084, cm: 100 },
     inches: { feet: 1/12, meters: 0.0254 },
@@ -86,46 +85,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  /* populate dropdowns */
   function populateLists() {
     const system = sys.value;
     const areaUnit = unitsFor[system].area;
     const volumeUnits = unitsFor[system].volume;
     const dimensionUnits = system === "imperial" ? ["feet", "inches"] : ["meters", "cm"];
 
-    // Populate Direct Input Units (Area + Volume)
     inU.innerHTML = "";
     inU.add(new Option(labels[areaUnit], areaUnit));
     volumeUnits.forEach((u) => inU.add(new Option(labels[u], u)));
 
-    // Populate Result Units (Volume only)
     resU.innerHTML = "";
     volumeUnits.forEach((u) => resU.add(new Option(labels[u], u)));
 
-    // Populate Dimension Units
     dimensionUnitSelect.innerHTML = "";
     dimensionUnits.forEach((u) => dimensionUnitSelect.add(new Option(labels[u], u)));
   }
 
-  /* show/hide input sections based on radio selection */
   function toggleInputMethod() {
     const selectedMethod = document.querySelector("input[name=\"inputMethod\"]:checked").value;
     if (selectedMethod === "areaVolume") {
       areaVolumeInputsDiv.style.display = "block";
       lengthWidthInputsDiv.style.display = "none";
-    } else { // lengthWidth
+    } else { 
       areaVolumeInputsDiv.style.display = "none";
       lengthWidthInputsDiv.style.display = "block";
     }
-    calc(); // Recalculate when method changes
+    calc(); 
   }
 
-  /* show/hide result-unit row */
   function toggleResRow(isAreaInput) {
     resRow.classList.toggle("d-none", !isAreaInput);
   }
 
-  /* --- Affiliate Link Display Logic --- */
   function displayAffiliateLinks(paintType, methodType) {
     if (!affiliateLinksList || !affiliateLinksContainer || typeof affiliateLinksData === "undefined") {
       console.error("Affiliate links container or data not found.");
@@ -141,60 +133,54 @@ document.addEventListener("DOMContentLoaded", () => {
     let reducerKey = null;
 
     if (paintType === "awlcraft2000") {
-      baseKeys = [
-        "awlcraft2000_base_snow_white_gallon",
-        "awlcraft2000_base_super_jet_black_gallon",
-        "awlcraft2000_base_flag_blue_quart" // Note: Quart
-      ];
-      converterKey = "awlcraft_awlgrip_spray_converter"; 
-      reducerKey = "awlgrip_spray_reducer_quart"; 
+      baseKeys = []; // Specific base colors are generally not linked directly here
+      converterKey = "awlcraft2000awlgrip_spray_converter_1quart"; 
+      reducerKey = "awlcraft2000awlgrip_spray_reducer_1quart"; 
     } else if (paintType === "awlgrip") {
-      baseKeys = [
-        "awlgrip_topcoat_base_snow_white_gallon",
-        "awlgrip_topcoat_base_extreme_black_gallon",
-        "awlgrip_topcoat_base_flag_blue_gallon"
-      ];
+      baseKeys = []; // Specific base colors are generally not linked directly here
       if (methodType === "spray") {
-        converterKey = "awlcraft_awlgrip_spray_converter"; 
-        reducerKey = "awlgrip_spray_reducer_quart"; 
-      } else { // roll/brush
-        converterKey = "awlgrip_roll_brush_converter"; 
-        reducerKey = "awlgrip_brush_reducer_quart"; 
+        converterKey = "awlcraft2000awlgrip_spray_converter_1quart"; 
+        reducerKey = "awlcraft2000awlgrip_spray_reducer_1quart"; 
+      } else { 
+        converterKey = "awlgrip_rollbrush_converter_1pint"; 
+        reducerKey = "awlgrip_rollbrush_reducer_1quart"; 
       }
     } else if (paintType === "545primer") {
-      baseKeys = ["awlgrip_545_primer_base_white_gallon"]; 
-      converterKey = "awlgrip_545_primer_converter"; 
+      baseKeys = ["awlgrip_545_primer_base_white_1gallon", "awlgrip_545_primer_base_grey_1gallon"]; 
+      converterKey = "awlgrip_545_primer_converter_1gallon";
       if (methodType === "spray") {
-        reducerKey = "awlgrip_spray_reducer_quart"; 
-      } else { // roll/brush
-        reducerKey = "awlgrip_brush_reducer_quart"; 
+        reducerKey = "awlcraft2000awlgrip_spray_reducer_1quart"; 
+      } else { 
+        reducerKey = "awlgrip_rollbrush_reducer_1quart"; 
       }
     }
 
-    // Add base colors
     baseKeys.forEach(key => {
         if (affiliateLinksData[key]) linksToShowKeys.add(key);
+        else console.warn(`Affiliate link key for base color not found: ${key}`)
     });
-    // Add converter and reducer
     if (converterKey && affiliateLinksData[converterKey]) linksToShowKeys.add(converterKey);
-    if (reducerKey && affiliateLinksData[reducerKey]) linksToShowKeys.add(reducerKey);
+    else if(converterKey) console.warn(`Affiliate link key for converter not found: ${converterKey}`);
 
-    // Add General Supplies
-    if (affiliateLinksData["latex_gloves"]) linksToShowKeys.add("latex_gloves");
-    if (affiliateLinksData["mixing_sticks"]) linksToShowKeys.add("mixing_sticks");
-    if (affiliateLinksData["disposable_paper_cups"]) linksToShowKeys.add("disposable_paper_cups");
-    if (affiliateLinksData["blue_tape"]) linksToShowKeys.add("blue_tape");
+    if (reducerKey && affiliateLinksData[reducerKey]) linksToShowKeys.add(reducerKey);
+    else if(reducerKey) console.warn(`Affiliate link key for reducer not found: ${reducerKey}`);
+
+    linksToShowKeys.add("latex_gloves");
+    linksToShowKeys.add("mixing_sticks_reusable"); 
+    linksToShowKeys.add("disposable_paper_cups_125pack"); 
+    linksToShowKeys.add("blue_tape_1inch_6pack"); 
+
     if (methodType === "spray") {
-        if (affiliateLinksData["3m_performance_spray_gun_kit"]) linksToShowKeys.add("3m_performance_spray_gun_kit");
-        if (affiliateLinksData["masking_plastic"]) linksToShowKeys.add("masking_plastic");
-        if (affiliateLinksData["3m_full_face_respirator"]) linksToShowKeys.add("3m_full_face_respirator");
-    } else { // roll/brush
-        if (affiliateLinksData["foam_rollers"]) linksToShowKeys.add("foam_rollers");
-        if (affiliateLinksData["roller_tray_with_liners_and_roller_frame"]) linksToShowKeys.add("roller_tray_with_liners_and_roller_frame");
+        linksToShowKeys.add("3m_performance_spray_gun_kit"); // Corrected Key to full version
+        linksToShowKeys.add("masking_plastic_24inch_with_dispenser"); 
+        linksToShowKeys.add("3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below"); 
+    } else { 
+        linksToShowKeys.add("foam_rollers_6inch_20pack"); 
+        linksToShowKeys.add("roller_tray_with_liners_and_roller_frame_6inch_11pack"); 
     }
 
-    // Render links
     if (linksToShowKeys.size > 0) {
+      let hasDisplayedLinks = false;
       linksToShowKeys.forEach((key) => {
         const linkData = affiliateLinksData[key];
         if (linkData && linkData.url && linkData.name) {
@@ -206,16 +192,23 @@ document.addEventListener("DOMContentLoaded", () => {
           a.rel = "noopener noreferrer sponsored";
           li.appendChild(a);
           affiliateLinksList.appendChild(li);
+          hasDisplayedLinks = true;
+        } else {
+            console.warn(`Attempted to render link for key but not found in affiliateLinksData: ${key}`);
         }
       });
-      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block"; // Show container
+      if (hasDisplayedLinks) {
+        if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
+      } else {
+        affiliateLinksList.innerHTML = "<li>No specific products found. Check Kits page.</li>";
+        if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
+      }
     } else {
       affiliateLinksList.innerHTML = "<li>No specific products found. Check Kits page.</li>";
-      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block"; // Still show container with message
+      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
     }
   }
 
-  /* calc */
   function calc() {
     const selectedInputMethod = document.querySelector("input[name=\"inputMethod\"]:checked").value;
     const sysType = sys.value;
@@ -225,38 +218,35 @@ document.addEventListener("DOMContentLoaded", () => {
     let inUnit = null;
     let isArea = false;
 
-    // Disable roll method for Awlcraft
     const isAwlcraft = paintType === "awlcraft2000";
     method.querySelector("[value=\"roll\"]").disabled = isAwlcraft;
     if (isAwlcraft && methodType === "roll") {
-      method.value = "spray"; // Auto-switch if roll was selected
-      methodType = method.value; // Update methodType after potential change
+      method.value = "spray"; 
+      methodType = method.value; 
     }
 
-    // Determine input value and unit based on selected method
     if (selectedInputMethod === "areaVolume") {
         inVal = parseFloat(val.value) || 0;
         inUnit = inU.value;
         isArea = ["squareFootage", "squareMeters"].includes(inUnit);
-    } else { // lengthWidth
+    } else { 
         const length = parseFloat(lengthInput.value) || 0;
         const width = parseFloat(widthInput.value) || 0;
         const dimUnit = dimensionUnitSelect.value;
-        isArea = true; // Always calculating area
-        inUnit = unitsFor[sysType].area; // Set input unit to the system's area unit
+        isArea = true; 
+        inUnit = unitsFor[sysType].area; 
 
         if (length > 0 && width > 0) {
-            // Convert dimensions to the system's base dimension unit (feet or meters)
             const baseDimUnit = sysType === "imperial" ? "feet" : "meters";
             const lengthBase = convert(length, dimUnit, baseDimUnit);
             const widthBase = convert(width, dimUnit, baseDimUnit);
             
             if (lengthBase !== null && widthBase !== null) {
-                const areaBase = lengthBase * widthBase; // Area in ft² or m²
-                inVal = areaBase; // Use this calculated area as the input value
+                const areaBase = lengthBase * widthBase; 
+                inVal = areaBase; 
                 calculatedAreaDisplaySpan.textContent = `${areaBase.toFixed(2)} ${labels[inUnit]}`;
             } else {
-                inVal = 0; // Error in conversion
+                inVal = 0; 
                 calculatedAreaDisplaySpan.textContent = "Error";
             }
         } else {
@@ -265,16 +255,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    toggleResRow(isArea); // Show/hide result unit selector based on whether input is area
+    toggleResRow(isArea); 
 
-    // Validate input value
     if (inVal <= 0) {
       reset();
-      // Keep results card visible but show placeholders
       if(resultsCard) resultsCard.style.display = "block"; 
       return;
     }
-    if(resultsCard) resultsCard.style.display = "block"; // Ensure results card is visible
+    if(resultsCard) resultsCard.style.display = "block"; 
     
     let baseCC;
     if (isArea) {
@@ -283,7 +271,6 @@ document.addEventListener("DOMContentLoaded", () => {
         reset("—");
         return;
       }
-      // Convert input area to ft² for coverage calculation
       const areaFt2 = inUnit === "squareFootage" ? inVal : convert(inVal, "squareMeters", "squareFootage");
 
       if (areaFt2 === null) {
@@ -298,8 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const totalParts = 1 + conv + red;
       baseCC = totalCCMixed / totalParts;
 
-    } else { // Input is volume
-      // Assume input volume is the BASE paint volume
+    } else { 
       baseCC = convert(inVal, inUnit, "ccs");
     }
 
@@ -312,8 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const convCC = baseCC * conv;
     const redCC = baseCC * red;
 
-    // Determine output unit
-    const outUnit = isArea ? resU.value : inUnit; // Use result unit selector if area, else use input unit
+    const outUnit = isArea ? resU.value : inUnit; 
     
     const pVol = convert(baseCC, "ccs", outUnit)?.toFixed(2) ?? "Err";
     const cVol = convert(convCC, "ccs", outUnit)?.toFixed(2) ?? "Err";
@@ -323,11 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
     outC.textContent = `Converter / Catalyst: ${cVol} ${labels[outUnit]}`;
     outR.textContent = `Reducer: ${rVol} ${labels[outUnit]}`;
 
-    // Display coverage info
     if (cov[paintType] && cov[paintType][methodType]) {
       const d = cov[paintType][methodType];
       const covFt2 = d.c;
-      // Calculate m²/L from ft²/gal: (ft²/gal) * (0.092903 m²/ft²) / (3.78541 L/gal)
       const covM2 = (covFt2 * 0.092903 / 3.78541).toFixed(1);
 
       const covStr =
@@ -348,11 +331,10 @@ document.addEventListener("DOMContentLoaded", () => {
     outR.textContent = `Reducer: ${msg}`;
     outCov.textContent = "";
     if (affiliateLinksList) affiliateLinksList.innerHTML = ""; 
-    if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none"; // Hide container on reset
-    calculatedAreaDisplaySpan.textContent = "—"; // Reset calculated area display
+    if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none"; 
+    calculatedAreaDisplaySpan.textContent = "—"; 
   };
 
-  /* listeners */
   sys.addEventListener("change", () => {
     populateLists();
     calc();
@@ -367,14 +349,13 @@ document.addEventListener("DOMContentLoaded", () => {
   widthInput.addEventListener("input", calc);
   dimensionUnitSelect.addEventListener("change", calc);
 
-  // --- Print Functionality ---
   const printButton = document.getElementById("printButton");
   const qrCodeContainer = document.getElementById("printQrCode");
 
   if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", () => {
       const pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = ""; // Clear previous QR code
+      qrCodeContainer.innerHTML = ""; 
       new QRCode(qrCodeContainer, {
         text: pageUrl,
         width: 100,
@@ -384,10 +365,9 @@ document.addEventListener("DOMContentLoaded", () => {
         correctLevel : QRCode.CorrectLevel.H
       });
       
-      // Timeout to allow QR code rendering before print dialog
       setTimeout(() => {
           window.print();
-      }, 250); // Adjust delay if needed
+      }, 250); 
     });
   } else {
       if (!printButton) console.error("Print button not found");
@@ -395,10 +375,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof QRCode === "undefined") console.error("QRCode library not loaded");
   }
 
-  // Initial setup
   populateLists();
-  toggleInputMethod(); // Set initial visibility based on default radio
-  calc(); // Includes initial reset/hide if value is empty
+  toggleInputMethod(); 
+  calc();
 });
-
 
