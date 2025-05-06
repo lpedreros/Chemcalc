@@ -1,157 +1,558 @@
-// affiliate_links.js - v2 (Restructured with alwaysShow, renamed thickeners, removed fairing)
-
-const chemcalcAffiliateLinks = {
-  // Links that should ALWAYS be shown, regardless of resin type
-  alwaysShow: [
-    // Safety
-    { url: "https://amzn.to/41GczFM", text: "Latex Gloves" },
-    // Application Tools
-    { url: "https://amzn.to/4ixutBi", text: "Mixing Sticks (Reusable)" },
-    { url: "https://amzn.to/4bx0Wp7", text: "Disposable Paper Cups, 125-Pack" },
-    { url: "https://amzn.to/4iaeQ2W", text: "Disposable Plastic Cups w/ Lids, 100-Count" },
-    { url: "https://amzn.to/3FxZhDA", text: "Reusable Silicone Cups, 3-Pack" },
-    { url: "https://amzn.to/4kzZ2Z0", text: "Shop Rags" }, // Renamed from Rags
-    { url: "https://amzn.to/4jdGIU0", text: "Chip Brushes, 2-inch, 36-Pack" },
-    { url: "https://amzn.to/4j98alz", text: "Foam Rollers, 6-inch, 20-Pack" }, // Assuming 6-inch is the 3-inch user meant?
-    { url: "https://amzn.to/3RqfH3w", text: "Foam Roller Frame, 6-inch" }, // Assuming 6-inch is the 3-inch user meant?
-    { url: "https://amzn.to/43xo0lC", text: "Roller Tray w/ Liners & Frame, 9-inch" },
-    { url: "https://amzn.to/3FP5qLQ", text: "Resin Roller Covers (solvent resistant), 9-inch, 6-Pack" },
-    { url: "https://amzn.to/4l4fIrz", text: "Fiberglass Bubble Rollers, Assorted Sizes, 4-Pack" },
-    // Thickeners (Renamed)
-    { url: "https://amzn.to/4bE5sCk", text: "Resin Thickener (Fumed Silica), 1-Quart" },
-    { url: "https://amzn.to/4bFDLc7", text: "Resin Thickener (Milled Fibers), 1-Quart" },
-  ],
-
-  // Links specific to Polyester and Vinylester Resins
-  polyester: [
-    { url: "https://amzn.to/3FunL0L", text: "Polyester Resin, 1-Gallon Kit (with MEKp)" },
-    { url: "https://amzn.to/3FKR4Mn", text: "White Gel Coat, 1-Gallon Kit (with wax and MEKp)" },
-    { url: "https://amzn.to/41AaUBs", text: "Duratec High Gloss Additive (for tack-free cure)" },
-  ],
-
-  // Links specific to Vinylester (Currently same as Polyester, can be customized)
-  vinylester: [
-    { url: "https://amzn.to/3FunL0L", text: "Polyester/Vinylester Resin, 1-Gallon Kit (with MEKp)" },
-    { url: "https://amzn.to/3FKR4Mn", text: "White Gel Coat, 1-Gallon Kit (with wax and MEKp)" },
-    { url: "https://amzn.to/41AaUBs", text: "Duratec High Gloss Additive (for tack-free cure)" },
-  ],
-
-  // Links specific to Epoxy Resins
-  epoxy: [
-    { url: "https://amzn.to/3DNMDjt", text: "Epoxy Resin Base, 1-Gallon" },
-    { url: "https://amzn.to/3DGSpU3", text: "Epoxy Resin Hardener FAST, 1-Quart" },
-    { url: "https://amzn.to/4issCxx", text: "Epoxy Resin Hardener SLOW, 1-Quart" },
-    // REMOVED Awlfair and Splash Zone links
-  ],
-
-  // Dynamic links based on selected materials
-  dynamic: {
-      // Add specific cloth links here, keyed by a representative material type
-      fiberglass_cloth: { url: "https://amzn.to/3FYn3c4", text: "Fiberglass Cloth, CSM (Chopped Strand Mat), 50in x 10yd" },
-      carbon_fiber: { url: "https://amzn.to/some_carbon_link", text: "Carbon Fiber Cloth, 3k Twill, 50in x 1yd" }, // Example
-      kevlar: { url: "https://amzn.to/some_kevlar_link", text: "Kevlar Cloth, 5oz Plain Weave, 50in x 1yd" } // Example
-      // Add more specific cloth types if needed
+const affiliateLinksData = {
+  "latex_gloves": {
+    "name": "Latex Gloves",
+    "url": "https://amzn.to/41GczFM"
   },
-
-  // Default links (Other Safety, Tools, General Materials) - Shown as fallback or addition
-  default: [
-    // Safety Gear
-    { url: "https://amzn.to/4kVO3ZO", text: "DuPont Tyvek Disposable Coverall w/ Hood & Boots" },
-    { url: "https://amzn.to/41p1b0I", text: "Head Socks (for under respirator)" },
-    { url: "https://amzn.to/41RKHOQ", text: "3M Full Face Respirator (Ultimate FX FF-402)" },
-    { url: "https://amzn.to/3DGQvmn", text: "Organic Vapor Cartridges (for 3M respirator)" },
-    { url: "https://amzn.to/3Fw6xQl", text: "Particulate Filter Retainers (for 3M respirator)" },
-    { url: "https://amzn.to/4kVNKhC", text: "Particulate Filters (P100 for 3M respirator)" },
-    { url: "https://amzn.to/4ixlkc6", text: "3M Faceshield Covers (for Ultimate FX series)" },
-    { url: "https://amzn.to/4bTO1xL", text: "Hearing Protection" },
-    // Solvents
-    { url: "https://amzn.to/4izxOjj", text: "Denatured Alcohol, 1-Gallon" },
-    { url: "https://amzn.to/4ia9cxM", text: "Lacquer Thinner, 1-Gallon" },
-    // Fillers/Putties (Excluding removed fairing compounds)
-    { url: "https://amzn.to/3FtykBc", text: "3M Platinum Plus Filler, 1 Gallon" },
-    { url: "https://amzn.to/4iwNPXi", text: "Hardener for Filler (Red), 4 oz" },
-    { url: "https://amzn.to/41vtWcg", text: "3M Acrylic Putty, 1 Tube" },
-    // Adhesives
-    { url: "https://amzn.to/3QVlcas", text: "3M 5200 Permanent Adhesive Sealant, 10 oz" },
-    { url: "https://amzn.to/420jAkA", text: "3M 4200 Fast Cure Adhesive Sealant, 10 oz" },
-    // Materials (Excluding the main cloth link moved to dynamic)
-    { url: "https://amzn.to/4ckJcgN", text: "Mica Powder Pigments (for tinting), 36-Colors" },
-    { url: "https://amzn.to/4iwdorG", text: "Color Tints (liquid, assorted colors)" },
-    // Application Tools
-    { url: "https://amzn.to/4bFNI9C", text: "Mixing Board" },
-    // Tapes/Masking
-    { url: "https://amzn.to/43P5LYL", text: "Blue Painter's Tape, 1-inch, 6-Pack" },
-    { url: "https://amzn.to/3DAGOWC", text: "Double-Sided Tape, 1-inch" },
-    { url: "https://amzn.to/4kVPFCU", text: "Masking Plastic, 72-inch" },
-    { url: "https://amzn.to/3FA2qmx", text: "Masking Paper, 12-inch" },
-    { url: "https://amzn.to/4hGh4G0", text: "3M Hand Masker Dispenser" },
-    // Sanding/Grinding
-    { url: "https://amzn.to/4iTdB7Y", text: "Guide Coat Kit" },
-    { url: "https://amzn.to/41sWEKN", text: "80 Grit Sanding Disc, 5-inch, 50-Box" },
-    { url: "https://amzn.to/41UrbBb", text: "180 Grit Xtract Sanding Disc, 5-inch, 50-Box" },
-    { url: "https://amzn.to/4kuvKe6", text: "320 Grit Xtract Sanding Disc, 5-inch, 50-Box" },
-    { url: "https://amzn.to/42i8iZ5", text: "400 Grit Sanding Disc, 5-inch, 200-Box" },
-    { url: "https://amzn.to/3RsRA4y", text: "800 Grit Sanding Disc, 5-inch, 50-Box" },
-    { url: "https://amzn.to/3GclOWT", text: "1200 Grit Sanding Disc, 5-inch, 50-Box" },
-    { url: "https://amzn.to/3DNPOrp", text: "400 Grit Wet/Dry Sandpaper, 50 Sheets" },
-    { url: "https://amzn.to/41p5Hwc", text: "800 Grit Wet/Dry Sandpaper, 50 Sheets" },
-    { url: "https://amzn.to/4ivoAVg", text: "1200 Grit Wet/Dry Sandpaper, 50 Sheets" },
-    { url: "https://amzn.to/4kusLlT", text: "1500 Grit Wet/Dry Sandpaper, 50 Sheets" },
-    { url: "https://amzn.to/3FtKEkI", text: "2000 Grit Wet/Dry Sandpaper, 50 Sheets" },
-    { url: "https://amzn.to/4ktEbGD", text: "Wet Sanding Paper Assortment (1000-2500 Grit)" },
-    { url: "https://amzn.to/3FE5Cxq", text: "3M Clean Sanding Blocks" },
-    { url: "https://amzn.to/4iaewRM", text: "Sanding Blocks (Dura-Block style)" },
-    { url: "https://amzn.to/3FAVDZM", text: "Linear Sanding Blocks, Assorted Sizes" },
-    { url: "https://amzn.to/4imXJuK", text: "File Sander Belts, 36-Grit" },
-    { url: "https://amzn.to/4ktEbGD", text: "3M Green Corps Grinding Wheels, 5-inch, 40-Grit" }, // Note: Duplicate URL from wet paper assortment? Check link.
-    { url: "https://amzn.to/3RdrYZ3", text: "3M Cubitron II Grinding Wheels, 5-inch, 36-Grit" },
-    // Spray/Paint Specific
-    { url: "https://amzn.to/4kw1dwv", text: "Preval Sprayer, 12-Pack" },
-    { url: "https://amzn.to/3XZmeG2", text: "Spray Gun Disposable Cups/Lids/Liners Kit, 28 oz" },
-    { url: "https://amzn.to/41UgS01", text: "Detail HVLP Spray Gun" },
-    { url: "https://amzn.to/3DORvEW", text: "3M Performance Spray Gun Kit" },
-    { url: "https://amzn.to/43Xef07", text: "3M Spray Gun Air Flow Control Valve" },
-    { url: "https://amzn.to/3XYhy3i", text: "3M Atomizing Heads Size 1.2 (for 3M gun)" },
-    { url: "https://amzn.to/3XVwpvq", text: "3M Atomizing Heads Size 1.4 (for 3M gun)" },
-    { url: "https://amzn.to/4kCrUQg", text: "3M Atomizing Heads Size 2.0 (for 3M gun)" },
-    { url: "https://www.amazon.com/Awlgrip-Premium-Polyester-Urethane-Gallon/dp/B002IZMGXE", text: "Awlgrip Topcoat Base (Snow White), 1-Gallon" },
-    { url: "https://defender.com/en_us/awlgrip-polyester-urethane-topcoat-base-extreme-black-g2066q", text: "Awlgrip Topcoat Base (Extreme Black), 1-Gallon" },
-    { url: "https://www.amazon.com/Awlgrip-NA-G5002G-REGMNTL-AWLGRIP/dp/B002IZMGPC", text: "Awlgrip Topcoat Base (Flag Blue), 1-Gallon" },
-    { url: "https://www.amazon.com/Awlgrip-Awlcraft-Acrylic-Urethane-Gallon/dp/B002IZDOVW", text: "Awlcraft 2000 Base (Snow White), 1-Gallon" },
-    { url: "https://www.partspak.com/productcart/pc/Awlgrip-F2091G-Awlcraft-2000-Super-Jet-Black-Gl-p250665.htm", text: "Awlcraft 2000 Base (Super Jet Black), 1-Gallon" },
-    { url: "https://www.amazon.com/Awlgrip-F5014Q-Awlcraft-2000-Flag/dp/B006VJ57JI", text: "Awlcraft 2000 Base (Flag Blue), 1-Quart" },
-    { url: "https://www.amazon.com/Awlgrip-Epoxy-Primer-Gallon-98-D8001g/dp/B002IZJ9UM/", text: "Awlgrip 545 Epoxy Primer Base (White), 1-Gallon" },
-    { url: "https://amzn.to/41zFVFL", text: "Awlgrip Roll/Brush Reducer (T0031), 1-Quart" },
-    { url: "https://amzn.to/4bTQLeg", text: "Awlgrip Roll/Brush Converter (H3002), 1-Pint" },
-    { url: "https://amzn.to/3FwKuZY", text: "Awlcraft/Awlgrip Spray Reducer (T0006), 1-Quart" },
-    { url: "https://amzn.to/42aSwk0", text: "Awlcraft/Awlgrip Spray Converter (G3010), 1-Quart" },
-    { url: "https://amzn.to/3FNsJpq", text: "Awlgrip 545 Primer Converter (D3001), 1-Gallon" },
-    // Polishing/Buffing
-    { url: "https://amzn.to/4iwqogI", text: "3M Perfect-It Rubbing Compound" },
-    { url: "https://amzn.to/4i9sof0", text: "3M Finesse-It II Polishing Compound" },
-    { url: "https://amzn.to/4hw5vkZ", text: "Polishing Pads, 6-inch" },
-    { url: "https://amzn.to/4igH1xg", text: "Buffing Pads, 7-inch" },
-    // Power Tools
-    { url: "https://amzn.to/4icDmAw", text: "Milwaukee Cordless Compressor" },
-    { url: "https://amzn.to/4iPGBgW", text: "DeWalt Cordless Grinder" },
-    { url: "https://amzn.to/3FvfoSq", text: "Makita Corded File Sander" },
-    { url: "https://amzn.to/41MzVJB", text: "Milwaukee Cordless File Sander" },
-    { url: "https://amzn.to/4bSv5PB", text: "Festool Orbital Sander (ETS 125 REQ), 5-inch" },
-    { url: "https://amzn.to/4kOQnld", text: "Festool Cordless/Corded Orbital Sander Kit (ETSC 125), 5-inch" },
-    { url: "https://amzn.to/4bUHQt1", text: "DeWalt Corded Orbital Sander, 5-inch" },
-    { url: "https://amzn.to/43JWb9y", text: "Milwaukee Cordless Orbital Sander, 5-inch" },
-    { url: "https://amzn.to/3R9VSgM", text: "DeWalt Cordless Orbital Sander (Tool Only), 5-inch" },
-    { url: "https://amzn.to/4hyUb7m", text: "DeWalt Cordless Orbital Sander Kit, 5-inch" },
-    { url: "https://amzn.to/4iO3h15", text: "Rupes LHR15 Random Orbital Polisher" },
-    { url: "https://amzn.to/3DBB6DP", text: "RUPES Cordless Polisher & Mini iBrid Combo" },
-    { url: "https://amzn.to/4kPTeKP", text: "SPTA Mini Car Polisher" },
-    { url: "https://amzn.to/4iBT4Fi", text: "DeWalt Corded Buffer" },
-    { url: "https://amzn.to/4ijJnLF", text: "Makita Corded Buffer" },
-    { url: "https://amzn.to/3DOPBUY", text: "Milwaukee Cordless Buffer" },
-    // Misc
-    { url: "https://amzn.to/41p3QHK", text: "PVA Mold Release" },
-    { url: "https://amzn.to/4ifkPDF", text: "Electric Scissors (for cloth)" },
-    { url: "https://amzn.to/4l0SbHZ", text: "Centipede Workbench, 4x8" },
-  ]
+  "dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack": {
+    "name": "DuPont Tyvek 400 TY122S Disposable Protective Coverall Hood and Boots, 25-pack",
+    "url": "https://amzn.to/4igVjxJ"
+  },
+  "dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack": {
+    "name": "DuPont Tyvek 400 TY122S Disposable Protective Coverall Hood and Boots, 1-pack",
+    "url": "https://amzn.to/4kVO3ZO"
+  },
+  "head_socks": {
+    "name": "Head socks",
+    "url": "https://amzn.to/41p1b0I"
+  },
+  "3m_full_face_respirator_medium_model_6800_filter_kit_linked_below": {
+    "name": "3M full face respirator (Medium, Model 6800. Filter kit linked below)",
+    "url": "https://amzn.to/3DwLixu"
+  },
+  "3m_full_face_respirator_large_model_6800_filter_kit_linked_below": {
+    "name": "3M full face respirator (Large, Model 6800. Filter kit linked below)",
+    "url": "https://amzn.to/4iQOkeF"
+  },
+  "3m_full_face_respirator_medium_model_ultimate_fx_ff402_filter_kit_linked_below": {
+    "name": "3M full face respirator (Medium, Model Ultimate FX FF-402. Filter kit linked below)",
+    "url": "https://amzn.to/4hfIToB"
+  },
+  "3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below": {
+    "name": "3M full face respirator (Large, Model Ultimate FX FF-402. Filter kit linked below)",
+    "url": "https://amzn.to/41RKHOQ"
+  },
+  "organic_vapor_filters": {
+    "name": "Organic Vapor filters",
+    "url": "https://amzn.to/3DGQvmn"
+  },
+  "particulate_filter_retainers": {
+    "name": "Particulate filter retainers",
+    "url": "https://amzn.to/3Fw6xQl"
+  },
+  "particulate_filters": {
+    "name": "Particulate filters",
+    "url": "https://amzn.to/4kVNKhC"
+  },
+  "3m_faceshield_cover_for_6000_series_respirators_25pack": {
+    "name": "3M Faceshield Cover for 6000 series respirators, 25-Pack",
+    "url": "https://amzn.to/4kTEkmH"
+  },
+  "3m_faceshield_cover_for_ultimate_fx_series_respirator_5pack": {
+    "name": "3M faceshield cover for Ultimate FX series respirator, 5-pack",
+    "url": "https://amzn.to/4ixlkc6"
+  },
+  "hearing_protection": {
+    "name": "Hearing protection",
+    "url": "https://amzn.to/4bTO1xL"
+  },
+  "denatured_alcohol_1gallon": {
+    "name": "Denatured Alcohol, 1-gallon",
+    "url": "https://amzn.to/4izxOjj"
+  },
+  "lacquer_thinner_1gallon": {
+    "name": "Lacquer Thinner, 1-gallon",
+    "url": "https://amzn.to/4ia9cxM"
+  },
+  "polyester_resin_1gallon_kit_with_mekp": {
+    "name": "Polyester resin, 1-gallon kit (with MEKp)",
+    "url": "https://amzn.to/3FunL0L"
+  },
+  "white_gel_coat_1quart_kit_with_wax_and_mekp": {
+    "name": "White Gel coat, 1-quart kit (with wax and MEKp)",
+    "url": "https://amzn.to/3FtFt4g"
+  },
+  "white_gel_coat_1gallon_kit_with_wax_and_mekp": {
+    "name": "White Gel coat, 1-gallon kit (with wax and MEKp)",
+    "url": "https://amzn.to/3FKR4Mn"
+  },
+  "epoxy_resin_base_1gallon": {
+    "name": "Epoxy resin base, 1-gallon",
+    "url": "https://amzn.to/3DNMDjt"
+  },
+  "epoxy_resin_hardener_fast_1quart": {
+    "name": "Epoxy resin hardener FAST, 1-quart",
+    "url": "https://amzn.to/3DGSpU3"
+  },
+  "epoxy_resin_hardener_slow_1_quart": {
+    "name": "Epoxy resin hardener SLOW, 1 quart",
+    "url": "https://amzn.to/4issCxx"
+  },
+  "awlfair_white_base_1quart": {
+    "name": "Awlfair white base, 1-quart",
+    "url": "https://amzn.to/43Wpbei"
+  },
+  "awlfair_red_converter_1quart": {
+    "name": "Awlfair red converter, 1-quart",
+    "url": "https://amzn.to/4bBuNwI"
+  },
+  "awlgrip_rollbrush_reducer_1quart": {
+    "name": "Awlgrip roll/brush reducer, 1-quart",
+    "url": "https://amzn.to/41zFVFL"
+  },
+  "awlgrip_rollbrush_converter_1pint": {
+    "name": "Awlgrip roll/brush converter, 1-pint",
+    "url": "https://amzn.to/4bTQLeg"
+  },
+  "awlcraft2000awlgrip_spray_reducer_1quart": {
+    "name": "Awlcraft2000/Awlgrip Spray Reducer, 1-quart",
+    "url": "https://amzn.to/3FwKuZY"
+  },
+  "awlcraft2000awlgrip_spray_converter_1quart": {
+    "name": "Awlcraft2000/Awlgrip Spray Converter, 1-quart",
+    "url": "https://amzn.to/42aSwk0"
+  },
+  "awlgrip_545_primer_base_grey_1quart": {
+    "name": "Awlgrip 545 Primer Base, Grey, 1-quart",
+    "url": "https://amzn.to/42qn2q4"
+  },
+  "awlgrip_545_primer_base_grey_1gallon": {
+    "name": "Awlgrip 545 Primer Base, Grey, 1-gallon",
+    "url": "https://amzn.to/4lbahHg"
+  },
+  "awlgrip_545_primer_base_white_1quart": {
+    "name": "Awlgrip 545 Primer Base, White, 1-quart",
+    "url": "https://amzn.to/429KS8p"
+  },
+  "awlgrip_545_primer_base_white_1gallon": {
+    "name": "Awlgrip 545 Primer Base, White, 1-gallon",
+    "url": "https://amzn.to/4c9tiG2"
+  },
+  "awlgrip_545_primer_converter_1quart": {
+    "name": "Awlgrip 545 Primer Converter, 1-quart",
+    "url": "https://amzn.to/43yAaur"
+  },
+  "awlgrip_545_primer_converter_1gallon": {
+    "name": "Awlgrip 545 Primer Converter, 1-gallon",
+    "url": "https://amzn.to/3FNsJpq"
+  },
+  "pva": {
+    "name": "PVA",
+    "url": "https://amzn.to/41p3QHK"
+  },
+  "3m_platinum_plus_filler_1_gallon": {
+    "name": "3M Platinum Plus filler, 1 gallon",
+    "url": "https://amzn.to/3FtykBc"
+  },
+  "hardener_for_filler_blue_4_ounces": {
+    "name": "Hardener for filler, Blue, 4 ounces",
+    "url": "https://amzn.to/4hijV87"
+  },
+  "hardener_for_filler_red_4_ounces": {
+    "name": "Hardener for filler, Red, 4 ounces",
+    "url": "https://amzn.to/4iwNPXi"
+  },
+  "fumed_silica_thickener_very_fine_easy_to_sand_1quart": {
+    "name": "Fumed Silica (thickener, very fine, easy to sand), 1-quart",
+    "url": "https://amzn.to/4bE5sCk"
+  },
+  "milled_fibers_thickener_heavier_for_adhesive_applications_1_quart": {
+    "name": "Milled Fibers, (thickener, heavier for adhesive applications), 1 quart",
+    "url": "https://amzn.to/4bFDLc7"
+  },
+  "3m_acrylic_putty_1_tube": {
+    "name": "3M Acrylic Putty, 1 Tube",
+    "url": "https://amzn.to/41vtWcg"
+  },
+  "splash_zone_cures_underwater": {
+    "name": "Splash zone (cures underwater)",
+    "url": "https://amzn.to/3FxYu5A"
+  },
+  "duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite": {
+    "name": "Duratec (resin and gel coat additive for tack-free curing)(My favorite)",
+    "url": "https://amzn.to/41AaUBs"
+  },
+  "5200_permanent_adhesive_fast_cure_3_oz_tube": {
+    "name": "5200 Permanent Adhesive, Fast cure, 3 oz. tube",
+    "url": "https://amzn.to/4jaQYw8"
+  },
+  "5200_permanent_adhesive_fast_cure_10_oz_tube": {
+    "name": "5200 Permanent Adhesive, Fast cure, 10 oz. tube",
+    "url": "https://amzn.to/3Y4HhqL"
+  },
+  "5200_permanent_adhesive_3_oz_tube": {
+    "name": "5200 Permanent Adhesive, 3 oz. tube",
+    "url": "https://amzn.to/4j98MHT"
+  },
+  "5200_permanent_adhesive_10_oz_tube": {
+    "name": "5200 Permanent Adhesive, 10 oz. tube",
+    "url": "https://amzn.to/3QVlcas"
+  },
+  "4200_permanent_adhesive_fast_cure_3_oz_tube": {
+    "name": "4200 Permanent Adhesive, Fast cure, 3 oz. tube",
+    "url": "https://amzn.to/4iUFkG6"
+  },
+  "4200_permanent_adhesive_10_oz_tube": {
+    "name": "4200 Permanent Adhesive, 10 oz. tube",
+    "url": "https://amzn.to/420jAkA"
+  },
+  "fiberglass_cloth_1708_biaxial_50_in_x_10_yards": {
+    "name": "Fiberglass cloth, 1708 Biaxial, 50 in. x 10 yards",
+    "url": "https://amzn.to/4lbyFbR"
+  },
+  "fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards": {
+    "name": "Fiberglass cloth, CSM (Chopped Strand Matt), 50 in. x 10 yards",
+    "url": "https://amzn.to/3FYn3c4"
+  },
+  "chip_brushes_1inch_24pack": {
+    "name": "Chip brushes, 1-inch, 24-pack",
+    "url": "https://amzn.to/4l0TUx0"
+  },
+  "chip_brushes_2inch_36pack": {
+    "name": "Chip brushes, 2-inch, 36-pack",
+    "url": "https://amzn.to/4jdGIU0"
+  },
+  "foam_rollers_6inch_20pack": {
+    "name": "Foam rollers, 6-inch, 20-pack",
+    "url": "https://amzn.to/4j98alz"
+  },
+  "roller_tray_with_liners_and_roller_frame_4inch_27pack": {
+    "name": "Roller tray with liners and roller frame, 4-inch, 27-pack",
+    "url": "https://amzn.to/4hS87cI"
+  },
+  "roller_tray_with_liners_and_roller_frame_6inch_11pack": {
+    "name": "Roller tray with liners and roller frame, 6-inch, 11-pack",
+    "url": "https://amzn.to/4hQGYXF"
+  },
+  "roller_tray_with_liners_and_roller_frame_9inch_10pack": {
+    "name": "Roller tray with liners and roller frame, 9-inch, 10-pack",
+    "url": "https://amzn.to/43xo0lC"
+  },
+  "poly_resin_roller_covers_9inch_6pack": {
+    "name": "Poly Resin Roller covers, 9-inch, 6-pack",
+    "url": "https://amzn.to/3FP5qLQ"
+  },
+  "blue_tape_1inch_6pack": {
+    "name": "Blue Tape, 1-inch, 6-pack",
+    "url": "https://amzn.to/43P5LYL"
+  },
+  "doublesided_tape_1inch": {
+    "name": "Double-sided tape, 1-inch",
+    "url": "https://amzn.to/3DAGOWC"
+  },
+  "guide_coat_kit": {
+    "name": "Guide coat kit",
+    "url": "https://amzn.to/4iTdB7Y"
+  },
+  "mixing_board": {
+    "name": "Mixing board",
+    "url": "https://amzn.to/4bFNI9C"
+  },
+  "mixing_sticks_reusable": {
+    "name": "Mixing sticks (reusable)",
+    "url": "https://amzn.to/4ixutBi"
+  },
+  "rags": {
+    "name": "Rags",
+    "url": "https://amzn.to/4kzZ2Z0"
+  },
+  "80_grit_sanding_disc_5inch_50box": {
+    "name": "80 grit sanding disc, 5-inch, 50-box",
+    "url": "https://amzn.to/41sWEKN"
+  },
+  "180_grit_xtract_sanding_disc_5inch_50box": {
+    "name": "180 grit Xtract sanding disc, 5-inch, 50-box",
+    "url": "https://amzn.to/41UrbBb"
+  },
+  "320_grit_xtract_sanding_disc_5_inch_50box": {
+    "name": "320 grit Xtract sanding disc, 5 inch, 50-box",
+    "url": "https://amzn.to/4kuvKe6"
+  },
+  "400_grit_sanding_disc_5inch_200box": {
+    "name": "400 grit sanding disc, 5-inch, 200-box",
+    "url": "https://amzn.to/42i8iZ5"
+  },
+  "800_grit_sanding_disc_5inch_50box": {
+    "name": "800 grit sanding disc, 5-inch, 50-box",
+    "url": "https://amzn.to/3RsRA4y"
+  },
+  "1200_grit_sanding_disc_5inch_50box": {
+    "name": "1200 grit sanding disc, 5-inch, 50-box",
+    "url": "https://amzn.to/3GclOWT"
+  },
+  "400_grit_wet_paper_50_sheets": {
+    "name": "400 grit wet paper, 50 sheets",
+    "url": "https://amzn.to/3DNPOrp"
+  },
+  "800_grit_wet_sandpaper_50_sheets": {
+    "name": "800 grit wet sandpaper, 50 sheets",
+    "url": "https://amzn.to/41p5Hwc"
+  },
+  "1200_grit_wet_sandpaper_5_sheets": {
+    "name": "1200 grit wet sandpaper, 5 sheets",
+    "url": "https://amzn.to/4ifUp4M"
+  },
+  "1200_grit_wet_sandpaper_50_sheets": {
+    "name": "1200 grit wet sandpaper, 50 sheets",
+    "url": "https://amzn.to/4ivoAVg"
+  },
+  "1500_grit_wet_sandpaper_5_sheets": {
+    "name": "1500 grit wet sandpaper, 5 sheets",
+    "url": "https://amzn.to/4hkXlf5"
+  },
+  "1500_grit_wet_sandpaper_50_sheets": {
+    "name": "1500 grit wet sandpaper, 50 sheets",
+    "url": "https://amzn.to/4kusLlT"
+  },
+  "2000_grit_wet_sandpaper_50_sheets": {
+    "name": "2000 grit wet sandpaper, 50 sheets",
+    "url": "https://amzn.to/3FtKEkI"
+  },
+  "wet_sanding_paper_assorted_1000_1500_2000_2500": {
+    "name": "Wet sanding paper, assorted 1000, 1500, 2000, 2500",
+    "url": "https://amzn.to/4ktEbGD"
+  },
+  "file_belts_36grit": {
+    "name": "File belts, 36-grit",
+    "url": "https://amzn.to/4imXJuK"
+  },
+  "masking_plastic_24inch_with_dispenser": {
+    "name": "Masking plastic, 24-inch (with dispenser)",
+    "url": "https://amzn.to/3RaXaZ0"
+  },
+  "masking_plastic_35_inch": {
+    "name": "Masking plastic, 35 inch",
+    "url": "https://amzn.to/3RdrYZ3"
+  },
+  "masking_plastic_48inch_with_dispenser": {
+    "name": "Masking plastic, 48-inch (with dispenser)",
+    "url": "https://amzn.to/4bA6GhM"
+  },
+  "masking_plastic_72inch": {
+    "name": "Masking plastic, 72-inch",
+    "url": "https://amzn.to/4kVPFCU"
+  },
+  "masking_paper_6inch": {
+    "name": "Masking paper, 6-inch",
+    "url": "https://amzn.to/4iA9OMY"
+  },
+  "masking_paper_12inch": {
+    "name": "Masking paper, 12-inch",
+    "url": "https://amzn.to/3FA2qmx"
+  },
+  "preval_singlepack": {
+    "name": "Preval (single-pack)",
+    "url": "https://amzn.to/4kxxl2S"
+  },
+  "preval_12pack_multipack": {
+    "name": "Preval, 12-pack (multi-pack)",
+    "url": "https://amzn.to/4kw1dwv"
+  },
+  "disposable_paper_cups_125pack": {
+    "name": "Disposable Paper cups, 125-pack",
+    "url": "https://amzn.to/4bx0Wp7"
+  },
+  "disposable_plastic_cups_with_lids_100count": {
+    "name": "Disposable Plastic cups with lids, 100-count",
+    "url": "https://amzn.to/4iaeQ2W"
+  },
+  "reusable_silicone_cups_3pack_assorted_sizes": {
+    "name": "Reusable silicone cups, 3-pack, assorted sizes",
+    "url": "https://amzn.to/3FxZhDA"
+  },
+  "spray_gun_cups_lids_and_liners_kit_3_ounces": {
+    "name": "Spray Gun Cups, Lids and Liners Kit, 3 ounces",
+    "url": "https://amzn.to/4bYryPP"
+  },
+  "spray_gun_cups_lids_and_liners_kit_6_ounces": {
+    "name": "Spray Gun Cups, Lids and Liners Kit, 6 ounces",
+    "url": "https://amzn.to/4ilpcwT"
+  },
+  "spray_gun_cups_lids_and_liners_kit_135_ounces": {
+    "name": "Spray Gun Cups, Lids and Liners Kit, 13.5 ounces",
+    "url": "https://amzn.to/4iV1yah"
+  },
+  "spray_gun_cups_lids_and_liners_kit_28_ounces": {
+    "name": "Spray Gun Cups, Lids, and Liners Kit, 28 ounces",
+    "url": "https://amzn.to/3XZmeG2"
+  },
+  "color_tints_assorted_colors": {
+    "name": "Color tints, assorted colors",
+    "url": "https://amzn.to/4iwdorG"
+  },
+  "3m_perfectit_rubbing_compound": {
+    "name": "3M Perfect-it rubbing compound",
+    "url": "https://amzn.to/4iwqogI"
+  },
+  "3m_finesseit_polishing_compound": {
+    "name": "3M Finesse-it Polishing compound",
+    "url": "https://amzn.to/4i9sof0"
+  },
+  "buffing_pads_7inch": {
+    "name": "Buffing pads, 7-inch",
+    "url": "https://amzn.to/4igH1xg"
+  },
+  "polishing_pads_3inch": {
+    "name": "Polishing Pads, 3-inch",
+    "url": "https://amzn.to/4bCdmMu"
+  },
+  "polishing_pads_5inch": {
+    "name": "Polishing Pads, 5-inch",
+    "url": "https://amzn.to/4iZLJQi"
+  },
+  "polishing_pads_6inch": {
+    "name": "Polishing Pads, 6-inch",
+    "url": "https://amzn.to/4hw5vkZ"
+  },
+  "3m_performance_atomizing_heads_size_12_5pack_for_3m_paint_gun_for_gel_coat_repairs": {
+    "name": "3M performance Atomizing heads Size 1.2, 5-pack (For 3M paint gun. For gel coat repairs)",
+    "url": "https://amzn.to/3XYhy3i"
+  },
+  "3m_performance_atomizing_heads_size_14_5pack_for_3m_paint_gun_for_gel_coat_repairs": {
+    "name": "3M performance Atomizing heads Size 1.4 5-pack (For 3M paint gun. For gel coat repairs)",
+    "url": "https://amzn.to/3XVwpvq"
+  },
+  "3m_performance_atomizing_heads_size_20_5pack_for_3m_paint_gun_for_gel_coat_repairs": {
+    "name": "3M performance Atomizing heads Size 2.0 5-pack (For 3M paint gun. For gel coat repairs)",
+    "url": "https://amzn.to/4kCrUQg"
+  },
+  "3m_green_corps_grinding_wheels_5inch_40grit_20pack": {
+    "name": "3M Green Corps Grinding wheels, 5-inch, 40-grit, 20-pack",
+    "url": "https://amzn.to/4ktEbGD"
+  },
+  "3m_cubitron_grinding_wheels_5inch_36grit_5pack": {
+    "name": "3M Cubitron Grinding Wheels, 5-inch, 36-grit, 5-pack",
+    "url": "https://amzn.to/3RdrYZ3"
+  },
+  "foam_roller_frame_4inch": {
+    "name": "Foam Roller Frame, 4-inch",
+    "url": "https://amzn.to/426fzv1"
+  },
+  "foam_roller_frame_6inch": {
+    "name": "Foam Roller Frame, 6-inch",
+    "url": "https://amzn.to/3RqfH3w"
+  },
+  "ribbed_bubble_rollers_for_fiberglass_assorted_sizes_4pack": {
+    "name": "Ribbed bubble rollers for fiberglass, assorted sizes, 4-pack",
+    "url": "https://amzn.to/4l4fIrz"
+  },
+  "electric_scissors_for_cutting_fiberglass_cloth": {
+    "name": "Electric scissors for cutting fiberglass cloth",
+    "url": "https://amzn.to/4ifkPDF"
+  },
+  "portable_workbench": {
+    "name": "Portable workbench",
+    "url": "https://amzn.to/3FNiTUk"
+  },
+  "centipede_workbench_2x4": {
+    "name": "Centipede workbench, 2x4",
+    "url": "https://amzn.to/4iY7Aad"
+  },
+  "centipede_workbench_4x8": {
+    "name": "Centipede workbench, 4x8",
+    "url": "https://amzn.to/4l0SbHZ"
+  },
+  "hand_masker": {
+    "name": "Hand masker",
+    "url": "https://amzn.to/4hGh4G0"
+  },
+  "3m_clean_sanding_blocks": {
+    "name": "3M Clean Sanding Blocks",
+    "url": "https://amzn.to/3FE5Cxq"
+  },
+  "sanding_blocks": {
+    "name": "Sanding Blocks",
+    "url": "https://amzn.to/4iaewRM"
+  },
+  "linear_sanding_blocks_12inch": {
+    "name": "Linear Sanding Blocks, 12-inch",
+    "url": "https://amzn.to/4bBBoXU"
+  },
+  "linear_sanding_blocks_assorted_sizes": {
+    "name": "Linear Sanding Blocks, assorted sizes",
+    "url": "https://amzn.to/3FAVDZM"
+  },
+  "preval": {
+    "name": "Preval",
+    "url": "https://amzn.to/4kxxl2S"
+  },
+  "preval_12pack": {
+    "name": "Preval, 12-pack",
+    "url": "https://amzn.to/4kw1dwv"
+  },
+  "detail_paint_gun": {
+    "name": "Detail Paint Gun",
+    "url": "https://amzn.to/41UgS01"
+  },
+  "3m_performance_spray_gun_kit": {
+    "name": "3M Performance Spray Gun Kit",
+    "url": "https://amzn.to/3DORvEW"
+  },
+  "3m_spray_gun_flow_control_valve": {
+    "name": "3M Spray Gun Flow Control Valve",
+    "url": "https://amzn.to/43Xef07"
+  },
+  "milwaukee_cordless_compressor_great_for_mobile_repairs": {
+    "name": "Milwaukee cordless compressor (Great for mobile repairs)",
+    "url": "https://amzn.to/4icDmAw"
+  },
+  "dewalt_cordless_grinder": {
+    "name": "DeWalt cordless Grinder",
+    "url": "https://amzn.to/4iPGBgW"
+  },
+  "makita_corded_file_sander": {
+    "name": "Makita corded File sander",
+    "url": "https://amzn.to/3FvfoSq"
+  },
+  "milwaukee_cordless_file_sander": {
+    "name": "Milwaukee cordless file sander",
+    "url": "https://amzn.to/41MzVJB"
+  },
+  "5inch_festool_orbital_sander": {
+    "name": "5-inch Festool orbital sander",
+    "url": "https://amzn.to/4bSv5PB"
+  },
+  "5inch_festool_cordlesscorded_orbital_sander_kit": {
+    "name": "5-inch Festool Cordless/Corded orbital sander kit",
+    "url": "https://amzn.to/4kOQnld"
+  },
+  "5inch_dewalt_corded_orbital_sander": {
+    "name": "5-inch DeWalt corded orbital sander",
+    "url": "https://amzn.to/4bUHQt1"
+  },
+  "5inch_milwaukee_cordless_orbital_sander": {
+    "name": "5-inch Milwaukee Cordless orbital sander",
+    "url": "https://amzn.to/43JWb9y"
+  },
+  "5inch_dewalt_cordless_orbital_sander_tool_only": {
+    "name": "5-inch DeWalt cordless orbital sander (tool only)",
+    "url": "https://amzn.to/3R9VSgM"
+  },
+  "5inch_dewalt_cordless_orbital_sander_kit": {
+    "name": "5-inch DeWalt cordless orbital sander kit",
+    "url": "https://amzn.to/4hyUb7m"
+  },
+  "rupes_lhr15_random_orbital_polisher": {
+    "name": "Rupes LHR15 random orbital polisher",
+    "url": "https://amzn.to/4iO3h15"
+  },
+  "rupes_cordless_random_orbital_polisher_and_mini_ibrid_polisher_combo": {
+    "name": "RUPES Cordless random orbital polisher AND mini iBrid polisher combo",
+    "url": "https://amzn.to/3DBB6DP"
+  },
+  "spta_mini_car_polisher_get_in_those_tight_spots": {
+    "name": "SPTA Mini car polisher (get in those tight spots)",
+    "url": "https://amzn.to/4kPTeKP"
+  },
+  "dewalt_corded_buffer": {
+    "name": "DeWalt corded buffer",
+    "url": "https://amzn.to/4iBT4Fi"
+  },
+  "makita_corded_buffer": {
+    "name": "Makita corded buffer",
+    "url": "https://amzn.to/4ijJnLF"
+  },
+  "milwaukee_cordless_buffer": {
+    "name": "Milwaukee cordless buffer",
+    "url": "https://amzn.to/3DOPBUY"
+  }
 };
-
