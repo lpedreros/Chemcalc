@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function to fetch and inject product list HTML
     async function loadProductList() {
         try {
-            const response = await fetch("new_kits_product_list.html");
+            const response = await fetch("products.html");
             if (!response.ok) {
-                console.error("Failed to load product list HTML. Status:", response.status);
+                console.error("Failed to load products.html. Status:", response.status);
                 productListContainer.innerHTML = "<p class=\"text-danger\">Error loading product list. Please try again later.</p>";
                 return;
             }
