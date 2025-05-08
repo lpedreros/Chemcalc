@@ -1,42 +1,49 @@
-/* Print Styles - v6 (Correct selectors for hiding sections) */
+/* Print Styles - v7 (More aggressive border removal for printable card) */
 @media print {
-  /* Hide common elements */
+  /* Hide common non-printable elements */
   body > header,
-  body > .row.mt-4, /* Hide Tips/Other Calcs sections (outside main - awlgrip/mekp) */
-  main > .row.mt-4, /* Hide Tips/Other Calcs sections (inside main - clothcalc) */
-  main > .row.mt-5, /* Hide Tips/Other Calcs sections (inside main - epifanes) */
-  body > main > .card:not(.printable-section), /* Hide input cards */
-  body > main > form > .card:not(.printable-section), /* Hide input cards within forms */
-  body > main > form > .form-group, /* Hide input groups */
-  body > main > form > .mb-3, /* Hide input method radio buttons */
-  .printable-section .row.mb-3, /* Corrected: Hide unit selectors inside results card (clothcalc) */
+  body > .row.mt-4, /* Common selector for Tips/Other Calcs sections */
+  main > .row.mt-4, /* Common selector for Tips/Other Calcs sections */
+  main > .row.mt-5, /* Common selector for Tips/Other Calcs sections */
+  body > main > .card:not(.printable-section),
+  body > main > form > .card:not(.printable-section),
+  body > main > form > .form-group,
+  body > main > form > .mb-3,
+  .printable-section .row.mb-3, /* e.g., unit selectors inside results card (clothcalc) */
   #donationModal,
   .fixed-donate-btn,
   body > footer,
   .menu-toggle,
-  .d-print-none,
+  .d-print-none, /* Generic class to hide elements from print */
   button#printButton /* Specifically hide the print button itself */
-   {
+  {
     display: none !important;
-    visibility: hidden !important; /* Use visibility hidden as well */
+    visibility: hidden !important;
   }
 
-  /* Ensure the printable section and its content are visible */
+  /* Ensure the printable section (results card) is styled correctly for print */
+  .card.printable-section,
   .printable-section {
     display: block !important;
-    width: 100% !important; /* Ensure it takes full width */
-    border: none !important; /* Remove card border */
-    box-shadow: none !important; /* Remove card shadow */
+    width: 100% !important;
+    border: none !important; /* CRITICAL: Remove any border */
+    box-shadow: none !important; /* CRITICAL: Remove any shadow */
     margin: 0 !important;
-    padding: 0 !important;
-    page-break-inside: avoid !important; /* Try to keep results together */
+    padding: 0 !important; /* Remove padding to prevent visual artifacts around content */
+    background-color: #ffffff !important; /* Ensure background is white */
+    page-break-inside: avoid !important;
   }
 
+  /* Ensure the inner card-body (if used) also has no border/padding */
   .printable-section .card-body {
-      padding: 0 !important;
-      margin: 0 !important;
+    padding: 10px !important; /* Add some padding back for content within card-body */
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
   }
 
+  /* General styling for text elements within the printable section */
   .printable-section h5,
   .printable-section p,
   .printable-section div,
@@ -44,17 +51,19 @@
   .printable-section ul,
   .printable-section li,
   .printable-section a {
-    display: block; /* Ensure paragraphs and other elements are block */
+    display: block; /* Ensure proper layout */
     visibility: visible !important;
-    color: #000 !important; /* Ensure black text */
-    background-color: #fff !important; /* Ensure white background */
-    font-size: 11pt !important; /* Base print size */
-    margin-bottom: 0.25em !important; /* Reduced spacing */
-    line-height: 1.2 !important; /* Reduce line height */
-    page-break-inside: avoid !important; /* Avoid breaking inside elements */
+    color: #000000 !important; /* Black text for print */
+    background-color: #ffffff !important; /* White background */
+    font-size: 11pt !important;
+    margin-bottom: 0.25em !important;
+    line-height: 1.2 !important;
+    page-break-inside: avoid !important;
+    border: none !important; /* Ensure no borders on these elements */
+    box-shadow: none !important; /* Ensure no shadows on these elements */
   }
 
-  /* Make specific results significantly larger and bold */
+  /* Larger, bold font for key result lines */
   .printable-section #resultPaint,
   .printable-section #resultConverter,
   .printable-section #resultReducer,
@@ -75,48 +84,52 @@
   .printable-section #mekp-ccs, /* For cloth calc */
   .printable-section #mekp-drops /* For cloth calc */
   {
-      font-weight: bold !important;
-      font-size: 24pt !important; /* Approx 3x larger than typical body text */
-      margin-bottom: 0.5em !important; /* Add slightly more space below */
-      line-height: 1.3 !important; /* Adjust line height for larger font */
+    font-weight: bold !important;
+    font-size: 18pt !important; /* Adjusted for better readability, was 24pt */
+    margin-bottom: 0.5em !important;
+    line-height: 1.3 !important;
   }
 
-  /* Specifically hide affiliate links within the printable section */
+  /* Hide affiliate links within the printable section */
   .printable-section #affiliateLinksContainer,
   .printable-section .affiliate-disclosure-inline {
-      display: none !important;
-      visibility: hidden !important;
+    display: none !important;
+    visibility: hidden !important;
   }
 
-  /* Style the QR code container */
+  /* Style the QR code container and image for print */
   #printQrCode {
-    display: block !important; /* Make sure it's displayed */
+    display: block !important;
     visibility: visible !important;
-    page-break-before: auto; /* Avoid breaking page before QR */
-    text-align: center; /* Center QR code */
-    margin-top: 15px !important; /* Space above QR */
+    page-break-before: auto;
+    text-align: center;
+    margin-top: 15px !important;
     margin-bottom: 0 !important;
     padding: 0 !important;
+    border: none !important;
+    background-color: #ffffff !important;
   }
 
   #printQrCode img {
-    max-width: 160px !important; /* 2x larger QR code size (was 80px) */
+    max-width: 120px !important; /* Adjusted size, was 160px */
     height: auto !important;
     margin: 0 auto !important;
+    border: none !important;
   }
 
-  /* Reset body margin/padding for print */
+  /* General body settings for print */
   body {
-      margin: 0.5cm !important; /* Reduced standard print margins */
-      padding: 0 !important;
-      background-color: #fff !important;
-      overflow: hidden !important; /* Hide potential scrollbars */
-      font-size: 11pt !important;
+    margin: 0.5cm !important;
+    padding: 0 !important;
+    background-color: #ffffff !important;
+    overflow: hidden !important;
+    font-size: 11pt !important;
   }
 
-  /* Ensure links are black and not underlined */
+  /* Ensure links are black and not underlined in print */
   a, a:visited {
-      color: #000 !important;
-      text-decoration: none !important;
+    color: #000000 !important;
+    text-decoration: none !important;
   }
 }
+
