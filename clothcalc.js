@@ -1,4 +1,4 @@
-// clothcalc.js - v12.7.7 (Updates affiliate link keys and product selection)
+// clothcalc.js - v12.7.8 (Fixes small value display: avoids zeros, adds dual imperial/metric display for tiny amounts)
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -102,6 +102,146 @@ document.addEventListener("DOMContentLoaded", () => {
   const mlPerDrop = 0.05;
   const mekpDensity = 1.1;
   const approxEpoxyHardenerDensity = 1.0;
+
+  // Constants for small value display
+  const MIN_DISPLAY_ML = 0.01;
+  const MIN_DISPLAY_G = 0.01;
+  const FL_OZ_DUAL_THRESHOLD = 0.5;
+  const OZ_DUAL_THRESHOLD = 0.5;
+  const LITER_DUAL_THRESHOLD_ML = 0.01; // For metric: if < 0.01 L, show mL
+  const KG_DUAL_THRESHOLD_G = 0.01;   // For metric: if < 0.01 kg, show g
+
+  /**
+   * Formats a volume value (in Liters) for display based on the selected unit and system.
+   * Handles small values by showing dual units (e.g., fl oz and mL) or a "< min" notation.
+   * @param {number} valueLiters - The volume value in Liters.
+   * @param {string} displayUnit - The target display unit (e.g., "floz", "l", "ml").
+   * @param {string} system - The measurement system ("imperial" or "metric").
+   * @returns {string} The formatted volume string for display.
+   */
+  function formatDisplayVolume(valueLiters, displayUnit, system) {
+    let primaryDisplay = "";
+    let secondaryDisplay = "";
+
+    if (system === "imperial") {
+        if (displayUnit === "floz") {
+            const valueFlOz = valueLiters * literToFlOz;
+            if (valueFlOz < MIN_DISPLAY_ML / mlToFlOz && valueFlOz !==0) { // if even fl oz is less than min mL equivalent
+                primaryDisplay = `< ${MIN_DISPLAY_ML.toFixed(2)} mL`;
+            } else if (valueFlOz < FL_OZ_DUAL_THRESHOLD && valueFlOz !== 0) {
+                const valueMl = valueLiters * 1000;
+                primaryDisplay = `${valueFlOz.toFixed(2)} fl oz`;
+                secondaryDisplay = `(${valueMl.toFixed(2)} mL)`;
+            } else {
+                primaryDisplay = `${valueFlOz.toFixed(2)} fl oz`;
+            }
+        } else if (displayUnit === "qt") {
+            const valueQt = valueLiters * literToQuart;
+            const valueFlOz = valueLiters * literToFlOz;
+            if (valueFlOz < MIN_DISPLAY_ML / mlToFlOz && valueFlOz !== 0) {
+                 primaryDisplay = `< ${MIN_DISPLAY_ML.toFixed(2)} mL`;
+            } else if (valueFlOz < FL_OZ_DUAL_THRESHOLD && valueFlOz !== 0) { // Show as fl oz with mL if small enough
+                const valueMl = valueLiters * 1000;
+                primaryDisplay = `${valueFlOz.toFixed(2)} fl oz`;
+                secondaryDisplay = `(${valueMl.toFixed(2)} mL)`;
+            } else {
+                primaryDisplay = `${valueQt.toFixed(3)} qt`;
+            }
+        } else if (displayUnit === "gal") {
+            const valueGal = valueLiters * literToGallon;
+            const valueFlOz = valueLiters * literToFlOz;
+            if (valueFlOz < MIN_DISPLAY_ML / mlToFlOz && valueFlOz !== 0) {
+                primaryDisplay = `< ${MIN_DISPLAY_ML.toFixed(2)} mL`;
+            } else if (valueFlOz < FL_OZ_DUAL_THRESHOLD && valueFlOz !== 0) { // Show as fl oz with mL if small enough
+                const valueMl = valueLiters * 1000;
+                primaryDisplay = `${valueFlOz.toFixed(2)} fl oz`;
+                secondaryDisplay = `(${valueMl.toFixed(2)} mL)`;
+            } else {
+                primaryDisplay = `${valueGal.toFixed(3)} gal`;
+            }
+        }
+    } else { // Metric system
+        if (displayUnit === "l") {
+            const valueMl = valueLiters * 1000;
+            if (valueMl < MIN_DISPLAY_ML && valueMl !== 0) {
+                primaryDisplay = `< ${MIN_DISPLAY_ML.toFixed(2)} mL`;
+            } else if (valueLiters < LITER_DUAL_THRESHOLD_ML && valueLiters !== 0) { // LITER_DUAL_THRESHOLD_ML is 0.01 L
+                primaryDisplay = `${valueLiters.toFixed(3)} L`;
+                secondaryDisplay = `(${valueMl.toFixed(2)} mL)`;
+            } else {
+                primaryDisplay = `${valueLiters.toFixed(3)} L`;
+            }
+        } else if (displayUnit === "ml") {
+            const valueMl = valueLiters * 1000;
+            if (valueMl < MIN_DISPLAY_ML && valueMl !== 0) {
+                primaryDisplay = `< ${MIN_DISPLAY_ML.toFixed(2)} mL`;
+            } else {
+                primaryDisplay = `${valueMl.toFixed(2)} mL`;
+            }
+        }
+    }
+    return `${primaryDisplay} ${secondaryDisplay}`.trim();
+  }
+
+  /**
+   * Formats a weight value (in Kilograms) for display based on the selected unit and system.
+   * Handles small values by showing dual units (e.g., oz and g) or a "< min" notation.
+   * @param {number} valueKg - The weight value in Kilograms.
+   * @param {string} displayUnit - The target display unit (e.g., "oz", "lbs", "kg", "g").
+   * @param {string} system - The measurement system ("imperial" or "metric").
+   * @returns {string} The formatted weight string for display.
+   */
+  function formatDisplayWeight(valueKg, displayUnit, system) {
+    let primaryDisplay = "";
+    let secondaryDisplay = "";
+
+    if (system === "imperial") {
+        if (displayUnit === "oz") {
+            const valueOz = valueKg * kgToLb * lbToOz;
+            if (valueOz < MIN_DISPLAY_G / (1000 * kgToLb * lbToOz) && valueOz !== 0) { // if even oz is less than min g equivalent
+                primaryDisplay = `< ${MIN_DISPLAY_G.toFixed(2)} g`;
+            } else if (valueOz < OZ_DUAL_THRESHOLD && valueOz !== 0) {
+                const valueG = valueKg * 1000;
+                primaryDisplay = `${valueOz.toFixed(2)} oz`;
+                secondaryDisplay = `(${valueG.toFixed(2)} g)`;
+            } else {
+                primaryDisplay = `${valueOz.toFixed(2)} oz`;
+            }
+        } else if (displayUnit === "lbs") {
+            const valueLbs = valueKg * kgToLb;
+            const valueOz = valueKg * kgToLb * lbToOz;
+            if (valueOz < MIN_DISPLAY_G / (1000 * kgToLb * lbToOz) && valueOz !== 0) {
+                primaryDisplay = `< ${MIN_DISPLAY_G.toFixed(2)} g`;
+            } else if (valueOz < OZ_DUAL_THRESHOLD && valueOz !== 0) { // Show as oz with g if small enough
+                const valueG = valueKg * 1000;
+                primaryDisplay = `${valueOz.toFixed(2)} oz`;
+                secondaryDisplay = `(${valueG.toFixed(2)} g)`;
+            } else {
+                primaryDisplay = `${valueLbs.toFixed(3)} lbs`;
+            }
+        }
+    } else { // Metric system
+        if (displayUnit === "kg") {
+            const valueG = valueKg * 1000;
+            if (valueG < MIN_DISPLAY_G && valueG !== 0) {
+                primaryDisplay = `< ${MIN_DISPLAY_G.toFixed(2)} g`;
+            } else if (valueKg < KG_DUAL_THRESHOLD_G && valueKg !== 0) { // KG_DUAL_THRESHOLD_G is 0.01 kg
+                primaryDisplay = `${valueKg.toFixed(3)} kg`;
+                secondaryDisplay = `(${valueG.toFixed(2)} g)`;
+            } else {
+                primaryDisplay = `${valueKg.toFixed(3)} kg`;
+            }
+        } else if (displayUnit === "g") {
+            const valueG = valueKg * 1000;
+            if (valueG < MIN_DISPLAY_G && valueG !== 0) {
+                primaryDisplay = `< ${MIN_DISPLAY_G.toFixed(2)} g`;
+            } else {
+                primaryDisplay = `${valueG.toFixed(2)} g`;
+            }
+        }
+    }
+    return `${primaryDisplay} ${secondaryDisplay}`.trim();
+  }
 
   function celsiusToFahrenheit(celsius) {
     return (celsius * 9/5) + 32;
@@ -493,43 +633,25 @@ document.addEventListener("DOMContentLoaded", () => {
     totalAreaEl.textContent = `${areaSqMeters.toFixed(2)} m² / ${(areaSqMeters * sqMeterToSqFeet).toFixed(2)} ft²`;
     clothResinRatioEl.textContent = `Average Cloth to Resin Ratio: 1:${avgClothResinRatio.toFixed(2)} by weight`;
 
-    let displayResinVol, displayHardenerVol, displayResinWeight;
-    if (resultUnit === "gal") {
-      displayResinVol = resinVolumeLiters * literToGallon;
-      displayHardenerVol = hardenerVolumeLiters * literToGallon;
-      displayResinWeight = totalResinKg * kgToLb;
-      resinVolumeEl.textContent = `${displayResinVol.toFixed(2)} gal`;
-      hardenerAmountEl.textContent = `Hardener: ${displayHardenerVol.toFixed(2)} gal`;
-      resinWeightEl.textContent = `${displayResinWeight.toFixed(2)} lbs`;
-    } else if (resultUnit === "qt") {
-      displayResinVol = resinVolumeLiters * literToQuart;
-      displayHardenerVol = hardenerVolumeLiters * literToQuart;
-      displayResinWeight = totalResinKg * kgToLb;
-      resinVolumeEl.textContent = `${displayResinVol.toFixed(2)} qt`;
-      hardenerAmountEl.textContent = `Hardener: ${displayHardenerVol.toFixed(2)} qt`;
-      resinWeightEl.textContent = `${displayResinWeight.toFixed(2)} lbs`;
-    } else if (resultUnit === "floz") {
-      displayResinVol = resinVolumeLiters * literToFlOz;
-      displayHardenerVol = hardenerVolumeLiters * literToFlOz;
-      displayResinWeight = totalResinKg * kgToLb * lbToOz;
-      resinVolumeEl.textContent = `${displayResinVol.toFixed(1)} fl oz`;
-      hardenerAmountEl.textContent = `Hardener: ${displayHardenerVol.toFixed(1)} fl oz`;
-      resinWeightEl.textContent = `${displayResinWeight.toFixed(1)} oz (weight)`;
-    } else if (resultUnit === "l") {
-      displayResinVol = resinVolumeLiters;
-      displayHardenerVol = hardenerVolumeLiters;
-      displayResinWeight = totalResinKg;
-      resinVolumeEl.textContent = `${displayResinVol.toFixed(2)} L`;
-      hardenerAmountEl.textContent = `Hardener: ${displayHardenerVol.toFixed(2)} L`;
-      resinWeightEl.textContent = `${displayResinWeight.toFixed(2)} kg`;
-    } else { // ml (ccs)
-      displayResinVol = resinVolumeLiters * 1000;
-      displayHardenerVol = hardenerVolumeLiters * 1000;
-      displayResinWeight = totalResinKg * 1000;
-      resinVolumeEl.textContent = `${displayResinVol.toFixed(0)} mL`;
-      hardenerAmountEl.textContent = `Hardener: ${displayHardenerVol.toFixed(0)} mL`;
-      resinWeightEl.textContent = `${displayResinWeight.toFixed(0)} g`;
+    const selectedSystem = resultSystemSelect.value;
+    // resultUnit is already defined as: const resultUnit = resultVolumeUnitSelect.value;
+
+    resinVolumeEl.textContent = formatDisplayVolume(resinVolumeLiters, resultUnit, selectedSystem);
+    
+    // Hardener display logic is managed by the epoxy check earlier for visibility,
+    // here we just set the text content if applicable.
+    if (resinType === "epoxy" && hardenerVolumeLiters > 0) {
+        hardenerAmountEl.textContent = `Hardener: ${formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem)}`;
+    } 
+    // No 'else' needed here for hardenerAmountEl.textContent as it's hidden for other resin types.
+    
+    let weightDisplayUnit;
+    if (selectedSystem === "imperial") {
+        weightDisplayUnit = (resultUnit === "gal" || resultUnit === "qt") ? "lbs" : "oz";
+    } else { // metric
+        weightDisplayUnit = (resultUnit === "l") ? "kg" : "g";
     }
+    resinWeightEl.textContent = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
 
     mekpPercentageEl.textContent = `${mekpPercentage.toFixed(1)}%`;
     mekpCcsEl.textContent = `${mekpCcs.toFixed(1)} mL`;
