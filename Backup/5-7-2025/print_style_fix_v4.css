@@ -1,0 +1,122 @@
+/* Print Styles - v6 (Correct selectors for hiding sections) */
+@media print {
+  /* Hide common elements */
+  body > header,
+  body > .row.mt-4, /* Hide Tips/Other Calcs sections (outside main - awlgrip/mekp) */
+  main > .row.mt-4, /* Hide Tips/Other Calcs sections (inside main - clothcalc) */
+  main > .row.mt-5, /* Hide Tips/Other Calcs sections (inside main - epifanes) */
+  body > main > .card:not(.printable-section), /* Hide input cards */
+  body > main > form > .card:not(.printable-section), /* Hide input cards within forms */
+  body > main > form > .form-group, /* Hide input groups */
+  body > main > form > .mb-3, /* Hide input method radio buttons */
+  .printable-section .row.mb-3, /* Corrected: Hide unit selectors inside results card (clothcalc) */
+  #donationModal,
+  .fixed-donate-btn,
+  body > footer,
+  .menu-toggle,
+  .d-print-none,
+  button#printButton /* Specifically hide the print button itself */
+   {
+    display: none !important;
+    visibility: hidden !important; /* Use visibility hidden as well */
+  }
+
+  /* Ensure the printable section and its content are visible */
+  .printable-section {
+    display: block !important;
+    width: 100% !important; /* Ensure it takes full width */
+    border: none !important; /* Remove card border */
+    box-shadow: none !important; /* Remove card shadow */
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important; /* Try to keep results together */
+  }
+
+  .printable-section .card-body {
+      padding: 0 !important;
+      margin: 0 !important;
+  }
+
+  .printable-section h5,
+  .printable-section p,
+  .printable-section div,
+  .printable-section span,
+  .printable-section ul,
+  .printable-section li,
+  .printable-section a {
+    display: block; /* Ensure paragraphs and other elements are block */
+    visibility: visible !important;
+    color: #000 !important; /* Ensure black text */
+    background-color: #fff !important; /* Ensure white background */
+    font-size: 11pt !important; /* Base print size */
+    margin-bottom: 0.25em !important; /* Reduced spacing */
+    line-height: 1.2 !important; /* Reduce line height */
+    page-break-inside: avoid !important; /* Avoid breaking inside elements */
+  }
+
+  /* Make specific results significantly larger and bold */
+  .printable-section #resultPaint,
+  .printable-section #resultConverter,
+  .printable-section #resultReducer,
+  .printable-section #mekpRecommended,
+  .printable-section #mekpPercentage,
+  .printable-section #mekpCcs,
+  .printable-section #mekpDrops,
+  .printable-section #resultBase,
+  .printable-section #resultHardener,
+  .printable-section #total-area,
+  .printable-section #cloth-resin-ratio,
+  .printable-section #resin-volume,
+  .printable-section #resin-weight,
+  .printable-section #hardener-amount,
+  .printable-section #working-time,
+  .printable-section #estimated-cost,
+  .printable-section #mekp-percentage, /* For cloth calc */
+  .printable-section #mekp-ccs, /* For cloth calc */
+  .printable-section #mekp-drops /* For cloth calc */
+  {
+      font-weight: bold !important;
+      font-size: 24pt !important; /* Approx 3x larger than typical body text */
+      margin-bottom: 0.5em !important; /* Add slightly more space below */
+      line-height: 1.3 !important; /* Adjust line height for larger font */
+  }
+
+  /* Specifically hide affiliate links within the printable section */
+  .printable-section #affiliateLinksContainer,
+  .printable-section .affiliate-disclosure-inline {
+      display: none !important;
+      visibility: hidden !important;
+  }
+
+  /* Style the QR code container */
+  #printQrCode {
+    display: block !important; /* Make sure it's displayed */
+    visibility: visible !important;
+    page-break-before: auto; /* Avoid breaking page before QR */
+    text-align: center; /* Center QR code */
+    margin-top: 15px !important; /* Space above QR */
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+
+  #printQrCode img {
+    max-width: 160px !important; /* 2x larger QR code size (was 80px) */
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+
+  /* Reset body margin/padding for print */
+  body {
+      margin: 0.5cm !important; /* Reduced standard print margins */
+      padding: 0 !important;
+      background-color: #fff !important;
+      overflow: hidden !important; /* Hide potential scrollbars */
+      font-size: 11pt !important;
+  }
+
+  /* Ensure links are black and not underlined */
+  a, a:visited {
+      color: #000 !important;
+      text-decoration: none !important;
+  }
+}
