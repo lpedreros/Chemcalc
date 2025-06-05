@@ -3,7 +3,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const filterButtonsContainer = document.getElementById("filter-buttons");
     const searchInput = document.getElementById("search-input");
 
-    // Function to fetch and inject product list HTML
+    // Mobile menu toggle
+  var menuToggle = document.querySelector('.menu-toggle');
+  var nav = document.getElementById('mainNav');
+  if (menuToggle && nav) {
+    menuToggle.addEventListener('click', function() {
+      nav.classList.toggle('active');
+    });
+  }
+	
+	// Function to fetch and inject product list HTML
     async function loadProductList() {
         try {
             const response = await fetch("products.html");
