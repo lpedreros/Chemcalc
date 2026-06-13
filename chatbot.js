@@ -1,5 +1,5 @@
-// ChemCalc Chatbot - Standalone Version
-// Works without backend API by using YouTube Data API directly
+// ChemCalc Chatbot - Final Working Version
+// Boat repair assistant with YouTube search and product recommendations
 
 (function() {
     'use strict';
@@ -7,11 +7,10 @@
     // Configuration
     const CONFIG = {
         MAX_VIDEOS: 5,
-        MAX_PRODUCTS: 5
+        MAX_PRODUCTS: 6
     };
 
     // State management
-    let chatHistory = [];
     let isProcessing = false;
     let affiliateLinksData = null;
 
@@ -71,7 +70,7 @@
         toggleBtn.addEventListener('click', toggleChatbot);
         closeBtn.addEventListener('click', closeChatbot);
         sendBtn.addEventListener('click', sendMessage);
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !isProcessing) {
                 sendMessage();
             }
@@ -98,14 +97,13 @@
         try {
             const response = await fetch('/affiliate_links.js');
             const text = await response.text();
-            // Extract the object from the JS file
-            const match = text.match(/const\s+affiliateLinks\s*=\s*({[\s\S]*?});/);
+            const match = text.match(/const\s+affiliateLinksData\s*=\s*({[\s\S]*?});?\s*$/);
             if (match) {
-                affiliateLinksData = eval('(' + match[1] + ')');
-                console.log('Loaded affiliate links:', Object.keys(affiliateLinksData).length);
+                affiliateLinksData = JSON.parse(match[1]);
+                console.log('Loaded', Object.keys(affiliateLinksData).length, 'affiliate products');
             }
         } catch (error) {
-            console.error('Failed to load affiliate links:', error);
+            console.warn('Could not load affiliate links:', error);
         }
     }
 
@@ -118,20 +116,15 @@
         
         if (!message) return;
 
-        // Add user message to chat
         addMessage(message, 'user');
         input.value = '';
         isProcessing = true;
 
-        // Show typing indicator
         const typingId = addTypingIndicator();
 
         try {
-            // Process the query
             const response = await processQuery(message);
             removeTypingIndicator(typingId);
-            
-            // Add bot response
             addBotResponse(response);
         } catch (error) {
             removeTypingIndicator(typingId);
@@ -144,67 +137,114 @@
 
     // Process user query
     async function processQuery(query) {
-        // Search YouTube
-        const videos = await searchYouTube(query);
-        
-        // Find relevant products
+        const videos = generateYouTubeSearchResults(query);
         const products = findRelevantProducts(query);
         
-        // Generate response text
-        let text = `Here's what I found for "${query}":\n\n`;
+        let text = 'Here\'s what I found for "' + query + '":';
         
-        if (videos.length === 0 && products.length === 0) {
-            text = `I'm searching for resources about "${query}". Let me find some helpful information for you.`;
-        }
-
-        return { text, videos, products };
+        return { text: text, videos: videos, products: products };
     }
 
-    // Search YouTube using Manus API
-    async function searchYouTube(query) {
-        try {
-            const searchQuery = `boat repair ${query}`;
-            
-            // Use Python script to call YouTube API
-            const response = await fetch('/api/youtube-search?q=' + encodeURIComponent(searchQuery) + '&maxResults=' + CONFIG.MAX_VIDEOS);
-            
-            if (!response.ok) {
-                console.error('YouTube API error:', response.status);
-                return [];
+    // Generate YouTube search results - prioritizes specific channels
+    function generateYouTubeSearchResults(query) {
+        const searchQuery = 'boat repair ' + query;
+        
+        // Priority channels
+        const priorityChannels = [
+            {
+                name: 'BoatworksToday',
+                handle: '@boatworkstoday',
+                url: 'https://www.youtube.com/@boatworkstoday/search?query=' + encodeURIComponent(query)
+            },
+            {
+                name: 'FishBumpTV',
+                handle: '@FishBumpTV',
+                url: 'https://www.youtube.com/@FishBumpTV/search?query=' + encodeURIComponent(query)
             }
-
-            const data = await response.json();
-            return data.videos || [];
-        } catch (error) {
-            console.error('YouTube search error:', error);
-            return [];
+        ];
+        
+        const results = [];
+        
+        // Add priority channel searches
+        for (let i = 0; i < priorityChannels.length; i++) {
+            const channel = priorityChannels[i];
+            results.push({
+                title: 'Search ' + channel.name + ' for "' + query + '"',
+                url: channel.url,
+                publishedTime: 'Recommended channel'
+            });
         }
+        
+        // Add general YouTube search
+        results.push({
+            title: 'Search all of YouTube for "' + searchQuery + '"',
+            url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery),
+            publishedTime: 'General search'
+        });
+        
+        return results;
     }
 
     // Find relevant products from affiliate links
     function findRelevantProducts(query) {
         if (!affiliateLinksData) {
-            console.log('No affiliate links data loaded');
+            console.log('No affiliate links loaded');
             return [];
         }
 
         const queryLower = query.toLowerCase();
-        const keywords = queryLower.split(/\s+/);
+        
+        const keywords = queryLower
+            .replace(/[^\w\s]/g, ' ')
+            .split(/\s+/)
+            .filter(function(word) { return word.length >= 3; });
+        
+        const repairMappings = {
+            'gelcoat': ['gel', 'coat', 'gelcoat', 'white', 'surface', 'finish'],
+            'gel coat': ['gel', 'coat', 'gelcoat', 'white', 'surface', 'finish'],
+            'spider crack': ['gel', 'coat', 'gelcoat', 'crack', 'repair'],
+            'fiberglass': ['fiberglass', 'fiber', 'glass', 'cloth', 'mat', 'csm', 'biaxial'],
+            'epoxy': ['epoxy', 'resin', 'hardener'],
+            'resin': ['resin', 'polyester', 'epoxy'],
+            'paint': ['paint', 'spray', 'gun', 'atomizing'],
+            'bottom paint': ['paint', 'bottom', 'antifoul'],
+            'sand': ['sandpaper', 'sanding', 'sand', 'grit'],
+            'polish': ['polish', 'compound', 'buff', 'wax']
+        };
+        
+        let expandedKeywords = keywords.slice();
+        for (const key in repairMappings) {
+            if (queryLower.indexOf(key) !== -1) {
+                expandedKeywords = expandedKeywords.concat(repairMappings[key]);
+            }
+        }
+        
+        const uniqueKeywords = [];
+        for (let i = 0; i < expandedKeywords.length; i++) {
+            if (uniqueKeywords.indexOf(expandedKeywords[i]) === -1) {
+                uniqueKeywords.push(expandedKeywords[i]);
+            }
+        }
+        
         const products = [];
 
-        // Search through affiliate links
-        for (const [key, product] of Object.entries(affiliateLinksData)) {
+        for (const key in affiliateLinksData) {
+            const product = affiliateLinksData[key];
             const productName = product.name.toLowerCase();
             const productKey = key.toLowerCase();
             
-            // Check if any keyword matches
             let relevance = 0;
-            keywords.forEach(keyword => {
-                if (keyword.length < 3) return; // Skip short words
-                if (productName.includes(keyword)) relevance += 2;
-                if (productKey.includes(keyword)) relevance += 1;
-            });
-
+            
+            for (let i = 0; i < uniqueKeywords.length; i++) {
+                const keyword = uniqueKeywords[i];
+                if (productName.indexOf(keyword) !== -1) relevance += 3;
+                if (productKey.indexOf(keyword) !== -1) relevance += 2;
+            }
+            
+            if (queryLower.length > 3 && productName.indexOf(queryLower) !== -1) {
+                relevance += 10;
+            }
+            
             if (relevance > 0) {
                 products.push({
                     name: product.name,
@@ -214,10 +254,11 @@
             }
         }
 
-        // Sort by relevance and return top matches
-        return products
-            .sort((a, b) => b.relevance - a.relevance)
-            .slice(0, CONFIG.MAX_PRODUCTS);
+        products.sort(function(a, b) { return b.relevance - a.relevance; });
+        const results = products.slice(0, CONFIG.MAX_PRODUCTS);
+        
+        console.log('Found', results.length, 'products for "' + query + '"');
+        return results;
     }
 
     // Add bot response with videos and products
@@ -226,42 +267,42 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chatbot-message bot-message';
 
-        let html = `<p>${escapeHtml(response.text)}</p>`;
+        let html = '<p>' + escapeHtml(response.text) + '</p>';
 
-        // Add videos if present
         if (response.videos && response.videos.length > 0) {
-            html += '<div class="chatbot-section-title">📺 Video Tutorials:</div>';
+            html += '<div class="chatbot-section-title">?? Video Tutorials:</div>';
             html += '<div class="chatbot-videos">';
-            response.videos.forEach(video => {
-                html += `
-                    <div class="chatbot-video-item">
-                        <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer">
-                            <img src="${escapeHtml(video.thumbnail)}" alt="${escapeHtml(video.title)}" loading="lazy" />
-                            <div class="video-info">
-                                <div class="video-title">${escapeHtml(video.title)}</div>
-                                ${video.publishedTime ? `<div class="video-meta">${escapeHtml(video.publishedTime)}</div>` : ''}
-                            </div>
-                        </a>
-                    </div>
-                `;
-            });
+            for (let i = 0; i < response.videos.length; i++) {
+                const video = response.videos[i];
+                html += '<div class="chatbot-video-item">';
+                html += '<a href="' + escapeHtml(video.url) + '" target="_blank" rel="noopener noreferrer" style="display: block; padding: 0.75rem;">';
+                html += '<div class="video-title" style="font-weight: 500;">?? ' + escapeHtml(video.title) + '</div>';
+                if (video.publishedTime) {
+                    html += '<div class="video-meta">' + escapeHtml(video.publishedTime) + '</div>';
+                }
+                html += '</a>';
+                html += '</div>';
+            }
             html += '</div>';
         }
 
-        // Add products if present
         if (response.products && response.products.length > 0) {
-            html += '<div class="chatbot-section-title">🛠️ Recommended Products:</div>';
+            html += '<div class="chatbot-section-title">??? Recommended Products:</div>';
             html += '<div class="chatbot-products">';
-            response.products.forEach(product => {
-                html += `
-                    <div class="chatbot-product-item">
-                        <a href="${escapeHtml(product.url)}" target="_blank" rel="noopener noreferrer">
-                            ${escapeHtml(product.name)}
-                        </a>
-                    </div>
-                `;
-            });
+            for (let i = 0; i < response.products.length; i++) {
+                const product = response.products[i];
+                html += '<div class="chatbot-product-item">';
+                html += '<a href="' + escapeHtml(product.url) + '" target="_blank" rel="noopener noreferrer">';
+                html += escapeHtml(product.name);
+                html += '</a>';
+                html += '</div>';
+            }
             html += '</div>';
+        }
+
+        if ((!response.videos || response.videos.length === 0) && 
+            (!response.products || response.products.length === 0)) {
+            html += '<p>I couldn\'t find specific resources for that query. Try asking about: gelcoat repair, fiberglass work, epoxy application, or boat painting.</p>';
         }
 
         messageDiv.innerHTML = html;
@@ -273,8 +314,8 @@
     function addMessage(text, sender) {
         const messagesContainer = document.getElementById('chatbot-messages');
         const messageDiv = document.createElement('div');
-        messageDiv.className = `chatbot-message ${sender}-message`;
-        messageDiv.innerHTML = `<p>${escapeHtml(text)}</p>`;
+        messageDiv.className = 'chatbot-message ' + sender + '-message';
+        messageDiv.innerHTML = '<p>' + escapeHtml(text) + '</p>';
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -295,9 +336,7 @@
     // Remove typing indicator
     function removeTypingIndicator(id) {
         const indicator = document.getElementById(id);
-        if (indicator) {
-            indicator.remove();
-        }
+        if (indicator) indicator.remove();
     }
 
     // Escape HTML to prevent XSS
