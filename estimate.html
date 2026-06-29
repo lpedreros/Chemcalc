@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marine Repair Estimator | ChemCalc</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Professional marine repair estimator for boat repair contractors. Build, save, and share repair estimates." />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== PRINT HEADER (only visible when printing) ===== -->
+<div class="print-header-block d-none">
+  <img src="logo-black.svg" alt="Think &amp; Engage LLC" class="print-logo-img" onerror="this.style.display='none'" />
+  <div class="print-company-info">
+    <strong>Think &amp; Engage LLC</strong><br/>
+    Marine Repair Services<br/>
+    chemcalc.co
+  </div>
+</div>
+
+<!-- ===== SITE HEADER ===== -->
+<div class="header d-print-none">
+  <h1>ChemCalc</h1>
+  <div class="powered-by-header">
+    Powered by <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
+  <nav class="nav" id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="services.html">Services</a>
+    <a href="kits.html">Kits</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</div>
+
+<!-- ===== MAIN CONTAINER ===== -->
+<div class="container est-container">
+
+  <!-- Page title -->
+  <div class="est-page-header d-print-none">
+    <h2>Marine Repair Estimator</h2>
+    <p class="est-subtitle">Build professional repair estimates in minutes</p>
+  </div>
+
+  <!-- ===== TIER BANNER ===== -->
+  <div class="tier-banner d-print-none" id="tierBanner">
+    <span id="tierLabel" class="tier-label">&#128274; Free Plan</span>
+    <span class="tier-actions">
+      <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
+      <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
+    </span>
+  </div>
+
+  <!-- ===== TOP TOOLBAR (Job Preset + Customer View Toggle) ===== -->
+  <div class="est-toolbar d-print-none">
+    <!-- Job Type Preset -->
+    <div class="toolbar-group">
+      <label class="est-label mb-0">Quick Start:</label>
+      <select id="jobPreset" class="est-input est-select" onchange="applyJobPreset(this.value)">
+        <option value="">— Select Job Type —</option>
+        <option value="gelcoat">Gelcoat Repair</option>
+        <option value="fiberglass">Fiberglass Repair</option>
+        <option value="paint">Full Paint Job (Awlcraft 2000)</option>
+        <option value="structural">Structural Repair</option>
+        <option value="custom">Custom / Blank</option>
+      </select>
+    </div>
+    <!-- Customer View Toggle -->
+    <div class="toolbar-group">
+      <label class="est-label mb-0">View:</label>
+      <div class="view-toggle-wrap">
+        <button id="btnInternalView" class="btn-view-toggle active" onclick="setView('internal')">Internal</button>
+        <button id="btnCustomerView" class="btn-view-toggle" onclick="setView('customer')">Customer</button>
+      </div>
+    </div>
+    <!-- Save Draft (Pro only) -->
+    <div class="toolbar-group">
+      <button class="btn-tier pro-only" id="saveDraftBtn" onclick="saveDraft()" title="Save estimate to browser (Pro)">&#128190; Save Draft</button>
+      <button class="btn-tier pro-only" id="loadDraftBtn" onclick="openModal('loadDraftModal')" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+    </div>
+  </div>
+
+  <!-- ===== ESTIMATE INFO ===== -->
+  <div class="est-card">
+    <div class="est-card-title">Estimate Information</div>
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="est-label">Estimate #</label>
+        <input type="text" id="estimateNumber" class="est-input" readonly />
+      </div>
+      <div class="col-md-3">
+        <label class="est-label">Date</label>
+        <input type="text" id="estimateDate" class="est-input" readonly />
+      </div>
+      <div class="col-md-3">
+        <label class="est-label">Valid Until</label>
+        <input type="text" id="estimateValidUntil" class="est-input" readonly />
+      </div>
+      <div class="col-md-3">
+        <label class="est-label">Hourly Rate ($/hr)</label>
+        <input type="number" id="hourlyRate" class="est-input" value="100" min="0" step="1" />
+      </div>
+    </div>
+    <!-- Expiry warning (shown if estimate is past valid date) -->
+    <div id="expiryWarning" class="expiry-warning d-none">
+      &#9888; This estimate has expired. Please create a new one.
+    </div>
+  </div>
+
+  <!-- ===== CLIENT INFO ===== -->
+  <div class="est-card">
+    <div class="est-card-title">Client Information</div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="est-label">First Name <span class="req-star">*</span></label>
+        <input type="text" id="clientFirst" class="est-input" placeholder="First name" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Last Name <span class="req-star">*</span></label>
+        <input type="text" id="clientLast" class="est-input" placeholder="Last name" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Phone <span class="req-star">*</span></label>
+        <input type="tel" id="clientPhone" class="est-input" placeholder="(555) 555-5555" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Email <span class="req-star">*</span></label>
+        <input type="email" id="clientEmail" class="est-input" placeholder="email@example.com" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VESSEL INFO ===== -->
+  <div class="est-card">
+    <div class="est-card-title">Vessel Information</div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="est-label">Boat Make <span class="req-star">*</span></label>
+        <input type="text" id="boatMake" class="est-input" placeholder="e.g. Sea Ray" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Boat Model <span class="req-star">*</span></label>
+        <input type="text" id="boatModel" class="est-input" placeholder="e.g. Sundancer 320" />
+      </div>
+      <div class="col-md-4">
+        <label class="est-label">Boat Name</label>
+        <input type="text" id="boatName" class="est-input" placeholder="Optional" />
+      </div>
+      <div class="col-md-4">
+        <label class="est-label">Year</label>
+        <input type="text" id="boatYear" class="est-input" placeholder="e.g. 2019" />
+      </div>
+      <div class="col-md-4">
+        <label class="est-label">HIN (Hull ID)</label>
+        <input type="text" id="boatHIN" class="est-input" placeholder="e.g. ABC12345D101" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HARD MATERIALS ===== -->
+  <div class="est-card customer-hide">
+    <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span>Hard Materials &amp; Chemicals</span>
+      <div class="markup-control">
+        <label class="est-label mb-0 me-2">Markup %</label>
+        <input type="number" id="materialsMarkup" class="est-input markup-input" value="40" min="0" max="500" step="1" title="Applied to all items in this section" />
+        <span class="markup-hint">cost × (1 + %)</span>
+      </div>
+    </div>
+    <div class="table-responsive mt-3">
+      <table class="est-table" id="materialsTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="col-cost">Your Cost ($)</th>
+            <th class="col-markup">Markup %</th>
+            <th class="col-retail">Retail Price</th>
+            <th class="col-qty">Qty</th>
+            <th class="col-total">Line Total</th>
+            <th class="col-link d-print-none">Buy</th>
+            <th class="col-del d-print-none"></th>
+          </tr>
+        </thead>
+        <tbody id="materialsBody"></tbody>
+        <tfoot>
+          <tr class="subtotal-row">
+            <td colspan="3" class="subtotal-label">Materials Subtotal</td>
+            <td></td>
+            <td></td>
+            <td class="subtotal-val" id="materialsSubtotal">$0.00</td>
+            <td colspan="2" class="d-print-none"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <button class="btn-add-row d-print-none" onclick="addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials')">+ Add Item</button>
+  </div>
+
+  <!-- ===== PAINT MATERIALS ===== -->
+  <div class="est-card customer-hide">
+    <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span>Paint Materials</span>
+      <div class="markup-control">
+        <label class="est-label mb-0 me-2">Markup %</label>
+        <input type="number" id="paintMarkup" class="est-input markup-input" value="40" min="0" max="500" step="1" title="Applied to all items in this section" />
+        <span class="markup-hint">cost × (1 + %)</span>
+      </div>
+    </div>
+    <div class="table-responsive mt-3">
+      <table class="est-table" id="paintTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="col-cost">Your Cost ($)</th>
+            <th class="col-markup">Markup %</th>
+            <th class="col-retail">Retail Price</th>
+            <th class="col-qty">Qty</th>
+            <th class="col-total">Line Total</th>
+            <th class="col-link d-print-none">Buy</th>
+            <th class="col-del d-print-none"></th>
+          </tr>
+        </thead>
+        <tbody id="paintBody"></tbody>
+        <tfoot>
+          <tr class="subtotal-row">
+            <td colspan="3" class="subtotal-label">Paint Subtotal</td>
+            <td></td>
+            <td></td>
+            <td class="subtotal-val" id="paintSubtotal">$0.00</td>
+            <td colspan="2" class="d-print-none"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <button class="btn-add-row d-print-none" onclick="addRow('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint')">+ Add Paint Item</button>
+  </div>
+
+  <!-- ===== REPAIR TASKS (injected by JS) ===== -->
+  <div id="tasksContainer"></div>
+  <div class="text-center mb-4 d-print-none">
+    <button class="btn-add-task" onclick="addRepairTask()">&#43; Add Another Repair Task</button>
+  </div>
+
+  <!-- ===== SCOPE OF WORK (optional, Pro only shows on PDF) ===== -->
+  <div class="est-card pro-only-card" id="scopeCard">
+    <div class="est-card-title d-flex justify-content-between align-items-center">
+      <span>Scope of Work / Notes</span>
+      <span class="pro-badge">PRO</span>
+    </div>
+    <textarea id="scopeNotes" class="est-textarea" rows="5" placeholder="Optionally describe the work to be performed, any special conditions, exclusions, etc. This will appear on the printed estimate for Pro users."></textarea>
+    <p class="scope-hint d-print-none">Optional. Only appears on printed/exported estimates for Pro accounts.</p>
+  </div>
+
+  <!-- ===== SUMMARY ===== -->
+  <div class="est-card est-summary-card">
+    <div class="est-card-title">Estimate Summary</div>
+
+    <!-- Customer view: repair totals only -->
+    <div id="customerSummary" class="summary-grid d-none">
+      <div id="customerRepairRows"></div>
+      <div class="summary-divider"></div>
+      <div class="summary-row summary-grand">
+        <span>ESTIMATE TOTAL</span>
+        <span id="grandTotalCustomer">$0.00</span>
+      </div>
+    </div>
+
+    <!-- Internal view: full breakdown -->
+    <div id="internalSummaryFull" class="summary-grid">
+      <div class="summary-row">
+        <span>Materials</span>
+        <span id="sumMaterials">$0.00</span>
+      </div>
+      <div class="summary-row">
+        <span>Paint Materials</span>
+        <span id="sumPaint">$0.00</span>
+      </div>
+      <div id="laborSummaryRows"></div>
+      <div class="summary-divider"></div>
+      <div class="summary-row summary-grand">
+        <span>ESTIMATE TOTAL</span>
+        <span id="grandTotal">$0.00</span>
+      </div>
+    </div>
+
+    <!-- Internal cost breakdown (logged-in users only) -->
+    <div id="internalSummary" class="internal-summary d-none">
+      <div class="internal-label">&#128274; Internal — Not visible to customer</div>
+      <div class="summary-grid mt-2">
+        <div class="summary-row">
+          <span>Your Cost (Materials)</span>
+          <span id="sumCostMaterials">$0.00</span>
+        </div>
+        <div class="summary-row">
+          <span>Your Cost (Paint)</span>
+          <span id="sumCostPaint">$0.00</span>
+        </div>
+        <div class="summary-row">
+          <span>Gross Profit</span>
+          <span id="grossProfit">$0.00</span>
+        </div>
+        <div class="summary-row">
+          <span>Margin</span>
+          <span id="marginPct">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEGAL ===== -->
+  <div class="est-card est-legal-card">
+    <div class="est-card-title">Terms &amp; Conditions</div>
+    <p class="legal-text">
+    THIS PROPOSAL INCLUDES THE CONDITIONS NOTED. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think &amp; Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work. All work is performed in a professional manner consistent with, or above, industry standards. No warranty is expressed or implied beyond the scope of work described herein.</p>
+    <div class="sig-block-row">
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-caption">Client Signature</div>
+      </div>
+      <div class="sig-block sig-block-short">
+        <div class="sig-line"></div>
+        <div class="sig-caption">Date</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-caption">Authorized Representative, Think &amp; Engage LLC</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ACTION BUTTONS ===== -->
+  <div class="est-actions d-print-none">
+    <button class="btn-action btn-print" onclick="window.print()">&#128424; Print</button>
+    <button class="btn-action btn-pdf" onclick="exportPDF()">&#128196; Save as PDF</button>
+    <button class="btn-action btn-share" onclick="shareEstimate()">&#128279; Share</button>
+    <button class="btn-action btn-log pro-only" id="logEstimateBtn" onclick="logEstimate()">&#128204; Log Estimate</button>
+    <button class="btn-action btn-new" onclick="newEstimate()">&#10010; New Estimate</button>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ===== LOGIN MODAL ===== -->
+<div class="modal-overlay" id="loginModal" style="display:none;" onclick="overlayClose(event,'loginModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('loginModal')">&#10005;</button>
+    <h3 class="modal-title">Log In</h3>
+    <p class="modal-sub">Access your saved estimates and contractor pricing.</p>
+    <label class="est-label">Email</label>
+    <input type="email" id="loginEmail" class="est-input" placeholder="email@example.com" />
+    <label class="est-label mt-3">Password</label>
+    <input type="password" id="loginPassword" class="est-input" placeholder="Password" />
+    <button class="btn-modal-primary mt-3" onclick="doLogin()">Log In</button>
+    <p class="modal-footer-link">Don't have an account? <a href="#" onclick="closeModal('loginModal');openModal('upgradeModal')">Sign up free</a></p>
+  </div>
+</div>
+
+<!-- ===== UPGRADE MODAL ===== -->
+<div class="modal-overlay" id="upgradeModal" style="display:none;" onclick="overlayClose(event,'upgradeModal')">
+  <div class="modal-box modal-wide" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('upgradeModal')">&#10005;</button>
+    <h3 class="modal-title">Choose Your Plan</h3>
+    <div class="plan-row">
+      <!-- FREE -->
+      <div class="plan-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0<span>/mo</span></div>
+        <ul class="plan-features">
+          <li class="feat-yes">&#10003; Create estimates</li>
+          <li class="feat-yes">&#10003; Print &amp; share (totals only)</li>
+          <li class="feat-yes">&#10003; Affiliate purchase links</li>
+          <li class="feat-no">&#10007; Save &amp; load drafts</li>
+          <li class="feat-no">&#10007; Itemized PDF export</li>
+          <li class="feat-no">&#10007; Custom logo &amp; prefix</li>
+          <li class="feat-no">&#10007; Contractor pricing view</li>
+          <li class="feat-no">&#10007; Scope of work on PDF</li>
+          <li class="feat-no">&#10007; Estimate history &amp; logging</li>
+        </ul>
+        <button class="btn-plan" onclick="closeModal('upgradeModal')">Current Plan</button>
+      </div>
+      <!-- PRO -->
+      <div class="plan-card plan-featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$9<span>/mo</span></div>
+        <ul class="plan-features">
+          <li class="feat-yes">&#10003; Everything in Free</li>
+          <li class="feat-yes">&#10003; Save &amp; load drafts (browser)</li>
+          <li class="feat-yes">&#10003; Itemized PDF export</li>
+          <li class="feat-yes">&#10003; Custom logo &amp; estimate prefix</li>
+          <li class="feat-yes">&#10003; Contractor pricing view</li>
+          <li class="feat-yes">&#10003; Scope of work on PDF</li>
+          <li class="feat-yes">&#10003; Estimate history &amp; database</li>
+          <li class="feat-yes">&#10003; Trello card auto-creation</li>
+        </ul>
+        <button class="btn-plan btn-plan-pro" onclick="alert('Pro plan coming soon! Check back shortly.')">Upgrade to Pro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOAD DRAFT MODAL ===== -->
+<div class="modal-overlay" id="loadDraftModal" style="display:none;" onclick="overlayClose(event,'loadDraftModal')">
+  <div class="modal-box modal-wide" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('loadDraftModal')">&#10005;</button>
+    <h3 class="modal-title">Saved Estimates</h3>
+    <p class="modal-sub">Select a saved estimate to load.</p>
+    <div id="savedEstimatesList" class="saved-list"></div>
+    <p class="modal-footer-link" id="noSavedMsg" style="display:none;">No saved estimates found.</p>
+  </div>
+</div>
+
+<!-- ===== LOG CONFIRM MODAL ===== -->
+<div class="modal-overlay" id="logModal" style="display:none;" onclick="overlayClose(event,'logModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('logModal')">&#10005;</button>
+    <h3 class="modal-title">&#128204; Log Estimate</h3>
+    <p class="modal-sub">This will save the estimate to the database and create a Trello card in the "Estimate Sent" column.</p>
+    <div id="logPreview" class="log-preview"></div>
+    <button class="btn-modal-primary mt-3" onclick="confirmLog()">&#10003; Confirm &amp; Log</button>
+    <p class="modal-footer-link" id="logStatus"></p>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="est-footer d-print-none">
+  <a href="/privacy.html">Privacy Policy</a> |
+  <a href="/terms.html">Terms of Use</a> |
+  <a href="/cookie.html">Cookie Policy</a><br/>
+  &copy; 2026 ChemCalc. All rights reserved. &nbsp;
+  Powered by <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage" style="height:1.1em;vertical-align:middle;" onerror="this.style.display='none'" />
+</footer>
+
+<script src="affiliate_links.js"></script>
+<script src="estimate.js"></script>
+</body>
+</html>
