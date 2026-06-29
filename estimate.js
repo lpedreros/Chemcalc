@@ -3,13 +3,42 @@
    chemcalc.co | Think & Engage LLC
    ============================================================ */
 
-/* -- Session state -- */
-var currentUser = null; // null = free, { tier:'pro', prefix:'TE', company:'Think & Engage LLC' }
+/* ── Session state ── */
 var currentView = 'internal'; // 'internal' | 'customer'
 var taskCounter = 0;
 var grandTotalValue = 0;
 
-/* -- Affiliate links map (keyed from affiliate_links.js globals) -- */
+/* setUserTier — called by auth.js after session loads */
+function setUserTier(tier) {
+  var isPro = tier === 'pro';
+  var loggedIn = false;
+  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch(e) {}
+
+  // Pro-only elements
+  document.querySelectorAll('.pro-only').forEach(function (el) {
+    el.style.display = isPro ? '' : 'none';
+  });
+
+  // Internal summary (logged-in only)
+  var internalSummary = document.getElementById('internalSummary');
+  if (internalSummary) internalSummary.classList.toggle('d-none', !loggedIn);
+
+  // Body class for print CSS
+  document.body.classList.toggle('free-user', !isPro);
+  document.body.classList.toggle('pro-user', isPro);
+
+  // Update estimate number prefix for pro users
+  var profile = null;
+  try { profile = window.getProfile(); } catch(e) {}
+  if (isPro && profile && profile.estimate_prefix) {
+    var estNum = document.getElementById('estimateNumber').value;
+    if (estNum && estNum.indexOf('EST-') === 0) {
+      document.getElementById('estimateNumber').value = estNum.replace('EST-', profile.estimate_prefix + '-');
+    }
+  }
+}
+
+/* ── Affiliate links map (keyed from affiliate_links.js globals) ── */
 function getAffiliateLink(key) {
   if (typeof affiliateLinksData !== 'undefined' && affiliateLinksData[key]) {
     return affiliateLinksData[key].url;
@@ -17,7 +46,7 @@ function getAffiliateLink(key) {
   return null;
 }
 
-/* -- Material presets -- */
+/* ── Material presets ── */
 var MATERIAL_PRESETS = {
   gelcoat: {
     materials: [
@@ -133,11 +162,12 @@ var MATERIAL_PRESETS = {
   }
 };
 
-/* -- Init -- */
+/* ── Init ── */
 document.addEventListener('DOMContentLoaded', function () {
   initEstimate();
   checkExpiry();
-  updateProUI();
+  // auth.js initializes session and calls setUserTier()
+  if (typeof authInit === 'function') authInit();
   // Default: load blank estimate with one repair task
   addRepairTask();
 });
@@ -164,7 +194,7 @@ function checkExpiry() {
   }
 }
 
-/* -- View toggle -- */
+/* ── View toggle ── */
 function setView(view) {
   currentView = view;
   if (view === 'customer') {
@@ -179,7 +209,7 @@ function setView(view) {
   updateSummary();
 }
 
-/* -- Job preset -- */
+/* ── Job preset ── */
 function applyJobPreset(presetKey) {
   if (!presetKey) return;
   var preset = MATERIAL_PRESETS[presetKey];
@@ -209,7 +239,7 @@ function applyJobPreset(presetKey) {
   updateSummary();
 }
 
-/* -- Add material row -- */
+/* ── Add material row ── */
 function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
   var tbody = document.getElementById(bodyId);
   var markupPct = parseFloat(document.getElementById(markupId).value) || 40;
@@ -292,7 +322,7 @@ function delRow(btn, subtotalId, sumId) {
   else if (bodyId === 'paintBody') recalcSection('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint');
 }
 
-/* -- Markup global change -- */
+/* ── Markup global change ── */
 document.addEventListener('input', function (e) {
   if (e.target.id === 'materialsMarkup') {
     applyGlobalMarkup('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials');
@@ -313,7 +343,7 @@ function applyGlobalMarkup(bodyId, markupId, subtotalId, sumId) {
   recalcSection(bodyId, markupId, subtotalId, sumId);
 }
 
-/* -- Repair task cards -- */
+/* ── Repair task cards ── */
 function addRepairTask(taskName, taskList) {
   taskCounter++;
   var id = taskCounter;
@@ -472,7 +502,7 @@ function toggleScope(btn) {
   }
 }
 
-/* -- Summary -- */
+/* ── Summary ── */
 function updateLaborSummary() {
   var laborRows = document.getElementById('laborSummaryRows');
   var customerRepairRows = document.getElementById('customerRepairRows');
@@ -544,135 +574,67 @@ function calcSectionCost(bodyId) {
   return total;
 }
 
-/* -- Auth (stub — replace with real backend) -- */
-function doLogin() {
-  var email = document.getElementById('loginEmail').value.trim();
-  var pass = document.getElementById('loginPassword').value;
-  if (!email || !pass) { alert('Please enter your email and password.'); return; }
+/* ── Auth (stub — replace with real backend) ── */
+/* doLogin / doLogout / doSignup / doGoogleLogin are defined in auth.js */
 
-  // STUB: Simulate login. Replace with real API call.
-  // For demo: any login with "pro" in email gets Pro tier.
-  var tier = email.toLowerCase().indexOf('pro') !== -1 ? 'pro' : 'free';
-  var prefix = 'EST';
-  var company = 'Think & Engage LLC';
-  if (email.toLowerCase().indexOf('dmg') !== -1 || email.toLowerCase().indexOf('daytona') !== -1) {
-    prefix = 'DMG'; company = 'Daytona Marine Group';
-  } else if (email.toLowerCase().indexOf('te') !== -1 || email.toLowerCase().indexOf('think') !== -1) {
-    prefix = 'TE'; company = 'Think & Engage LLC';
-  }
-
-  currentUser = { email: email, tier: tier, prefix: prefix, company: company };
-  closeModal('loginModal');
-  updateProUI();
-  alert('Welcome! Logged in as ' + email + ' (' + tier.toUpperCase() + ')');
+/* ── Auth tab switcher ── */
+function switchAuthTab(tab) {
+  document.getElementById('authPanelLogin').style.display  = tab === 'login'  ? '' : 'none';
+  document.getElementById('authPanelSignup').style.display = tab === 'signup' ? '' : 'none';
+  document.getElementById('tabLogin').classList.toggle('active',  tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
 }
 
-function updateProUI() {
-  var isPro = currentUser && currentUser.tier === 'pro';
-  var isLoggedIn = currentUser !== null;
-
-  // Tier banner
-  var tierLabel = document.getElementById('tierLabel');
-  var loginBtn = document.getElementById('loginBtn');
-  if (isLoggedIn) {
-    tierLabel.textContent = isPro ? '★ Pro Plan — ' + currentUser.company : '● Free Plan';
-    tierLabel.className = 'tier-label' + (isPro ? ' pro' : '');
-    loginBtn.textContent = 'Log Out';
-    loginBtn.onclick = function () { doLogout(); };
-  } else {
-    tierLabel.textContent = '🔒 Free Plan';
-    tierLabel.className = 'tier-label';
-    loginBtn.textContent = 'Log In';
-    loginBtn.onclick = function () { openModal('loginModal'); };
-  }
-
-  // Pro-only elements
-  var proEls = document.querySelectorAll('.pro-only');
-  proEls.forEach(function (el) {
-    el.style.display = isPro ? '' : 'none';
-  });
-
-  // Internal summary (logged-in only)
-  var internalSummary = document.getElementById('internalSummary');
-  if (internalSummary) {
-    internalSummary.classList.toggle('d-none', !isLoggedIn);
-  }
-
-  // Free user print class
-  if (!isPro) {
-    document.body.classList.add('free-user');
-  } else {
-    document.body.classList.remove('free-user');
-  }
-
-  // Update estimate number prefix if pro
-  if (isPro && currentUser.prefix) {
-    var estNum = document.getElementById('estimateNumber').value;
-    if (estNum && estNum.indexOf('EST-') === 0) {
-      document.getElementById('estimateNumber').value = estNum.replace('EST-', currentUser.prefix + '-');
-    }
-  }
-}
-
-function doLogout() {
-  currentUser = null;
-  updateProUI();
-}
-
-/* -- Save / Load drafts (Pro, localStorage) -- */
+/* ── Save / Load drafts (Pro, Supabase) ── */
 function saveDraft() {
-  if (!currentUser || currentUser.tier !== 'pro') {
-    openModal('upgradeModal'); return;
-  }
+  if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
   var data = collectEstimateData();
-  var key = 'est_draft_' + data.estimateNumber;
-  localStorage.setItem(key, JSON.stringify(data));
-  alert('Draft saved: ' + data.estimateNumber);
+  window.saveEstimateToSupabase(data).then(function(result) {
+    if (result.error) {
+      alert('Save failed: ' + result.error.message);
+    } else {
+      alert('Estimate saved: ' + data.estimateNumber);
+    }
+  });
 }
 
 function openLoadDraftModal() {
-  if (!currentUser || currentUser.tier !== 'pro') {
-    openModal('upgradeModal'); return;
-  }
+  if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
   var list = document.getElementById('savedEstimatesList');
   var noMsg = document.getElementById('noSavedMsg');
-  list.innerHTML = '';
-  var keys = [];
-  for (var i = 0; i < localStorage.length; i++) {
-    var k = localStorage.key(i);
-    if (k && k.indexOf('est_draft_') === 0) keys.push(k);
-  }
-  if (keys.length === 0) {
-    noMsg.style.display = '';
-  } else {
-    noMsg.style.display = 'none';
-    keys.forEach(function (k) {
-      var raw = localStorage.getItem(k);
-      if (!raw) return;
-      var d = JSON.parse(raw);
-      var item = document.createElement('div');
-      item.className = 'saved-item';
-      item.innerHTML =
-        '<div>' +
-          '<div>' + escHtml(d.estimateNumber) + ' — ' + escHtml((d.clientFirst || '') + ' ' + (d.clientLast || '')) + '</div>' +
-          '<div class="saved-item-meta">' + escHtml(d.estimateDate || '') + ' | ' + escHtml(d.boatMake || '') + ' ' + escHtml(d.boatModel || '') + '</div>' +
-        '</div>' +
-        '<button class="saved-item-del" onclick="deleteDraft(\'' + k + '\')" title="Delete">&#10005;</button>';
-      item.addEventListener('click', function (e) {
-        if (e.target.classList.contains('saved-item-del')) return;
-        loadDraft(d);
-        closeModal('loadDraftModal');
-      });
-      list.appendChild(item);
-    });
-  }
+  list.innerHTML = '<p style="color:#aaa;">Loading...</p>';
   openModal('loadDraftModal');
+
+  window.loadEstimatesFromSupabase().then(function(rows) {
+    list.innerHTML = '';
+    if (!rows || rows.length === 0) {
+      noMsg.style.display = '';
+    } else {
+      noMsg.style.display = 'none';
+      rows.forEach(function(row) {
+        var item = document.createElement('div');
+        item.className = 'saved-item';
+        item.innerHTML =
+          '<div>' +
+            '<div>' + escHtml(row.estimate_number) + ' — ' + escHtml((row.customer_first || '') + ' ' + (row.customer_last || '')) + '</div>' +
+            '<div class="saved-item-meta">' + escHtml(row.created_at ? row.created_at.slice(0,10) : '') + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
+          '</div>' +
+          '<button class="saved-item-del" onclick="deleteSavedEstimate(\'' + row.id + '\')" title="Delete">&#10005;</button>';
+        item.addEventListener('click', function(e) {
+          if (e.target.classList.contains('saved-item-del')) return;
+          window.loadEstimateById(row.id).then(function(data) {
+            if (data) { loadDraft(data); closeModal('loadDraftModal'); }
+          });
+        });
+        list.appendChild(item);
+      });
+    }
+  });
 }
 
-function deleteDraft(key) {
+function deleteSavedEstimate(id) {
   if (confirm('Delete this saved estimate?')) {
-    localStorage.removeItem(key);
-    openLoadDraftModal();
+    window.deleteEstimateById(id).then(function() { openLoadDraftModal(); });
   }
 }
 
@@ -718,7 +680,7 @@ function loadDraft(data) {
   updateSummary();
 }
 
-/* -- Collect estimate data -- */
+/* ── Collect estimate data ── */
 function collectEstimateData() {
   var materials = [];
   document.querySelectorAll('#materialsBody tr').forEach(function (tr) {
@@ -794,16 +756,16 @@ function collectEstimateData() {
     materials: materials,
     paint: paint,
     tasks: tasks,
-    company: currentUser ? currentUser.company : 'Think & Engage LLC',
-    userEmail: currentUser ? currentUser.email : null,
-    tier: currentUser ? currentUser.tier : 'free',
+    company: (typeof getProfile === 'function' && getProfile()) ? (getProfile().company_name || 'Think & Engage LLC') : 'Think & Engage LLC',
+    userEmail: (typeof getUser === 'function' && getUser()) ? getUser().email : null,
+    tier: (typeof getProfile === 'function' && getProfile()) ? (getProfile().tier || 'free') : 'free',
     loggedAt: new Date().toISOString()
   };
 }
 
-/* -- Database logging (stub — wire to backend API) -- */
+/* ── Database logging (stub — wire to backend API) ── */
 function logEstimate() {
-  if (!currentUser || currentUser.tier !== 'pro') {
+  if (typeof isPro !== 'function' || !isPro()) {
     openModal('upgradeModal'); return;
   }
   var data = collectEstimateData();
@@ -823,7 +785,7 @@ function confirmLog() {
   var statusEl = document.getElementById('logStatus');
   statusEl.textContent = 'Logging...';
 
-  /* -- BACKEND STUB --
+  /* ── BACKEND STUB ──
      Replace this fetch with your real Hostinger API endpoint.
      The endpoint should:
        1. Save the estimate JSON to your database
@@ -836,7 +798,7 @@ function confirmLog() {
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify(data)
        }).then(r => r.json()).then(res => { ... });
-  -- END STUB -- */
+  ── END STUB ── */
 
   // Simulate success for now
   setTimeout(function () {
@@ -847,14 +809,18 @@ function confirmLog() {
   }, 800);
 }
 
-/* -- Export / Share -- */
+/* ── Export / Share ── */
 function exportPDF() {
-  var isPro = currentUser && currentUser.tier === 'pro';
-  if (!isPro) {
-    // Free users: switch to customer view before printing
+  var pro = (typeof isPro === 'function') ? isPro() : false;
+  if (!pro) {
+    // Free/unregistered: customer view, single-page print
+    document.body.classList.add('free-user');
+    document.body.classList.remove('pro-user');
     setView('customer');
     setTimeout(function () { window.print(); }, 150);
   } else {
+    document.body.classList.add('pro-user');
+    document.body.classList.remove('free-user');
     window.print();
   }
 }
@@ -909,7 +875,7 @@ function newEstimate() {
   }
 }
 
-/* -- Modal helpers -- */
+/* ── Modal helpers ── */
 function openModal(id) {
   var el = document.getElementById(id);
   if (el) el.style.display = 'flex';
@@ -922,7 +888,7 @@ function overlayClose(event, id) {
   if (event.target === document.getElementById(id)) closeModal(id);
 }
 
-/* -- Utilities -- */
+/* ── Utilities ── */
 function fmtCurrency(val) {
   return '$' + (parseFloat(val) || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

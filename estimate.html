@@ -8,6 +8,8 @@
   <meta name="description" content="Professional marine repair estimator for boat repair contractors. Build, save, and share repair estimates." />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style_additions.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -52,6 +54,7 @@
     <span id="tierLabel" class="tier-label">&#128274; Free Plan</span>
     <span class="tier-actions">
       <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
+      <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
       <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
     </span>
   </div>
@@ -81,7 +84,7 @@
     <!-- Save Draft (Pro only) -->
     <div class="toolbar-group">
       <button class="btn-tier pro-only" id="saveDraftBtn" onclick="saveDraft()" title="Save estimate to browser (Pro)">&#128190; Save Draft</button>
-      <button class="btn-tier pro-only" id="loadDraftBtn" onclick="openModal('loadDraftModal')" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+      <button class="btn-tier pro-only" id="loadDraftBtn" onclick="openLoadDraftModal()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
     </div>
   </div>
 
@@ -163,7 +166,7 @@
   </div>
 
   <!-- ===== HARD MATERIALS ===== -->
-  <div class="est-card customer-hide">
+  <div class="est-card customer-hide" id="materialsCard">
     <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
       <span>Hard Materials &amp; Chemicals</span>
       <div class="markup-control">
@@ -202,7 +205,7 @@
   </div>
 
   <!-- ===== PAINT MATERIALS ===== -->
-  <div class="est-card customer-hide">
+  <div class="est-card customer-hide" id="paintCard">
     <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
       <span>Paint Materials</span>
       <div class="markup-control">
@@ -316,7 +319,8 @@
   <div class="est-card est-legal-card">
     <div class="est-card-title">Terms &amp; Conditions</div>
     <p class="legal-text">
-    THIS PROPOSAL INCLUDES THE CONDITIONS NOTED. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think &amp; Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work. All work is performed in a professional manner consistent with, or above, industry standards. No warranty is expressed or implied beyond the scope of work described herein.</p>
+      THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think &amp; Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work. All work is performed in a professional manner consistent with industry standards. No warranty is expressed or implied beyond the scope of work described herein.
+    </p>
     <div class="sig-block-row">
       <div class="sig-block">
         <div class="sig-line"></div>
@@ -348,14 +352,45 @@
 <div class="modal-overlay" id="loginModal" style="display:none;" onclick="overlayClose(event,'loginModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('loginModal')">&#10005;</button>
-    <h3 class="modal-title">Log In</h3>
-    <p class="modal-sub">Access your saved estimates and contractor pricing.</p>
-    <label class="est-label">Email</label>
-    <input type="email" id="loginEmail" class="est-input" placeholder="email@example.com" />
-    <label class="est-label mt-3">Password</label>
-    <input type="password" id="loginPassword" class="est-input" placeholder="Password" />
-    <button class="btn-modal-primary mt-3" onclick="doLogin()">Log In</button>
-    <p class="modal-footer-link">Don't have an account? <a href="#" onclick="closeModal('loginModal');openModal('upgradeModal')">Sign up free</a></p>
+    <!-- Tab switcher -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Log In</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login panel -->
+    <div id="authPanelLogin">
+      <p class="modal-sub">Access your saved estimates and contractor pricing.</p>
+      <label class="est-label">Email</label>
+      <input type="email" id="loginEmail" class="est-input" placeholder="email@example.com" />
+      <label class="est-label mt-3">Password</label>
+      <input type="password" id="loginPassword" class="est-input" placeholder="Password" />
+      <p class="auth-error" id="loginError"></p>
+      <button class="btn-modal-primary mt-3" onclick="doLogin()">Log In</button>
+      <div class="auth-divider"><span>or</span></div>
+      <button class="btn-google" onclick="doGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        Continue with Google
+      </button>
+    </div>
+
+    <!-- Signup panel -->
+    <div id="authPanelSignup" style="display:none;">
+      <p class="modal-sub">Create a free account to save your estimates.</p>
+      <label class="est-label">Full Name</label>
+      <input type="text" id="signupName" class="est-input" placeholder="Your name" />
+      <label class="est-label mt-3">Email</label>
+      <input type="email" id="signupEmail" class="est-input" placeholder="email@example.com" />
+      <label class="est-label mt-3">Password</label>
+      <input type="password" id="signupPassword" class="est-input" placeholder="Min. 8 characters" />
+      <p class="auth-error" id="signupError"></p>
+      <button class="btn-modal-primary mt-3" onclick="doSignup()">Create Account</button>
+      <div class="auth-divider"><span>or</span></div>
+      <button class="btn-google" onclick="doGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        Continue with Google
+      </button>
+    </div>
   </div>
 </div>
 
@@ -436,6 +471,7 @@
 </footer>
 
 <script src="affiliate_links.js"></script>
+<script src="auth.js"></script>
 <script src="estimate.js"></script>
 </body>
 </html>
