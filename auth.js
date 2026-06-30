@@ -57,8 +57,8 @@ function applyAuthUI() {
     const name = currentProfile?.full_name || currentUser.email;
     if (tierLabel) {
       tierLabel.textContent = tier === 'pro'
-        ? '\uD83D\uDD13 Pro — ' + name
-        : '\uD83D\uDD10 Free — ' + name;
+        ? '\uD83D\uDD13 Pro \u2014 ' + name
+        : '\uD83D\uDD10 Free \u2014 ' + name;
       tierLabel.className = 'tier-label' + (tier === 'pro' ? ' pro' : '');
     }
     if (loginBtn)  loginBtn.style.display  = 'none';
@@ -146,30 +146,33 @@ async function doLogout() {
 /* ── Save estimate to Supabase ───────────────────────────── */
 async function saveEstimateToSupabase(payload) {
   if (!currentUser) return { error: { message: 'Not logged in.' } };
+
+  var matTotal  = (payload.materials || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
+  var paintTotal = (payload.paint || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
+
   const row = {
     user_id:         currentUser.id,
     company_name:    currentProfile?.company_name || 'ChemCalc',
     estimate_number: payload.estimateNumber,
     valid_until:     payload.estimateValidUntil || null,
-    customer_first:  payload.clientFirst,
-    customer_last:   payload.clientLast,
-    customer_phone:  payload.clientPhone,
-    customer_email:  payload.clientEmail,
-    boat_name:       payload.boatName,
-    boat_make:       payload.boatMake,
-    boat_model:      payload.boatModel,
-    hin:             payload.boatHIN,
-    materials_total: payload.materials.reduce(function(s,r){ return s + (r.qty * r.cost * (1 + r.markup/100)); }, 0),
-    paint_total:     payload.paint.reduce(function(s,r){ return s + (r.qty * r.cost * (1 + r.markup/100)); }, 0),
-    labor_total:     payload.grandTotal,
-    grand_total:     payload.grandTotal,
-    hourly_rate:     payload.hourlyRate,
+    customer_first:  payload.clientFirst  || '',
+    customer_last:   payload.clientLast   || '',
+    customer_phone:  payload.clientPhone  || '',
+    customer_email:  payload.clientEmail  || '',
+    boat_name:       payload.boatName     || '',
+    boat_make:       payload.boatMake     || '',
+    boat_model:      payload.boatModel    || '',
+    hin:             payload.boatHIN      || '',
+    materials_total: matTotal,
+    paint_total:     paintTotal,
+    labor_total:     parseFloat(payload.grandTotal) || 0,
+    grand_total:     parseFloat(payload.grandTotal) || 0,
+    hourly_rate:     parseFloat(payload.hourlyRate) || 0,
     estimate_data:   payload,
     status:          'draft',
     notes:           payload.scopeNotes || ''
   };
-  return await _sb.from('estimates').insert(row).select().single();
-}
+
   return await _sb.from('estimates').insert(row).select().single();
 }
 
