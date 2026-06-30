@@ -15,11 +15,34 @@
 
 <!-- ===== PRINT HEADER (only visible when printing) ===== -->
 <div class="print-header-block d-none">
-  <img src="logo-black.svg" alt="Think &amp; Engage LLC" class="print-logo-img" onerror="this.style.display='none'" />
-  <div class="print-company-info">
-    <strong>Think &amp; Engage LLC</strong><br/>
-    Marine Repair Services<br/>
-    chemcalc.co
+  <!-- Left: logo (pro) or ChemCalc branding (free) -->
+  <div class="print-header-left">
+    <img id="printLogoImg" src="logo-black.svg" alt="Company Logo" class="print-logo-img" onerror="this.style.display='none'" />
+    <div class="print-chemcalc-brand free-only-print">
+      <span class="print-brand-name">ChemCalc</span>
+      <span class="print-brand-sub">Marine Repair Estimator</span>
+    </div>
+  </div>
+  <!-- Center: estimate title + number -->
+  <div class="print-header-center">
+    <div class="print-doc-title">REPAIR ESTIMATE</div>
+    <div class="print-doc-meta">
+      <span id="printEstNum"></span>
+      <span id="printEstDate"></span>
+      <span id="printEstValid"></span>
+    </div>
+  </div>
+  <!-- Right: company info (pro) or ChemCalc URL (free) -->
+  <div class="print-header-right">
+    <div class="print-company-block pro-only-print">
+      <strong id="printCompanyName"></strong>
+      <span id="printCompanyTagline"></span>
+      <span id="printCompanyPhone"></span>
+      <span id="printCompanyEmail"></span>
+      <span id="printCompanyWebsite"></span>
+      <span id="printCompanyAddress"></span>
+    </div>
+    <div class="print-chemcalc-url free-only-print">chemcalc.co</div>
   </div>
 </div>
 
@@ -55,6 +78,7 @@
     <span class="tier-actions">
       <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
       <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
+      <button class="btn-tier pro-only" id="bizInfoBtn" onclick="openModal('bizInfoModal')">&#9998; My Business Info</button>
       <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
     </span>
   </div>
@@ -319,7 +343,7 @@
   <div class="est-card est-legal-card">
     <div class="est-card-title">Terms &amp; Conditions</div>
     <p class="legal-text">
-      THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think &amp; Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work. All work is performed in a professional manner consistent with, or above, industry standards. No warranty is expressed or implied beyond the scope of work described herein.
+      THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think &amp; Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work. All work is performed in a professional manner consistent with industry standards. No warranty is expressed or implied beyond the scope of work described herein.
     </p>
     <div class="sig-block-row">
       <div class="sig-block">
@@ -446,6 +470,52 @@
     <p class="modal-sub">Select a saved estimate to load.</p>
     <div id="savedEstimatesList" class="saved-list"></div>
     <p class="modal-footer-link" id="noSavedMsg" style="display:none;">No saved estimates found.</p>
+  </div>
+</div>
+
+<!-- ===== PRO BUSINESS INFO MODAL ===== -->
+<div class="modal-overlay" id="bizInfoModal" style="display:none;" onclick="overlayClose(event,'bizInfoModal')">
+  <div class="modal-box modal-wide" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('bizInfoModal')">&#10005;</button>
+    <h3 class="modal-title">&#9998; My Business Info</h3>
+    <p class="modal-sub">This appears on your printed and exported estimates. Saved locally in your browser.</p>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="est-label">Company Name</label>
+        <input type="text" id="bizName" class="est-input" placeholder="e.g. Daytona Marine Group" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Tagline / Trade</label>
+        <input type="text" id="bizTagline" class="est-input" placeholder="e.g. Marine Repair &amp; Refinishing" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Phone</label>
+        <input type="tel" id="bizPhone" class="est-input" placeholder="(555) 555-5555" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Email</label>
+        <input type="email" id="bizEmail" class="est-input" placeholder="info@yourcompany.com" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Website</label>
+        <input type="text" id="bizWebsite" class="est-input" placeholder="www.yourcompany.com" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Address</label>
+        <input type="text" id="bizAddress" class="est-input" placeholder="123 Marina Blvd, Daytona Beach, FL" />
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Estimate # Prefix</label>
+        <input type="text" id="bizPrefix" class="est-input" placeholder="e.g. DMG or TE" maxlength="6" />
+        <p class="scope-hint">Estimates will be numbered DMG-20260629-1234</p>
+      </div>
+      <div class="col-md-6">
+        <label class="est-label">Logo URL <span class="scope-hint">(link to your logo image)</span></label>
+        <input type="url" id="bizLogoUrl" class="est-input" placeholder="https://yoursite.com/logo.png" />
+      </div>
+    </div>
+    <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">&#10003; Save Business Info</button>
+    <p class="modal-footer-link" id="bizSaveStatus"></p>
   </div>
 </div>
 

@@ -27,15 +27,111 @@ function setUserTier(tier) {
   document.body.classList.toggle('free-user', !isPro);
   document.body.classList.toggle('pro-user', isPro);
 
-  // Update estimate number prefix for pro users
-  var profile = null;
-  try { profile = window.getProfile(); } catch(e) {}
-  if (isPro && profile && profile.estimate_prefix) {
+  // Update estimate number prefix for pro users (from saved biz info)
+  if (isPro) {
+    var biz = loadBusinessInfo();
+    if (biz && biz.prefix) {
+      var estNum = document.getElementById('estimateNumber').value;
+      var prefixPattern = /^[A-Z0-9]+-/;
+      if (prefixPattern.test(estNum)) {
+        document.getElementById('estimateNumber').value = estNum.replace(prefixPattern, biz.prefix.toUpperCase() + '-');
+      }
+    }
+    // Pre-fill biz info modal fields
+    populateBizInfoModal();
+  }
+
+  // Populate print header with current data
+  populatePrintHeader();
+}
+
+/* ── Business Info (Pro): save/load from localStorage ── */
+function saveBusinessInfo() {
+  var biz = {
+    name:    document.getElementById('bizName').value.trim(),
+    tagline: document.getElementById('bizTagline').value.trim(),
+    phone:   document.getElementById('bizPhone').value.trim(),
+    email:   document.getElementById('bizEmail').value.trim(),
+    website: document.getElementById('bizWebsite').value.trim(),
+    address: document.getElementById('bizAddress').value.trim(),
+    prefix:  document.getElementById('bizPrefix').value.trim().toUpperCase(),
+    logoUrl: document.getElementById('bizLogoUrl').value.trim()
+  };
+  localStorage.setItem('chemcalc_biz_info', JSON.stringify(biz));
+
+  // Apply prefix to current estimate number
+  if (biz.prefix) {
     var estNum = document.getElementById('estimateNumber').value;
-    if (estNum && estNum.indexOf('EST-') === 0) {
-      document.getElementById('estimateNumber').value = estNum.replace('EST-', profile.estimate_prefix + '-');
+    var prefixPattern = /^[A-Z0-9]+-/;
+    if (prefixPattern.test(estNum)) {
+      document.getElementById('estimateNumber').value = estNum.replace(prefixPattern, biz.prefix + '-');
     }
   }
+
+  populatePrintHeader();
+
+  var status = document.getElementById('bizSaveStatus');
+  if (status) {
+    status.textContent = '\u2713 Saved!';
+    status.style.color = '#7ed47e';
+    setTimeout(function () { status.textContent = ''; }, 2500);
+  }
+}
+
+function loadBusinessInfo() {
+  try {
+    var raw = localStorage.getItem('chemcalc_biz_info');
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function populateBizInfoModal() {
+  var biz = loadBusinessInfo();
+  if (!biz) return;
+  var fields = {
+    bizName: biz.name, bizTagline: biz.tagline, bizPhone: biz.phone,
+    bizEmail: biz.email, bizWebsite: biz.website, bizAddress: biz.address,
+    bizPrefix: biz.prefix, bizLogoUrl: biz.logoUrl
+  };
+  Object.keys(fields).forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el && fields[id]) el.value = fields[id];
+  });
+}
+
+/* ── Populate print header with live estimate + biz data ── */
+function populatePrintHeader() {
+  var isPro = (typeof window.isPro === 'function') ? window.isPro() : false;
+  var biz = isPro ? loadBusinessInfo() : null;
+
+  // Estimate meta
+  var estNum = document.getElementById('estimateNumber').value;
+  var estDate = document.getElementById('estimateDate').value;
+  var estValid = document.getElementById('estimateValidUntil').value;
+  setText('printEstNum',   estNum   ? 'Est. #' + estNum : '');
+  setText('printEstDate',  estDate  ? 'Date: ' + estDate : '');
+  setText('printEstValid', estValid ? 'Valid: ' + estValid : '');
+
+  // Company info (pro)
+  if (biz) {
+    setText('printCompanyName',    biz.name    || '');
+    setText('printCompanyTagline', biz.tagline || '');
+    setText('printCompanyPhone',   biz.phone   || '');
+    setText('printCompanyEmail',   biz.email   || '');
+    setText('printCompanyWebsite', biz.website || '');
+    setText('printCompanyAddress', biz.address || '');
+    // Logo
+    var logoEl = document.getElementById('printLogoImg');
+    if (logoEl && biz.logoUrl) {
+      logoEl.src = biz.logoUrl;
+      logoEl.style.display = '';
+    }
+  }
+}
+
+function setText(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = val;
 }
 
 /* ── Affiliate links map (keyed from affiliate_links.js globals) ── */
@@ -181,6 +277,8 @@ function initEstimate() {
   document.getElementById('estimateDate').value = formatDate(now);
   var validUntil = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
   document.getElementById('estimateValidUntil').value = formatDate(validUntil);
+  // Populate print header once dates are set
+  setTimeout(populatePrintHeader, 0);
 }
 
 function checkExpiry() {
@@ -674,10 +772,21 @@ function loadDraft(data) {
   taskCounter = 0;
   (data.tasks || []).forEach(function (t) {
     addRepairTask(t.name, t.rows);
+    // Restore scope note if present
+    if (t.scope) {
+      var scopeEl = document.getElementById('repairScope' + taskCounter);
+      if (scopeEl) {
+        scopeEl.value = t.scope;
+        scopeEl.style.display = 'block';
+        var toggleBtn = scopeEl.closest('.repair-scope-wrap') && scopeEl.closest('.repair-scope-wrap').querySelector('.repair-scope-toggle');
+        if (toggleBtn) toggleBtn.textContent = '\u2212 Hide scope note';
+      }
+    }
   });
 
   checkExpiry();
   updateSummary();
+  populatePrintHeader();
 }
 
 /* ── Collect estimate data ── */

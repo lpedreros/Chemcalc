@@ -783,92 +783,728 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
 .print-header-block { display: none; }
 
 /* ============================================================
-   ESTIMATE PRINT STYLES
+   ESTIMATE TOOL ADDITIONS — append to bottom of style.css
+   ============================================================ */
+
+/* -- Page layout -- */
+.est-container { max-width: 1100px; padding-bottom: 3rem; }
+.est-page-header { text-align: center; margin-bottom: 1.5rem; padding-top: 0.5rem; }
+.est-page-header h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+.est-subtitle { color: #aaa; font-size: 1rem; margin: 0; }
+
+/* -- Tier banner -- */
+.tier-banner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.5rem;
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 8px;
+  padding: 0.6rem 1rem; margin-bottom: 1rem; font-size: 0.95rem;
+}
+.tier-label { color: #aaa; font-weight: 600; }
+.tier-label.pro { color: #89CFF0; }
+.tier-actions { display: flex; gap: 0.5rem; }
+.btn-tier {
+  background: transparent; border: 1px solid #89CFF0; color: #89CFF0;
+  border-radius: 5px; padding: 0.3rem 0.85rem; font-size: 0.88rem;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-tier:hover { background: rgba(137,207,240,0.12); }
+.btn-tier-upgrade { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
+.btn-tier-upgrade:hover { background: #70b8d0; color: #1c1c1e; }
+
+/* -- Toolbar -- */
+.est-toolbar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 1rem;
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 8px;
+  padding: 0.75rem 1rem; margin-bottom: 1.25rem;
+}
+.toolbar-group { display: flex; align-items: center; gap: 0.5rem; }
+.est-select {
+  background: #1c1c1e; border: 1px solid #48484a; border-radius: 6px;
+  color: #fff; padding: 0.35rem 0.6rem; font-size: 0.9rem; cursor: pointer;
+}
+.est-select:focus { outline: none; border-color: #89CFF0; }
+
+/* View toggle */
+.view-toggle-wrap { display: flex; border: 1px solid #48484a; border-radius: 6px; overflow: hidden; }
+.btn-view-toggle {
+  background: #1c1c1e; border: none; color: #aaa;
+  padding: 0.35rem 0.9rem; font-size: 0.88rem; cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.btn-view-toggle.active { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
+.btn-view-toggle:hover:not(.active) { background: #2c2c2e; color: #fff; }
+
+/* Pro-only elements */
+.pro-only { display: none; }
+
+/* -- Cards -- */
+.est-card {
+  background: rgba(0,0,0,0.75); border-radius: 10px;
+  padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.est-card-title {
+  font-size: 1.1rem; font-weight: 700; color: #89CFF0;
+  border-bottom: 1px solid #333; padding-bottom: 0.6rem; margin-bottom: 1rem;
+}
+.pro-only-card { border-left: 3px solid #89CFF0; }
+.pro-badge {
+  background: #89CFF0; color: #1c1c1e; font-size: 0.7rem; font-weight: 800;
+  padding: 0.15rem 0.5rem; border-radius: 4px; letter-spacing: 0.05em;
+}
+.scope-hint { font-size: 0.78rem; color: #666; margin-top: 0.4rem; margin-bottom: 0; }
+
+/* -- Expiry warning -- */
+.expiry-warning {
+  background: rgba(224,82,82,0.15); border: 1px solid #e05252;
+  color: #e05252; border-radius: 6px; padding: 0.5rem 0.8rem;
+  margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600;
+}
+
+/* -- Form inputs -- */
+.est-label { display: block; font-size: 0.88rem; color: #ccc; margin-bottom: 0.3rem; font-weight: 500; }
+.req-star { color: #e05252; }
+.est-input {
+  width: 100%; background: #2c2c2e; border: 1px solid #48484a;
+  border-radius: 6px; color: #fff; padding: 0.45rem 0.7rem;
+  font-size: 0.95rem; transition: border-color 0.2s;
+}
+.est-input:focus { outline: none; border-color: #89CFF0; background: #333; }
+.est-input[readonly] { color: #888; cursor: default; }
+.est-textarea {
+  width: 100%; background: #2c2c2e; border: 1px solid #48484a;
+  border-radius: 6px; color: #fff; padding: 0.6rem 0.8rem;
+  font-size: 0.95rem; resize: vertical;
+}
+.est-textarea:focus { outline: none; border-color: #89CFF0; }
+
+/* -- Markup control -- */
+.markup-control { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.markup-input { width: 70px !important; text-align: center; padding: 0.3rem 0.4rem; font-size: 0.9rem; }
+.markup-hint { font-size: 0.78rem; color: #888; white-space: nowrap; }
+
+/* -- Tables -- */
+.est-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #eee; }
+.est-table thead th {
+  background: #1c1c1e; color: #89CFF0; padding: 0.55rem 0.6rem;
+  text-align: left; font-weight: 600; white-space: nowrap; border-bottom: 2px solid #333;
+}
+.est-table tbody tr { border-bottom: 1px solid #2c2c2e; transition: background 0.15s; }
+.est-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.est-table tbody td { padding: 0.4rem 0.5rem; vertical-align: middle; }
+.est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid #333; }
+.col-cost, .col-markup, .col-retail, .col-qty, .col-total { width: 100px; }
+.col-link { width: 60px; text-align: center; }
+.col-del { width: 36px; text-align: center; }
+.est-table input[type="text"],
+.est-table input[type="number"] {
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
+  color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 60px;
+}
+.est-table input:focus { outline: none; border-color: #89CFF0; }
+.est-table .item-name-input { min-width: 160px; }
+.retail-display { color: #89CFF0; font-weight: 600; white-space: nowrap; }
+.line-total-display { font-weight: 600; white-space: nowrap; }
+.subtotal-row td { background: #1c1c1e; }
+.subtotal-label { text-align: right; font-weight: 700; color: #ccc; font-size: 0.9rem; }
+.subtotal-val { font-weight: 700; color: #89CFF0; white-space: nowrap; }
+
+/* -- Buy Here links -- override global a rule -- */
+.buy-link {
+  display: inline-block !important; background: #2c2c2e; color: #89CFF0 !important;
+  border: 1px solid #89CFF0; border-radius: 4px; padding: 0.2rem 0.45rem;
+  font-size: 0.78rem !important; text-decoration: none !important; white-space: nowrap;
+  margin-top: 0 !important; vertical-align: middle;
+  font-weight: normal !important;
+  transition: background 0.15s, color 0.15s; transform: none !important;
+}
+.buy-link:hover,
+.buy-link:active,
+.buy-link:visited {
+  background: rgba(137,207,240,0.25) !important; color: #fff !important;
+  transform: none !important; font-size: 0.78rem !important; margin-top: 0 !important;
+  font-weight: normal !important;
+}
+.buy-link-none { color: #555; font-size: 0.78rem; }
+
+.btn-del-row {
+  background: none; border: none; color: #e05252; font-size: 1.1rem;
+  cursor: pointer; padding: 0.1rem 0.3rem; line-height: 1; transition: color 0.15s;
+}
+.btn-del-row:hover { color: #ff6b6b; }
+.btn-add-row {
+  background: transparent; border: 1px dashed #48484a; color: #89CFF0;
+  border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.88rem;
+  cursor: pointer; margin-top: 0.5rem; transition: border-color 0.2s, background 0.2s;
+}
+.btn-add-row:hover { border-color: #89CFF0; background: rgba(137,207,240,0.07); }
+
+/* -- Repair task cards -- */
+.repair-card {
+  background: rgba(0,0,0,0.75); border-radius: 10px;
+  padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); border-left: 3px solid #89CFF0;
+}
+.repair-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
+.repair-card-actions { display: flex; gap: 0.4rem; align-items: center; }
+.repair-name-input {
+  background: transparent; border: none; border-bottom: 1px solid #48484a;
+  color: #89CFF0; font-size: 1.05rem; font-weight: 700; width: 280px; padding: 0.1rem 0.2rem;
+}
+.repair-name-input:focus { outline: none; border-bottom-color: #89CFF0; }
+.btn-del-task { background: none; border: none; color: #e05252; font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.4rem; }
+.btn-del-task:hover { color: #ff6b6b; }
+.btn-dup-task {
+  background: none; border: 1px solid #48484a; color: #89CFF0;
+  font-size: 0.8rem; border-radius: 4px; cursor: pointer; padding: 0.2rem 0.5rem;
+  transition: background 0.15s;
+}
+.btn-dup-task:hover { background: rgba(137,207,240,0.1); }
+.repair-scope-wrap { margin-top: 0.75rem; }
+.repair-scope-toggle {
+  background: none; border: none; color: #888; font-size: 0.82rem;
+  cursor: pointer; padding: 0; text-decoration: underline;
+}
+.repair-scope-toggle:hover { color: #aaa; }
+.repair-scope-textarea {
+  width: 100%; background: #1c1c1e; border: 1px solid #48484a; border-radius: 5px;
+  color: #ccc; padding: 0.5rem 0.7rem; font-size: 0.88rem; resize: vertical;
+  margin-top: 0.4rem; display: none;
+}
+.repair-scope-textarea:focus { outline: none; border-color: #89CFF0; }
+.repair-task-table { font-size: 0.88rem; width: 100%; border-collapse: collapse; color: #eee; }
+.repair-task-table thead th {
+  background: #1c1c1e; color: #89CFF0; padding: 0.45rem 0.5rem;
+  border-bottom: 2px solid #333; white-space: nowrap; text-align: left;
+}
+.repair-task-table tbody tr { border-bottom: 1px solid #2c2c2e; }
+.repair-task-table tbody td { padding: 0.35rem 0.45rem; vertical-align: middle; }
+.repair-task-table tfoot td { padding: 0.45rem 0.5rem; border-top: 2px solid #333; }
+.repair-task-table input[type="number"],
+.repair-task-table input[type="text"] {
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
+  color: #fff; padding: 0.28rem 0.4rem; font-size: 0.85rem;
+}
+.repair-task-table input[type="number"] { width: 80px; }
+.repair-task-table input[type="text"] { width: 100%; min-width: 140px; }
+.repair-task-table input:focus { outline: none; border-color: #89CFF0; }
+.task-price-display { color: #89CFF0; font-weight: 600; }
+.repair-subtotal-row td { background: #1c1c1e; }
+.repair-subtotal-label { text-align: right; font-weight: 700; color: #ccc; }
+.repair-subtotal-val { font-weight: 700; color: #89CFF0; }
+.btn-add-task-row {
+  background: transparent; border: 1px dashed #48484a; color: #89CFF0;
+  border-radius: 5px; padding: 0.3rem 0.8rem; font-size: 0.85rem;
+  cursor: pointer; margin-top: 0.4rem; transition: border-color 0.2s, background 0.2s;
+}
+.btn-add-task-row:hover { border-color: #89CFF0; background: rgba(137,207,240,0.07); }
+.btn-add-task {
+  background: #89CFF0; color: #1c1c1e; border: none; border-radius: 8px;
+  padding: 0.65rem 1.6rem; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s; margin-bottom: 0.5rem;
+}
+.btn-add-task:hover { background: #70b8d0; }
+
+/* -- Summary -- */
+.est-summary-card { border-left: 3px solid #89CFF0; }
+.summary-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 1rem; color: #ddd; padding: 0.2rem 0;
+}
+.summary-row span:last-child { font-weight: 600; color: #89CFF0; }
+.summary-divider { border-top: 1px solid #333; margin: 0.4rem 0; }
+.summary-grand { font-size: 1.25rem; font-weight: 700; color: #fff !important; padding-top: 0.4rem; }
+.summary-grand span:last-child { color: #fff !important; font-size: 1.3rem; }
+.internal-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #48484a; }
+.internal-label { font-size: 0.82rem; color: #e05252; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
+
+/* -- Legal -- */
+.est-legal-card { border-left: 3px solid #555; }
+.legal-text { font-size: 0.82rem; color: #aaa; line-height: 1.6; margin-bottom: 1.25rem; }
+.sig-block-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
+.sig-block { flex: 1; min-width: 160px; }
+.sig-block-short { flex: 0 0 140px; }
+.sig-line { border-bottom: 1px solid #555; height: 2rem; margin-bottom: 0.3rem; }
+.sig-caption { font-size: 0.78rem; color: #888; }
+
+/* -- Action buttons -- */
+.est-actions {
+  display: flex; flex-wrap: wrap; gap: 0.75rem;
+  justify-content: center; margin: 1.5rem 0 2rem;
+}
+.btn-action {
+  border: none; border-radius: 8px; padding: 0.65rem 1.4rem;
+  font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-action:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-print { background: #2c2c2e; color: #89CFF0; border: 1px solid #89CFF0; }
+.btn-pdf   { background: #89CFF0; color: #1c1c1e; }
+.btn-share { background: #2c2c2e; color: #89CFF0; border: 1px solid #89CFF0; }
+.btn-log   { background: #48484a; color: #fff; border: 1px solid #89CFF0; }
+.btn-new   { background: #48484a; color: #fff; }
+
+/* -- Modals -- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-box {
+  background: #2c2c2e; border-radius: 12px; padding: 2rem;
+  width: 100%; max-width: 420px; position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.modal-wide { max-width: 700px; }
+.modal-close { position: absolute; top: 0.75rem; right: 0.9rem; background: none; border: none; color: #aaa; font-size: 1.1rem; cursor: pointer; }
+.modal-close:hover { color: #fff; }
+.modal-title { color: #fff; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; }
+.modal-sub { color: #aaa; font-size: 0.9rem; margin-bottom: 1rem; }
+.btn-modal-primary {
+  width: 100%; background: #89CFF0; color: #1c1c1e; border: none;
+  border-radius: 7px; padding: 0.6rem; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-modal-primary:hover { background: #70b8d0; }
+.modal-footer-link { text-align: center; margin-top: 0.9rem; font-size: 0.88rem; color: #aaa; }
+.modal-footer-link a { color: #89CFF0; font-size: 0.88rem !important; margin-top: 0 !important; font-weight: normal !important; }
+.log-preview {
+  background: #1c1c1e; border-radius: 6px; padding: 0.75rem 1rem;
+  font-size: 0.88rem; color: #ccc; line-height: 1.7; margin-bottom: 0.5rem;
+}
+.log-preview strong { color: #89CFF0; }
+.saved-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
+.saved-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #1c1c1e; border-radius: 6px; padding: 0.6rem 0.9rem;
+  font-size: 0.9rem; color: #ddd; cursor: pointer; transition: background 0.15s;
+}
+.saved-item:hover { background: #333; }
+.saved-item-meta { font-size: 0.78rem; color: #888; }
+.saved-item-del { background: none; border: none; color: #e05252; font-size: 0.9rem; cursor: pointer; padding: 0.1rem 0.3rem; }
+
+/* -- Plan cards -- */
+.plan-row { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 1rem; }
+.plan-card {
+  flex: 1; min-width: 200px; background: #1c1c1e;
+  border-radius: 10px; padding: 1.25rem; border: 1px solid #333; position: relative;
+}
+.plan-featured { border-color: #89CFF0; }
+.plan-badge {
+  position: absolute; top: -0.7rem; left: 50%; transform: translateX(-50%);
+  background: #89CFF0; color: #1c1c1e; font-size: 0.72rem; font-weight: 700;
+  padding: 0.2rem 0.7rem; border-radius: 20px; white-space: nowrap;
+}
+.plan-name { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+.plan-price { font-size: 2rem; font-weight: 800; color: #89CFF0; }
+.plan-price span { font-size: 1rem; color: #aaa; font-weight: 400; }
+.plan-features { list-style: none; padding: 0; margin: 0 0 1rem; font-size: 0.88rem; }
+.plan-features li { padding: 0.25rem 0; color: #ccc; }
+.feat-yes { color: #7ed47e; }
+.feat-no  { color: #666; }
+.btn-plan {
+  width: 100%; background: #48484a; color: #ccc; border: none;
+  border-radius: 6px; padding: 0.55rem; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;
+}
+.btn-plan:hover { background: #555; }
+.btn-plan-pro { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
+.btn-plan-pro:hover { background: #70b8d0; }
+
+/* -- Footer -- */
+.est-footer { text-align: center; margin-top: 2rem; padding: 1rem; color: #aaa; font-size: 0.85rem; }
+.est-footer a { color: #89CFF0; font-size: 0.85rem !important; margin-top: 0 !important; font-weight: normal !important; }
+
+/* -- Customer view: hide itemized sections -- */
+body.customer-view .customer-hide { display: none !important; }
+body.customer-view .repair-task-table tbody { display: none !important; }
+body.customer-view .repair-task-table thead { display: none !important; }
+body.customer-view .btn-add-task-row { display: none !important; }
+body.customer-view #internalSummaryFull { display: none !important; }
+body.customer-view #customerSummary { display: flex !important; }
+body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; pointer-events: none; }
+
+/* -- Print header -- */
+.print-header-block { display: none; }
+
+/* ============================================================
+   ESTIMATE PRINT STYLES — Professional single-page layout
    ============================================================ */
 @media print {
-  body { background: #fff !important; color: #000 !important; margin: 0; font-size: 12px; }
 
+  /* ── Reset & global overrides ── */
+  @page { margin: 0.45in 0.5in; size: letter portrait; }
+
+  *, *::before, *::after { box-sizing: border-box !important; }
+
+  body {
+    background: #fff !important; color: #111 !important;
+    margin: 0 !important; padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+    font-size: 9.5pt !important; line-height: 1.35 !important;
+  }
+
+  /* Override live-site global link styles */
+  a, a:visited, a:hover, a:active {
+    color: #111 !important; font-size: inherit !important;
+    font-weight: inherit !important; margin-top: 0 !important;
+    text-decoration: none !important;
+  }
+
+  /* Override live-site global heading sizes */
+  h1, h2, h3, h4 { font-size: inherit !important; margin: 0 !important; }
+  p, li { font-size: inherit !important; }
+
+  /* ── Hide all screen-only chrome ── */
   .header, .tier-banner, .est-toolbar, .est-actions, .btn-add-row, .btn-add-task,
   .btn-del-row, .btn-del-task, .btn-dup-task, .btn-add-task-row, .est-footer,
-  .modal-overlay, nav, .menu-toggle, .d-print-none, .repair-scope-toggle { display: none !important; }
+  .modal-overlay, nav, .menu-toggle, .d-print-none, .repair-scope-toggle,
+  .est-page-header, .expiry-warning, .pro-badge, .scope-hint,
+  .markup-control, .markup-hint, .buy-link, .buy-link-none,
+  .internal-summary, #internalSummary { display: none !important; }
 
+  /* ── Container ── */
+  .est-container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+  /* ── PRINT HEADER ── */
   .print-header-block {
-    display: flex !important; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #000;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 8pt;
+    margin-bottom: 8pt;
+    border-bottom: 2.5pt solid #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  .print-logo-img { height: 45px; }
-  .print-company-info { text-align: right; font-size: 11px; line-height: 1.5; }
 
-  .est-container { max-width: 100%; padding: 0; }
+  .print-header-left {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3pt;
+  }
+  .print-logo-img {
+    max-height: 48pt !important;
+    max-width: 140pt !important;
+    width: auto !important;
+    object-fit: contain;
+  }
+  .print-chemcalc-brand {
+    display: flex !important;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .print-brand-name {
+    font-size: 16pt !important;
+    font-weight: 800 !important;
+    color: #111 !important;
+    letter-spacing: -0.02em;
+  }
+  .print-brand-sub {
+    font-size: 8pt !important;
+    color: #555 !important;
+    font-weight: 400 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
 
+  .print-header-center {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .print-doc-title {
+    font-size: 18pt !important;
+    font-weight: 900 !important;
+    color: #111 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .print-doc-meta {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 1pt;
+    font-size: 8pt !important;
+    color: #444 !important;
+    margin-top: 3pt;
+  }
+  .print-doc-meta span { display: block !important; }
+
+  .print-header-right {
+    display: flex !important;
+    justify-content: flex-end;
+  }
+  .print-company-block {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    font-size: 8.5pt !important;
+    line-height: 1.5;
+    color: #222 !important;
+  }
+  .print-company-block strong {
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    display: block !important;
+  }
+  .print-company-block span { display: block !important; color: #444 !important; }
+  .print-chemcalc-url {
+    font-size: 9pt !important;
+    color: #555 !important;
+    font-style: italic;
+    text-align: right;
+  }
+
+  /* FREE: hide logo, show ChemCalc brand */
+  body.free-user .print-logo-img { display: none !important; }
+  body.free-user .free-only-print { display: flex !important; }
+  body.free-user .pro-only-print  { display: none !important; }
+  body.free-user .print-chemcalc-url { display: block !important; }
+
+  /* PRO: show logo, hide ChemCalc brand */
+  body.pro-user .print-logo-img { display: block !important; }
+  body.pro-user .free-only-print { display: none !important; }
+  body.pro-user .pro-only-print  { display: flex !important; }
+  body.pro-user .print-chemcalc-url { display: none !important; }
+
+  /* ── Cards: clean white, no shadows ── */
   .est-card, .repair-card {
-    background: #fff !important; box-shadow: none !important;
-    border: 1px solid #ccc !important; border-left: none !important;
-    page-break-inside: avoid; margin-bottom: 0.75rem; padding: 0.75rem;
+    background: #fff !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-top: 1pt solid #ddd !important;
+    border-radius: 0 !important;
+    margin-bottom: 5pt !important;
+    padding: 5pt 0 !important;
+    page-break-inside: avoid;
+  }
+  .est-card-title {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    color: #555 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: none !important;
+    padding-bottom: 2pt !important;
+    margin-bottom: 4pt !important;
   }
 
-  .est-card-title { color: #000 !important; border-bottom-color: #ccc !important; }
-  .est-label { color: #333 !important; }
+  /* ── Form inputs: transparent, value-only ── */
+  .est-label { font-size: 7pt !important; color: #888 !important; margin-bottom: 1pt !important; }
   .est-input, .est-textarea {
-    color: #000 !important; background: transparent !important;
+    color: #111 !important; background: transparent !important;
     border: none !important; padding: 0 !important;
+    font-size: 9pt !important; font-weight: 500 !important;
   }
-  .repair-name-input { color: #000 !important; background: transparent !important; border: none !important; }
+  .repair-name-input {
+    color: #111 !important; background: transparent !important;
+    border: none !important; font-size: 10pt !important; font-weight: 700 !important;
+  }
 
-  .est-table, .repair-task-table { color: #000 !important; font-size: 11px; }
+  /* ── Client + Vessel: compact two-column grid ── */
+  .print-info-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 12pt;
+    margin-bottom: 5pt;
+  }
+  .print-info-grid .row { display: contents !important; }
+  .print-info-grid .col-md-6, .print-info-grid .col-md-4, .print-info-grid .col-md-3 {
+    display: block !important; width: auto !important; padding: 0 !important;
+  }
+  .print-info-pair {
+    display: flex !important;
+    flex-direction: column;
+    margin-bottom: 3pt;
+  }
+
+  /* ── Estimate info: single row ── */
+  .est-card:first-of-type .row {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 0 16pt;
+  }
+  .est-card:first-of-type .col-md-3 {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+
+  /* ── Repair task tables ── */
+  .est-table, .repair-task-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8.5pt !important;
+    color: #111 !important;
+  }
   .est-table thead th, .repair-task-table thead th {
-    background: #f0f0f0 !important; color: #000 !important;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    background: #f4f4f4 !important;
+    color: #333 !important;
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    padding: 3pt 5pt !important;
+    border-bottom: 1pt solid #ccc !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .est-table tbody td, .repair-task-table tbody td {
+    padding: 2.5pt 5pt !important;
+    border-bottom: 0.5pt solid #eee !important;
+    vertical-align: middle !important;
+  }
+  .est-table tfoot td, .repair-task-table tfoot td {
+    padding: 3pt 5pt !important;
+    border-top: 1pt solid #ccc !important;
+    font-weight: 700 !important;
   }
   .est-table input, .repair-task-table input {
     border: none !important; background: transparent !important;
-    color: #000 !important; padding: 0 !important; font-size: 11px;
+    color: #111 !important; padding: 0 !important;
+    font-size: 8.5pt !important; width: auto !important;
   }
   .retail-display, .line-total-display, .task-price-display,
-  .subtotal-val, .repair-subtotal-val { color: #000 !important; }
-  .buy-link { display: none !important; }
+  .subtotal-val, .repair-subtotal-val {
+    color: #111 !important; font-weight: 700 !important;
+  }
+  .subtotal-label, .repair-subtotal-label { color: #333 !important; }
 
-  .pro-only-card { display: block !important; border: 1px solid #ccc !important; border-left: none !important; }
-  .pro-badge { display: none !important; }
-  .scope-hint { display: none !important; }
-  .repair-scope-textarea { display: block !important; border: none !important; background: transparent !important; color: #000 !important; padding: 0 !important; }
+  /* ── Summary card ── */
+  .est-summary-card {
+    border-top: 1.5pt solid #111 !important;
+    border-left: none !important;
+  }
+  .summary-grid { gap: 2pt !important; }
+  .summary-row {
+    font-size: 9pt !important;
+    padding: 1.5pt 0 !important;
+  }
+  .summary-row span:last-child { color: #111 !important; font-weight: 600 !important; }
+  .summary-divider { border-top: 1pt solid #bbb !important; margin: 3pt 0 !important; }
+  .summary-grand {
+    font-size: 12pt !important;
+    font-weight: 800 !important;
+    padding-top: 3pt !important;
+  }
+  .summary-grand span:last-child { color: #111 !important; font-size: 13pt !important; }
 
-  .internal-summary, #internalSummary { display: none !important; }
+  /* ── Scope of work (pro) ── */
+  .pro-only-card {
+    border: none !important;
+    border-top: 1pt solid #ddd !important;
+    border-left: none !important;
+    display: block !important;
+  }
+  .repair-scope-textarea {
+    display: block !important;
+    border: none !important; background: transparent !important;
+    color: #333 !important; padding: 0 !important;
+    font-size: 8.5pt !important; line-height: 1.45 !important;
+    font-style: italic;
+  }
 
-  /* ── FREE / UNREGISTERED: single-page branded summary ── */
-  body.free-user .customer-hide { display: none !important; }
-  body.free-user .repair-task-table tbody { display: none !important; }
-  body.free-user .repair-task-table thead { display: none !important; }
-  body.free-user #internalSummaryFull { display: none !important; }
-  body.free-user #customerSummary { display: flex !important; }
-  /* Hide materials, paint, scope cards entirely for free print */
+  /* ── Legal & signature ── */
+  .est-legal-card { border-top: 1pt solid #ddd !important; border-left: none !important; }
+  .legal-text {
+    font-size: 7pt !important;
+    color: #666 !important;
+    line-height: 1.4 !important;
+    margin-bottom: 6pt !important;
+  }
+  .sig-block-row {
+    display: flex !important;
+    gap: 20pt !important;
+    margin-top: 6pt !important;
+  }
+  .sig-block { flex: 1 !important; }
+  .sig-block-short { flex: 0 0 100pt !important; }
+  .sig-line {
+    border-bottom: 1pt solid #333 !important;
+    height: 18pt !important;
+    margin-bottom: 2pt !important;
+  }
+  .sig-caption { font-size: 7pt !important; color: #666 !important; }
+
+  /* ── FREE USER: non-itemized single-page ── */
   body.free-user #materialsCard { display: none !important; }
   body.free-user #paintCard { display: none !important; }
   body.free-user .pro-only-card { display: none !important; }
-  /* Collapse repair cards to name + total only */
-  body.free-user .repair-card .est-card-title { display: block !important; }
-  body.free-user .repair-card .repair-task-table { display: none !important; }
-  body.free-user .repair-card .repair-subtotal-row { display: flex !important; }
-  /* ChemCalc branding watermark for free print */
-  body.free-user .print-header-block::after {
-    content: 'Estimate generated by ChemCalc.co';
-    display: block; width: 100%; text-align: center;
-    font-size: 10px; color: #888; margin-top: 4px;
+  body.free-user .customer-hide { display: none !important; }
+  body.free-user .repair-task-table { display: none !important; }
+  body.free-user #internalSummaryFull { display: none !important; }
+  body.free-user #customerSummary { display: flex !important; flex-direction: column !important; }
+  /* Show repair card name + subtotal only */
+  body.free-user .repair-card { padding: 4pt 0 !important; }
+  body.free-user .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
+  /* ChemCalc branding footer line */
+  body.free-user .est-legal-card::after {
+    content: 'Estimate generated with ChemCalc Marine Repair Estimator — chemcalc.co';
+    display: block !important;
+    font-size: 7pt !important;
+    color: #aaa !important;
+    text-align: center;
+    margin-top: 6pt;
+    border-top: 0.5pt solid #eee;
+    padding-top: 4pt;
   }
 
-  /* ── PRO: full itemized layout ── */
-  body.pro-user .customer-hide { display: table-row !important; }
-  body.pro-user #internalSummaryFull { display: block !important; }
+  /* ── PRO USER: full itemized ── */
+  body.pro-user .customer-hide { display: table-cell !important; }
+  body.pro-user #internalSummaryFull { display: flex !important; flex-direction: column !important; }
   body.pro-user #customerSummary { display: none !important; }
-
-  .summary-row span { color: #000 !important; }
-  .summary-grand span:last-child { color: #000 !important; }
-  .legal-text { color: #333 !important; }
-  .sig-line { border-bottom: 1px solid #000 !important; }
-  .sig-caption { color: #333 !important; }
-
-  @page { margin: 0.6in 0.5in; }
 }
+
+/* -- Responsive -- */
+@media (max-width: 767px) {
+  .sig-block-row { flex-direction: column; gap: 1rem; }
+  .plan-row { flex-direction: column; }
+  .est-actions { flex-direction: column; align-items: stretch; }
+  .btn-action { text-align: center; }
+  .markup-control { justify-content: flex-start; }
+  .est-toolbar { flex-direction: column; align-items: flex-start; }
+}
+
+/* -- Auth modal tabs -- */
+.auth-tabs { display: flex; gap: 0; margin-bottom: 1.25rem; border-bottom: 2px solid #333; }
+.auth-tab {
+  flex: 1; padding: 0.5rem 1rem; background: transparent;
+  border: none; color: #aaa; font-weight: 600; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.auth-tab.active { color: #e63946; border-bottom-color: #e63946; }
+.auth-tab:hover:not(.active) { color: #fff; }
+
+/* -- Google sign-in button -- */
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%; padding: 0.6rem 1rem; margin-top: 0.75rem;
+  background: #fff; color: #333; border: 1px solid #ccc; border-radius: 4px;
+  font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-google:hover { background: #f5f5f5; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* -- Auth divider -- */
+.auth-divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 1rem 0; color: #666; font-size: 0.8rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: #333;
+}
+
+/* -- pro-user body class: show internal columns on screen -- */
+body.pro-user .internal-col { display: table-cell !important; }
+
+/* -- Auth error -- */
+.auth-error { color: #e05252; font-size: 0.85rem; min-height: 1.2em; margin: 0.3rem 0 0; }
 
 /* -- Responsive -- */
 @media (max-width: 767px) {
