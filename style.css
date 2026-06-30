@@ -1278,3 +1278,31 @@ body.pro-user .internal-col { display: table-cell !important; }
   background: #48484a; border-color: #555; color: #888;
   opacity: 0.55; cursor: not-allowed;
 }
+
+/* ── Custom Estimator Callout (estimate.html) ─────────────── */
+.custom-est-callout {
+  background: linear-gradient(90deg, #1a3a5c 0%, #2c2c2e 100%);
+  border: 1px solid #2a5a8c;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.custom-est-callout a {
+  color: #89CFF0;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.custom-est-callout a:hover {
+  text-decoration: underline;
+}
