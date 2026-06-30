@@ -358,8 +358,32 @@ document.addEventListener('DOMContentLoaded', function () {
   checkExpiry();
   // auth.js initializes session and calls setUserTier()
   if (typeof authInit === 'function') authInit();
-  // Default: load blank estimate with one repair task
-  addRepairTask();
+
+  // Auto-load estimate from ?draft=UUID URL param (used by Trello card links)
+  var urlParams = new URLSearchParams(window.location.search);
+  var draftId = urlParams.get('draft');
+  if (draftId) {
+    // Wait for auth session to be ready before loading
+    var _draftLoadAttempts = 0;
+    var _draftLoadInterval = setInterval(function () {
+      _draftLoadAttempts++;
+      if (typeof window.loadEstimateById === 'function' && typeof window.isLoggedIn === 'function' && window.isLoggedIn()) {
+        clearInterval(_draftLoadInterval);
+        window.loadEstimateById(draftId).then(function (data) {
+          if (data) {
+            loadDraft(data);
+          } else {
+            console.warn('Draft not found or access denied for id:', draftId);
+          }
+        });
+      } else if (_draftLoadAttempts > 40) {
+        clearInterval(_draftLoadInterval); // give up after 4s
+      }
+    }, 100);
+  } else {
+    // Default: load blank estimate with one repair task
+    addRepairTask();
+  }
 });
 
 function initEstimate() {
@@ -750,6 +774,7 @@ function updateSummary() {
 
   document.getElementById('sumCostMaterials').textContent = fmtCurrency(matCost);
   document.getElementById('sumCostPaint').textContent = fmtCurrency(paintCost);
+
   document.getElementById('grossProfit').textContent = fmtCurrency(grossProfit);
   document.getElementById('marginPct').textContent = margin.toFixed(1) + '%';
 }

@@ -807,6 +807,14 @@ body.customer-view .btn-add-task-row { display: none !important; }
 body.customer-view #internalSummaryFull { display: none !important; }
 body.customer-view #customerSummary { display: flex !important; }
 body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; pointer-events: none; }
+/* Hide materials/paint cards and all cost/markup/retail columns in customer view */
+body.customer-view #materialsCard { display: none !important; }
+body.customer-view #paintCard { display: none !important; }
+body.customer-view .pro-feature-card { display: none !important; }
+body.customer-view .col-cost { display: none !important; }
+body.customer-view .col-markup { display: none !important; }
+body.customer-view .col-retail { display: none !important; }
+body.customer-view .markup-control { display: none !important; }
 
 /* -- Print header -- */
 .print-header-block { display: none; }
@@ -868,7 +876,6 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
     flex-direction: column;
     align-items: flex-start;
     gap: 3pt;
-
   }
   .print-logo-img {
     max-height: 48pt !important;

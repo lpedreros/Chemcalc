@@ -264,6 +264,21 @@ async function addToTrello() {
   var statusEl = document.getElementById('trelloSendStatus');
   function setStatus(msg) { if (statusEl) statusEl.textContent = msg; }
 
+  setStatus('Saving estimate…');
+
+  // 0. Auto-save estimate to Supabase to get a shareable UUID
+  var estimateUUID = null;
+  try {
+    if (typeof saveEstimateToSupabase === 'function') {
+      var saveResult = await saveEstimateToSupabase((typeof collectEstimateData === 'function') ? collectEstimateData() : {});
+      if (saveResult && saveResult.data && saveResult.data.id) {
+        estimateUUID = saveResult.data.id;
+      }
+    }
+  } catch (e) {
+    console.warn('Auto-save for Trello link failed:', e);
+  }
+
   setStatus('Generating PDF…');
 
   // 1. Generate PDF blob (respects current print style toggle)
@@ -321,12 +336,15 @@ async function addToTrello() {
     });
   }
 
-  // Add ChemCalc estimate page link
+  // Add ChemCalc estimate link (with UUID if available)
+  var estimateLink = estimateUUID
+    ? 'https://chemcalc.co/estimate.html?draft=' + estimateUUID
+    : 'https://chemcalc.co/estimate.html';
   descLines.push('');
-  descLines.push('[?? View Estimate on ChemCalc](https://chemcalc.co/estimate.html)');
+  descLines.push('[\ud83d\udd17 View Estimate on ChemCalc](' + estimateLink + ')');
 
   if (pdfUrl) {
-    var pdfLabel = (printStyle === 'itemized') ? '?? PDF Estimate (Itemized)' : '?? PDF Estimate (Summary)';
+    var pdfLabel = (printStyle === 'itemized') ? '\ud83d\udcce PDF Estimate (Itemized)' : '\ud83d\udcce PDF Estimate (Summary)';
     descLines.push('[' + pdfLabel + '](' + pdfUrl + ')');
   }
 

@@ -7,9 +7,9 @@
 <file name="chatbot.js" server="157.173.209.17" local="134258660400000000" remote="134258660400000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134258670000000000" remote="134258670000000000" Dst="2" />
 <file name="estimate.html" server="157.173.209.17" local="134272633422731649" remote="134272633200000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134272614794003176" remote="134272616400000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134272649065714149" remote="134272648800000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134258640942074687" remote="134272352400000000" Dst="2" />
-<file name="estimate.js" server="157.173.209.17" local="134272629180532929" remote="134272630200000000" Dst="2" />
+<file name="estimate.js" server="157.173.209.17" local="134272646854610879" remote="134272646400000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134258640942069687" remote="134272501800000000" Dst="2" />
 <file name="auth.js" server="157.173.209.17" local="134272586055416173" remote="134272585800000000" Dst="2" />
 <file name=".gitignore" server="157.173.209.17" local="134258640941939590" remote="134272519200000000" Dst="2" />
@@ -52,5 +52,5 @@
 <file name="terms.html" server="157.173.209.17" local="134258640942189687" remote="134272519200000000" Dst="2" />
 <file name="default.php" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="requirements.txt" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
-<file name="trello.js" server="157.173.209.17" local="134272616099791975" remote="134272616400000000" Dst="2" />
+<file name="trello.js" server="157.173.209.17" local="134272646639592053" remote="134272646400000000" Dst="2" />
 </dwsync>
