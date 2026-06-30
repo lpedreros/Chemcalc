@@ -6,6 +6,7 @@
 /* ── Session state ── */
 var currentView = 'internal'; // 'internal' | 'customer'
 var currentPrintStyle = 'summary'; // 'summary' | 'itemized'
+var currentFormat = 'summary'; // 'summary' | 'itemized' | 'internal'
 var taskCounter = 0;
 var grandTotalValue = 0;
 
@@ -95,6 +96,30 @@ function proLogEstimate() {
 }
 function proSetPrintItemized() {
   if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
+}
+
+/* ── Consolidated format selector ── */
+function setFormat(fmt) {
+  currentFormat = fmt;
+  // Update pill active state
+  ['summary','itemized','internal'].forEach(function(f) {
+    var btn = document.getElementById('btnFmt' + f.charAt(0).toUpperCase() + f.slice(1));
+    if (btn) btn.classList.toggle('active', f === fmt);
+  });
+  // Apply view + print style
+  if (fmt === 'summary') {
+    setView('customer');
+    setPrintStyle('summary');
+  } else if (fmt === 'itemized') {
+    setView('customer');
+    setPrintStyle('itemized');
+  } else { // internal
+    setView('internal');
+    setPrintStyle('itemized');
+  }
+}
+function proSetFormat(fmt) {
+  if (_checkPro()) { setFormat(fmt); } else { openModal('upgradeModal'); }
 }
 function proAddToTrello() {
   if (_checkPro()) { addToTrello(); } else { openModal('upgradeModal'); }
@@ -444,12 +469,8 @@ function setView(view) {
   currentView = view;
   if (view === 'customer') {
     document.body.classList.add('customer-view');
-    document.getElementById('btnCustomerView').classList.add('active');
-    document.getElementById('btnInternalView').classList.remove('active');
   } else {
     document.body.classList.remove('customer-view');
-    document.getElementById('btnInternalView').classList.add('active');
-    document.getElementById('btnCustomerView').classList.remove('active');
   }
   updateSummary();
 }

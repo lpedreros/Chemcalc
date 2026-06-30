@@ -6,12 +6,12 @@
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134258658772702051" remote="134258658600000000" Dst="2" />
 <file name="chatbot.js" server="157.173.209.17" local="134258660400000000" remote="134258660400000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134258670000000000" remote="134258670000000000" Dst="2" />
-<file name="estimate.html" server="157.173.209.17" local="134272740028613812" remote="134272740000000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134272735337267207" remote="134272735200000000" Dst="2" />
+<file name="estimate.html" server="157.173.209.17" local="134272959306711540" remote="134272959000000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134272967673089499" remote="134272977600000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134258640942074687" remote="134272352400000000" Dst="2" />
-<file name="estimate.js" server="157.173.209.17" local="134272731902070545" remote="134272731600000000" Dst="2" />
+<file name="estimate.js" server="157.173.209.17" local="134272959406082815" remote="134272959000000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134258640942069687" remote="134272501800000000" Dst="2" />
-<file name="auth.js" server="157.173.209.17" local="134272586055416173" remote="134272585800000000" Dst="2" />
+<file name="auth.js" server="157.173.209.17" local="134272967705625229" remote="134272977600000000" Dst="2" />
 <file name=".gitignore" server="157.173.209.17" local="134258640941939590" remote="134272519200000000" Dst="2" />
 <file name="about.html" server="157.173.209.17" local="134258640942074687" remote="134272519200000000" Dst="2" />
 <file name="ads.txt" server="157.173.209.17" local="134258640942074687" remote="134272519200000000" Dst="2" />
@@ -53,8 +53,8 @@
 <file name="default.php" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="requirements.txt" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="trello.js" server="157.173.209.17" local="134272652834198516" remote="134272653000000000" Dst="2" />
-<file name="materials_library.js" server="157.173.209.17" local="134272716217623509" remote="134272716000000000" Dst="2" />
-<file name="history.html" server="157.173.209.17" local="134272722787964782" remote="134272726200000000" Dst="2" />
+<file name="materials_library.js" server="157.173.209.17" local="134272758642175941" remote="134272758600000000" Dst="2" />
+<file name="history.html" server="157.173.209.17" local="134272967596471071" remote="134272977600000000" Dst="2" />
 <file name="history.js" server="157.173.209.17" local="134272720805859739" remote="134272720800000000" Dst="2" />
 <file name=".htaccess" server="157.173.209.17" local="134272589400000000" remote="134272589400000000" Dst="2" />
 </dwsync>

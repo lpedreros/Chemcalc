@@ -158,26 +158,31 @@
         <option value="custom">Custom / Blank</option>
       </select>
     </div>
-    <!-- Customer View Toggle -->
+    <!-- Format Selector (replaces separate View + Print toggles) -->
     <div class="toolbar-group">
-      <label class="est-label mb-0">View:</label>
-      <div class="view-toggle-wrap">
-        <button id="btnInternalView" class="btn-view-toggle active" onclick="setView('internal')">Internal</button>
-        <button id="btnCustomerView" class="btn-view-toggle" onclick="setView('customer')">Customer</button>
+      <label class="est-label mb-0">Format:</label>
+      <div class="view-toggle-wrap" id="formatToggleWrap">
+        <button id="btnFmtSummary" class="btn-view-toggle active"
+          onclick="setFormat('summary')"
+          title="Best for quick, small jobs or picky clients. Shows only the final category totals. Keeps the focus on the bottom line so clients don't try to haggle over individual material costs.">
+          Customer Summary
+        </button>
+        <button id="btnFmtItemized" class="btn-view-toggle pro-feature"
+          onclick="proSetFormat('itemized')"
+          title="Best for large insurance claims or transparent corporate accounts. Fully breaks down retail pricing for labor, materials, and paint so the client sees exactly where their money is going.">
+          Customer Itemized &#128274;
+        </button>
+        <button id="btnFmtInternal" class="btn-view-toggle pro-feature"
+          onclick="proSetFormat('internal')"
+          title="For your eyes only! Displays your raw wholesale costs, precise material markups, and total gross profit margins. Use this on the dock to make sure you are actually making money on the job before handing it to the client.">
+          Internal Copy &#128274;
+        </button>
       </div>
     </div>
     <!-- Save / Load Draft (Pro) -->
     <div class="toolbar-group">
       <button class="btn-tier pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
       <button class="btn-tier pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
-    </div>
-    <!-- Print Style Toggle -->
-    <div class="toolbar-group" id="printStyleGroup">
-      <label class="est-label mb-0">Print:</label>
-      <div class="view-toggle-wrap">
-        <button id="btnPrintSummary" class="btn-view-toggle active" onclick="setPrintStyle('summary')">Summary</button>
-        <button id="btnPrintItemized" class="btn-view-toggle pro-feature" onclick="proSetPrintItemized()">Itemized &#128274;</button>
-      </div>
     </div>
   </div>
 
@@ -711,11 +716,18 @@
     <!-- Library table -->
     <div class="lib-table-wrap">
       <table class="est-table lib-table">
+        <colgroup>
+          <col class="col-name" style="width:28%" />
+          <col class="col-type" style="width:15%" />
+          <col class="col-cost" style="width:10%" />
+          <col class="col-markup" style="width:10%" />
+          <col class="col-url" />
+          <col class="col-actions" style="width:60px" />
+        </colgroup>
         <thead>
           <tr>
             <th>Name</th>
             <th>Type</th>
-            <th>Unit</th>
             <th>Cost</th>
             <th>Markup %</th>
             <th>Buy URL</th>
@@ -723,7 +735,7 @@
           </tr>
         </thead>
         <tbody id="libTableBody">
-          <tr><td colspan="7" style="text-align:center;color:#888;padding:1rem;">Loading...</td></tr>
+          <tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">Loading...</td></tr>
         </tbody>
       </table>
     </div>

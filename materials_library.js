@@ -82,7 +82,7 @@ function renderLibraryTable() {
   var tbody = document.getElementById('libTableBody');
   if (!tbody) return;
   if (_matLib.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:1rem;">No saved items yet. Add your first item below.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">No saved items yet. Add your first item below.</td></tr>';
     return;
   }
   tbody.innerHTML = _matLib.map(item => `
@@ -95,11 +95,10 @@ function renderLibraryTable() {
           <option value="other"    ${item.item_type==='other'   ?'selected':''}>Other</option>
         </select>
       </td>
-      <td><input class="est-input lib-edit" data-field="unit" value="${_libEscHtml(item.unit)}" style="width:70px;" /></td>
-      <td><input class="est-input lib-edit" data-field="cost" type="number" min="0" step="0.01" value="${item.cost}" style="width:80px;" /></td>
-      <td><input class="est-input lib-edit" data-field="markup" type="number" min="0" step="1" value="${item.markup}" style="width:60px;" /></td>
-      <td><input class="est-input lib-edit" data-field="buy_url" value="${_libEscHtml(item.buy_url || '')}" placeholder="https://..." style="width:160px;" /></td>
-      <td style="white-space:nowrap;">
+      <td><input class="est-input lib-edit" data-field="cost" type="number" min="0" step="0.01" value="${item.cost}" /></td>
+      <td><input class="est-input lib-edit" data-field="markup" type="number" min="0" step="1" value="${item.markup}" /></td>
+      <td><input class="est-input lib-edit" data-field="buy_url" value="${_libEscHtml(item.buy_url || '')}" placeholder="https://..." /></td>
+      <td class="lib-actions-cell">
         <button class="btn-lib-save" onclick="commitLibEdit('${item.id}')" title="Save changes">&#10003;</button>
         <button class="btn-lib-del"  onclick="confirmDeleteLib('${item.id}', '${_libEscHtml(item.name)}')" title="Delete">&#10005;</button>
       </td>

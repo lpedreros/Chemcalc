@@ -55,10 +55,14 @@ function applyAuthUI() {
 
   if (currentUser) {
     const name = currentProfile?.full_name || currentUser.email;
+    const betaTester = currentProfile?.beta_tester === true;
     if (tierLabel) {
-      tierLabel.textContent = tier === 'pro'
-        ? '\uD83D\uDD13 Pro \u2014 ' + name
-        : '\uD83D\uDD10 Free \u2014 ' + name;
+      const lockIcon = tier === 'pro' ? '\uD83D\uDD13' : '\uD83D\uDD10';
+      const tierText = tier === 'pro' ? 'Pro' : 'Free';
+      const badgeHTML = betaTester
+        ? ' <span class="beta-crew-badge" title="Beta Crew Member"><img src="kite_icon_32.png" alt="kite" class="kite-icon"> Beta Crew</span>'
+        : '';
+      tierLabel.innerHTML = lockIcon + ' ' + tierText + ' \u2014 ' + name + badgeHTML;
       tierLabel.className = 'tier-label' + (tier === 'pro' ? ' pro' : '');
     }
     if (loginBtn)  loginBtn.style.display  = 'none';
@@ -211,7 +215,8 @@ async function deleteEstimateById(id) {
 }
 
 /* ── Get current profile (for estimate.js to read) ──────── */
-function getProfile()  { return currentProfile; }
-function getUser()     { return currentUser; }
-function isLoggedIn()  { return !!currentUser; }
-function isPro()       { return currentProfile?.tier === 'pro'; }
+function getProfile()    { return currentProfile; }
+function getUser()       { return currentUser; }
+function isLoggedIn()    { return !!currentUser; }
+function isPro()         { return currentProfile?.tier === 'pro'; }
+function isBetaTester()  { return currentProfile?.beta_tester === true; }
