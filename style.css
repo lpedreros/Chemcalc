@@ -1306,3 +1306,115 @@ body.pro-user .internal-col { display: table-cell !important; }
 .custom-est-callout a:hover {
   text-decoration: underline;
 }
+
+/* ============================================================
+   Materials Library
+   ============================================================ */
+
+/* Save-to-library star button on material rows */
+.btn-save-lib {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.2s;
+}
+.btn-save-lib:hover { color: #f5c518; }
+
+/* Typeahead dropdown */
+.lib-typeahead-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #1e2530;
+  border: 1px solid #3a4556;
+  border-radius: 6px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  max-height: 240px;
+  overflow-y: auto;
+}
+.lib-typeahead-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #2a3444;
+  transition: background 0.15s;
+}
+.lib-typeahead-item:last-child { border-bottom: none; }
+.lib-typeahead-item:hover,
+.lib-typeahead-item.active { background: #2a3f5f; }
+.lib-ta-name { font-size: 0.9rem; color: #e8edf3; font-weight: 500; }
+.lib-ta-meta { font-size: 0.75rem; color: #7a8fa6; margin-top: 2px; }
+
+/* Library manager inside bizInfoModal */
+.lib-add-form { margin-bottom: 0.5rem; }
+.lib-table-wrap {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #2a3444;
+  border-radius: 6px;
+}
+.lib-table { margin-bottom: 0; font-size: 0.85rem; }
+.lib-table thead th {
+  background: #1a2233;
+  color: #7a8fa6;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.lib-table .lib-edit {
+  padding: 4px 6px;
+  font-size: 0.82rem;
+  height: auto;
+}
+.btn-lib-save {
+  background: none;
+  border: none;
+  color: #7ed47e;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+.btn-lib-save:hover { color: #a8f0a8; }
+.btn-lib-del {
+  background: none;
+  border: none;
+  color: #e05c5c;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+.btn-lib-del:hover { color: #ff8888; }
+.lib-status {
+  font-size: 0.82rem;
+  min-height: 1.2rem;
+  margin: 4px 0 8px;
+}
+.lib-ok    { color: #7ed47e; }
+.lib-error { color: #e05c5c; }
+
+/* btn-modal-secondary */
+.btn-modal-secondary {
+  background: #2a3f5f;
+  color: #c8d8f0;
+  border: 1px solid #3a5070;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-modal-secondary:hover { background: #3a5070; }

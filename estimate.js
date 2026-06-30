@@ -50,7 +50,13 @@ function setUserTier(tier) {
     }
     // Pre-fill biz info modal fields
     populateBizInfoModal();
+    // Load saved materials library
+    if (typeof loadMaterialsLibrary === 'function') loadMaterialsLibrary();
   }
+
+  // Show History nav link for Pro users
+  var navHistoryLink = document.getElementById('navHistoryLink');
+  if (navHistoryLink) navHistoryLink.classList.toggle('d-none', !isPro);
 
   // Populate print header with current data
   populatePrintHeader();
@@ -359,8 +365,22 @@ document.addEventListener('DOMContentLoaded', function () {
   // auth.js initializes session and calls setUserTier()
   if (typeof authInit === 'function') authInit();
 
-  // Auto-load estimate from ?draft=UUID URL param (used by Trello card links)
+  // Auto-load duplicate from sessionStorage (used by History page Copy button)
   var urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('duplicate') === '1') {
+    var dupData = sessionStorage.getItem('chemcalc_duplicate');
+    if (dupData) {
+      sessionStorage.removeItem('chemcalc_duplicate');
+      try {
+        var parsed = JSON.parse(dupData);
+        // Clear estimate number so a new one is generated
+        parsed.estimateNumber = null;
+        setTimeout(function(){ loadDraft(parsed); }, 200);
+      } catch(e) { console.warn('Duplicate load failed:', e); }
+    }
+  }
+
+  // Auto-load estimate from ?draft=UUID URL param (used by Trello card links)
   var draftId = urlParams.get('draft');
   if (draftId) {
     // Wait for auth session to be ready before loading
@@ -384,6 +404,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Default: load blank estimate with one repair task
     addRepairTask();
   }
+
+  // Init typeahead observer for material/paint name inputs
+  if (typeof initTypeaheadObserver === 'function') initTypeaheadObserver();
+
+  // Load materials library as soon as auth + pro status is confirmed
+  var _libLoadAttempts = 0;
+  var _libLoadInterval = setInterval(function () {
+    _libLoadAttempts++;
+    if (typeof window.isPro === 'function' && window.isPro() && typeof loadMaterialsLibrary === 'function') {
+      clearInterval(_libLoadInterval);
+      loadMaterialsLibrary();
+    } else if (_libLoadAttempts > 60) {
+      clearInterval(_libLoadInterval);
+    }
+  }, 100);
 });
 
 function initEstimate() {
@@ -477,6 +512,7 @@ function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
     '<td><input type="number" class="qty-input" value="' + (item.qty || 1) + '" min="0" step="0.01" oninput="recalcRow(this)" /></td>' +
     '<td><span class="line-total-display">' + fmtCurrency(lineTotal) + '</span></td>' +
     '<td class="d-print-none">' + buyHtml + '</td>' +
+    '<td class="d-print-none"><button class="btn-save-lib" onclick="saveRowToLibrary(this)" title="Save to My Library">&#9733;</button></td>' +
     '<td class="d-print-none"><button class="btn-del-row" onclick="delRow(this, \'' + subtotalId + '\', \'' + sumId + '\')" title="Remove">&#10005;</button></td>';
 
   tbody.appendChild(tr);
@@ -774,7 +810,6 @@ function updateSummary() {
 
   document.getElementById('sumCostMaterials').textContent = fmtCurrency(matCost);
   document.getElementById('sumCostPaint').textContent = fmtCurrency(paintCost);
-
   document.getElementById('grossProfit').textContent = fmtCurrency(grossProfit);
   document.getElementById('marginPct').textContent = margin.toFixed(1) + '%';
 }

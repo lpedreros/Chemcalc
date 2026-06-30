@@ -6,10 +6,10 @@
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134258658772702051" remote="134258658600000000" Dst="2" />
 <file name="chatbot.js" server="157.173.209.17" local="134258660400000000" remote="134258660400000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134258670000000000" remote="134258670000000000" Dst="2" />
-<file name="estimate.html" server="157.173.209.17" local="134272633422731649" remote="134272633200000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134272649065714149" remote="134272648800000000" Dst="2" />
+<file name="estimate.html" server="157.173.209.17" local="134272678163649182" remote="134272679400000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134272678067152382" remote="134272679400000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134258640942074687" remote="134272352400000000" Dst="2" />
-<file name="estimate.js" server="157.173.209.17" local="134272646854610879" remote="134272646400000000" Dst="2" />
+<file name="estimate.js" server="157.173.209.17" local="134272682411134227" remote="134272682400000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134258640942069687" remote="134272501800000000" Dst="2" />
 <file name="auth.js" server="157.173.209.17" local="134272586055416173" remote="134272585800000000" Dst="2" />
 <file name=".gitignore" server="157.173.209.17" local="134258640941939590" remote="134272519200000000" Dst="2" />
@@ -45,7 +45,7 @@
 <file name="product_list.csv" server="157.173.209.17" local="134258640942179687" remote="134272519200000000" Dst="2" />
 <file name="products.html" server="157.173.209.17" local="134258640942179687" remote="134272519200000000" Dst="2" />
 <file name="robots.txt" server="157.173.209.17" local="134258640942179687" remote="134272519200000000" Dst="2" />
-<file name="services.html" server="157.173.209.17" local="134258640942184735" remote="134272519200000000" Dst="2" />
+<file name="services.html" server="157.173.209.17" local="134272673767002637" remote="134272675200000000" Dst="2" />
 <file name="sitemap.xml" server="157.173.209.17" local="134258640942184735" remote="134272519200000000" Dst="2" />
 <file name="supabase_schema.sql" server="157.173.209.17" local="134272514764023859" remote="134272519200000000" Dst="2" />
 <file name="sw.js" server="157.173.209.17" local="134258640942184735" remote="134272519200000000" Dst="2" />
@@ -53,4 +53,5 @@
 <file name="default.php" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="requirements.txt" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="trello.js" server="157.173.209.17" local="134272652834198516" remote="134272653000000000" Dst="2" />
+<file name="materials_library.js" server="157.173.209.17" local="134272682333902912" remote="134272682400000000" Dst="2" />
 </dwsync>

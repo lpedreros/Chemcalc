@@ -619,6 +619,57 @@
     </div>
     <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">&#10003; Save Business Info</button>
     <p class="modal-footer-link" id="bizSaveStatus"></p>
+
+    <!-- Materials Library (Pro) -->
+    <hr class="trello-divider" />
+    <h5 class="trello-section-title">&#128218; My Materials Library <span class="pro-badge-inline">Pro</span></h5>
+    <p class="modal-sub">Save your go-to materials and paint products. Start typing in any item name field to search your library.</p>
+
+    <!-- Add new item form -->
+    <div class="lib-add-form row g-2 mb-3">
+      <div class="col-12 col-md-4">
+        <input type="text" id="libNewName" class="est-input" placeholder="Item name (required)" />
+      </div>
+      <div class="col-6 col-md-2">
+        <select id="libNewType" class="est-input">
+          <option value="material">Material</option>
+          <option value="paint">Paint</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-1">
+        <input type="text" id="libNewUnit" class="est-input" placeholder="Unit" value="each" />
+      </div>
+      <div class="col-6 col-md-2">
+        <input type="number" id="libNewCost" class="est-input" placeholder="Cost $" min="0" step="0.01" />
+      </div>
+      <div class="col-6 col-md-1">
+        <input type="number" id="libNewMarkup" class="est-input" placeholder="Markup %" value="40" min="0" step="1" />
+      </div>
+      <div class="col-12 col-md-2">
+        <button class="btn-modal-secondary w-100" onclick="addLibraryItemFromForm()">+ Add Item</button>
+      </div>
+    </div>
+    <p class="lib-status" id="libStatus"></p>
+
+    <!-- Library table -->
+    <div class="lib-table-wrap">
+      <table class="est-table lib-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Unit</th>
+            <th>Cost</th>
+            <th>Markup %</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="libTableBody">
+          <tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -649,5 +700,6 @@
 <script src="auth.js?v=2"></script>
 <script src="estimate.js?v=2"></script>
 <script src="trello.js?v=2"></script>
+<script src="materials_library.js?v=2"></script>
 </body>
 </html>
