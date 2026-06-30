@@ -165,17 +165,17 @@
         <button id="btnFmtSummary" class="btn-view-toggle active"
           onclick="setFormat('summary')"
           title="Best for quick, small jobs or picky clients. Shows only the final category totals. Keeps the focus on the bottom line so clients don't try to haggle over individual material costs.">
-          Customer Summary
+          Summary
         </button>
         <button id="btnFmtItemized" class="btn-view-toggle pro-feature"
           onclick="proSetFormat('itemized')"
           title="Best for large insurance claims or transparent corporate accounts. Fully breaks down retail pricing for labor, materials, and paint so the client sees exactly where their money is going.">
-          Customer Itemized &#128274;
+          Itemized
         </button>
         <button id="btnFmtInternal" class="btn-view-toggle pro-feature"
           onclick="proSetFormat('internal')"
           title="For your eyes only! Displays your raw wholesale costs, precise material markups, and total gross profit margins. Use this on the dock to make sure you are actually making money on the job before handing it to the client.">
-          Internal Copy &#128274;
+          Internal Copy
         </button>
       </div>
     </div>
@@ -344,7 +344,7 @@
   <!-- ===== REPAIR TASKS (injected by JS) ===== -->
   <div id="tasksContainer"></div>
   <div class="text-center mb-4 d-print-none">
-    <button class="btn-add-task" onclick="addRepairTask()">&#43; Add Another Repair Task</button>
+    <button class="btn-add-task" onclick="openTaskStarter()">&#43; Add Another Repair Task</button>
   </div>
 
   <!-- ===== SCOPE OF WORK (Pro feature — always visible, locked for free) ===== -->
@@ -498,6 +498,37 @@
   </div>
 
 </div><!-- /container -->
+
+<!-- ===== TASK STARTER MODAL ===== -->
+<div class="modal-overlay" id="taskStarterModal" style="display:none;" onclick="overlayClose(event,'taskStarterModal')">
+  <div class="modal-box modal-wide task-starter-modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('taskStarterModal')">&#10005;</button>
+    <h3 class="modal-title">&#43; New Repair Task</h3>
+    <p class="modal-sub">Pick a preset to get started, or add a blank task and customize it yourself.</p>
+
+    <!-- Tabs -->
+    <div class="ts-tabs">
+      <button class="ts-tab active" id="tsTabPresets" onclick="tsShowTab('presets')">&#128196; Presets</button>
+      <button class="ts-tab" id="tsTabMine" onclick="tsShowTab('mine')">&#9733; My Templates</button>
+    </div>
+
+    <!-- Presets Tab -->
+    <div id="tsPanelPresets" class="ts-panel">
+      <div id="tsPresetGrid" class="ts-grid"></div>
+    </div>
+
+    <!-- My Templates Tab -->
+    <div id="tsPanelMine" class="ts-panel" style="display:none;">
+      <div id="tsMyGrid" class="ts-grid"></div>
+      <p id="tsMyEmpty" class="ts-empty" style="display:none;">No saved templates yet. Use a preset or blank task, then click &#9733; Save as Template on any repair card.</p>
+    </div>
+
+    <!-- Blank Task footer -->
+    <div class="ts-footer">
+      <button class="btn-ts-blank" onclick="tsPickBlank()">&#43; Blank Task</button>
+    </div>
+  </div>
+</div>
 
 <!-- ===== LOGIN MODAL ===== -->
 <div class="modal-overlay" id="loginModal" style="display:none;" onclick="overlayClose(event,'loginModal')">
@@ -765,6 +796,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="task_presets.js?v=1"></script>
 <script src="affiliate_links.js?v=5"></script>
 <script src="auth.js?v=5"></script>
 <script src="estimate.js?v=5"></script>

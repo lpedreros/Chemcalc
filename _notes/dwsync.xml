@@ -6,10 +6,10 @@
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134258658772702051" remote="134258658600000000" Dst="2" />
 <file name="chatbot.js" server="157.173.209.17" local="134258660400000000" remote="134258660400000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134258670000000000" remote="134258670000000000" Dst="2" />
-<file name="estimate.html" server="157.173.209.17" local="134272959306711540" remote="134272959000000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134272967673089499" remote="134272977600000000" Dst="2" />
+<file name="estimate.html" server="157.173.209.17" local="134272993567843261" remote="134272994400000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134272998145437395" remote="134273013000000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134258640942074687" remote="134272352400000000" Dst="2" />
-<file name="estimate.js" server="157.173.209.17" local="134272959406082815" remote="134272959000000000" Dst="2" />
+<file name="estimate.js" server="157.173.209.17" local="134272998070002561" remote="134273013000000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134258640942069687" remote="134272501800000000" Dst="2" />
 <file name="auth.js" server="157.173.209.17" local="134272967705625229" remote="134272977600000000" Dst="2" />
 <file name=".gitignore" server="157.173.209.17" local="134258640941939590" remote="134272519200000000" Dst="2" />
@@ -57,4 +57,5 @@
 <file name="history.html" server="157.173.209.17" local="134272967596471071" remote="134272977600000000" Dst="2" />
 <file name="history.js" server="157.173.209.17" local="134272720805859739" remote="134272720800000000" Dst="2" />
 <file name=".htaccess" server="157.173.209.17" local="134272589400000000" remote="134272589400000000" Dst="2" />
+<file name="task_presets.js" server="157.173.209.17" local="134272994478505521" remote="134272994400000000" Dst="2" />
 </dwsync>

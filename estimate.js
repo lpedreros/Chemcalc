@@ -25,11 +25,11 @@ function setUserTier(tier) {
     el.classList.toggle('pro-locked-card', !isPro);
   });
 
-  // Update Itemized button label: show lock icon for free, remove for pro
-  var btnItemized = document.getElementById('btnPrintItemized');
-  if (btnItemized) {
-    btnItemized.innerHTML = isPro ? 'Itemized' : 'Itemized &#128274;';
-  }
+  // Update format toggle button labels: show lock icon for free, remove for pro
+  var btnFmtItemized = document.getElementById('btnFmtItemized');
+  if (btnFmtItemized) btnFmtItemized.innerHTML = isPro ? 'Itemized' : 'Itemized &#128274;';
+  var btnFmtInternal = document.getElementById('btnFmtInternal');
+  if (btnFmtInternal) btnFmtInternal.innerHTML = isPro ? 'Internal Copy' : 'Internal Copy &#128274;';
 
   // Internal summary (logged-in only)
   var internalSummary = document.getElementById('internalSummary');
@@ -106,6 +106,10 @@ function setFormat(fmt) {
     var btn = document.getElementById('btnFmt' + f.charAt(0).toUpperCase() + f.slice(1));
     if (btn) btn.classList.toggle('active', f === fmt);
   });
+  // Body classes for screen + print differentiation
+  document.body.classList.toggle('fmt-summary',  fmt === 'summary');
+  document.body.classList.toggle('fmt-itemized',  fmt === 'itemized');
+  document.body.classList.toggle('fmt-internal',  fmt === 'internal');
   // Apply view + print style
   if (fmt === 'summary') {
     setView('customer');
@@ -451,6 +455,8 @@ function initEstimate() {
   document.getElementById('estimateValidUntil').value = formatDate(validUntil);
   // Populate print header once dates are set
   setTimeout(populatePrintHeader, 0);
+  // Apply initial format so body classes are set correctly
+  setFormat('summary');
 }
 
 function checkExpiry() {
@@ -651,6 +657,7 @@ function addRepairTask(taskName, taskList) {
     '<div class="repair-card-header">' +
       '<input type="text" class="repair-name-input" value="' + escHtml(name) + '" oninput="updateLaborSummary()" placeholder="Repair name" />' +
       '<div class="repair-card-actions d-print-none">' +
+        '<button class="btn-save-template d-print-none" onclick="saveTaskAsTemplate(' + id + ')" title="Save as My Template">&#9733; Save as Template</button>' +
         '<button class="btn-dup-task" onclick="duplicateTask(' + id + ')" title="Duplicate this repair">&#128260; Duplicate</button>' +
         '<button class="btn-del-task" onclick="deleteTask(' + id + ')" title="Remove this repair">&#10005;</button>' +
       '</div>' +
@@ -1261,4 +1268,229 @@ function formatDate(d) {
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 function escHtml(str) {
   return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ============================================================
+   TASK STARTER MODAL
+   ============================================================ */
+
+var _userTemplates    = [];   // in-memory cache of user's saved templates
+var _tsTemplatesLoaded = false;
+
+/* ── Open modal (Pro-gated) ──────────────────────────────── */
+function openTaskStarter() {
+  if (!_checkPro()) { openModal('upgradeModal'); return; }
+  tsShowTab('presets');
+  tsRenderPresets();
+  tsLoadUserTemplates();
+  openModal('taskStarterModal');
+}
+
+/* ── Tab switcher ────────────────────────────────────────── */
+function tsShowTab(tab) {
+  document.getElementById('tsPanelPresets').style.display = tab === 'presets' ? '' : 'none';
+  document.getElementById('tsPanelMine').style.display    = tab === 'mine'    ? '' : 'none';
+  document.getElementById('tsTabPresets').classList.toggle('active', tab === 'presets');
+  document.getElementById('tsTabMine').classList.toggle('active',    tab === 'mine');
+}
+
+/* ── Render shared presets grid ──────────────────────────── */
+function tsRenderPresets() {
+  var grid = document.getElementById('tsPresetGrid');
+  if (!grid || typeof TASK_PRESETS === 'undefined') return;
+
+  // Group by category
+  var categories = {};
+  TASK_PRESETS.forEach(function(p) {
+    var cat = p.category || 'General';
+    if (!categories[cat]) categories[cat] = [];
+    categories[cat].push(p);
+  });
+
+  var html = '';
+  Object.keys(categories).forEach(function(cat) {
+    html += '<div class="ts-category-label">' + escHtml(cat) + '</div>';
+    html += '<div class="ts-row">';
+    categories[cat].forEach(function(p, i) {
+      var idx = TASK_PRESETS.indexOf(p);
+      html +=
+        '<div class="ts-card" onclick="tsApplyPreset(' + idx + ')">' +
+          '<div class="ts-card-icon">' + (p.icon || '🔧') + '</div>' +
+          '<div class="ts-card-name">' + escHtml(p.name) + '</div>' +
+          '<div class="ts-card-desc">' + escHtml(p.description || '') + '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+/* ── Apply a shared preset ───────────────────────────────── */
+function tsApplyPreset(idx) {
+  var preset = (typeof TASK_PRESETS !== 'undefined') ? TASK_PRESETS[idx] : null;
+  if (!preset) return;
+  closeModal('taskStarterModal');
+  addRepairTask(preset.name, preset.taskRows);
+  // Populate scope textarea with steps
+  if (preset.scopeSteps && preset.scopeSteps.length) {
+    var taskId = taskCounter; // addRepairTask already incremented it
+    var scopeEl = document.getElementById('repairScope' + taskId);
+    if (scopeEl) {
+      scopeEl.value = preset.scopeSteps.map(function(s, i) {
+        return (i + 1) + '. ' + s;
+      }).join('\n');
+      // Show the scope textarea
+      var toggle = scopeEl.previousElementSibling;
+      if (toggle && toggle.classList.contains('repair-scope-toggle')) {
+        scopeEl.style.display = 'block';
+        toggle.textContent = '- Hide scope note';
+      }
+    }
+  }
+}
+
+/* ── Blank task ──────────────────────────────────────────── */
+function tsPickBlank() {
+  closeModal('taskStarterModal');
+  addRepairTask();
+}
+
+/* ── Load user templates from Supabase ───────────────────── */
+async function tsLoadUserTemplates() {
+  if (!_sb) return;
+  var { data: { session } } = await _sb.auth.getSession();
+  if (!session) { tsRenderMyTemplates(); return; }
+  var { data, error } = await _sb
+    .from('user_task_templates')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) { console.warn('Template load error:', error.message); return; }
+  _userTemplates = data || [];
+  _tsTemplatesLoaded = true;
+  tsRenderMyTemplates();
+}
+
+/* ── Render My Templates tab ─────────────────────────────── */
+function tsRenderMyTemplates() {
+  var grid  = document.getElementById('tsMyGrid');
+  var empty = document.getElementById('tsMyEmpty');
+  if (!grid) return;
+  if (_userTemplates.length === 0) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  grid.innerHTML = '<div class="ts-row">' + _userTemplates.map(function(t) {
+    var rows = t.task_rows ? JSON.parse(typeof t.task_rows === 'string' ? t.task_rows : JSON.stringify(t.task_rows)) : [];
+    var rowCount = rows.length;
+    return (
+      '<div class="ts-card ts-card-mine">' +
+        '<div class="ts-card-icon">&#9733;</div>' +
+        '<div class="ts-card-name">' + escHtml(t.name) + '</div>' +
+        '<div class="ts-card-desc">' + rowCount + ' step' + (rowCount !== 1 ? 's' : '') + '</div>' +
+        '<div class="ts-card-actions">' +
+          '<button class="ts-use-btn" onclick="tsApplyUserTemplate(\'' + t.id + '\')">Use</button>' +
+          '<button class="ts-del-btn" onclick="tsDeleteUserTemplate(\'' + t.id + '\', event)">&#10005;</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join('') + '</div>';
+}
+
+/* ── Apply a user template ───────────────────────────────── */
+function tsApplyUserTemplate(id) {
+  var t = _userTemplates.find(function(x) { return x.id === id; });
+  if (!t) return;
+  closeModal('taskStarterModal');
+  var rows = t.task_rows ? (typeof t.task_rows === 'string' ? JSON.parse(t.task_rows) : t.task_rows) : [];
+  addRepairTask(t.name, rows);
+  // Populate scope textarea with saved steps
+  if (t.scope_steps) {
+    var taskId = taskCounter;
+    var scopeEl = document.getElementById('repairScope' + taskId);
+    if (scopeEl) {
+      scopeEl.value = t.scope_steps;
+      var toggle = scopeEl.previousElementSibling;
+      if (toggle && toggle.classList.contains('repair-scope-toggle')) {
+        scopeEl.style.display = 'block';
+        toggle.textContent = '- Hide scope note';
+      }
+    }
+  }
+}
+
+/* ── Save current task card as a user template ───────────── */
+async function saveTaskAsTemplate(cardId) {
+  if (!_checkPro()) { openModal('upgradeModal'); return; }
+  if (!_sb) return;
+  var { data: { session } } = await _sb.auth.getSession();
+  if (!session) { openModal('loginModal'); return; }
+
+  var card = document.getElementById('repairCard' + cardId);
+  if (!card) return;
+
+  var nameInput = card.querySelector('.repair-name-input');
+  var tName = nameInput ? nameInput.value.trim() : 'My Template';
+  if (!tName) tName = 'My Template';
+
+  // Collect task rows
+  var rows = [];
+  card.querySelectorAll('#taskTable' + cardId + ' tbody tr').forEach(function(tr) {
+    var n = tr.querySelector('input[type="text"]');
+    var h = tr.querySelector('.task-hours');
+    rows.push({ name: n ? n.value : '', hours: parseFloat(h ? h.value : 0) || 0 });
+  });
+
+  // Collect scope text
+  var scopeEl = document.getElementById('repairScope' + cardId);
+  var scopeText = scopeEl ? scopeEl.value.trim() : '';
+
+  // Duplicate check
+  var existing = _userTemplates.find(function(t) {
+    return t.name.toLowerCase() === tName.toLowerCase();
+  });
+  if (existing) {
+    if (!confirm('"' + tName + '" already exists in My Templates. Overwrite it?')) return;
+    var { error: upErr } = await _sb
+      .from('user_task_templates')
+      .update({ task_rows: rows, scope_steps: scopeText })
+      .eq('id', existing.id);
+    if (upErr) { alert('Save failed: ' + upErr.message); return; }
+    existing.task_rows  = rows;
+    existing.scope_steps = scopeText;
+  } else {
+    var payload = {
+      user_id:     session.user.id,
+      name:        tName,
+      scope_steps: scopeText || null,
+      task_rows:   rows
+    };
+    var { data: inserted, error: insErr } = await _sb
+      .from('user_task_templates')
+      .insert(payload)
+      .select()
+      .single();
+    if (insErr) { alert('Save failed: ' + insErr.message); return; }
+    _userTemplates.unshift(inserted);
+  }
+
+  // Visual feedback on the button
+  var btn = card.querySelector('.btn-save-template');
+  if (btn) {
+    var orig = btn.innerHTML;
+    btn.innerHTML = '&#10003; Saved!';
+    btn.style.color = '#7ed47e';
+    setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+  }
+}
+
+/* ── Delete a user template ──────────────────────────────── */
+async function tsDeleteUserTemplate(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this template?')) return;
+  var { error } = await _sb.from('user_task_templates').delete().eq('id', id);
+  if (error) { alert('Delete failed: ' + error.message); return; }
+  _userTemplates = _userTemplates.filter(function(t) { return t.id !== id; });
+  tsRenderMyTemplates();
 }
