@@ -42,7 +42,8 @@ async function saveLibraryItem(item) {
     unit:      item.unit || 'each',
     cost:      parseFloat(item.cost) || 0,
     markup:    parseFloat(item.markup) || 40,
-    item_type: item.item_type || 'material'
+    item_type: item.item_type || 'material',
+    buy_url:   item.buy_url ? item.buy_url.trim() : null
   };
   var { data, error } = await _sb.from('materials_library').insert(payload).select().single();
   if (error) { console.warn('Library save error:', error.message); return null; }
@@ -81,7 +82,7 @@ function renderLibraryTable() {
   var tbody = document.getElementById('libTableBody');
   if (!tbody) return;
   if (_matLib.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">No saved items yet. Add your first item below.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:1rem;">No saved items yet. Add your first item below.</td></tr>';
     return;
   }
   tbody.innerHTML = _matLib.map(item => `
@@ -97,6 +98,7 @@ function renderLibraryTable() {
       <td><input class="est-input lib-edit" data-field="unit" value="${_libEscHtml(item.unit)}" style="width:70px;" /></td>
       <td><input class="est-input lib-edit" data-field="cost" type="number" min="0" step="0.01" value="${item.cost}" style="width:80px;" /></td>
       <td><input class="est-input lib-edit" data-field="markup" type="number" min="0" step="1" value="${item.markup}" style="width:60px;" /></td>
+      <td><input class="est-input lib-edit" data-field="buy_url" value="${_libEscHtml(item.buy_url || '')}" placeholder="https://..." style="width:160px;" /></td>
       <td style="white-space:nowrap;">
         <button class="btn-lib-save" onclick="commitLibEdit('${item.id}')" title="Save changes">&#10003;</button>
         <button class="btn-lib-del"  onclick="confirmDeleteLib('${item.id}', '${_libEscHtml(item.name)}')" title="Delete">&#10005;</button>
@@ -113,8 +115,9 @@ async function commitLibEdit(id) {
   tr.querySelectorAll('.lib-edit').forEach(el => {
     fields[el.dataset.field] = el.tagName === 'SELECT' ? el.value : el.value;
   });
-  fields.cost   = parseFloat(fields.cost)   || 0;
-  fields.markup = parseFloat(fields.markup) || 40;
+  fields.cost    = parseFloat(fields.cost)   || 0;
+  fields.markup  = parseFloat(fields.markup) || 40;
+  fields.buy_url = fields.buy_url ? fields.buy_url.trim() : null;
   await updateLibraryItem(id, fields);
   showLibStatus('Saved.', 'ok');
 }
@@ -133,13 +136,15 @@ async function addLibraryItemFromForm() {
   var unit   = document.getElementById('libNewUnit')?.value?.trim() || 'each';
   var cost   = document.getElementById('libNewCost')?.value;
   var markup = document.getElementById('libNewMarkup')?.value;
+  var buyUrl = document.getElementById('libNewUrl')?.value?.trim() || null;
   if (!name) { showLibStatus('Name is required.', 'error'); return; }
-  var result = await saveLibraryItem({ name, item_type: type, unit, cost, markup });
+  var result = await saveLibraryItem({ name, item_type: type, unit, cost, markup, buy_url: buyUrl });
   if (result) {
     document.getElementById('libNewName').value   = '';
     document.getElementById('libNewCost').value   = '';
     document.getElementById('libNewUnit').value   = 'each';
     document.getElementById('libNewMarkup').value = '40';
+    document.getElementById('libNewUrl').value    = '';
     showLibStatus('Item added to library.', 'ok');
   }
 }
@@ -160,16 +165,17 @@ async function saveRowToLibrary(btn) {
   var name   = tr.querySelector('.item-name-input')?.value?.trim();
   var cost   = tr.querySelector('.cost-input')?.value;
   var markup = tr.querySelector('.markup-row-input')?.value;
+  var buyUrl = tr.querySelector('.buy-link')?.href || null;
   var tbody  = tr.closest('tbody');
   var type   = tbody?.id === 'paintBody' ? 'paint' : 'material';
   if (!name) { alert('Enter an item name before saving to library.'); return; }
   var existing = _matLib.find(i => i.name.toLowerCase() === name.toLowerCase());
   if (existing) {
     if (!confirm('"' + name + '" is already in your library. Update it?')) return;
-    await updateLibraryItem(existing.id, { cost: parseFloat(cost)||0, markup: parseFloat(markup)||40 });
+    await updateLibraryItem(existing.id, { cost: parseFloat(cost)||0, markup: parseFloat(markup)||40, buy_url: buyUrl });
     btn.title = 'Updated in library!';
   } else {
-    await saveLibraryItem({ name, item_type: type, cost, markup, unit: 'each' });
+    await saveLibraryItem({ name, item_type: type, cost, markup, unit: 'each', buy_url: buyUrl });
     btn.title = 'Saved to library!';
   }
   btn.style.color = '#7ed47e';
@@ -246,8 +252,19 @@ function fillRowFromLibrary(nameInput, item) {
   nameInput.value = item.name;
   var costInput   = tr.querySelector('.cost-input');
   var markupInput = tr.querySelector('.markup-row-input');
+  var buyCell     = tr.querySelector('td:has(.buy-link, .buy-link-none)') ||
+                    tr.querySelector('.buy-link')?.closest('td') ||
+                    tr.querySelector('.buy-link-none')?.closest('td');
   if (costInput)   costInput.value   = item.cost;
   if (markupInput) markupInput.value = item.markup;
+  // Populate Buy Here link if the item has a URL
+  if (buyCell) {
+    if (item.buy_url) {
+      buyCell.innerHTML = '<a href="' + _libEscHtml(item.buy_url) + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>';
+    } else {
+      buyCell.innerHTML = '<span class="buy-link-none">&mdash;</span>';
+    }
+  }
   // Trigger recalc
   if (costInput) costInput.dispatchEvent(new Event('input'));
 }
