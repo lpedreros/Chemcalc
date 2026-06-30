@@ -146,30 +146,30 @@ async function doLogout() {
 /* ── Save estimate to Supabase ───────────────────────────── */
 async function saveEstimateToSupabase(payload) {
   if (!currentUser) return { error: { message: 'Not logged in.' } };
-
   const row = {
     user_id:         currentUser.id,
     company_name:    currentProfile?.company_name || 'ChemCalc',
     estimate_number: payload.estimateNumber,
-    valid_until:     payload.validUntil || null,
+    valid_until:     payload.estimateValidUntil || null,
     customer_first:  payload.clientFirst,
-customer_last:   payload.clientLast,
-customer_phone:  payload.clientPhone,
-customer_email:  payload.clientEmail,
-boat_name:       payload.boatName,
-boat_make:       payload.boatMake,
-boat_model:      payload.boatModel,
-hin:             payload.hin,
-materials_total: payload.totals.materials,
-    paint_total:     payload.totals.paint,
-    labor_total:     payload.totals.labor,
-    grand_total:     payload.totals.grand,
+    customer_last:   payload.clientLast,
+    customer_phone:  payload.clientPhone,
+    customer_email:  payload.clientEmail,
+    boat_name:       payload.boatName,
+    boat_make:       payload.boatMake,
+    boat_model:      payload.boatModel,
+    hin:             payload.boatHIN,
+    materials_total: payload.materials.reduce(function(s,r){ return s + (r.qty * r.cost * (1 + r.markup/100)); }, 0),
+    paint_total:     payload.paint.reduce(function(s,r){ return s + (r.qty * r.cost * (1 + r.markup/100)); }, 0),
+    labor_total:     payload.grandTotal,
+    grand_total:     payload.grandTotal,
     hourly_rate:     payload.hourlyRate,
     estimate_data:   payload,
     status:          'draft',
-    notes:           payload.notes || ''
+    notes:           payload.scopeNotes || ''
   };
-
+  return await _sb.from('estimates').insert(row).select().single();
+}
   return await _sb.from('estimates').insert(row).select().single();
 }
 
