@@ -140,7 +140,7 @@
       <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
       <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
       <button class="btn-tier pro-feature" id="bizInfoBtn" onclick="proAction('bizInfoModal')">&#9998; My Business Info</button>
-      <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
+      <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Join Free Beta</button>
     </span>
   </div>
 
@@ -346,10 +346,31 @@
   <div class="est-card pro-feature-card" id="scopeCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Scope of Work / Notes</span>
-      <span class="pro-badge">PRO</span>
+      <span class="pro-badge">BETA</span>
+    </div>
+    <div class="scope-snippet-row d-print-none">
+      <select id="scopeSnippet" class="scope-snippet-select" onchange="insertScopeSnippet(this)">
+        <option value="">&#128203; Insert Scope Template&hellip;</option>
+        <optgroup label="Cosmetic Repairs">
+          <option value="gelcoat">Gelcoat Repair</option>
+          <option value="spider">Spider Cracks (Stress Cracks)</option>
+          <option value="paint">Full Paint Job (Awlcraft 2000)</option>
+          <option value="buff">Hull Buff &amp; Wax (Oxidation Removal)</option>
+        </optgroup>
+        <optgroup label="Structural Repairs">
+          <option value="fiberglass">Fiberglass Repair</option>
+          <option value="keel">Keel Repair</option>
+          <option value="transom">Transom Core Replacement</option>
+          <option value="stringer">Stringer / Bulkhead Repair</option>
+        </optgroup>
+        <optgroup label="Hardware &amp; Trim">
+          <option value="rubrail">Rub Rail Replacement</option>
+          <option value="thruhull">Thru-Hull / Seacock Replacement</option>
+        </optgroup>
+      </select>
     </div>
     <textarea id="scopeNotes" class="est-textarea" rows="5" placeholder="Optionally describe the work to be performed, any special conditions, exclusions, etc. This will appear on the printed estimate for Pro users."></textarea>
-    <p class="scope-hint d-print-none">Optional. Only appears on printed/exported estimates for Pro accounts.</p>
+    <p class="scope-hint d-print-none">Optional. Appears on all printed/exported estimates for Beta users.</p>
   </div>
 
   <!-- ===== SUMMARY ===== -->
@@ -381,6 +402,37 @@
       <div class="summary-row summary-grand">
         <span>ESTIMATE TOTAL</span>
         <span id="grandTotal">$0.00</span>
+      </div>
+    </div>
+
+    <!-- Deposit Calculator (Pro) -->
+    <div id="depositCalcBlock" class="deposit-calc-block d-print-none d-none">
+      <div class="summary-divider"></div>
+      <div class="deposit-row">
+        <label class="deposit-label" for="depositToggle">
+          <input type="checkbox" id="depositToggle" onchange="updateDeposit()" />
+          Require Deposit
+        </label>
+        <select id="depositPct" class="deposit-select" onchange="updateDeposit()">
+          <option value="50">50%</option>
+          <option value="33">33%</option>
+          <option value="25">25%</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input type="number" id="depositCustomPct" class="deposit-custom-input d-none" min="1" max="100" step="1" placeholder="%" oninput="updateDeposit()" />
+      </div>
+    </div>
+
+    <!-- Deposit breakdown — shown on screen and in print when deposit is active -->
+    <div id="depositSummaryBlock" class="d-none">
+      <div class="summary-divider"></div>
+      <div class="summary-row deposit-line">
+        <span id="depositLabel">Deposit Required (50%)</span>
+        <span id="depositAmount">$0.00</span>
+      </div>
+      <div class="summary-row deposit-balance-line">
+        <span>Balance Due on Completion</span>
+        <span id="depositBalance">$0.00</span>
       </div>
     </div>
 
@@ -492,7 +544,7 @@
 <div class="modal-overlay" id="upgradeModal" style="display:none;" onclick="overlayClose(event,'upgradeModal')">
   <div class="modal-box modal-wide" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('upgradeModal')">&#10005;</button>
-    <h3 class="modal-title">Choose Your Plan</h3>
+    <h3 class="modal-title">Unlock Pro Features — Free During Beta</h3>
     <div class="plan-row">
       <!-- FREE -->
       <div class="plan-card">
@@ -513,9 +565,9 @@
       </div>
       <!-- PRO -->
       <div class="plan-card plan-featured">
-        <div class="plan-badge">Most Popular</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-price">$9<span>/mo</span></div>
+        <div class="plan-badge">Free During Launch &#127881;</div>
+        <div class="plan-name">Beta Pro</div>
+        <div class="plan-price"><span class="plan-price-strike">$19</span> <span class="plan-price-free">FREE</span></div>
         <ul class="plan-features">
           <li class="feat-yes">&#10003; Everything in Free</li>
           <li class="feat-yes">&#10003; Save &amp; load drafts (browser)</li>
@@ -526,9 +578,10 @@
           <li class="feat-yes">&#10003; Estimate history &amp; database</li>
           <li class="feat-yes">&#10003; Trello card auto-creation</li>
         </ul>
-        <button class="btn-plan btn-plan-pro" onclick="alert('Pro plan coming soon! Check back shortly.')">Upgrade to Pro</button>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('upgradeModal'); openModal('authModal')">Join Free Beta — Unlock Now</button>
       </div>
     </div>
+    <p class="plan-beta-note">&#128276; Future price will be $19/mo — sign up now to lock in free access and get early-adopter pricing when we launch.</p>
   </div>
 </div>
 
@@ -705,5 +758,10 @@
 <script src="estimate.js?v=5"></script>
 <script src="trello.js?v=5"></script>
 <script src="materials_library.js?v=5"></script>
+<!-- ===== FEEDBACK BUTTON ===== -->
+<div class="feedback-btn d-print-none" id="feedbackBtn">
+  <a href="mailto:feedback@chemcalc.co?subject=ChemCalc%20Feedback&body=Hi%2C%20I%20wanted%20to%20share%20some%20feedback%20about%20ChemCalc%3A%0A%0A" class="feedback-link">&#128075; Feedback</a>
+</div>
+
 </body>
 </html>

@@ -58,6 +58,9 @@ function setUserTier(tier) {
   var navHistoryLink = document.getElementById('navHistoryLink');
   if (navHistoryLink) navHistoryLink.classList.toggle('d-none', !isPro);
 
+  // Deposit calculator — Pro only
+  showDepositCalc(isPro);
+
   // Populate print header with current data
   populatePrintHeader();
 }
@@ -803,6 +806,82 @@ function updateSummary() {
   document.getElementById('sumCostPaint').textContent = fmtCurrency(paintCost);
   document.getElementById('grossProfit').textContent = fmtCurrency(grossProfit);
   document.getElementById('marginPct').textContent = margin.toFixed(1) + '%';
+  updateDeposit();
+}
+
+
+/* ── Scope of Work Snippets ──────────────────────────── */
+var _scopeSnippets = {
+  gelcoat:   'Gelcoat Repair:\nGrind out damaged gelcoat to sound fiberglass laminate. Thoroughly clean and prep the area using styrene/acetone solvent. Apply color-matched marine gelcoat mixed with appropriate catalyst and PVA curing agent. Block sand repaired area progressively from 400-grit up to 2000-grit compound. Machine buff and polish to match the factory gloss and profile of the surrounding hull.',
+  spider:    'Spider Cracks (Stress Cracks):\nV-groove cracks down to the laminate to relieve stress points. Fill with reinforced compound, sand flush, apply color-matched gelcoat, and buff to blend with the surrounding surface.',
+  paint:     'Full Paint Job (Awlcraft 2000):\nDe-wax and chemically clean all surfaces. Machine sand existing coating to create a mechanical bond profile. Repair minor surface imperfections using marine fairing compound. Apply multiple coats of high-build epoxy primer, followed by block sanding to ensure a perfectly flat surface. Apply 3 cross-coats of Awlcraft 2000 acrylic urethane topcoat via professional spray equipment under controlled environmental conditions to achieve a high-gloss, durable marine finish.',
+  buff:      'Hull Buff & Wax (Oxidation Removal):\nMachine compound hull surfaces using heavy-cut wool pads to remove oxidation. Follow with a fine finishing polish to restore depth, and seal with premium marine paste wax or ceramic coating.',
+  fiberglass:'Fiberglass Repair:\nGrind back fractured laminate to a 12:1 bevel ratio to ensure structural bonding. Wipe down area with chemical solvent to remove contaminants. Lay up alternating layers of marine-grade biaxial fiberglass cloth saturated with high-strength resin system. Allow full cure cycle before rough-fairing the surface with structural epoxy compound to restore original hull lines and strength profiles.',
+  keel:      'Keel Repair:\nGrind back damaged or gouged keel area to clean structure. Rebuild the keel line with high-strength biaxial cloth and vinyl ester/epoxy resin. Fair, barrier coat, and touch up bottom paint or gelcoat.',
+  transom:   'Transom Core Replacement:\nRemove top skin or outer skin to access rotted wood core. Excavate degraded material, clean the inner skin, and laminate a new high-density foam or marine plywood core. Re-glass with heavy structural laminate.',
+  stringer:  'Stringer / Bulkhead Repair:\nGrind away fractured or delaminated fiberglass tabbing around structural members. Prep surfaces, inject structural adhesive or replace rotted wood, and re-tab to the hull using heavy biaxial glass.',
+  rubrail:   'Rub Rail Replacement:\nRemove old rub rail and scrape away old sealant. Seal old fastener holes, bed the new track in marine polyurethane sealant (3M 5200/4200), and insert the new vinyl insert or stainless steel track.',
+  thruhull:  'Thru-Hull / Seacock Replacement:\nRemove corroded or damaged fitting. Sand and clean the fiberglass backing area. Install a new marine-grade thru-hull valve bedded in marine polyurethane sealant, tightening to factory safety torque specs.'
+};
+
+function insertScopeSnippet(sel) {
+  var key = sel.value;
+  if (!key) return;
+  var ta = document.getElementById('scopeNotes');
+  if (!ta) return;
+  var text = _scopeSnippets[key] || '';
+  ta.value += (ta.value ? '\n\n' : '') + text;
+  sel.value = ''; // reset dropdown
+  ta.focus();
+}
+
+/* ── Deposit Calculator ───────────────────────────────── */
+function updateDeposit() {
+  var toggle  = document.getElementById('depositToggle');
+  var pctSel  = document.getElementById('depositPct');
+  var custom  = document.getElementById('depositCustomPct');
+  var block   = document.getElementById('depositSummaryBlock');
+  if (!toggle || !block) return;
+
+  // Show/hide custom input
+  if (pctSel.value === 'custom') {
+    custom.classList.remove('d-none');
+  } else {
+    custom.classList.add('d-none');
+  }
+
+  if (!toggle.checked) {
+    block.classList.add('d-none');
+    return;
+  }
+
+  var pct = pctSel.value === 'custom'
+    ? (parseFloat(custom.value) || 0)
+    : parseFloat(pctSel.value);
+
+  if (pct <= 0) { block.classList.add('d-none'); return; }
+
+  var deposit  = grandTotalValue * (pct / 100);
+  var balance  = grandTotalValue - deposit;
+
+  document.getElementById('depositLabel').textContent  = 'Deposit Required (' + pct + '%)';
+  document.getElementById('depositAmount').textContent  = fmtCurrency(deposit);
+  document.getElementById('depositBalance').textContent = fmtCurrency(balance);
+  block.classList.remove('d-none');
+}
+
+function showDepositCalc(show) {
+  var block = document.getElementById('depositCalcBlock');
+  if (block) {
+    if (show) block.classList.remove('d-none');
+    else      block.classList.add('d-none');
+  }
+  if (!show) {
+    var summaryBlock = document.getElementById('depositSummaryBlock');
+    if (summaryBlock) summaryBlock.classList.add('d-none');
+    var toggle = document.getElementById('depositToggle');
+    if (toggle) toggle.checked = false;
+  }
 }
 
 function calcSectionCost(bodyId) {

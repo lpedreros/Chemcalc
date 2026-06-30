@@ -1140,6 +1140,32 @@ body.customer-view .markup-control { display: none !important; }
   body.free-user .repair-card { padding: 4pt 0 !important; }
   body.free-user .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
   /* ChemCalc branding footer line */
+
+  /* ── Scope of Work: show for pro, hide for free ── */
+  body.pro-user #scopeCard { display: block !important; }
+  body.pro-user #scopeCard .scope-snippet-row { display: none !important; }
+  body.print-summary #scopeCard { display: block !important; }
+  body.print-summary #scopeCard .scope-snippet-row { display: none !important; }
+  body.print-itemized #scopeCard { display: block !important; }
+  body.print-itemized #scopeCard .scope-snippet-row { display: none !important; }
+
+  /* ── Scope textarea: render as text on print ── */
+  #scopeCard .est-textarea {
+    border: none !important;
+    background: transparent !important;
+    resize: none !important;
+    color: #000 !important;
+    font-size: 9pt !important;
+    line-height: 1.5 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+  }
+  #scopeCard .est-card-title { color: #000 !important; font-size: 10pt !important; }
+  #scopeCard .pro-badge { display: none !important; }
+  #scopeCard.pro-locked-card { opacity: 1 !important; pointer-events: auto !important; filter: none !important; }
+  #scopeCard.pro-locked-card::after { display: none !important; }
   body.free-user .est-legal-card::after {
     content: 'Estimate generated with ChemCalc Marine Repair Estimator — chemcalc.co';
     display: block !important;
@@ -1684,4 +1710,142 @@ body.pro-user .internal-col { display: table-cell !important; }
   .hist-stat-val { font-size: 1.1rem; }
   .col-vessel, .col-date { display: none; }
   .hist-action-btn { padding: 0.25rem 0.5rem; font-size: 0.72rem; }
+}
+
+/* ============================================================
+   DEPOSIT CALCULATOR
+   ============================================================ */
+.deposit-calc-block {
+  padding: 0.5rem 0 0;
+}
+
+.deposit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+.deposit-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+}
+
+.deposit-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #89CFF0;
+}
+
+.deposit-select {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.deposit-select:focus { outline: none; border-color: #89CFF0; }
+
+.deposit-custom-input {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  width: 70px;
+}
+
+.deposit-custom-input:focus { outline: none; border-color: #89CFF0; }
+
+.deposit-line span:first-child,
+.deposit-balance-line span:first-child {
+  color: #89CFF0;
+  font-weight: 600;
+}
+
+.deposit-balance-line span:last-child {
+  color: #7ed47e;
+  font-weight: 700;
+}
+
+/* ============================================================
+   SCOPE OF WORK SNIPPETS
+   ============================================================ */
+.scope-snippet-row {
+  margin-bottom: 0.5rem;
+}
+
+.scope-snippet-select {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #89CFF0;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+}
+
+.scope-snippet-select:focus { outline: none; border-color: #89CFF0; }
+
+/* ============================================================
+   FEEDBACK BUTTON
+   ============================================================ */
+.feedback-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+}
+
+.feedback-link {
+  display: inline-block;
+  background: #89CFF0;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  transition: background 0.2s;
+}
+
+.feedback-link:hover { background: #6bb8e0; color: #000; }
+
+/* ============================================================
+   BETA PLAN PRICING
+   ============================================================ */
+.plan-price-strike {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 1.2rem;
+  margin-right: 0.3rem;
+}
+
+.plan-price-free {
+  color: #7ed47e;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.plan-beta-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin: 1rem 0 0;
+  padding: 0 1rem;
 }
