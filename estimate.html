@@ -11,7 +11,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="Marine Repair Estimator | ChemCalc" />
-  <meta property="og:description" content="Build professional marine repair estimates in minutes. Itemized labor, materials, and paint costs — free for contractors." />
+  <meta property="og:description" content="Build professional marine repair estimates in minutes. Itemized labor, materials, and paint costs - free for contractors." />
   <meta property="og:url" content="https://chemcalc.co/estimate.html" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
@@ -19,7 +19,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Marine Repair Estimator | ChemCalc" />
-  <meta name="twitter:description" content="Build professional marine repair estimates in minutes. Itemized labor, materials, and paint costs — free for contractors." />
+  <meta name="twitter:description" content="Build professional marine repair estimates in minutes. Itemized labor, materials, and paint costs - free for contractors." />
   <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
 
   <!-- JSON-LD Structured Data -->
@@ -172,8 +172,14 @@
   </div>
 
   <!-- ===== ESTIMATE INFO ===== -->
-  <div class="est-card">
-    <div class="est-card-title">Estimate Information</div>
+  <div class="est-card" id="estimateInfoCard">
+    <div class="est-card-title d-flex justify-content-between align-items-center">
+      <span>Estimate Information</span>
+      <button class="help-icon" onclick="showHelp('helpEstimateInfo')" title="Help">?</button>
+    </div>
+    <div class="help-popover" id="helpEstimateInfo">
+      Auto-filled with a unique estimate number and today's date. Set your hourly rate here -- it applies to all labor tasks on this estimate. The valid-until date is calculated automatically.
+    </div>
     <div class="row g-3">
       <div class="col-md-3">
         <label class="est-label">Estimate #</label>
@@ -199,15 +205,25 @@
   </div>
 
   <!-- ===== CLIENT INFO ===== -->
-  <div class="est-card">
-    <div class="est-card-title">Client Information</div>
+  <div class="est-card" id="clientInfoCard">
+    <div class="est-card-title d-flex justify-content-between align-items-center">
+      <span>Client Information</span>
+      <button class="help-icon" onclick="showHelp('helpClientInfo')" title="Help">?</button>
+    </div>
+    <div class="help-popover" id="helpClientInfo">
+      Enter your client's contact details. These appear on all printed and exported estimates. You can use a first and last name, or a company name -- or both. Company name takes priority on the PDF and filename when provided.
+    </div>
     <div class="row g-3">
+      <div class="col-md-12">
+        <label class="est-label">Company Name</label>
+        <input type="text" id="clientCompany" class="est-input" placeholder="Optional -- overrides first/last name on PDF" />
+      </div>
       <div class="col-md-6">
-        <label class="est-label">First Name <span class="req-star">*</span></label>
+        <label class="est-label">First Name</label>
         <input type="text" id="clientFirst" class="est-input" placeholder="First name" />
       </div>
       <div class="col-md-6">
-        <label class="est-label">Last Name <span class="req-star">*</span></label>
+        <label class="est-label">Last Name</label>
         <input type="text" id="clientLast" class="est-input" placeholder="Last name" />
       </div>
       <div class="col-md-6">
@@ -222,8 +238,14 @@
   </div>
 
   <!-- ===== VESSEL INFO ===== -->
-  <div class="est-card">
-    <div class="est-card-title">Vessel Information</div>
+  <div class="est-card" id="vesselInfoCard">
+    <div class="est-card-title d-flex justify-content-between align-items-center">
+      <span>Vessel Information</span>
+      <button class="help-icon" onclick="showHelp('helpVesselInfo')" title="Help">?</button>
+    </div>
+    <div class="help-popover" id="helpVesselInfo">
+      Document the boat being worked on. Make, model, and year help identify the vessel on the estimate. The HIN (Hull ID Number) is optional but useful for insurance, warranty records, sourcing parts, and matching gelcoat or paint.
+    </div>
     <div class="row g-3">
       <div class="col-md-6">
         <label class="est-label">Boat Make <span class="req-star">*</span></label>
@@ -250,12 +272,16 @@
 
   <!-- ===== HARD MATERIALS ===== -->
   <div class="est-card customer-hide" id="materialsCard">
+    <div class="help-popover" id="helpMaterials">
+      Add every product used on this job. Set your wholesale cost and markup -- ChemCalc calculates the retail price automatically. Items with a Buy Here link earn the developer affiliate commission when your client orders directly. Save custom items to your template so you never re-enter the same product twice.
+    </div>
     <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
       <span>Materials</span>
+      <button class="help-icon" onclick="showHelp('helpMaterials')" title="Help">?</button>
       <div class="markup-control">
         <label class="est-label mb-0 me-2">Markup %</label>
         <input type="number" id="materialsMarkup" class="est-input markup-input" value="40" min="0" max="500" step="1" title="Applied to all items in this section" />
-        <span class="markup-hint">cost × (1 + %)</span>
+        <span class="markup-hint">cost x (1 + %)</span>
       </div>
     </div>
     <div class="table-responsive mt-3">
@@ -298,11 +324,15 @@
     <button class="btn-add-task" onclick="openTaskStarter()">&#43; Add Another Repair Task</button>
   </div>
 
-  <!-- ===== SCOPE OF WORK (Pro feature — always visible, locked for free) ===== -->
+  <!-- ===== SCOPE OF WORK (Pro feature - always visible, locked for free) ===== -->
   <div class="est-card pro-feature-card" id="scopeCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Scope of Work / Notes</span>
       <span class="pro-badge">BETA</span>
+      <button class="help-icon" onclick="showHelp('helpScope')" title="Help">?</button>
+    </div>
+    <div class="help-popover" id="helpScope">
+      Write a detailed description of the work to be performed. Use the template dropdown to insert pre-written scope language for common repairs. This section appears on the printed estimate and protects you legally by documenting exactly what was agreed to.
     </div>
     <div class="scope-snippet-row d-print-none">
       <select id="scopeSnippet" class="scope-snippet-select" onchange="insertScopeSnippet(this)">
@@ -331,7 +361,13 @@
 
   <!-- ===== SUMMARY ===== -->
   <div class="est-card est-summary-card">
-    <div class="est-card-title">Estimate Summary</div>
+    <div class="est-card-title d-flex justify-content-between align-items-center">
+      <span>Estimate Summary</span>
+      <button class="help-icon" onclick="showHelp('helpSummary')" title="Help">?</button>
+    </div>
+    <div class="help-popover" id="helpSummary">
+      A live total of all materials and labor. The internal view (visible only to you) shows your actual cost, gross profit, and margin. The customer view shows only the total. Use the Deposit Calculator to set a required deposit amount.
+    </div>
 
     <!-- Customer view: repair totals only -->
     <div id="customerSummary" class="summary-grid d-none">
@@ -375,7 +411,7 @@
       </div>
     </div>
 
-    <!-- Deposit breakdown — shown on screen and in print when deposit is active -->
+    <!-- Deposit breakdown - shown on screen and in print when deposit is active -->
     <div id="depositSummaryBlock" class="d-none">
       <div class="summary-divider"></div>
       <div class="summary-row deposit-line">
@@ -390,7 +426,7 @@
 
     <!-- Internal cost breakdown (logged-in users only) -->
     <div id="internalSummary" class="internal-summary d-none">
-      <div class="internal-label">&#128274; Internal — Not visible to customer</div>
+      <div class="internal-label">&#128274; Internal - Not visible to customer</div>
       <div class="summary-grid mt-2">
         <div class="summary-row">
           <span>Your Cost (Materials)</span>
@@ -402,7 +438,7 @@
         </div>
         <div class="summary-row">
           <span>Margin</span>
-          <span id="marginPct">—</span>
+          <span id="marginPct">-</span>
         </div>
       </div>
     </div>
@@ -410,7 +446,13 @@
 
   <!-- ===== LEGAL ===== -->
   <div class="est-card est-legal-card">
-    <div class="est-card-title">Terms &amp; Conditions</div>
+    <div class="est-card-title d-flex justify-content-between align-items-center">
+      <span>Terms &amp; Conditions</span>
+      <button class="help-icon" onclick="showHelp('helpTerms')" title="Help">?</button>
+    </div>
+    <div class="help-popover" id="helpTerms">
+      Standard legal language protecting your business. This appears on all printed estimates and becomes binding when the client signs.
+    </div>
     <p class="legal-text">
       THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think &amp; Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work. All work is performed in a professional manner consistent with, or above, industry standards. No warranty is expressed or implied beyond the scope of work described herein.
     </p>
@@ -523,7 +565,7 @@
 <div class="modal-overlay" id="upgradeModal" style="display:none;" onclick="overlayClose(event,'upgradeModal')">
   <div class="modal-box modal-wide" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('upgradeModal')">&#10005;</button>
-    <h3 class="modal-title">Unlock Pro Features — Free During Beta</h3>
+    <h3 class="modal-title">Unlock Pro Features - Free During Beta</h3>
     <div class="plan-row">
       <!-- FREE -->
       <div class="plan-card">
@@ -557,10 +599,10 @@
           <li class="feat-yes">&#10003; Estimate history &amp; database</li>
           <li class="feat-yes">&#10003; Trello card auto-creation</li>
         </ul>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('upgradeModal'); openModal('authModal')">Join Free Beta — Unlock Now</button>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('upgradeModal'); openModal('authModal')">Join Free Beta - Unlock Now</button>
       </div>
     </div>
-    <p class="plan-beta-note">&#128276; Future price will be $19/mo — sign up now to lock in free access and get early-adopter pricing when we launch.</p>
+    <p class="plan-beta-note">&#128276; Future price will be $19/mo - sign up now to lock in free access and get early-adopter pricing when we launch.</p>
   </div>
 </div>
 
@@ -637,10 +679,10 @@
         <label class="est-label">Default Board &amp; List</label>
         <div class="trello-picker-row">
           <select id="trelloBoardSelect" class="est-input" onchange="trelloLoadLists()">
-            <option value="">— Select a board —</option>
+            <option value="">- Select a board -</option>
           </select>
           <select id="trelloListSelect" class="est-input">
-            <option value="">— Select a list —</option>
+            <option value="">- Select a list -</option>
           </select>
         </div>
         <button class="btn-trello-load" onclick="trelloLoadBoards()">&#8635; Refresh Boards</button>

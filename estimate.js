@@ -1,16 +1,16 @@
 /* ============================================================
-   MARINE REPAIR ESTIMATOR — estimate.js
+   MARINE REPAIR ESTIMATOR - estimate.js
    chemcalc.co | Think & Engage LLC
    ============================================================ */
 
-/* ── Session state ── */
+/* -- Session state -- */
 var currentView = 'internal'; // 'internal' | 'customer'
 var currentPrintStyle = 'summary'; // 'summary' | 'itemized'
 var currentFormat = 'summary'; // 'summary' | 'itemized' | 'internal'
 var taskCounter = 0;
 var grandTotalValue = 0;
 
-/* setUserTier — called by auth.js after session loads */
+/* setUserTier - called by auth.js after session loads */
 function setUserTier(tier) {
   var isPro = tier === 'pro';
   var loggedIn = false;
@@ -59,14 +59,14 @@ function setUserTier(tier) {
   var navHistoryLink = document.getElementById('navHistoryLink');
   if (navHistoryLink) navHistoryLink.classList.toggle('d-none', !isPro);
 
-  // Deposit calculator — Pro only
+  // Deposit calculator - Pro only
   showDepositCalc(isPro);
 
   // Populate print header with current data
   populatePrintHeader();
 }
 
-/* ── Print Style Toggle ── */
+/* -- Print Style Toggle -- */
 function setPrintStyle(style) {
   currentPrintStyle = style;
   var btnSummary  = document.getElementById('btnPrintSummary');
@@ -79,7 +79,7 @@ function setPrintStyle(style) {
   document.body.classList.toggle('print-internal', style === 'internal');
 }
 
-/* ── Pro-gated action wrappers ── */
+/* -- Pro-gated action wrappers -- */
 function _checkPro() {
   return (typeof isPro === 'function') ? isPro() : false;
 }
@@ -99,7 +99,7 @@ function proSetPrintItemized() {
   if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
 }
 
-/* ── Consolidated format selector ── */
+/* -- Consolidated format selector -- */
 function setFormat(fmt) {
   currentFormat = fmt;
   // Update pill active state (toolbar + FAP)
@@ -133,7 +133,7 @@ function proAddToTrello() {
   if (_checkPro()) { addToTrello(); } else { openModal('upgradeModal'); }
 }
 
-/* ── Business Info (Pro): save/load from localStorage ── */
+/* -- Business Info (Pro): save/load from localStorage -- */
 function saveBusinessInfo() {
   var biz = {
     name:    document.getElementById('bizName').value.trim(),
@@ -171,7 +171,7 @@ function saveBusinessInfo() {
         if (res.error) console.warn('Profile save error:', res.error.message);
       });
   } else if (typeof trelloCollectSettings === 'function') {
-    // Not logged in — at least update in-memory Trello state
+    // Not logged in - at least update in-memory Trello state
     trelloCollectSettings();
   }
 
@@ -235,7 +235,7 @@ function populateBizInfoModal() {
   }
 }
 
-/* ── Populate print header with live estimate + biz data ── */
+/* -- Populate print header with live estimate + biz data -- */
 function populatePrintHeader() {
   var isPro = (typeof window.isPro === 'function') ? window.isPro() : false;
   var biz = isPro ? loadBusinessInfo() : null;
@@ -270,7 +270,7 @@ function setText(id, val) {
   if (el) el.textContent = val;
 }
 
-/* ── Affiliate links map (keyed from affiliate_links.js globals) ── */
+/* -- Affiliate links map (keyed from affiliate_links.js globals) -- */
 function getAffiliateLink(key) {
   if (typeof affiliateLinksData !== 'undefined' && affiliateLinksData[key]) {
     return affiliateLinksData[key].url;
@@ -278,7 +278,7 @@ function getAffiliateLink(key) {
   return null;
 }
 
-/* ── Material presets ── */
+/* -- Material presets -- */
 var MATERIAL_PRESETS = {
   gelcoat: {
     materials: [
@@ -394,7 +394,25 @@ var MATERIAL_PRESETS = {
   }
 };
 
-/* ── Init ── */
+/* -- Init -- */
+// -- Help popover toggle --
+function showHelp(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isOpen = el.classList.contains('help-popover--open');
+  document.querySelectorAll('.help-popover--open').forEach(function(p) {
+    p.classList.remove('help-popover--open');
+  });
+  if (!isOpen) el.classList.add('help-popover--open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('help-icon')) {
+    document.querySelectorAll('.help-popover--open').forEach(function(p) {
+      p.classList.remove('help-popover--open');
+    });
+  }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   initEstimate();
   checkExpiry();
@@ -437,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }, 100);
   } else {
-    // Default: blank estimate, no task pre-added — user clicks Add Task
+    // Default: blank estimate, no task pre-added - user clicks Add Task
   }
 
   // Init typeahead observer for material/paint name inputs
@@ -473,7 +491,7 @@ function checkExpiry() {
   }
 }
 
-/* ── View toggle ── */
+/* -- View toggle -- */
 function setView(view) {
   currentView = view;
   if (view === 'customer') {
@@ -484,7 +502,7 @@ function setView(view) {
   updateSummary();
 }
 
-/* ── Job preset ── */
+/* -- Job preset -- */
 function applyJobPreset(presetKey) {
   if (!presetKey) return;
   var preset = MATERIAL_PRESETS[presetKey];
@@ -507,7 +525,7 @@ function applyJobPreset(presetKey) {
   updateSummary();
 }
 
-/* ── Add material row ── */
+/* -- Add material row -- */
 function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
   var tbody = document.getElementById(bodyId);
   var markupPct = parseFloat(document.getElementById(markupId).value) || 40;
@@ -541,7 +559,7 @@ function buildBuyLink(affKey, source) {
   if (url) {
     return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>';
   }
-  return '<span class="buy-link-none">—</span>';
+  return '<span class="buy-link-none">-</span>';
 }
 
 function recalcRow(input) {
@@ -589,7 +607,7 @@ function delRow(btn, subtotalId, sumId) {
   if (bodyId === 'materialsBody') recalcSection('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials');
 }
 
-/* ── Markup global change ── */
+/* -- Markup global change -- */
 document.addEventListener('input', function (e) {
   if (e.target.id === 'materialsMarkup') {
     applyGlobalMarkup('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials');
@@ -608,7 +626,7 @@ function applyGlobalMarkup(bodyId, markupId, subtotalId, sumId) {
   recalcSection(bodyId, markupId, subtotalId, sumId);
 }
 
-/* ── Repair task cards ── */
+/* -- Repair task cards -- */
 function addRepairTask(taskName, taskList) {
   taskCounter++;
   var id = taskCounter;
@@ -747,6 +765,7 @@ function duplicateTask(id) {
   rows.forEach(function (tr) {
     var nameEl = tr.querySelector('input[type="text"]');
     var hoursEl = tr.querySelector('.task-hours');
+
     tasks.push({
       name: nameEl ? nameEl.value : '',
       hours: parseFloat(hoursEl ? hoursEl.value : 0) || 0
@@ -763,12 +782,12 @@ function toggleScope(btn) {
     btn.textContent = '+ Add scope of work note';
   } else {
     textarea.style.display = 'block';
-    btn.textContent = '− Hide scope note';
+    btn.textContent = '- Hide scope note';
     textarea.focus();
   }
 }
 
-/* ── Summary ── */
+/* -- Summary -- */
 function updateLaborSummary() {
   var laborRows = document.getElementById('laborSummaryRows');
   var customerRepairRows = document.getElementById('customerRepairRows');
@@ -825,7 +844,7 @@ function updateSummary() {
 }
 
 
-/* ── Scope of Work Snippets ──────────────────────────── */
+/* -- Scope of Work Snippets ---------------------------- */
 var _scopeSnippets = {
   gelcoat:   'Gelcoat Repair:\nGrind out damaged gelcoat to sound fiberglass laminate. Thoroughly clean and prep the area using styrene/acetone solvent. Apply color-matched marine gelcoat mixed with appropriate catalyst and PVA curing agent. Block sand repaired area progressively from 400-grit up to 2000-grit compound. Machine buff and polish to match the factory gloss and profile of the surrounding hull.',
   spider:    'Spider Cracks (Stress Cracks):\nV-groove cracks down to the laminate to relieve stress points. Fill with reinforced compound, sand flush, apply color-matched gelcoat, and buff to blend with the surrounding surface.',
@@ -850,7 +869,7 @@ function insertScopeSnippet(sel) {
   ta.focus();
 }
 
-/* ── Deposit Calculator ───────────────────────────────── */
+/* -- Deposit Calculator --------------------------------- */
 function updateDeposit() {
   var toggle  = document.getElementById('depositToggle');
   var pctSel  = document.getElementById('depositPct');
@@ -911,10 +930,10 @@ function calcSectionCost(bodyId) {
   return total;
 }
 
-/* ── Auth (stub — replace with real backend) ── */
+/* -- Auth (stub - replace with real backend) -- */
 /* doLogin / doLogout / doSignup / doGoogleLogin are defined in auth.js */
 
-/* ── Auth tab switcher ── */
+/* -- Auth tab switcher -- */
 function switchAuthTab(tab) {
   document.getElementById('authPanelLogin').style.display  = tab === 'login'  ? '' : 'none';
   document.getElementById('authPanelSignup').style.display = tab === 'signup' ? '' : 'none';
@@ -922,7 +941,7 @@ function switchAuthTab(tab) {
   document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
 }
 
-/* ── Save / Load drafts (Pro, Supabase) ── */
+/* -- Save / Load drafts (Pro, Supabase) -- */
 function saveDraft() {
   if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
   var data = collectEstimateData();
@@ -953,7 +972,7 @@ function openLoadDraftModal() {
         item.className = 'saved-item';
         item.innerHTML =
           '<div>' +
-            '<div>' + escHtml(row.estimate_number) + ' — ' + escHtml((row.customer_first || '') + ' ' + (row.customer_last || '')) + '</div>' +
+            '<div>' + escHtml(row.estimate_number) + ' - ' + escHtml((row.customer_first || '') + ' ' + (row.customer_last || '')) + '</div>' +
             '<div class="saved-item-meta">' + escHtml(row.created_at ? row.created_at.slice(0,10) : '') + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
           '</div>' +
           '<button class="saved-item-del" onclick="deleteSavedEstimate(\'' + row.id + '\')" title="Delete">&#10005;</button>';
@@ -981,6 +1000,7 @@ function loadDraft(data) {
   document.getElementById('estimateDate').value = data.estimateDate || '';
   document.getElementById('estimateValidUntil').value = data.estimateValidUntil || '';
   document.getElementById('hourlyRate').value = data.hourlyRate || 100;
+  if (document.getElementById('clientCompany')) document.getElementById('clientCompany').value = data.clientCompany || '';
   document.getElementById('clientFirst').value = data.clientFirst || '';
   document.getElementById('clientLast').value = data.clientLast || '';
   document.getElementById('clientPhone').value = data.clientPhone || '';
@@ -1020,7 +1040,7 @@ function loadDraft(data) {
   populatePrintHeader();
 }
 
-/* ── Collect estimate data ── */
+/* -- Collect estimate data -- */
 function collectEstimateData() {
   var materials = [];
   document.querySelectorAll('#materialsBody tr').forEach(function (tr) {
@@ -1064,6 +1084,7 @@ function collectEstimateData() {
     estimateDate: document.getElementById('estimateDate').value,
     estimateValidUntil: document.getElementById('estimateValidUntil').value,
     hourlyRate: document.getElementById('hourlyRate').value,
+    clientCompany: document.getElementById('clientCompany') ? document.getElementById('clientCompany').value : '',
     clientFirst: document.getElementById('clientFirst').value,
     clientLast: document.getElementById('clientLast').value,
     clientPhone: document.getElementById('clientPhone').value,
@@ -1085,7 +1106,7 @@ function collectEstimateData() {
   };
 }
 
-/* ── Database logging (stub — wire to backend API) ── */
+/* -- Database logging (stub - wire to backend API) -- */
 function logEstimate() {
   if (typeof isPro !== 'function' || !isPro()) {
     openModal('upgradeModal'); return;
@@ -1107,38 +1128,39 @@ function confirmLog() {
   var statusEl = document.getElementById('logStatus');
   statusEl.textContent = 'Logging...';
 
-  /* ── BACKEND STUB ──
+  /* -- BACKEND STUB --
      Replace this fetch with your real Hostinger API endpoint.
      The endpoint should:
        1. Save the estimate JSON to your database
        2. Create a Trello card in the correct board based on data.company
-          - Think & Engage LLC → TE board, "Estimate Sent" column
-          - Daytona Marine Group → DMG board, "Estimate Sent" column
+          - Think & Engage LLC -> TE board, "Estimate Sent" column
+          - Daytona Marine Group -> DMG board, "Estimate Sent" column
      Example:
        fetch('https://chemcalc.co/api/log-estimate.php', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify(data)
        }).then(r => r.json()).then(res => { ... });
-  ── END STUB ── */
+  -- END STUB -- */
 
   // Simulate success for now
   setTimeout(function () {
-    statusEl.textContent = '✓ Logged successfully! Trello card will be created when backend is connected.';
+    statusEl.textContent = 'OK Logged successfully! Trello card will be created when backend is connected.';
     statusEl.style.color = '#7ed47e';
     // Also save to localStorage as backup
     localStorage.setItem('est_log_' + data.estimateNumber, JSON.stringify(data));
   }, 800);
 }
 
-/* ── Export / Share ── */
+/* -- Export / Share -- */
 function exportPDF() {
   var pro = _checkPro();
   // Build filename: [Client Name] - [Mode ]Estimate [EstNum] - [Date].pdf
   var estNum     = (document.getElementById('estimateNumber') || {}).value || 'EST';
-  var firstName  = (document.getElementById('clientFirst')    || {}).value.trim();
-  var lastName   = (document.getElementById('clientLast')     || {}).value.trim();
-  var clientName = (firstName + ' ' + lastName).trim() || 'Client';
+  var companyName = ((document.getElementById('clientCompany') || {}).value || '').trim();
+  var firstName   = (document.getElementById('clientFirst')    || {}).value.trim();
+  var lastName    = (document.getElementById('clientLast')     || {}).value.trim();
+  var clientName  = companyName || (firstName + ' ' + lastName).trim() || 'Client';
   var today      = new Date().toISOString().slice(0,10); // YYYY-MM-DD
   var modePrefix = currentPrintStyle === 'internal' ? 'Internal '
                  : currentPrintStyle === 'itemized'  ? 'Itemized '
@@ -1187,13 +1209,14 @@ function exportPDF() {
 function shareEstimate() {
   var data = collectEstimateData();
   var title = 'Repair Estimate ' + data.estimateNumber;
-  var text = 'Marine Repair Estimate for ' + data.clientFirst + ' ' + data.clientLast +
+  var clientDisplay = (data.clientCompany || '').trim() || ((data.clientFirst || '') + ' ' + (data.clientLast || '')).trim() || 'Client';
+  var text = 'Marine Repair Estimate for ' + clientDisplay +
     '\nVessel: ' + data.boatYear + ' ' + data.boatMake + ' ' + data.boatModel +
     '\nTotal: ' + fmtCurrency(data.grandTotal) +
     '\nValid until: ' + data.estimateValidUntil;
 
   if (navigator.share) {
-    // Web Share API — works on mobile (iMessage, WhatsApp, Email, etc.)
+    // Web Share API - works on mobile (iMessage, WhatsApp, Email, etc.)
     navigator.share({ title: title, text: text })
       .catch(function (err) {
         if (err.name !== 'AbortError') fallbackShare(title, text);
@@ -1211,6 +1234,7 @@ function fallbackShare(title, text) {
 
 function newEstimate() {
   if (confirm('Start a new estimate? Unsaved changes will be lost.')) {
+    if (document.getElementById('clientCompany')) document.getElementById('clientCompany').value = '';
     document.getElementById('clientFirst').value = '';
     document.getElementById('clientLast').value = '';
     document.getElementById('clientPhone').value = '';
@@ -1231,7 +1255,7 @@ function newEstimate() {
   }
 }
 
-/* ── Modal helpers ── */
+/* -- Modal helpers -- */
 function openModal(id) {
   var el = document.getElementById(id);
   if (el) el.style.display = 'flex';
@@ -1244,7 +1268,7 @@ function overlayClose(event, id) {
   if (event.target === document.getElementById(id)) closeModal(id);
 }
 
-/* ── Utilities ── */
+/* -- Utilities -- */
 function fmtCurrency(val) {
   return '$' + (parseFloat(val) || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
@@ -1266,7 +1290,7 @@ function escHtml(str) {
 var _userTemplates    = [];   // in-memory cache of user's saved templates
 var _tsTemplatesLoaded = false;
 
-/* ── Open modal (Pro-gated) ──────────────────────────────── */
+/* -- Open modal (Pro-gated) -------------------------------- */
 function openTaskStarter() {
   var taskCount = document.querySelectorAll('.repair-card').length;
   var pro = _checkPro();
@@ -1277,7 +1301,7 @@ function openTaskStarter() {
   openModal('taskStarterModal');
 }
 
-/* ── Tab switcher ────────────────────────────────────────── */
+/* -- Tab switcher ------------------------------------------ */
 function tsShowTab(tab) {
   document.getElementById('tsPanelPresets').style.display = tab === 'presets' ? '' : 'none';
   document.getElementById('tsPanelMine').style.display    = tab === 'mine'    ? '' : 'none';
@@ -1285,7 +1309,7 @@ function tsShowTab(tab) {
   document.getElementById('tsTabMine').classList.toggle('active',    tab === 'mine');
 }
 
-/* ── Render shared presets grid ──────────────────────────── */
+/* -- Render shared presets grid ---------------------------- */
 function tsRenderPresets() {
   var grid = document.getElementById('tsPresetGrid');
   if (!grid || typeof TASK_PRESETS === 'undefined') return;
@@ -1306,7 +1330,7 @@ function tsRenderPresets() {
       var idx = TASK_PRESETS.indexOf(p);
       html +=
         '<div class="ts-card" onclick="tsApplyPreset(' + idx + ')">' +
-          '<div class="ts-card-icon">' + (p.icon || '🔧') + '</div>' +
+          '<div class="ts-card-icon">' + (p.icon || '') + '</div>' +
           '<div class="ts-card-name">' + escHtml(p.name) + '</div>' +
           '<div class="ts-card-desc">' + escHtml(p.description || '') + '</div>' +
         '</div>';
@@ -1316,7 +1340,7 @@ function tsRenderPresets() {
   grid.innerHTML = html;
 }
 
-/* ── Apply a shared preset ───────────────────────────────── */
+/* -- Apply a shared preset --------------------------------- */
 function tsApplyPreset(idx) {
   var preset = (typeof TASK_PRESETS !== 'undefined') ? TASK_PRESETS[idx] : null;
   if (!preset) return;
@@ -1341,7 +1365,7 @@ function tsApplyPreset(idx) {
   }
 }
 
-/* ── Merge preset materials into existing sections ──────── */
+/* -- Merge preset materials into existing sections -------- */
 function mergePresetMaterials(preset) {
   function mergeRows(bodyId, markupId, subtotalId, sumId, items) {
     if (!items || !items.length) return;
@@ -1370,13 +1394,13 @@ function mergePresetMaterials(preset) {
   mergeRows('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', preset.materialRows);
 }
 
-/* ── Blank task ──────────────────────────────────────────── */
+/* -- Blank task -------------------------------------------- */
 function tsPickBlank() {
   closeModal('taskStarterModal');
   addRepairTask();
 }
 
-/* ── Load user templates from Supabase ───────────────────── */
+/* -- Load user templates from Supabase --------------------- */
 async function tsLoadUserTemplates() {
   if (!_sb) return;
   var { data: { session } } = await _sb.auth.getSession();
@@ -1391,7 +1415,7 @@ async function tsLoadUserTemplates() {
   tsRenderMyTemplates();
 }
 
-/* ── Render My Templates tab ─────────────────────────────── */
+/* -- Render My Templates tab ------------------------------- */
 function tsRenderMyTemplates() {
   var grid  = document.getElementById('tsMyGrid');
   var empty = document.getElementById('tsMyEmpty');
@@ -1419,7 +1443,7 @@ function tsRenderMyTemplates() {
   }).join('') + '</div>';
 }
 
-/* ── Apply a user template ───────────────────────────────── */
+/* -- Apply a user template --------------------------------- */
 function tsApplyUserTemplate(id) {
   var t = _userTemplates.find(function(x) { return x.id === id; });
   if (!t) return;
@@ -1441,7 +1465,7 @@ function tsApplyUserTemplate(id) {
   }
 }
 
-/* ── Save current task card as a user template ───────────── */
+/* -- Save current task card as a user template ------------- */
 async function saveTaskAsTemplate(cardId) {
   if (!_checkPro()) { openModal('upgradeModal'); return; }
   if (!_sb) return;
@@ -1506,7 +1530,7 @@ async function saveTaskAsTemplate(cardId) {
   }
 }
 
-/* ── Delete a user template ──────────────────────────────── */
+/* -- Delete a user template -------------------------------- */
 async function tsDeleteUserTemplate(id, e) {
   e.stopPropagation();
   if (!confirm('Delete this template?')) return;
