@@ -533,6 +533,10 @@ h1 {
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 .est-card-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 1.1rem; font-weight: 700; color: #89CFF0;
   border-bottom: 1px solid #333; padding-bottom: 0.6rem; margin-bottom: 1rem;
 }
@@ -588,7 +592,6 @@ h1 {
 .markup-hint { font-size: 0.78rem; color: #888; white-space: nowrap; }
 
 /* -- Help icons and popovers -- */
-.est-card-title { position: relative; display: flex; align-items: center; justify-content: space-between; }
 .help-icon {
   display: inline-flex; align-items: center; justify-content: center;
   width: 1.25rem; height: 1.25rem; border-radius: 50%;
@@ -601,7 +604,7 @@ h1 {
 .help-icon:hover { background: #3a3a3c; border-color: #89CFF0; }
 .help-popover {
   display: none;
-  position: absolute; right: 0; top: calc(100% + 0.5rem); z-index: 200;
+  position: fixed; z-index: 9999;
   width: 280px; max-width: 90vw;
   background: #1c1c1e; border: 1px solid #48484a; border-radius: 8px;
   padding: 0.85rem 1rem; font-size: 0.82rem; color: #ccc; line-height: 1.5;
@@ -627,6 +630,7 @@ h1 {
 .col-link { width: 60px; text-align: center; }
 .col-del { width: 36px; text-align: center; }
 .est-table input[type="text"],
+
 .est-table input[type="number"] {
   background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
   color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 60px;
@@ -1031,6 +1035,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
     border-bottom: 2.5pt solid #111;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   .print-header-left {
@@ -1216,7 +1222,6 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
   /* -- Repair task tables -- */
   .est-table, .repair-task-table {
-
     width: 100% !important;
     border-collapse: collapse !important;
     font-size: 8.5pt !important;
@@ -1330,7 +1335,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .sig-block-short { flex: 0 0 100pt !important; }
   .sig-line {
     border-bottom: 1pt solid #333 !important;
-    height: 18pt !important;
+    height: 10pt !important;
     margin-bottom: 2pt !important;
   }
   .sig-caption { font-size: 7pt !important; color: #666 !important; }

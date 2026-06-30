@@ -396,14 +396,19 @@ var MATERIAL_PRESETS = {
 
 /* -- Init -- */
 // -- Help popover toggle --
-function showHelp(id) {
+function showHelp(id, iconEl) {
   var el = document.getElementById(id);
   if (!el) return;
   var isOpen = el.classList.contains('help-popover--open');
   document.querySelectorAll('.help-popover--open').forEach(function(p) {
     p.classList.remove('help-popover--open');
   });
-  if (!isOpen) el.classList.add('help-popover--open');
+  if (!isOpen) {
+    var rect = iconEl.getBoundingClientRect();
+    el.style.top = (rect.bottom + 8) + 'px';
+    el.style.right = (window.innerWidth - rect.right) + 'px';
+    el.classList.add('help-popover--open');
+  }
 }
 document.addEventListener('click', function(e) {
   if (!e.target.classList.contains('help-icon')) {
@@ -765,7 +770,6 @@ function duplicateTask(id) {
   rows.forEach(function (tr) {
     var nameEl = tr.querySelector('input[type="text"]');
     var hoursEl = tr.querySelector('.task-hours');
-
     tasks.push({
       name: nameEl ? nameEl.value : '',
       hours: parseFloat(hoursEl ? hoursEl.value : 0) || 0

@@ -175,7 +175,7 @@
   <div class="est-card" id="estimateInfoCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Estimate Information</span>
-      <button class="help-icon" onclick="showHelp('helpEstimateInfo')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpEstimateInfo', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpEstimateInfo">
       Auto-filled with a unique estimate number and today's date. Set your hourly rate here -- it applies to all labor tasks on this estimate. The valid-until date is calculated automatically.
@@ -208,7 +208,7 @@
   <div class="est-card" id="clientInfoCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Client Information</span>
-      <button class="help-icon" onclick="showHelp('helpClientInfo')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpClientInfo', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpClientInfo">
       Enter your client's contact details. These appear on all printed and exported estimates. You can use a first and last name, or a company name -- or both. Company name takes priority on the PDF and filename when provided.
@@ -241,7 +241,7 @@
   <div class="est-card" id="vesselInfoCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Vessel Information</span>
-      <button class="help-icon" onclick="showHelp('helpVesselInfo')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpVesselInfo', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpVesselInfo">
       Document the boat being worked on. Make, model, and year help identify the vessel on the estimate. The HIN (Hull ID Number) is optional but useful for insurance, warranty records, sourcing parts, and matching gelcoat or paint.
@@ -277,7 +277,7 @@
     </div>
     <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
       <span>Materials</span>
-      <button class="help-icon" onclick="showHelp('helpMaterials')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpMaterials', this)" title="Help">?</button>
       <div class="markup-control">
         <label class="est-label mb-0 me-2">Markup %</label>
         <input type="number" id="materialsMarkup" class="est-input markup-input" value="40" min="0" max="500" step="1" title="Applied to all items in this section" />
@@ -329,7 +329,7 @@
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Scope of Work / Notes</span>
       <span class="pro-badge">BETA</span>
-      <button class="help-icon" onclick="showHelp('helpScope')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpScope', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpScope">
       Write a detailed description of the work to be performed. Use the template dropdown to insert pre-written scope language for common repairs. This section appears on the printed estimate and protects you legally by documenting exactly what was agreed to.
@@ -363,7 +363,7 @@
   <div class="est-card est-summary-card">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Estimate Summary</span>
-      <button class="help-icon" onclick="showHelp('helpSummary')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpSummary', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpSummary">
       A live total of all materials and labor. The internal view (visible only to you) shows your actual cost, gross profit, and margin. The customer view shows only the total. Use the Deposit Calculator to set a required deposit amount.
@@ -448,7 +448,7 @@
   <div class="est-card est-legal-card">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Terms &amp; Conditions</span>
-      <button class="help-icon" onclick="showHelp('helpTerms')" title="Help">?</button>
+      <button class="help-icon" onclick="showHelp('helpTerms', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpTerms">
       Standard legal language protecting your business. This appears on all printed estimates and becomes binding when the client signs.
