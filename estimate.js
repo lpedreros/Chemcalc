@@ -87,6 +87,9 @@ function proLogEstimate() {
 function proSetPrintItemized() {
   if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
 }
+function proAddToTrello() {
+  if (_checkPro()) { addToTrello(); } else { openModal('upgradeModal'); }
+}
 
 /* ── Business Info (Pro): save/load from localStorage ── */
 function saveBusinessInfo() {
@@ -101,6 +104,18 @@ function saveBusinessInfo() {
     logoUrl: document.getElementById('bizLogoUrl').value.trim()
   };
   localStorage.setItem('chemcalc_biz_info', JSON.stringify(biz));
+
+  // Save Trello settings to Supabase profile
+  if (typeof trelloCollectSettings === 'function') {
+    var trelloSettings = trelloCollectSettings();
+    var user = (typeof getUser === 'function') ? getUser() : null;
+    if (user && _sb) {
+      _sb.from('profiles').update(trelloSettings).eq('id', user.id)
+        .then(function(res) {
+          if (res.error) console.warn('Trello settings save error:', res.error.message);
+        });
+    }
+  }
 
   // Apply prefix to current estimate number
   if (biz.prefix) {
@@ -140,6 +155,11 @@ function populateBizInfoModal() {
     var el = document.getElementById(id);
     if (el && fields[id]) el.value = fields[id];
   });
+  // Restore Trello UI from saved profile
+  if (typeof trelloInit === 'function') {
+    var profile = (typeof getProfile === 'function') ? getProfile() : null;
+    trelloInit(profile);
+  }
 }
 
 /* ── Populate print header with live estimate + biz data ── */

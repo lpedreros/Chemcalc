@@ -429,6 +429,7 @@
     <button class="btn-action btn-pdf" onclick="exportPDF()">&#128196; Save as PDF</button>
     <button class="btn-action btn-share" onclick="shareEstimate()">&#128279; Share</button>
     <button class="btn-action btn-log pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
+    <button class="btn-action btn-trello pro-feature" id="addToTrelloBtn" onclick="proAddToTrello()">&#128203; Add to Trello</button>
     <button class="btn-action btn-new" onclick="newEstimate()">&#10010; New Estimate</button>
   </div>
 
@@ -576,6 +577,39 @@
         <input type="url" id="bizLogoUrl" class="est-input" placeholder="https://yoursite.com/logo.png" />
       </div>
     </div>
+    <!-- Trello Integration (Pro) -->
+    <hr class="trello-divider" />
+    <h5 class="trello-section-title">&#128203; Trello Integration <span class="pro-badge-inline">Pro</span></h5>
+    <p class="modal-sub">Connect your Trello account to send estimates directly to your board.</p>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="est-label">Trello API Key</label>
+        <div class="trello-key-row">
+          <input type="text" id="trelloApiKey" class="est-input" placeholder="Paste your Trello API key here" />
+          <button class="btn-trello-auth" id="trelloAuthBtn" onclick="trelloAuthorize()">Authorize Trello &#8599;</button>
+        </div>
+        <p class="scope-hint">Get your API key at <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a></p>
+      </div>
+      <div class="col-12" id="trelloTokenRow" style="display:none;">
+        <label class="est-label">Trello Token <span class="scope-hint">(auto-filled after authorization)</span></label>
+        <input type="text" id="trelloToken" class="est-input" placeholder="Token will appear here after you authorize" readonly />
+      </div>
+      <div class="col-12" id="trelloBoardRow" style="display:none;">
+        <label class="est-label">Default Board &amp; List</label>
+        <div class="trello-picker-row">
+          <select id="trelloBoardSelect" class="est-input" onchange="trelloLoadLists()">
+            <option value="">— Select a board —</option>
+          </select>
+          <select id="trelloListSelect" class="est-input">
+            <option value="">— Select a list —</option>
+          </select>
+        </div>
+        <button class="btn-trello-load" onclick="trelloLoadBoards()">&#8635; Refresh Boards</button>
+      </div>
+      <div class="col-12">
+        <p class="trello-status" id="trelloStatus"></p>
+      </div>
+    </div>
     <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">&#10003; Save Business Info</button>
     <p class="modal-footer-link" id="bizSaveStatus"></p>
   </div>
@@ -605,5 +639,6 @@
 <script src="affiliate_links.js?v=2"></script>
 <script src="auth.js?v=2"></script>
 <script src="estimate.js?v=2"></script>
+<script src="trello.js?v=2"></script>
 </body>
 </html>
