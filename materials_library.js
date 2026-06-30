@@ -25,6 +25,8 @@ async function loadMaterialsLibrary() {
   _matLib = data || [];
   _matLibLoaded = true;
   renderLibraryTable();
+  // Re-run observer so any open rows get typeahead with fresh data
+  if (typeof initTypeaheadObserver === 'function') initTypeaheadObserver();
 }
 
 /* ── Save a new item ─────────────────────────────────────── */
@@ -182,7 +184,11 @@ function attachTypeahead(input) {
 
   function showSuggestions(query) {
     dropdown.innerHTML = '';
-    if (!query || query.length < 1 || _matLib.length === 0) {
+    if (!query || query.length < 1) {
+      dropdown.style.display = 'none';
+      return;
+    }
+    if (_matLib.length === 0) {
       dropdown.style.display = 'none';
       return;
     }
