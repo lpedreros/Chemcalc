@@ -77,7 +77,7 @@
     <span class="tier-actions">
       <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
       <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
-      <button class="btn-tier pro-only" id="bizInfoBtn" onclick="openModal('bizInfoModal')">&#9998; My Business Info</button>
+      <button class="btn-tier pro-feature" id="bizInfoBtn" onclick="proAction('bizInfoModal')">&#9998; My Business Info</button>
       <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
     </span>
   </div>
@@ -104,10 +104,18 @@
         <button id="btnCustomerView" class="btn-view-toggle" onclick="setView('customer')">Customer</button>
       </div>
     </div>
-    <!-- Save Draft (Pro only) -->
+    <!-- Save / Load Draft (Pro) -->
     <div class="toolbar-group">
-      <button class="btn-tier pro-only" id="saveDraftBtn" onclick="saveDraft()" title="Save estimate to browser (Pro)">&#128190; Save Draft</button>
-      <button class="btn-tier pro-only" id="loadDraftBtn" onclick="openLoadDraftModal()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+      <button class="btn-tier pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
+      <button class="btn-tier pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+    </div>
+    <!-- Print Style Toggle -->
+    <div class="toolbar-group" id="printStyleGroup">
+      <label class="est-label mb-0">Print:</label>
+      <div class="view-toggle-wrap">
+        <button id="btnPrintSummary" class="btn-view-toggle active" onclick="setPrintStyle('summary')">Summary</button>
+        <button id="btnPrintItemized" class="btn-view-toggle pro-feature" onclick="proSetPrintItemized()">Itemized &#128274;</button>
+      </div>
     </div>
   </div>
 
@@ -272,8 +280,8 @@
     <button class="btn-add-task" onclick="addRepairTask()">&#43; Add Another Repair Task</button>
   </div>
 
-  <!-- ===== SCOPE OF WORK (optional, Pro only shows on PDF) ===== -->
-  <div class="est-card pro-only-card" id="scopeCard">
+  <!-- ===== SCOPE OF WORK (Pro feature — always visible, locked for free) ===== -->
+  <div class="est-card pro-feature-card" id="scopeCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Scope of Work / Notes</span>
       <span class="pro-badge">PRO</span>
@@ -365,7 +373,7 @@
     <button class="btn-action btn-print" onclick="window.print()">&#128424; Print</button>
     <button class="btn-action btn-pdf" onclick="exportPDF()">&#128196; Save as PDF</button>
     <button class="btn-action btn-share" onclick="shareEstimate()">&#128279; Share</button>
-    <button class="btn-action btn-log pro-only" id="logEstimateBtn" onclick="logEstimate()">&#128204; Log Estimate</button>
+    <button class="btn-action btn-log pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
     <button class="btn-action btn-new" onclick="newEstimate()">&#10010; New Estimate</button>
   </div>
 

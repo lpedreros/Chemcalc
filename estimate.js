@@ -5,6 +5,7 @@
 
 /* ── Session state ── */
 var currentView = 'internal'; // 'internal' | 'customer'
+var currentPrintStyle = 'summary'; // 'summary' | 'itemized'
 var taskCounter = 0;
 var grandTotalValue = 0;
 
@@ -14,10 +15,20 @@ function setUserTier(tier) {
   var loggedIn = false;
   try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch(e) {}
 
-  // Pro-only elements
-  document.querySelectorAll('.pro-only').forEach(function (el) {
-    el.style.display = isPro ? 'inline-block' : 'none';
+  // Pro-feature elements: always visible, but locked (grayed) for free users
+  document.querySelectorAll('.pro-feature').forEach(function (el) {
+    el.classList.toggle('pro-locked', !isPro);
   });
+  // Pro-feature cards: always visible, but locked for free users
+  document.querySelectorAll('.pro-feature-card').forEach(function (el) {
+    el.classList.toggle('pro-locked-card', !isPro);
+  });
+
+  // Update Itemized button label: show lock icon for free, remove for pro
+  var btnItemized = document.getElementById('btnPrintItemized');
+  if (btnItemized) {
+    btnItemized.innerHTML = isPro ? 'Itemized' : 'Itemized &#128274;';
+  }
 
   // Internal summary (logged-in only)
   var internalSummary = document.getElementById('internalSummary');
@@ -43,6 +54,38 @@ function setUserTier(tier) {
 
   // Populate print header with current data
   populatePrintHeader();
+}
+
+/* ── Print Style Toggle ── */
+function setPrintStyle(style) {
+  currentPrintStyle = style;
+  var btnSummary  = document.getElementById('btnPrintSummary');
+  var btnItemized = document.getElementById('btnPrintItemized');
+  if (btnSummary)  btnSummary.classList.toggle('active', style === 'summary');
+  if (btnItemized) btnItemized.classList.toggle('active', style === 'itemized');
+  // Apply print body class
+  document.body.classList.toggle('print-summary',  style === 'summary');
+  document.body.classList.toggle('print-itemized', style === 'itemized');
+}
+
+/* ── Pro-gated action wrappers ── */
+function _checkPro() {
+  return (typeof isPro === 'function') ? isPro() : false;
+}
+function proAction(modalId) {
+  if (_checkPro()) { openModal(modalId); } else { openModal('upgradeModal'); }
+}
+function proSaveDraft() {
+  if (_checkPro()) { saveDraft(); } else { openModal('upgradeModal'); }
+}
+function proLoadDraft() {
+  if (_checkPro()) { openLoadDraftModal(); } else { openModal('upgradeModal'); }
+}
+function proLogEstimate() {
+  if (_checkPro()) { logEstimate(); } else { openModal('upgradeModal'); }
+}
+function proSetPrintItemized() {
+  if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
 }
 
 /* ── Business Info (Pro): save/load from localStorage ── */
@@ -920,14 +963,15 @@ function confirmLog() {
 
 /* ── Export / Share ── */
 function exportPDF() {
-  var pro = (typeof isPro === 'function') ? isPro() : false;
-  if (!pro) {
-    // Free/unregistered: customer view, single-page print
+  var pro = _checkPro();
+  if (!pro || currentPrintStyle === 'summary') {
+    // Summary (single-page): customer view, free-user print class
     document.body.classList.add('free-user');
     document.body.classList.remove('pro-user');
     setView('customer');
     setTimeout(function () { window.print(); }, 150);
   } else {
+    // Itemized (Pro only): full detail, pro-user print class
     document.body.classList.add('pro-user');
     document.body.classList.remove('free-user');
     window.print();

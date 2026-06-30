@@ -490,8 +490,13 @@ h1 {
 .btn-view-toggle.active { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
 .btn-view-toggle:hover:not(.active) { background: #2c2c2e; color: #fff; }
 
-/* Pro-only elements */
-.pro-only { display: none; }
+/* Pro-feature elements: always visible, grayed/locked for free users */
+.pro-feature.pro-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+.pro-feature.pro-locked:hover { opacity: 0.55; }
 
 /* -- Cards -- */
 .est-card {
@@ -504,6 +509,21 @@ h1 {
   border-bottom: 1px solid #333; padding-bottom: 0.6rem; margin-bottom: 1rem;
 }
 .pro-only-card { border-left: 3px solid #89CFF0; }
+.pro-feature-card { border-left: 3px solid #89CFF0; }
+.pro-feature-card.pro-locked-card {
+  opacity: 0.55;
+  pointer-events: none;
+  filter: grayscale(0.3);
+  position: relative;
+}
+.pro-feature-card.pro-locked-card::after {
+  content: '\1F512 Pro feature — upgrade to edit';
+  display: block;
+  font-size: 0.75rem;
+  color: #89CFF0;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
 .pro-badge {
   background: #89CFF0; color: #1c1c1e; font-size: 0.7rem; font-weight: 800;
   padding: 0.15rem 0.5rem; border-radius: 4px; letter-spacing: 0.05em;
@@ -1094,6 +1114,7 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
   body.free-user #materialsCard { display: none !important; }
   body.free-user #paintCard { display: none !important; }
   body.free-user .pro-only-card { display: none !important; }
+  body.free-user .pro-feature-card { display: none !important; }
   body.free-user .customer-hide { display: none !important; }
   body.free-user .repair-task-table { display: none !important; }
   body.free-user #internalSummaryFull { display: none !important; }
@@ -1117,6 +1138,33 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
   body.pro-user .customer-hide { display: table-cell !important; }
   body.pro-user #internalSummaryFull { display: flex !important; flex-direction: column !important; }
   body.pro-user #customerSummary { display: none !important; }
+
+  /* ── PRINT SUMMARY (same as free-user) ── */
+  body.print-summary #materialsCard { display: none !important; }
+  body.print-summary #paintCard { display: none !important; }
+  body.print-summary .pro-only-card { display: none !important; }
+  body.print-summary .pro-feature-card { display: none !important; }
+  body.print-summary .customer-hide { display: none !important; }
+  body.print-summary .repair-task-table { display: none !important; }
+  body.print-summary #internalSummaryFull { display: none !important; }
+  body.print-summary #customerSummary { display: flex !important; flex-direction: column !important; }
+  body.print-summary .repair-card { padding: 4pt 0 !important; }
+  body.print-summary .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
+  body.print-summary .est-legal-card::after {
+    content: 'Estimate generated with ChemCalc Marine Repair Estimator — chemcalc.co';
+    display: block !important;
+    font-size: 7pt !important;
+    color: #aaa !important;
+    text-align: center;
+    margin-top: 6pt;
+    border-top: 0.5pt solid #eee;
+    padding-top: 4pt;
+  }
+
+  /* ── PRINT ITEMIZED (same as pro-user) ── */
+  body.print-itemized .customer-hide { display: table-cell !important; }
+  body.print-itemized #internalSummaryFull { display: flex !important; flex-direction: column !important; }
+  body.print-itemized #customerSummary { display: none !important; }
 }
 
 /* -- Responsive -- */
