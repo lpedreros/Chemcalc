@@ -103,18 +103,34 @@ function saveBusinessInfo() {
     prefix:  document.getElementById('bizPrefix').value.trim().toUpperCase(),
     logoUrl: document.getElementById('bizLogoUrl').value.trim()
   };
+  // Always save to localStorage as fast local cache
   localStorage.setItem('chemcalc_biz_info', JSON.stringify(biz));
 
-  // Save Trello settings to Supabase profile
-  if (typeof trelloCollectSettings === 'function') {
-    var trelloSettings = trelloCollectSettings();
-    var user = (typeof getUser === 'function') ? getUser() : null;
-    if (user && _sb) {
-      _sb.from('profiles').update(trelloSettings).eq('id', user.id)
-        .then(function(res) {
-          if (res.error) console.warn('Trello settings save error:', res.error.message);
-        });
+  // Save biz info + Trello settings to Supabase so it travels with the user
+  var user = (typeof getUser === 'function') ? getUser() : null;
+  if (user && _sb) {
+    var profileUpdate = {
+      biz_name:     biz.name,
+      biz_tagline:  biz.tagline,
+      biz_phone:    biz.phone,
+      biz_email:    biz.email,
+      biz_website:  biz.website,
+      biz_address:  biz.address,
+      biz_prefix:   biz.prefix,
+      biz_logo_url: biz.logoUrl
+    };
+    // Merge Trello settings if available
+    if (typeof trelloCollectSettings === 'function') {
+      var trelloSettings = trelloCollectSettings();
+      Object.assign(profileUpdate, trelloSettings);
     }
+    _sb.from('profiles').update(profileUpdate).eq('id', user.id)
+      .then(function(res) {
+        if (res.error) console.warn('Profile save error:', res.error.message);
+      });
+  } else if (typeof trelloCollectSettings === 'function') {
+    // Not logged in — at least update in-memory Trello state
+    trelloCollectSettings();
   }
 
   // Apply prefix to current estimate number
@@ -137,6 +153,21 @@ function saveBusinessInfo() {
 }
 
 function loadBusinessInfo() {
+  // Prefer Supabase profile data (already loaded into currentProfile by auth.js)
+  var profile = (typeof getProfile === 'function') ? getProfile() : null;
+  if (profile && profile.biz_name) {
+    return {
+      name:    profile.biz_name    || '',
+      tagline: profile.biz_tagline || '',
+      phone:   profile.biz_phone   || '',
+      email:   profile.biz_email   || '',
+      website: profile.biz_website || '',
+      address: profile.biz_address || '',
+      prefix:  profile.biz_prefix  || '',
+      logoUrl: profile.biz_logo_url || ''
+    };
+  }
+  // Fallback to localStorage (for users who saved before this update)
   try {
     var raw = localStorage.getItem('chemcalc_biz_info');
     return raw ? JSON.parse(raw) : null;
