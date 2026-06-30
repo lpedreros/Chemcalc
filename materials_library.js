@@ -22,7 +22,8 @@ async function loadMaterialsLibrary() {
     .select('*')
     .order('name', { ascending: true });
   if (error) { console.warn('Library load error:', error.message); return; }
-  _matLib = data || [];
+  _matLib.length = 0;
+  (data || []).forEach(function(item) { _matLib.push(item); });
   _matLibLoaded = true;
   renderLibraryTable();
   // Re-run observer so any open rows get typeahead with fresh data
@@ -53,7 +54,8 @@ async function saveLibraryItem(item) {
 async function deleteLibraryItem(id) {
   var { error } = await _sb.from('materials_library').delete().eq('id', id);
   if (error) { console.warn('Library delete error:', error.message); return; }
-  _matLib = _matLib.filter(i => i.id !== id);
+  var idx = _matLib.findIndex(i => i.id === id);
+  if (idx > -1) _matLib.splice(idx, 1);
   renderLibraryTable();
 }
 
@@ -188,10 +190,7 @@ function attachTypeahead(input) {
       dropdown.style.display = 'none';
       return;
     }
-    if (_matLib.length === 0) {
-      dropdown.style.display = 'none';
-      return;
-    }
+
     var q = query.toLowerCase();
     var matches = _matLib.filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
     if (matches.length === 0) { dropdown.style.display = 'none'; return; }
