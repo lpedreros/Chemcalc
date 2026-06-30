@@ -1305,12 +1305,7 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
     border: none !important; font-size: 10pt !important; font-weight: 700 !important;
   }
 
-<<<<<<< HEAD
-    /* ── Estimate / Client / Vessel: all fields horizontal in one row ── */
-=======
   /* ── Estimate / Client / Vessel: all fields horizontal in one row ── */
-  /* Target all three info cards' Bootstrap rows */
->>>>>>> origin/main
   .est-card .row {
     display: flex !important;
     flex-direction: row !important;
@@ -1318,10 +1313,6 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
     gap: 0 10pt !important;
     align-items: flex-start !important;
   }
-<<<<<<< HEAD
-=======
-  /* Each column becomes auto-width, not full-width */
->>>>>>> origin/main
   .est-card .col-md-3,
   .est-card .col-md-4,
   .est-card .col-md-6 {
@@ -1330,10 +1321,6 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
     min-width: 0 !important;
     padding: 0 !important;
   }
-<<<<<<< HEAD
-=======
-  /* Labels and values stack vertically within each cell */
->>>>>>> origin/main
   .est-card .est-label {
     display: block !important;
     white-space: nowrap;
@@ -1347,13 +1334,8 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
     overflow: hidden;
     text-overflow: ellipsis;
   }
-<<<<<<< HEAD
   #estimateNumber { font-size: 7.5pt !important; }
 
-=======
-  /* Estimate # gets a bit more room since it's long */
-  #estimateNumber { font-size: 7.5pt !important; }
->>>>>>> origin/main
 
   /* ── Repair task tables ── */
   .est-table, .repair-task-table {
