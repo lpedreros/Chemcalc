@@ -408,17 +408,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // Init typeahead observer for material/paint name inputs
   if (typeof initTypeaheadObserver === 'function') initTypeaheadObserver();
 
-  // Load materials library as soon as auth + pro status is confirmed
-  var _libLoadAttempts = 0;
-  var _libLoadInterval = setInterval(function () {
-    _libLoadAttempts++;
-    if (typeof window.isPro === 'function' && window.isPro() && typeof loadMaterialsLibrary === 'function') {
-      clearInterval(_libLoadInterval);
-      loadMaterialsLibrary();
-    } else if (_libLoadAttempts > 60) {
-      clearInterval(_libLoadInterval);
-    }
-  }, 100);
+  // Load materials library immediately on page load (will no-op if not logged in)
+  if (typeof loadMaterialsLibrary === 'function') loadMaterialsLibrary();
 });
 
 function initEstimate() {

@@ -14,9 +14,7 @@ function _libEscHtml(str) {
 
 /* ── Load library from Supabase ──────────────────────────── */
 async function loadMaterialsLibrary() {
-  if (!window._sb) return;
-  var { data: { session } } = await _sb.auth.getSession();
-  if (!session) return;
+  if (!_sb) return;
   var { data, error } = await _sb
     .from('materials_library')
     .select('*')
@@ -26,8 +24,12 @@ async function loadMaterialsLibrary() {
   (data || []).forEach(function(item) { _matLib.push(item); });
   _matLibLoaded = true;
   renderLibraryTable();
-  // Re-run observer so any open rows get typeahead with fresh data
-  if (typeof initTypeaheadObserver === 'function') initTypeaheadObserver();
+  // Re-attach typeahead on all existing rows now that _matLib is populated
+  document.querySelectorAll('#materialsBody .item-name-input, #paintBody .item-name-input')
+    .forEach(function(input) {
+      delete input.dataset.typeaheadAttached;
+      attachTypeahead(input);
+    });
 }
 
 /* ── Save a new item ─────────────────────────────────────── */
