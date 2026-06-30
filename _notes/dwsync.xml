@@ -6,10 +6,10 @@
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134258658772702051" remote="134258658600000000" Dst="2" />
 <file name="chatbot.js" server="157.173.209.17" local="134258660400000000" remote="134258660400000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134258670000000000" remote="134258670000000000" Dst="2" />
-<file name="estimate.html" server="157.173.209.17" local="134273150890134206" remote="134273151000000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134273150961943132" remote="134273151000000000" Dst="2" />
+<file name="estimate.html" server="157.173.209.17" local="134273220089838142" remote="134273220000000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134273220250744360" remote="134273220000000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134258640942074687" remote="134272352400000000" Dst="2" />
-<file name="estimate.js" server="157.173.209.17" local="134273166510014072" remote="134273166000000000" Dst="2" />
+<file name="estimate.js" server="157.173.209.17" local="134273231692278424" remote="134273231400000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134258640942069687" remote="134272501800000000" Dst="2" />
 <file name="auth.js" server="157.173.209.17" local="134272967705625229" remote="134272977600000000" Dst="2" />
 <file name=".gitignore" server="157.173.209.17" local="134258640941939590" remote="134272519200000000" Dst="2" />
@@ -57,5 +57,5 @@
 <file name="history.html" server="157.173.209.17" local="134272967596471071" remote="134272977600000000" Dst="2" />
 <file name="history.js" server="157.173.209.17" local="134272720805859739" remote="134272720800000000" Dst="2" />
 <file name=".htaccess" server="157.173.209.17" local="134272589400000000" remote="134272589400000000" Dst="2" />
-<file name="task_presets.js" server="157.173.209.17" local="134273161799732215" remote="134273161800000000" Dst="2" />
+<file name="task_presets.js" server="157.173.209.17" local="134273211471857091" remote="134273211600000000" Dst="2" />
 </dwsync>

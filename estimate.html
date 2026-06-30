@@ -58,11 +58,8 @@
     gtag('config', 'G-DTECSH4N52');
   </script>
 
-  <!-- AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1179454606770448" crossorigin="anonymous"></script>
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -146,18 +143,6 @@
 
   <!-- ===== TOP TOOLBAR (Job Preset + Customer View Toggle) ===== -->
   <div class="est-toolbar d-print-none">
-    <!-- Job Type Preset -->
-    <div class="toolbar-group">
-      <label class="est-label mb-0">Quick Start:</label>
-      <select id="jobPreset" class="est-input est-select" onchange="applyJobPreset(this.value)">
-        <option value="">— Select Job Type —</option>
-        <option value="gelcoat">Gelcoat Repair</option>
-        <option value="fiberglass">Fiberglass Repair</option>
-        <option value="paint">Full Paint Job (Awlcraft 2000)</option>
-        <option value="structural">Structural Repair</option>
-        <option value="custom">Custom / Blank</option>
-      </select>
-    </div>
     <!-- Format Selector (replaces separate View + Print toggles) -->
     <div class="toolbar-group">
       <label class="est-label mb-0">Format:</label>
@@ -266,7 +251,7 @@
   <!-- ===== HARD MATERIALS ===== -->
   <div class="est-card customer-hide" id="materialsCard">
     <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-      <span>Hard Materials &amp; Chemicals</span>
+      <span>Materials</span>
       <div class="markup-control">
         <label class="est-label mb-0 me-2">Markup %</label>
         <input type="number" id="materialsMarkup" class="est-input markup-input" value="40" min="0" max="500" step="1" title="Applied to all items in this section" />
@@ -305,50 +290,6 @@
       </table>
     </div>
     <button class="btn-add-row d-print-none" onclick="addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials')">+ Add Item</button>
-  </div>
-
-  <!-- ===== PAINT MATERIALS ===== -->
-  <div class="est-card customer-hide" id="paintCard">
-    <div class="est-card-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-      <span>Paint Materials</span>
-      <div class="markup-control">
-        <label class="est-label mb-0 me-2">Markup %</label>
-        <input type="number" id="paintMarkup" class="est-input markup-input" value="40" min="0" max="500" step="1" title="Applied to all items in this section" />
-        <span class="markup-hint">cost × (1 + %)</span>
-      </div>
-    </div>
-    <div class="table-responsive mt-3">
-      <table class="est-table" id="paintTable">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th class="col-cost">Your Cost ($)</th>
-            <th class="col-markup">Markup %</th>
-            <th class="col-retail">Retail Price</th>
-            <th class="col-qty">Qty</th>
-            <th class="col-total">Line Total</th>
-            <th class="col-link d-print-none">Buy</th>
-            <th class="col-del d-print-none"></th>
-            <th class="col-del d-print-none"></th>
-          </tr>
-        </thead>
-        <tbody id="paintBody"></tbody>
-        <tfoot>
-          <tr class="subtotal-row">
-            <td class="subtotal-label" colspan="2">Paint Subtotal</td>
-            <td class="col-cost"></td>
-            <td class="col-markup"></td>
-            <td class="col-retail"></td>
-            <td class="col-qty"></td>
-            <td class="col-total subtotal-val" id="paintSubtotal">$0.00</td>
-            <td class="col-link d-print-none"></td>
-            <td class="col-del d-print-none"></td>
-            <td class="col-del d-print-none"></td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-    <button class="btn-add-row d-print-none" onclick="addRow('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint')">+ Add Paint Item</button>
   </div>
 
   <!-- ===== REPAIR TASKS (injected by JS) ===== -->
@@ -408,10 +349,6 @@
         <span>Materials</span>
         <span id="sumMaterials">$0.00</span>
       </div>
-      <div class="summary-row">
-        <span>Paint Materials</span>
-        <span id="sumPaint">$0.00</span>
-      </div>
       <div id="laborSummaryRows"></div>
       <div class="summary-divider"></div>
       <div class="summary-row summary-grand">
@@ -458,10 +395,6 @@
         <div class="summary-row">
           <span>Your Cost (Materials)</span>
           <span id="sumCostMaterials">$0.00</span>
-        </div>
-        <div class="summary-row">
-          <span>Your Cost (Paint)</span>
-          <span id="sumCostPaint">$0.00</span>
         </div>
         <div class="summary-row">
           <span>Gross Profit</span>
@@ -786,6 +719,7 @@
 <!-- ===== LOG CONFIRM MODAL ===== -->
 <div class="modal-overlay" id="logModal" style="display:none;" onclick="overlayClose(event,'logModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
+
     <button class="modal-close" onclick="closeModal('logModal')">&#10005;</button>
     <h3 class="modal-title">&#128204; Log Estimate</h3>
     <p class="modal-sub">This will save the estimate to the database and create a Trello card in the "Estimate Sent" column.</p>

@@ -497,13 +497,6 @@ function applyJobPreset(presetKey) {
     addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item);
   });
 
-  // Clear and repopulate paint
-  var paintBody = document.getElementById('paintBody');
-  paintBody.innerHTML = '';
-  preset.paint.forEach(function (item) {
-    addRow('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint', item);
-  });
-
   // Clear existing tasks and add one preset task
   document.getElementById('tasksContainer').innerHTML = '';
   taskCounter = 0;
@@ -566,7 +559,6 @@ function recalcRow(input) {
   if (tbody) {
     var bodyId = tbody.id;
     if (bodyId === 'materialsBody') recalcSection('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials');
-    else if (bodyId === 'paintBody') recalcSection('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint');
   }
 }
 
@@ -595,15 +587,12 @@ function delRow(btn, subtotalId, sumId) {
   tr.remove();
   var bodyId = tbody.id;
   if (bodyId === 'materialsBody') recalcSection('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials');
-  else if (bodyId === 'paintBody') recalcSection('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint');
 }
 
 /* ── Markup global change ── */
 document.addEventListener('input', function (e) {
   if (e.target.id === 'materialsMarkup') {
     applyGlobalMarkup('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials');
-  } else if (e.target.id === 'paintMarkup') {
-    applyGlobalMarkup('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint');
   } else if (e.target.id === 'hourlyRate') {
     recalcAllTasks();
   }
@@ -812,29 +801,24 @@ function updateLaborSummary() {
 
 function updateSummary() {
   var matVal = parseCurrency(document.getElementById('materialsSubtotal').textContent);
-  var paintVal = parseCurrency(document.getElementById('paintSubtotal').textContent);
   var laborTotal = 0;
   document.querySelectorAll('[id^="taskSubtotal"]').forEach(function (el) {
     laborTotal += parseCurrency(el.textContent);
   });
 
-  var grand = matVal + paintVal + laborTotal;
+  var grand = matVal + laborTotal;
   grandTotalValue = grand;
 
   document.getElementById('grandTotal').textContent = fmtCurrency(grand);
   document.getElementById('grandTotalCustomer').textContent = fmtCurrency(grand);
   document.getElementById('sumMaterials').textContent = fmtCurrency(matVal);
-  document.getElementById('sumPaint').textContent = fmtCurrency(paintVal);
 
   // Internal cost summary
   var matCost = calcSectionCost('materialsBody');
-  var paintCost = calcSectionCost('paintBody');
-  var totalCost = matCost + paintCost;
-  var grossProfit = grand - totalCost;
+  var grossProfit = grand - matCost;
   var margin = grand > 0 ? (grossProfit / grand * 100) : 0;
 
   document.getElementById('sumCostMaterials').textContent = fmtCurrency(matCost);
-  document.getElementById('sumCostPaint').textContent = fmtCurrency(paintCost);
   document.getElementById('grossProfit').textContent = fmtCurrency(grossProfit);
   document.getElementById('marginPct').textContent = margin.toFixed(1) + '%';
   updateDeposit();
@@ -1008,18 +992,10 @@ function loadDraft(data) {
   document.getElementById('boatHIN').value = data.boatHIN || '';
   document.getElementById('scopeNotes').value = data.scopeNotes || '';
   document.getElementById('materialsMarkup').value = data.materialsMarkup || 40;
-  document.getElementById('paintMarkup').value = data.paintMarkup || 40;
-
   // Restore materials
   document.getElementById('materialsBody').innerHTML = '';
   (data.materials || []).forEach(function (item) {
     addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item);
-  });
-
-  // Restore paint
-  document.getElementById('paintBody').innerHTML = '';
-  (data.paint || []).forEach(function (item) {
-    addRow('paintBody', 'paintMarkup', 'paintSubtotal', 'sumPaint', item);
   });
 
   // Restore tasks
@@ -1053,22 +1029,6 @@ function collectEstimateData() {
     var markupEl = tr.querySelector('.markup-row-input');
     var qtyEl = tr.querySelector('.qty-input');
     materials.push({
-      name: nameEl ? nameEl.value : '',
-      cost: parseFloat(costEl ? costEl.value : 0) || 0,
-      markup: parseFloat(markupEl ? markupEl.value : 0) || 0,
-      qty: parseFloat(qtyEl ? qtyEl.value : 1) || 1,
-      source: tr.getAttribute('data-source') || 'wm',
-      affKey: tr.getAttribute('data-affkey') || ''
-    });
-  });
-
-  var paint = [];
-  document.querySelectorAll('#paintBody tr').forEach(function (tr) {
-    var nameEl = tr.querySelector('.item-name-input');
-    var costEl = tr.querySelector('.cost-input');
-    var markupEl = tr.querySelector('.markup-row-input');
-    var qtyEl = tr.querySelector('.qty-input');
-    paint.push({
       name: nameEl ? nameEl.value : '',
       cost: parseFloat(costEl ? costEl.value : 0) || 0,
       markup: parseFloat(markupEl ? markupEl.value : 0) || 0,
@@ -1115,10 +1075,8 @@ function collectEstimateData() {
     boatHIN: document.getElementById('boatHIN').value,
     scopeNotes: document.getElementById('scopeNotes').value,
     materialsMarkup: document.getElementById('materialsMarkup').value,
-    paintMarkup: document.getElementById('paintMarkup').value,
     grandTotal: grandTotalValue,
     materials: materials,
-    paint: paint,
     tasks: tasks,
     company: (typeof getProfile === 'function' && getProfile()) ? (getProfile().company_name || 'Think & Engage LLC') : 'Think & Engage LLC',
     userEmail: (typeof getUser === 'function' && getUser()) ? getUser().email : null,
@@ -1264,11 +1222,9 @@ function newEstimate() {
     document.getElementById('boatHIN').value = '';
     document.getElementById('scopeNotes').value = '';
     document.getElementById('materialsBody').innerHTML = '';
-    document.getElementById('paintBody').innerHTML = '';
     document.getElementById('tasksContainer').innerHTML = '';
     taskCounter = 0;
     document.getElementById('materialsSubtotal').textContent = '$0.00';
-    document.getElementById('paintSubtotal').textContent = '$0.00';
     document.getElementById('expiryWarning').classList.add('d-none');
     initEstimate();
     updateSummary();
@@ -1312,10 +1268,12 @@ var _tsTemplatesLoaded = false;
 
 /* ── Open modal (Pro-gated) ──────────────────────────────── */
 function openTaskStarter() {
-  if (!_checkPro()) { openModal('upgradeModal'); return; }
+  var taskCount = document.querySelectorAll('.repair-card').length;
+  var pro = _checkPro();
+  if (!pro && taskCount >= 5) { openModal('upgradeModal'); return; }
   tsShowTab('presets');
   tsRenderPresets();
-  tsLoadUserTemplates();
+  if (pro) tsLoadUserTemplates();
   openModal('taskStarterModal');
 }
 
@@ -1410,7 +1368,6 @@ function mergePresetMaterials(preset) {
     });
   }
   mergeRows('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', preset.materialRows);
-  mergeRows('paintBody',     'paintMarkup',     'paintSubtotal',     'sumPaint',     preset.paintRows);
 }
 
 /* ── Blank task ──────────────────────────────────────────── */
