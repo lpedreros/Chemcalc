@@ -16,7 +16,7 @@ function setUserTier(tier) {
 
   // Pro-only elements
   document.querySelectorAll('.pro-only').forEach(function (el) {
-    el.style.display = isPro ? '' : 'none';
+    el.style.display = isPro ? 'inline-block' : 'none';
   });
 
   // Internal summary (logged-in only)
