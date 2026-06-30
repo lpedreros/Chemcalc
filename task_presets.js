@@ -1,17 +1,17 @@
 /* ============================================================
-   task_presets.js — ChemCalc Shared Task Presets
+   task_presets.js - ChemCalc Shared Task Presets
    ============================================================
    Edit this file to add, remove, or modify the preset task
    templates shown in the Task Starter modal.
 
    Each preset object has:
-     name        {string}   — Display name for the task card
-     category    {string}   — Groups cards in the modal (e.g. "Paint", "Fiberglass")
-     icon        {string}   — Emoji shown on the card
-     description {string}   — One-line description shown under the card title
-     scopeSteps  {string[]} — Steps appended to the scope of work textarea
-     taskRows    {object[]} — Default labor rows: [{ name, hours }]
-                              hours are suggestions only — contractor edits freely
+     name        {string}   - Display name for the task card
+     category    {string}   - Groups cards in the modal (e.g. "Paint", "Fiberglass")
+     icon        {string}   - Icon shown on the card (JS Unicode escape - do NOT use raw emoji)
+     description {string}   - One-line description shown under the card title
+     scopeSteps  {string[]} - Steps appended to the scope of work textarea (plain text only)
+     taskRows    {object[]} - Default labor rows: [{ name, hours }]
+                              hours are suggestions only - contractor edits freely
 
    To add a new preset, copy an existing block and paste it into
    the TASK_PRESETS array below. The modal will pick it up automatically.
@@ -23,7 +23,7 @@ var TASK_PRESETS = [
   {
     name:        'Gelcoat Repair',
     category:    'Gelcoat & Paint',
-    icon:        '🔧',
+    icon:        '\uD83D\uDD27',
     description: 'Grind, fill, shoot gelcoat, wet sand & buff',
     scopeSteps: [
       'Prep and mask surrounding area',
@@ -34,48 +34,75 @@ var TASK_PRESETS = [
       'Final cleanup and inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask',          hours: 0.5 },
-      { name: 'Grind',         hours: 1.0 },
-      { name: 'Fill & Shape',  hours: 1.5 },
-      { name: 'Shoot Gelcoat', hours: 1.0 },
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Mask',            hours: 0.5 },
+      { name: 'Grind',           hours: 1.0 },
+      { name: 'Fill & Shape',    hours: 1.5 },
+      { name: 'Shoot Gelcoat',   hours: 1.0 },
       { name: 'Wet Sand & Buff', hours: 1.5 },
-      { name: 'Cleanup',       hours: 0.5 },
-      { name: 'Driving',       hours: 0.5 }
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
+    ]
+  },
+
+  {
+    name:        'Spider Cracks',
+    category:    'Gelcoat & Paint',
+    icon:        '\uD83D\uDD78',
+    description: 'V-groove stress cracks, fill, gelcoat, buff',
+    scopeSteps: [
+      'Identify and mark all spider crack areas',
+      'V-groove each crack with a rotary tool',
+      'Clean and degrease grooves',
+      'Fill with gelcoat paste or fairing compound',
+      'Sand flush when cured',
+      'Apply matched gelcoat',
+      'Wet sand and buff to blend',
+      'Final cleanup and inspection'
+    ],
+    taskRows: [
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Mask',            hours: 0.5 },
+      { name: 'V-Groove',        hours: 1.0 },
+      { name: 'Fill',            hours: 1.0 },
+      { name: 'Shoot Gelcoat',   hours: 1.0 },
+      { name: 'Wet Sand & Buff', hours: 1.5 },
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
     ]
   },
 
   {
     name:        'Full Paint Job',
     category:    'Gelcoat & Paint',
-    icon:        '🎨',
+    icon:        '\uD83C\uDFA8',
     description: 'Sand, prime, spray topcoat, wet sand & buff',
     scopeSteps: [
       'Wash and degrease entire surface',
       'Sand to scuff and remove oxidation',
       'Apply fairing compound where needed',
       'Apply primer coats',
-      'Spray topcoat (2–3 coats)',
+      'Spray topcoat (2-3 coats)',
       'Wet sand and buff to high gloss',
       'Final cleanup and inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask',          hours: 1.0 },
-      { name: 'Grind / Sand',  hours: 2.0 },
-      { name: 'Fill & Shape',  hours: 1.0 },
-      { name: 'Match',         hours: 0.5 },
-      { name: 'Shoot Paint',   hours: 2.0 },
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Mask',            hours: 1.0 },
+      { name: 'Grind / Sand',    hours: 2.0 },
+      { name: 'Fill & Shape',    hours: 1.0 },
+      { name: 'Match',           hours: 0.5 },
+      { name: 'Shoot Paint',     hours: 2.0 },
       { name: 'Wet Sand & Buff', hours: 2.0 },
-      { name: 'Cleanup',       hours: 0.5 },
-      { name: 'Driving',       hours: 0.5 }
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
     ]
   },
 
   {
     name:        'Bottom Paint',
     category:    'Gelcoat & Paint',
-    icon:        '⚓',
+    icon:        '\u2693',
     description: 'Haul, sand, apply antifouling bottom paint',
     scopeSteps: [
       'Haul and pressure wash hull',
@@ -86,20 +113,20 @@ var TASK_PRESETS = [
       'Launch and inspect'
     ],
     taskRows: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Pressure Wash', hours: 0.5 },
-      { name: 'Sand Bottom',   hours: 2.0 },
-      { name: 'Mask',          hours: 0.5 },
-      { name: 'Apply Paint',   hours: 1.5 },
-      { name: 'Cleanup',       hours: 0.5 },
-      { name: 'Driving',       hours: 0.5 }
+      { name: 'Getting Ready',  hours: 0.5 },
+      { name: 'Pressure Wash',  hours: 0.5 },
+      { name: 'Sand Bottom',    hours: 2.0 },
+      { name: 'Mask',           hours: 0.5 },
+      { name: 'Apply Paint',    hours: 1.5 },
+      { name: 'Cleanup',        hours: 0.5 },
+      { name: 'Driving',        hours: 0.5 }
     ]
   },
 
   {
     name:        'Buff & Polish',
     category:    'Gelcoat & Paint',
-    icon:        '✨',
+    icon:        '\u2728',
     description: 'Compound, polish, and wax oxidized gelcoat',
     scopeSteps: [
       'Wash and degrease surface',
@@ -123,7 +150,7 @@ var TASK_PRESETS = [
   {
     name:        'Fiberglass Repair',
     category:    'Fiberglass & Structural',
-    icon:        '🛠️',
+    icon:        '\uD83D\uDEE0',
     description: 'Grind, glass, fill, match gelcoat',
     scopeSteps: [
       'Assess and mark damaged area',
@@ -136,24 +163,49 @@ var TASK_PRESETS = [
       'Final cleanup and inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask',          hours: 0.5 },
-      { name: 'Grind',         hours: 1.5 },
-      { name: 'Cut Cloth',     hours: 0.5 },
-      { name: 'Glass',         hours: 2.0 },
-      { name: 'Fill & Shape',  hours: 2.0 },
-      { name: 'Match',         hours: 1.0 },
-      { name: 'Shoot Gelcoat', hours: 1.0 },
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Mask',            hours: 0.5 },
+      { name: 'Grind',           hours: 1.5 },
+      { name: 'Cut Cloth',       hours: 0.5 },
+      { name: 'Glass',           hours: 2.0 },
+      { name: 'Fill & Shape',    hours: 2.0 },
+      { name: 'Match',           hours: 1.0 },
+      { name: 'Shoot Gelcoat',   hours: 1.0 },
       { name: 'Wet Sand & Buff', hours: 2.0 },
-      { name: 'Cleanup',       hours: 0.5 },
-      { name: 'Driving',       hours: 0.5 }
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
+    ]
+  },
+
+  {
+    name:        'Keel Repair',
+    category:    'Fiberglass & Structural',
+    icon:        '\u2693',
+    description: 'Grind, rebuild, barrier coat keel',
+    scopeSteps: [
+      'Haul and inspect keel condition',
+      'Grind damaged areas to sound substrate',
+      'Fill voids with epoxy fairing compound',
+      'Apply barrier coat (2-3 coats)',
+      'Sand and fair surface',
+      'Apply bottom paint',
+      'Launch and inspect'
+    ],
+    taskRows: [
+      { name: 'Getting Ready',  hours: 0.5 },
+      { name: 'Grind',          hours: 2.0 },
+      { name: 'Fill & Fair',    hours: 2.0 },
+      { name: 'Barrier Coat',   hours: 1.5 },
+      { name: 'Sand & Finish',  hours: 1.0 },
+      { name: 'Cleanup',        hours: 0.5 },
+      { name: 'Driving',        hours: 0.5 }
     ]
   },
 
   {
     name:        'Structural Repair',
     category:    'Fiberglass & Structural',
-    icon:        '🏗️',
+    icon:        '\uD83C\uDFD7',
     description: 'Demo, glass, rebuild structural laminate',
     scopeSteps: [
       'Assess structural damage and develop repair plan',
@@ -181,7 +233,7 @@ var TASK_PRESETS = [
   {
     name:        'Transom Repair',
     category:    'Fiberglass & Structural',
-    icon:        '⛵',
+    icon:        '\u26F5',
     description: 'Remove, replace, and glass transom core',
     scopeSteps: [
       'Remove outboard, hardware, and fittings from transom',
@@ -195,15 +247,42 @@ var TASK_PRESETS = [
       'Final inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready',    hours: 0.5 },
-      { name: 'Remove Hardware',  hours: 1.5 },
-      { name: 'Demo Core',        hours: 3.0 },
-      { name: 'Fit New Core',     hours: 2.0 },
-      { name: 'Glass Skins',      hours: 3.0 },
-      { name: 'Fair & Finish',    hours: 2.0 },
+      { name: 'Getting Ready',      hours: 0.5 },
+      { name: 'Remove Hardware',    hours: 1.5 },
+      { name: 'Demo Core',          hours: 3.0 },
+      { name: 'Fit New Core',       hours: 2.0 },
+      { name: 'Glass Skins',        hours: 3.0 },
+      { name: 'Fair & Finish',      hours: 2.0 },
       { name: 'Reinstall Hardware', hours: 1.5 },
-      { name: 'Cleanup',          hours: 0.5 },
-      { name: 'Driving',          hours: 0.5 }
+      { name: 'Cleanup',            hours: 0.5 },
+      { name: 'Driving',            hours: 0.5 }
+    ]
+  },
+
+  {
+    name:        'Stringer Repair',
+    category:    'Fiberglass & Structural',
+    icon:        '\uD83D\uDEE0',
+    description: 'Re-tab fractured or delaminated stringers',
+    scopeSteps: [
+      'Inspect and locate delaminated or fractured stringers',
+      'Remove flooring or access panels as needed',
+      'Grind tabbing and stringer surface to clean laminate',
+      'Dry out core if wet rot is present',
+      'Re-tab stringers with biaxial cloth and epoxy',
+      'Fair and finish exposed surfaces',
+      'Reinstall flooring or access panels',
+      'Final inspection'
+    ],
+    taskRows: [
+      { name: 'Getting Ready',  hours: 0.5 },
+      { name: 'Access / Demo',  hours: 2.0 },
+      { name: 'Grind',          hours: 2.0 },
+      { name: 'Re-Tab',         hours: 3.0 },
+      { name: 'Fair & Finish',  hours: 1.5 },
+      { name: 'Reinstall',      hours: 1.5 },
+      { name: 'Cleanup',        hours: 0.5 },
+      { name: 'Driving',        hours: 0.5 }
     ]
   },
 
@@ -211,7 +290,7 @@ var TASK_PRESETS = [
   {
     name:        'Engine Service',
     category:    'Mechanical & Systems',
-    icon:        '⚙️',
+    icon:        '\u2699',
     description: 'Oil, filters, impeller, zincs, belts',
     scopeSteps: [
       'Change engine oil and filter',
@@ -224,21 +303,21 @@ var TASK_PRESETS = [
       'Sea trial if applicable'
     ],
     taskRows: [
-      { name: 'Getting Ready',   hours: 0.5 },
-      { name: 'Oil & Filter',    hours: 0.5 },
-      { name: 'Fuel Filter',     hours: 0.5 },
-      { name: 'Impeller',        hours: 1.0 },
-      { name: 'Zincs',           hours: 0.5 },
-      { name: 'Belts & Hoses',   hours: 0.5 },
-      { name: 'Run & Inspect',   hours: 0.5 },
-      { name: 'Driving',         hours: 0.5 }
+      { name: 'Getting Ready',  hours: 0.5 },
+      { name: 'Oil & Filter',   hours: 0.5 },
+      { name: 'Fuel Filter',    hours: 0.5 },
+      { name: 'Impeller',       hours: 1.0 },
+      { name: 'Zincs',          hours: 0.5 },
+      { name: 'Belts & Hoses',  hours: 0.5 },
+      { name: 'Run & Inspect',  hours: 0.5 },
+      { name: 'Driving',        hours: 0.5 }
     ]
   },
 
   {
     name:        'Electrical Repair',
     category:    'Mechanical & Systems',
-    icon:        '⚡',
+    icon:        '\u26A1',
     description: 'Diagnose and repair electrical fault or install',
     scopeSteps: [
       'Diagnose electrical fault or scope installation',
@@ -249,21 +328,21 @@ var TASK_PRESETS = [
       'Final inspection and documentation'
     ],
     taskRows: [
-      { name: 'Getting Ready',  hours: 0.5 },
-      { name: 'Diagnose',       hours: 1.0 },
-      { name: 'Pull Wire',      hours: 1.5 },
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Diagnose',        hours: 1.0 },
+      { name: 'Pull Wire',       hours: 1.5 },
       { name: 'Connect & Label', hours: 1.0 },
-      { name: 'Test',           hours: 0.5 },
-      { name: 'Cleanup',        hours: 0.5 },
-      { name: 'Driving',        hours: 0.5 }
+      { name: 'Test',            hours: 0.5 },
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
     ]
   },
 
   /* -- Hardware & Deck -------------------------------------- */
   {
-    name:        'Hardware Install / Rebedding',
+    name:        'Hardware Rebedding',
     category:    'Hardware & Deck',
-    icon:        '🔩',
+    icon:        '\uD83D\uDD29',
     description: 'Remove, rebed, and reinstall deck hardware',
     scopeSteps: [
       'Remove existing hardware',
@@ -275,20 +354,68 @@ var TASK_PRESETS = [
       'Final cleanup'
     ],
     taskRows: [
-      { name: 'Getting Ready',    hours: 0.5 },
-      { name: 'Remove Hardware',  hours: 1.0 },
-      { name: 'Prep & Fill',      hours: 0.5 },
-      { name: 'Bed & Reinstall',  hours: 1.0 },
-      { name: 'Inspect & Test',   hours: 0.5 },
-      { name: 'Cleanup',          hours: 0.5 },
-      { name: 'Driving',          hours: 0.5 }
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Remove Hardware', hours: 1.0 },
+      { name: 'Prep & Fill',     hours: 0.5 },
+      { name: 'Bed & Reinstall', hours: 1.0 },
+      { name: 'Inspect & Test',  hours: 0.5 },
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
+    ]
+  },
+
+  {
+    name:        'Thru-Hull Replacement',
+    category:    'Hardware & Deck',
+    icon:        '\uD83D\uDD29',
+    description: 'Remove, rebed, and reinstall thru-hull / seacock',
+    scopeSteps: [
+      'Close and remove existing seacock and thru-hull',
+      'Inspect and clean hull opening',
+      'Bed new thru-hull with 5200 or equivalent',
+      'Install and torque new seacock',
+      'Test for leaks at dock',
+      'Final inspection'
+    ],
+    taskRows: [
+      { name: 'Getting Ready',   hours: 0.5 },
+      { name: 'Remove Old',      hours: 1.0 },
+      { name: 'Prep Opening',    hours: 0.5 },
+      { name: 'Install New',     hours: 1.0 },
+      { name: 'Test & Inspect',  hours: 0.5 },
+      { name: 'Cleanup',         hours: 0.5 },
+      { name: 'Driving',         hours: 0.5 }
+    ]
+  },
+
+  {
+    name:        'Rub Rail Replacement',
+    category:    'Hardware & Deck',
+    icon:        '\uD83D\uDEE0',
+    description: 'Remove old rub rail, seal, install new',
+    scopeSteps: [
+      'Remove existing rub rail and hardware',
+      'Clean and inspect hull edge',
+      'Repair any damage to hull flange',
+      'Install new rub rail and insert',
+      'Seal ends and fastener holes',
+      'Final inspection'
+    ],
+    taskRows: [
+      { name: 'Getting Ready',  hours: 0.5 },
+      { name: 'Remove Old',     hours: 1.5 },
+      { name: 'Prep Edge',      hours: 0.5 },
+      { name: 'Install New',    hours: 2.0 },
+      { name: 'Seal & Finish',  hours: 0.5 },
+      { name: 'Cleanup',        hours: 0.5 },
+      { name: 'Driving',        hours: 0.5 }
     ]
   },
 
   {
     name:        'Teak Deck Repair',
     category:    'Hardware & Deck',
-    icon:        '🪵',
+    icon:        '\uD83E\uDEB5',
     description: 'Remove, reglue, or replace teak deck sections',
     scopeSteps: [
       'Assess teak condition and identify repair sections',
@@ -300,14 +427,14 @@ var TASK_PRESETS = [
       'Final inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready',   hours: 0.5 },
-      { name: 'Remove Teak',     hours: 2.0 },
-      { name: 'Prep Substrate',  hours: 1.0 },
-      { name: 'Fit & Glue',      hours: 2.0 },
-      { name: 'Caulk Seams',     hours: 1.5 },
-      { name: 'Sand & Seal',     hours: 1.0 },
-      { name: 'Cleanup',         hours: 0.5 },
-      { name: 'Driving',         hours: 0.5 }
+      { name: 'Getting Ready',  hours: 0.5 },
+      { name: 'Remove Teak',    hours: 2.0 },
+      { name: 'Prep Substrate', hours: 1.0 },
+      { name: 'Fit & Glue',     hours: 2.0 },
+      { name: 'Caulk Seams',    hours: 1.5 },
+      { name: 'Sand & Seal',    hours: 1.0 },
+      { name: 'Cleanup',        hours: 0.5 },
+      { name: 'Driving',        hours: 0.5 }
     ]
   },
 
@@ -315,7 +442,7 @@ var TASK_PRESETS = [
   {
     name:        'Vinyl Wrap / Graphics',
     category:    'Cosmetic',
-    icon:        '🖼️',
+    icon:        '\uD83D\uDDBC',
     description: 'Remove old graphics, apply new vinyl wrap or decals',
     scopeSteps: [
       'Remove existing graphics or vinyl',
@@ -326,20 +453,20 @@ var TASK_PRESETS = [
       'Final inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready',  hours: 0.5 },
-      { name: 'Remove Old',     hours: 1.0 },
-      { name: 'Clean Surface',  hours: 0.5 },
-      { name: 'Cut & Apply',    hours: 2.0 },
-      { name: 'Trim & Set',     hours: 1.0 },
-      { name: 'Cleanup',        hours: 0.5 },
-      { name: 'Driving',        hours: 0.5 }
+      { name: 'Getting Ready', hours: 0.5 },
+      { name: 'Remove Old',    hours: 1.0 },
+      { name: 'Clean Surface', hours: 0.5 },
+      { name: 'Cut & Apply',   hours: 2.0 },
+      { name: 'Trim & Set',    hours: 1.0 },
+      { name: 'Cleanup',       hours: 0.5 },
+      { name: 'Driving',       hours: 0.5 }
     ]
   },
 
   {
     name:        'Interior Detailing',
     category:    'Cosmetic',
-    icon:        '🧽',
+    icon:        '\uD83E\uDDFD',
     description: 'Deep clean, shampoo, and detail interior',
     scopeSteps: [
       'Remove cushions and loose items',
@@ -352,13 +479,13 @@ var TASK_PRESETS = [
       'Final inspection'
     ],
     taskRows: [
-      { name: 'Getting Ready',  hours: 0.5 },
-      { name: 'Vacuum',         hours: 0.5 },
-      { name: 'Shampoo',        hours: 1.5 },
-      { name: 'Wipe Down',      hours: 1.0 },
-      { name: 'Windows',        hours: 0.5 },
-      { name: 'Reassemble',     hours: 0.5 },
-      { name: 'Driving',        hours: 0.5 }
+      { name: 'Getting Ready', hours: 0.5 },
+      { name: 'Vacuum',        hours: 0.5 },
+      { name: 'Shampoo',       hours: 1.5 },
+      { name: 'Wipe Down',     hours: 1.0 },
+      { name: 'Windows',       hours: 0.5 },
+      { name: 'Reassemble',    hours: 0.5 },
+      { name: 'Driving',       hours: 0.5 }
     ]
   }
 

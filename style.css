@@ -955,7 +955,11 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
    ============================================================ */
 @media print {
 
-  /* ── Reset & global overrides ── */
+  /* ════════════════════════════════════════════════════════════
+     SECTION 1 — SHARED BASE (applies to ALL print modes)
+     Do not add mode-specific rules here.
+  ════════════════════════════════════════════════════════════ */
+
   @page { margin: 0.45in 0.5in; size: letter portrait; }
 
   *, *::before, *::after { box-sizing: border-box !important; }
@@ -1162,6 +1166,12 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   #estimateNumber { font-size: 7.5pt !important; }
 
 
+  /* ── Remove scrollbars from table wrappers ── */
+  .table-responsive {
+    overflow: visible !important;
+    overflow-x: visible !important;
+  }
+
   /* ── Repair task tables ── */
   .est-table, .repair-task-table {
     width: 100% !important;
@@ -1183,9 +1193,18 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   }
   .est-table tbody td, .repair-task-table tbody td {
     padding: 2.5pt 5pt !important;
-    border-bottom: 0.5pt solid #eee !important;
+    border-bottom: 0.5pt solid #ddd !important;
     vertical-align: middle !important;
   }
+  /* Remove border from hidden cells so they don't render black lines */
+  .est-table td.d-print-none, .repair-task-table td.d-print-none,
+  .est-table th.d-print-none, .repair-task-table th.d-print-none {
+    border: none !important;
+    padding: 0 !important;
+    width: 0 !important;
+  }
+  body.print-itemized .est-table tbody tr,
+  body.print-summary .est-table tbody tr { border-bottom: none !important; }
   .est-table tfoot td, .repair-task-table tfoot td {
     padding: 3pt 5pt !important;
     border-top: 1pt solid #ccc !important;
@@ -1234,6 +1253,21 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
     color: #333 !important; padding: 0 !important;
     font-size: 8.5pt !important; line-height: 1.45 !important;
     font-style: italic;
+    resize: none !important;
+    overflow: hidden !important;
+  }
+  /* Hide scope block entirely when textarea is empty (placeholder only) */
+  .repair-scope-textarea:placeholder-shown,
+  .est-textarea:placeholder-shown {
+    display: none !important;
+  }
+  .repair-scope-textarea:placeholder-shown + *,
+  .est-textarea:placeholder-shown + * {
+    display: none !important;
+  }
+  /* Hide the whole scope card if its textarea is placeholder-only */
+  #scopeCard:has(.est-textarea:placeholder-shown) {
+    display: none !important;
   }
 
   /* ── Legal & signature ── */
@@ -1258,62 +1292,45 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   }
   .sig-caption { font-size: 7pt !important; color: #666 !important; }
 
-  /* ── FREE USER: non-itemized single-page ── */
-  body.free-user #materialsCard { display: none !important; }
-  body.free-user #paintCard { display: none !important; }
-  body.free-user .pro-only-card { display: none !important; }
-  body.free-user .pro-feature-card { display: none !important; }
-  body.free-user .customer-hide { display: none !important; }
-  body.free-user .repair-task-table { display: none !important; }
-  body.free-user #internalSummaryFull { display: none !important; }
-  body.free-user #customerSummary { display: flex !important; flex-direction: column !important; }
-  /* Show repair card name + subtotal only */
-  body.free-user .repair-card { padding: 4pt 0 !important; }
-  body.free-user .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
-  /* ChemCalc branding footer line */
-
-  /* ── Scope of Work: show for pro, hide for free ── */
-  body.pro-user #scopeCard { display: block !important; }
-  body.pro-user #scopeCard .scope-snippet-row { display: none !important; }
-  body.print-summary #scopeCard { display: block !important; }
-  body.print-summary #scopeCard .scope-snippet-row { display: none !important; }
-  body.print-itemized #scopeCard { display: block !important; }
-  body.print-itemized #scopeCard .scope-snippet-row { display: none !important; }
-
-  /* ── Scope textarea: render as text on print ── */
-  #scopeCard .est-textarea {
-    border: none !important;
-    background: transparent !important;
-    resize: none !important;
-    color: #000 !important;
-    font-size: 9pt !important;
-    line-height: 1.5 !important;
-    padding: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-    white-space: pre-wrap !important;
+  /* ════════════════════════════════════════════════════════════
+     SECTION 2 — INTERNAL COPY (body.print-internal)
+     Shows all columns: Cost, Markup, Retail, Qty, Line Total.
+     DO NOT MODIFY without confirming internal copy PDF still works.
+  ════════════════════════════════════════════════════════════ */
+  /* Show all internal-only blocks */
+  body.print-internal #materialsCard  { display: block !important; }
+  body.print-internal #paintCard      { display: block !important; }
+  body.print-internal #scopeCard      { display: block !important; }
+  body.print-internal #scopeCard .scope-snippet-row { display: none !important; }
+  body.print-internal #internalSummaryFull { display: flex !important; flex-direction: column !important; }
+  body.print-internal #customerSummary { display: none !important; }
+  /* Show all columns in internal copy — never hide cost/markup/retail */
+  body.print-internal .col-cost   { display: table-cell !important; }
+  body.print-internal .col-markup { display: table-cell !important; }
+  body.print-internal .col-retail { display: table-cell !important; }
+  body.print-internal .col-qty    { display: table-cell !important; }
+  body.print-internal .col-total  { display: table-cell !important; }
+  /* Subtotal row: hide empty spacer cells, right-align label to fill all visible columns */
+  body.print-internal .subtotal-row .col-cost,
+  body.print-internal .subtotal-row .col-markup,
+  body.print-internal .subtotal-row .col-retail,
+  body.print-internal .subtotal-row .col-qty { display: none !important; }
+  body.print-internal .subtotal-row .subtotal-label {
+    text-align: right !important;
+    font-weight: 700 !important;
+    padding-right: 8pt !important;
   }
-  #scopeCard .est-card-title { color: #000 !important; font-size: 10pt !important; }
-  #scopeCard .pro-badge { display: none !important; }
-  #scopeCard.pro-locked-card { opacity: 1 !important; pointer-events: auto !important; filter: none !important; }
-  #scopeCard.pro-locked-card::after { display: none !important; }
-  body.free-user .est-legal-card::after {
-    content: 'Estimate generated with ChemCalc Marine Repair Estimator — chemcalc.co';
-    display: block !important;
-    font-size: 7pt !important;
-    color: #aaa !important;
-    text-align: center;
-    margin-top: 6pt;
-    border-top: 0.5pt solid #eee;
-    padding-top: 4pt;
+  body.print-internal .subtotal-row .col-total {
+    text-align: right !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
   }
 
-  /* ── PRO USER: full itemized ── */
-  body.pro-user .customer-hide { display: table-cell !important; }
-  body.pro-user #internalSummaryFull { display: flex !important; flex-direction: column !important; }
-  body.pro-user #customerSummary { display: none !important; }
-
-  /* ── PRINT SUMMARY (same as free-user) ── */
+  /* ════════════════════════════════════════════════════════════
+     SECTION 3 — PRINT SUMMARY (body.print-summary)
+     Client-facing. Hides materials/paint tables and task rows.
+     Shows: task names + subtotals + grand total only.
+  ════════════════════════════════════════════════════════════ */
   body.print-summary #materialsCard { display: none !important; }
   body.print-summary #paintCard { display: none !important; }
   body.print-summary .pro-only-card { display: none !important; }
@@ -1324,21 +1341,78 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   body.print-summary #customerSummary { display: flex !important; flex-direction: column !important; }
   body.print-summary .repair-card { padding: 4pt 0 !important; }
   body.print-summary .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
+  body.print-summary #scopeCard { display: block !important; }
+  body.print-summary #scopeCard .scope-snippet-row { display: none !important; }
   body.print-summary .est-legal-card::after {
     content: 'Estimate generated with ChemCalc Marine Repair Estimator — chemcalc.co';
-    display: block !important;
-    font-size: 7pt !important;
-    color: #aaa !important;
-    text-align: center;
-    margin-top: 6pt;
-    border-top: 0.5pt solid #eee;
-    padding-top: 4pt;
+    display: block !important; font-size: 7pt !important; color: #aaa !important;
+    text-align: center; margin-top: 6pt; border-top: 0.5pt solid #eee; padding-top: 4pt;
   }
 
-  /* ── PRINT ITEMIZED (same as pro-user) ── */
+  /* ════════════════════════════════════════════════════════════
+     SECTION 4 — PRINT ITEMIZED (body.print-itemized)
+     Client-facing. Shows materials/paint tables with Qty + Line Total only.
+     Hides: Cost, Markup %, Retail Price columns.
+  ════════════════════════════════════════════════════════════ */
+  body.print-itemized #materialsCard { display: block !important; }
+  body.print-itemized #paintCard { display: block !important; }
   body.print-itemized .customer-hide { display: table-cell !important; }
   body.print-itemized #internalSummaryFull { display: flex !important; flex-direction: column !important; }
   body.print-itemized #customerSummary { display: none !important; }
+  body.print-itemized .markup-control { display: none !important; }
+  body.print-itemized #scopeCard { display: block !important; }
+  body.print-itemized #scopeCard .scope-snippet-row { display: none !important; }
+  /* Hide contractor-only columns — Qty and Line Total remain visible */
+  body.print-itemized .col-cost   { display: none !important; }
+  body.print-itemized .col-markup { display: none !important; }
+  body.print-itemized .col-retail { display: none !important; }
+  /* Subtotal row: label right-aligns to fill visible space, value aligns with Line Total header */
+  body.print-itemized .subtotal-row .subtotal-label {
+    text-align: right !important;
+    font-weight: 700 !important;
+    padding-right: 8pt !important;
+  }
+  body.print-itemized .subtotal-row .col-qty { display: none !important; }
+  body.print-itemized .subtotal-row .col-total {
+    text-align: right !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     SECTION 5 — FREE USER
+     Same as Summary but with ChemCalc branding footer.
+  ════════════════════════════════════════════════════════════ */
+  body.free-user #materialsCard { display: none !important; }
+  body.free-user #paintCard { display: none !important; }
+  body.free-user .pro-only-card { display: none !important; }
+  body.free-user .pro-feature-card { display: none !important; }
+  body.free-user .customer-hide { display: none !important; }
+  body.free-user .repair-task-table { display: none !important; }
+  body.free-user #internalSummaryFull { display: none !important; }
+  body.free-user #customerSummary { display: flex !important; flex-direction: column !important; }
+  body.free-user .repair-card { padding: 4pt 0 !important; }
+  body.free-user .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
+  body.free-user .est-legal-card::after {
+    content: 'Estimate generated with ChemCalc Marine Repair Estimator — chemcalc.co';
+    display: block !important; font-size: 7pt !important; color: #aaa !important;
+    text-align: center; margin-top: 6pt; border-top: 0.5pt solid #eee; padding-top: 4pt;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     SECTION 6 — SHARED SCOPE + TEXTAREA (all modes)
+  ════════════════════════════════════════════════════════════ */
+  #scopeCard .est-textarea {
+    border: none !important; background: transparent !important;
+    resize: none !important; color: #000 !important;
+    font-size: 9pt !important; line-height: 1.5 !important;
+    padding: 0 !important; height: auto !important;
+    overflow: visible !important; white-space: pre-wrap !important;
+  }
+  #scopeCard .est-card-title { color: #000 !important; font-size: 10pt !important; }
+  #scopeCard .pro-badge { display: none !important; }
+  #scopeCard.pro-locked-card { opacity: 1 !important; pointer-events: auto !important; filter: none !important; }
+  #scopeCard.pro-locked-card::after { display: none !important; }
 }
 
 /* -- Responsive -- */
@@ -1743,6 +1817,7 @@ body.pro-user .internal-col { display: table-cell !important; }
 .hist-table td {
   padding: 0.7rem 0.85rem;
   vertical-align: middle;
+
   color: #e0e0e0;
 }
 
@@ -1950,19 +2025,41 @@ body.pro-user .internal-col { display: table-cell !important; }
 }
 
 .feedback-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   background: #89CFF0;
   color: #000;
   font-weight: 700;
   font-size: 0.85rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.65rem;
   border-radius: 20px;
   text-decoration: none;
   box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-  transition: background 0.2s;
+  transition: background 0.2s, padding 0.25s ease;
+  overflow: hidden;
+  white-space: nowrap;
 }
-
-.feedback-link:hover { background: #6bb8e0; color: #000; }
+.feedback-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.feedback-label {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.25s ease, opacity 0.2s ease;
+  font-size: 0.85rem;
+}
+.feedback-link:hover {
+  background: #6bb8e0;
+  color: #000;
+  padding: 0.5rem 1rem;
+}
+.feedback-link:hover .feedback-label {
+  max-width: 80px;
+  opacity: 1;
+}
 
 /* ============================================================
    BETA PLAN PRICING
@@ -2031,3 +2128,199 @@ body.pro-user .internal-col { display: table-cell !important; }
   transition: background 0.2s, transform 0.15s;
 }
 .float-save-btn:hover { background: #70b8d0; transform: translateY(-2px); }
+
+/* ============================================================
+   FLOATING ACTION PANEL (FAP)
+   Desktop: fixed right-side vertical strip
+   Mobile:  fixed bottom bar
+   ============================================================ */
+
+/* ── Emoji font fix — ensure emoji render everywhere ── */
+body,
+.fap-btn, .fap-icon, .ts-card-icon,
+.feedback-icon, .btn-action, .btn-tier,
+.btn-view-toggle, .est-label, .modal-title,
+.tier-label, .repair-card-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial,
+               "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+               sans-serif;
+}
+
+/* ── Desktop: right-side vertical strip ── */
+.fap {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+}
+
+/* Button base */
+.fap-btn {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(28, 28, 30, 0.92);
+  border: 1px solid #48484a;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  color: #ccc;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.18s, color 0.18s, padding 0.22s ease, gap 0.22s ease, border-color 0.18s;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.45);
+  max-width: 2.6rem; /* icon-only width at rest */
+}
+
+.fap-btn:hover {
+  background: rgba(44, 44, 46, 0.98);
+  color: #fff;
+  border-color: #89CFF0;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem 0.55rem 0.7rem;
+  max-width: 10rem;
+}
+
+.fap-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.fap-label {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-size: 0.82rem;
+  transition: max-width 0.22s ease, opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.fap-btn:hover .fap-label {
+  max-width: 7rem;
+  opacity: 1;
+}
+
+/* Active format button */
+.fap-btn.fap-fmt-active {
+  background: rgba(137, 207, 240, 0.15);
+  border-color: #89CFF0;
+  color: #89CFF0;
+}
+.fap-btn.fap-fmt-active .fap-icon { color: #89CFF0; }
+
+/* Danger (New Estimate) */
+.fap-btn.fap-danger { border-color: #5a3a3a; color: #e07070; }
+.fap-btn.fap-danger:hover { border-color: #e05252; color: #ff8080; background: rgba(80,20,20,0.85); }
+
+/* Format group — tighter spacing */
+.fap-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+/* Divider between groups */
+.fap-divider {
+  width: 1.6rem;
+  height: 1px;
+  background: #48484a;
+  margin: 0.2rem 0.5rem 0.2rem 0;
+  align-self: flex-end;
+}
+
+/* ── Mobile: bottom bar ── */
+@media (max-width: 767px) {
+  .fap {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    transform: none;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-around;
+    padding: 0;
+    background: rgba(28, 28, 30, 0.97);
+    border-top: 1px solid #48484a;
+    border-radius: 0;
+    gap: 0;
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.5);
+  }
+
+  /* Flatten the format group inline */
+  .fap-group {
+    flex-direction: row;
+    gap: 0;
+  }
+
+  .fap-divider { display: none; }
+
+  .fap-btn {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-right: 1px solid #3a3a3c;
+    border-radius: 0;
+    max-width: none;
+    padding: 0.5rem 0.25rem 0.45rem;
+    gap: 0.2rem;
+    background: transparent;
+    box-shadow: none;
+    font-size: 0.7rem;
+    color: #aaa;
+  }
+
+  .fap-btn:last-child { border-right: none; }
+
+  .fap-btn:hover,
+  .fap-btn:active {
+    background: rgba(137, 207, 240, 0.1);
+    color: #89CFF0;
+    border-color: #3a3a3c;
+    padding: 0.5rem 0.25rem 0.45rem;
+    gap: 0.2rem;
+    max-width: none;
+  }
+
+  .fap-icon { font-size: 1.2rem; }
+
+  .fap-label {
+    max-width: none;
+    opacity: 1;
+    font-size: 0.65rem;
+    overflow: visible;
+  }
+
+  .fap-btn:hover .fap-label { max-width: none; opacity: 1; }
+
+  .fap-btn.fap-fmt-active {
+    color: #89CFF0;
+    background: rgba(137, 207, 240, 0.12);
+  }
+
+  /* Push page content above bottom bar */
+  .est-container { padding-bottom: 5rem !important; }
+
+  /* Move feedback button above bottom bar */
+  .feedback-btn { bottom: 4.5rem; }
+}
+
+/* Hide FAP from print */
+@media print {
+  .fap { display: none !important; }
+}

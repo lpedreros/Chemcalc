@@ -73,9 +73,10 @@ function setPrintStyle(style) {
   var btnItemized = document.getElementById('btnPrintItemized');
   if (btnSummary)  btnSummary.classList.toggle('active', style === 'summary');
   if (btnItemized) btnItemized.classList.toggle('active', style === 'itemized');
-  // Apply print body class
+  // Apply mutually exclusive print body classes
   document.body.classList.toggle('print-summary',  style === 'summary');
   document.body.classList.toggle('print-itemized', style === 'itemized');
+  document.body.classList.toggle('print-internal', style === 'internal');
 }
 
 /* ── Pro-gated action wrappers ── */
@@ -101,10 +102,13 @@ function proSetPrintItemized() {
 /* ── Consolidated format selector ── */
 function setFormat(fmt) {
   currentFormat = fmt;
-  // Update pill active state
+  // Update pill active state (toolbar + FAP)
   ['summary','itemized','internal'].forEach(function(f) {
-    var btn = document.getElementById('btnFmt' + f.charAt(0).toUpperCase() + f.slice(1));
+    var cap = f.charAt(0).toUpperCase() + f.slice(1);
+    var btn = document.getElementById('btnFmt' + cap);
     if (btn) btn.classList.toggle('active', f === fmt);
+    var fapBtn = document.getElementById('fapFmt' + cap);
+    if (fapBtn) fapBtn.classList.toggle('fap-fmt-active', f === fmt);
   });
   // Body classes for screen + print differentiation
   document.body.classList.toggle('fmt-summary',  fmt === 'summary');
@@ -119,7 +123,7 @@ function setFormat(fmt) {
     setPrintStyle('itemized');
   } else { // internal
     setView('internal');
-    setPrintStyle('itemized');
+    setPrintStyle('internal');
   }
 }
 function proSetFormat(fmt) {
@@ -433,8 +437,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }, 100);
   } else {
-    // Default: load blank estimate with one repair task
-    addRepairTask();
+    // Default: blank estimate, no task pre-added — user clicks Add Task
   }
 
   // Init typeahead observer for material/paint name inputs
@@ -527,14 +530,14 @@ function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
 
   tr.innerHTML =
     '<td><input type="text" class="item-name-input" value="' + escHtml(item.name) + '" oninput="recalcRow(this)" placeholder="Item name" /></td>' +
-    '<td><input type="number" class="cost-input" value="' + (item.cost || '') + '" min="0" step="0.01" oninput="recalcRow(this)" placeholder="0.00" /></td>' +
-    '<td><input type="number" class="markup-row-input" value="' + markupPct + '" min="0" max="500" step="1" oninput="recalcRow(this)" /></td>' +
-    '<td><span class="retail-display">' + fmtCurrency(retailPrice) + '</span></td>' +
-    '<td><input type="number" class="qty-input" value="' + (item.qty || 1) + '" min="0" step="0.01" oninput="recalcRow(this)" /></td>' +
-    '<td><span class="line-total-display">' + fmtCurrency(lineTotal) + '</span></td>' +
-    '<td class="d-print-none">' + buyHtml + '</td>' +
-    '<td class="d-print-none"><button class="btn-save-lib" onclick="saveRowToLibrary(this)" title="Save to My Library">&#9733;</button></td>' +
-    '<td class="d-print-none"><button class="btn-del-row" onclick="delRow(this, \'' + subtotalId + '\', \'' + sumId + '\')" title="Remove">&#10005;</button></td>';
+    '<td class="col-cost"><input type="number" class="cost-input" value="' + (item.cost || '') + '" min="0" step="0.01" oninput="recalcRow(this)" placeholder="0.00" /></td>' +
+    '<td class="col-markup"><input type="number" class="markup-row-input" value="' + markupPct + '" min="0" max="500" step="1" oninput="recalcRow(this)" /></td>' +
+    '<td class="col-retail"><span class="retail-display">' + fmtCurrency(retailPrice) + '</span></td>' +
+    '<td class="col-qty"><input type="number" class="qty-input" value="' + (item.qty || 1) + '" min="0" step="0.01" oninput="recalcRow(this)" /></td>' +
+    '<td class="col-total"><span class="line-total-display">' + fmtCurrency(lineTotal) + '</span></td>' +
+    '<td class="col-link d-print-none">' + buyHtml + '</td>' +
+    '<td class="col-del d-print-none"><button class="btn-save-lib" onclick="saveRowToLibrary(this)" title="Save to My Library">&#9733;</button></td>' +
+    '<td class="col-del d-print-none"><button class="btn-del-row" onclick="delRow(this, \'' + subtotalId + '\', \'' + sumId + '\')" title="Remove">&#10005;</button></td>';
 
   tbody.appendChild(tr);
   recalcSection(bodyId, markupId, subtotalId, sumId);
@@ -1173,8 +1176,40 @@ function confirmLog() {
 /* ── Export / Share ── */
 function exportPDF() {
   var pro = _checkPro();
+  // Build filename: [Client Name] - [Mode ]Estimate [EstNum] - [Date].pdf
+  var estNum     = (document.getElementById('estimateNumber') || {}).value || 'EST';
+  var firstName  = (document.getElementById('clientFirst')    || {}).value.trim();
+  var lastName   = (document.getElementById('clientLast')     || {}).value.trim();
+  var clientName = (firstName + ' ' + lastName).trim() || 'Client';
+  var today      = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  var modePrefix = currentPrintStyle === 'internal' ? 'Internal '
+                 : currentPrintStyle === 'itemized'  ? 'Itemized '
+                 : '';
+  var prevTitle = document.title;
+  document.title = clientName + ' - ' + modePrefix + 'Estimate ' + estNum + ' - ' + today;
+
+  // Flatten numbered scope lines to comma-separated for print
+  var scopeOriginals = [];
+  document.querySelectorAll('.repair-scope-textarea, #scopeNotes').forEach(function(ta) {
+    scopeOriginals.push({ el: ta, val: ta.value });
+    if (ta.value.trim()) {
+      ta.value = ta.value
+        .split('\n')
+        .map(function(line) { return line.replace(/^\d+\.\s*/, '').trim(); })
+        .filter(function(line) { return line.length > 0; })
+        .join(', ');
+    }
+  });
+
+  function afterPrint() {
+    document.title = prevTitle;
+    // Restore original scope text
+    scopeOriginals.forEach(function(o) { o.el.value = o.val; });
+    window.removeEventListener('afterprint', afterPrint);
+  }
+  window.addEventListener('afterprint', afterPrint);
+
   if (pro) {
-    // Pro user: always keep pro-user class so company info shows on both styles
     document.body.classList.add('pro-user');
     document.body.classList.remove('free-user');
     if (currentPrintStyle === 'summary') {
@@ -1184,7 +1219,6 @@ function exportPDF() {
       window.print();
     }
   } else {
-    // Free user: summary/customer view only
     document.body.classList.add('free-user');
     document.body.classList.remove('pro-user');
     setView('customer');
@@ -1237,7 +1271,6 @@ function newEstimate() {
     document.getElementById('paintSubtotal').textContent = '$0.00';
     document.getElementById('expiryWarning').classList.add('d-none');
     initEstimate();
-    addRepairTask();
     updateSummary();
   }
 }
@@ -1331,6 +1364,7 @@ function tsApplyPreset(idx) {
   if (!preset) return;
   closeModal('taskStarterModal');
   addRepairTask(preset.name, preset.taskRows);
+  mergePresetMaterials(preset);
   // Populate scope textarea with steps
   if (preset.scopeSteps && preset.scopeSteps.length) {
     var taskId = taskCounter; // addRepairTask already incremented it
@@ -1347,6 +1381,36 @@ function tsApplyPreset(idx) {
       }
     }
   }
+}
+
+/* ── Merge preset materials into existing sections ──────── */
+function mergePresetMaterials(preset) {
+  function mergeRows(bodyId, markupId, subtotalId, sumId, items) {
+    if (!items || !items.length) return;
+    items.forEach(function(item) {
+      // Look for an existing row with the same item name (case-insensitive)
+      var existing = null;
+      document.querySelectorAll('#' + bodyId + ' tr').forEach(function(tr) {
+        var nameEl = tr.querySelector('.item-name-input');
+        if (nameEl && nameEl.value.trim().toLowerCase() === item.name.trim().toLowerCase()) {
+          existing = tr;
+        }
+      });
+      if (existing) {
+        // Add 0.5 to qty of existing row
+        var qtyInput = existing.querySelector('.qty-input');
+        if (qtyInput) {
+          qtyInput.value = Math.round((parseFloat(qtyInput.value) || 0) * 100 + 50) / 100;
+          recalcRow(qtyInput);
+        }
+      } else {
+        // Add as a new row with preset qty
+        addRow(bodyId, markupId, subtotalId, sumId, item);
+      }
+    });
+  }
+  mergeRows('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', preset.materialRows);
+  mergeRows('paintBody',     'paintMarkup',     'paintSubtotal',     'sumPaint',     preset.paintRows);
 }
 
 /* ── Blank task ──────────────────────────────────────────── */

@@ -164,10 +164,22 @@ async function saveRowToLibrary(btn) {
   var name   = tr.querySelector('.item-name-input')?.value?.trim();
   var cost   = tr.querySelector('.cost-input')?.value;
   var markup = tr.querySelector('.markup-row-input')?.value;
-  var buyUrl = tr.querySelector('.buy-link')?.href || null;
   var tbody  = tr.closest('tbody');
   var type   = tbody?.id === 'paintBody' ? 'paint' : 'material';
   if (!name) { alert('Enter an item name before saving to library.'); return; }
+
+  // Prefer the affiliate link from the row's data-affkey attribute;
+  // fall back to the visible buy-link href if present.
+  var affKey = tr.getAttribute('data-affkey') || null;
+  var buyUrl = null;
+  if (affKey && typeof getAffiliateLink === 'function') {
+    buyUrl = getAffiliateLink(affKey) || null;
+  }
+  if (!buyUrl) {
+    var buyAnchor = tr.querySelector('.buy-link');
+    buyUrl = (buyAnchor && buyAnchor.href && !buyAnchor.href.endsWith('#')) ? buyAnchor.href : null;
+  }
+
   var existing = _matLib.find(i => i.name.toLowerCase() === name.toLowerCase());
   if (existing) {
     if (!confirm('"' + name + '" is already in your library. Update it?')) return;

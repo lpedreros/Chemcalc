@@ -285,16 +285,21 @@
             <th class="col-total">Line Total</th>
             <th class="col-link d-print-none">Buy</th>
             <th class="col-del d-print-none"></th>
+            <th class="col-del d-print-none"></th>
           </tr>
         </thead>
         <tbody id="materialsBody"></tbody>
         <tfoot>
           <tr class="subtotal-row">
-            <td colspan="3" class="subtotal-label">Materials Subtotal</td>
-            <td></td>
-            <td></td>
-            <td class="subtotal-val" id="materialsSubtotal">$0.00</td>
-            <td colspan="2" class="d-print-none"></td>
+            <td class="subtotal-label" colspan="2">Materials Subtotal</td>
+            <td class="col-cost"></td>
+            <td class="col-markup"></td>
+            <td class="col-retail"></td>
+            <td class="col-qty"></td>
+            <td class="col-total subtotal-val" id="materialsSubtotal">$0.00</td>
+            <td class="col-link d-print-none"></td>
+            <td class="col-del d-print-none"></td>
+            <td class="col-del d-print-none"></td>
           </tr>
         </tfoot>
       </table>
@@ -324,16 +329,21 @@
             <th class="col-total">Line Total</th>
             <th class="col-link d-print-none">Buy</th>
             <th class="col-del d-print-none"></th>
+            <th class="col-del d-print-none"></th>
           </tr>
         </thead>
         <tbody id="paintBody"></tbody>
         <tfoot>
           <tr class="subtotal-row">
-            <td colspan="3" class="subtotal-label">Paint Subtotal</td>
-            <td></td>
-            <td></td>
-            <td class="subtotal-val" id="paintSubtotal">$0.00</td>
-            <td colspan="2" class="d-print-none"></td>
+            <td class="subtotal-label" colspan="2">Paint Subtotal</td>
+            <td class="col-cost"></td>
+            <td class="col-markup"></td>
+            <td class="col-retail"></td>
+            <td class="col-qty"></td>
+            <td class="col-total subtotal-val" id="paintSubtotal">$0.00</td>
+            <td class="col-link d-print-none"></td>
+            <td class="col-del d-print-none"></td>
+            <td class="col-del d-print-none"></td>
           </tr>
         </tfoot>
       </table>
@@ -802,9 +812,56 @@
 <script src="estimate.js?v=5"></script>
 <script src="trello.js?v=5"></script>
 <script src="materials_library.js?v=5"></script>
+<!-- ===== FLOATING ACTION PANEL ===== -->
+<div class="fap d-print-none" id="floatActionPanel">
+
+  <!-- View format group -->
+  <div class="fap-group">
+    <button class="fap-btn fap-fmt" id="fapFmtSummary" onclick="setFormat('summary')" title="Summary view">
+      <span class="fap-icon">&#128065;</span>
+      <span class="fap-label">Summary</span>
+    </button>
+    <button class="fap-btn fap-fmt pro-feature" id="fapFmtItemized" onclick="proSetFormat('itemized')" title="Itemized view">
+      <span class="fap-icon">&#128203;</span>
+      <span class="fap-label">Itemized</span>
+    </button>
+    <button class="fap-btn fap-fmt pro-feature" id="fapFmtInternal" onclick="proSetFormat('internal')" title="Internal copy">
+      <span class="fap-icon">&#128274;</span>
+      <span class="fap-label">Internal</span>
+    </button>
+  </div>
+
+  <div class="fap-divider"></div>
+
+  <!-- Action buttons -->
+  <button class="fap-btn pro-feature" onclick="proSaveDraft()" title="Save draft">
+    <span class="fap-icon">&#128190;</span>
+    <span class="fap-label">Save Draft</span>
+  </button>
+  <button class="fap-btn pro-feature" onclick="proLoadDraft()" title="Load draft">
+    <span class="fap-icon">&#128193;</span>
+    <span class="fap-label">Load Draft</span>
+  </button>
+  <button class="fap-btn" onclick="openTaskStarter()" title="Add task">
+    <span class="fap-icon">&#10133;</span>
+    <span class="fap-label">Add Task</span>
+  </button>
+  <button class="fap-btn" onclick="shareEstimate()" title="Share estimate">
+    <span class="fap-icon">&#128279;</span>
+    <span class="fap-label">Share</span>
+  </button>
+  <button class="fap-btn fap-danger" onclick="newEstimate()" title="New estimate">
+    <span class="fap-icon">&#128196;</span>
+    <span class="fap-label">New</span>
+  </button>
+
+</div>
+
 <!-- ===== FEEDBACK BUTTON ===== -->
 <div class="feedback-btn d-print-none" id="feedbackBtn">
-  <a href="/contact.html" target="_blank" class="feedback-link">&#128075; Feedback</a>
+  <a href="/contact.html" target="_blank" class="feedback-link">
+    <span class="feedback-icon">&#128075;</span><span class="feedback-label"> Feedback</span>
+  </a>
 </div>
 
 </body>
