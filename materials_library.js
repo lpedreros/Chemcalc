@@ -6,6 +6,12 @@
 var _matLib = [];          // in-memory cache
 var _matLibLoaded = false;
 
+/* Self-contained HTML escaping so this file doesn't depend on estimate.js */
+function _libEscHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 /* ── Load library from Supabase ──────────────────────────── */
 async function loadMaterialsLibrary() {
   if (!window._sb) return;
@@ -74,7 +80,7 @@ function renderLibraryTable() {
   }
   tbody.innerHTML = _matLib.map(item => `
     <tr data-lib-id="${item.id}">
-      <td><input class="est-input lib-edit" data-field="name" value="${escHtml(item.name)}" /></td>
+      <td><input class="est-input lib-edit" data-field="name" value="${_libEscHtml(item.name)}" /></td>
       <td>
         <select class="est-input lib-edit" data-field="item_type">
           <option value="material" ${item.item_type==='material'?'selected':''}>Material</option>
@@ -82,12 +88,12 @@ function renderLibraryTable() {
           <option value="other"    ${item.item_type==='other'   ?'selected':''}>Other</option>
         </select>
       </td>
-      <td><input class="est-input lib-edit" data-field="unit" value="${escHtml(item.unit)}" style="width:70px;" /></td>
+      <td><input class="est-input lib-edit" data-field="unit" value="${_libEscHtml(item.unit)}" style="width:70px;" /></td>
       <td><input class="est-input lib-edit" data-field="cost" type="number" min="0" step="0.01" value="${item.cost}" style="width:80px;" /></td>
       <td><input class="est-input lib-edit" data-field="markup" type="number" min="0" step="1" value="${item.markup}" style="width:60px;" /></td>
       <td style="white-space:nowrap;">
         <button class="btn-lib-save" onclick="commitLibEdit('${item.id}')" title="Save changes">&#10003;</button>
-        <button class="btn-lib-del"  onclick="confirmDeleteLib('${item.id}', '${escHtml(item.name)}')" title="Delete">&#10005;</button>
+        <button class="btn-lib-del"  onclick="confirmDeleteLib('${item.id}', '${_libEscHtml(item.name)}')" title="Delete">&#10005;</button>
       </td>
     </tr>
   `).join('');
@@ -187,8 +193,8 @@ function attachTypeahead(input) {
       var li = document.createElement('li');
       li.className = 'lib-typeahead-item';
       li.innerHTML =
-        '<span class="lib-ta-name">' + escHtml(item.name) + '</span>' +
-        '<span class="lib-ta-meta">' + escHtml(item.item_type) + ' &bull; ' + escHtml(item.unit) + ' &bull; $' + item.cost.toFixed(2) + '</span>';
+        '<span class="lib-ta-name">' + _libEscHtml(item.name) + '</span>' +
+        '<span class="lib-ta-meta">' + _libEscHtml(item.item_type) + ' &bull; ' + _libEscHtml(item.unit) + ' &bull; $' + item.cost.toFixed(2) + '</span>';
       li.addEventListener('mousedown', function(e) {
         e.preventDefault();
         fillRowFromLibrary(input, item);
