@@ -984,17 +984,22 @@ function confirmLog() {
 /* ── Export / Share ── */
 function exportPDF() {
   var pro = _checkPro();
-  if (!pro || currentPrintStyle === 'summary') {
-    // Summary (single-page): customer view, free-user print class
+  if (pro) {
+    // Pro user: always keep pro-user class so company info shows on both styles
+    document.body.classList.add('pro-user');
+    document.body.classList.remove('free-user');
+    if (currentPrintStyle === 'summary') {
+      setView('customer');
+      setTimeout(function () { window.print(); }, 150);
+    } else {
+      window.print();
+    }
+  } else {
+    // Free user: summary/customer view only
     document.body.classList.add('free-user');
     document.body.classList.remove('pro-user');
     setView('customer');
     setTimeout(function () { window.print(); }, 150);
-  } else {
-    // Itemized (Pro only): full detail, pro-user print class
-    document.body.classList.add('pro-user');
-    document.body.classList.remove('free-user');
-    window.print();
   }
 }
 
