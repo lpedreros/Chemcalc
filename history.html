@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <title>Estimate History | ChemCalc Marine Repair Estimator</title>
+  <meta name="description" content="View, manage, and track all your marine repair estimates in one place.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://chemcalc.co/history.html" />
+  <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DTECSH4N52');
+  </script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- ChemCalc styles -->
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+
+<!-- ===== HEADER / NAV ===== -->
+<div class="header d-print-none">
+  <h1>ChemCalc</h1>
+  <div class="powered-by-header">
+    Powered by <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
+  <nav class="nav" id="mainNav">
+    <a href="index.html">Home</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="services.html">Services</a>
+    <a href="kits.html">Kits</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="estimate.html">Estimator</a>
+    <a href="history.html" class="active">History</a>
+  </nav>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="container hist-container">
+
+  <div class="hist-page-header">
+    <div>
+      <h2>Estimate History</h2>
+      <p class="hist-subtitle">All your saved estimates, in one place</p>
+    </div>
+    <a href="estimate.html" class="btn btn-primary hist-new-btn">+ New Estimate</a>
+  </div>
+
+  <!-- Auth gate — shown until session loads -->
+  <div id="histAuthGate" class="hist-gate">
+    <p>Please <a href="estimate.html">log in</a> to view your estimate history.</p>
+  </div>
+
+  <!-- Pro gate — shown for free users -->
+  <div id="histProGate" class="hist-gate d-none">
+    <p>Estimate history is a <strong>Pro feature</strong>. <a href="estimate.html">Upgrade to Pro</a> to access your full estimate log.</p>
+  </div>
+
+  <!-- Content — shown for Pro users -->
+  <div id="histContent" class="d-none">
+
+    <!-- Toolbar -->
+    <div class="hist-toolbar">
+      <input type="text" id="histSearch" class="hist-search" placeholder="Search by client, vessel, or estimate #…">
+      <select id="histStatusFilter" class="hist-filter">
+        <option value="">All Statuses</option>
+        <option value="draft">Draft</option>
+        <option value="sent">Sent</option>
+        <option value="approved">Approved</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+        <option value="invoiced">Invoiced</option>
+        <option value="declined">Declined</option>
+      </select>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="hist-stats" id="histStats">
+      <div class="hist-stat">
+        <span class="hist-stat-val" id="statTotal">—</span>
+        <span class="hist-stat-lbl">Total Estimates</span>
+      </div>
+      <div class="hist-stat">
+        <span class="hist-stat-val" id="statValue">—</span>
+        <span class="hist-stat-lbl">Total Value</span>
+      </div>
+      <div class="hist-stat">
+        <span class="hist-stat-val" id="statApproved">—</span>
+        <span class="hist-stat-lbl">Approved</span>
+      </div>
+      <div class="hist-stat">
+        <span class="hist-stat-val" id="statDraft">—</span>
+        <span class="hist-stat-lbl">Drafts</span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="hist-table-wrap">
+      <table class="hist-table" id="histTable">
+        <thead>
+          <tr>
+            <th class="col-est-num">Estimate #</th>
+            <th class="col-client">Client</th>
+            <th class="col-vessel">Vessel</th>
+            <th class="col-total">Total</th>
+            <th class="col-date">Date</th>
+            <th class="col-status">Status</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="histTableBody">
+          <!-- Rows injected by history.js -->
+        </tbody>
+      </table>
+      <div id="histEmpty" class="hist-empty d-none">No estimates found.</div>
+      <div id="histLoading" class="hist-loading">Loading estimates…</div>
+    </div>
+
+  </div><!-- /histContent -->
+
+</div><!-- /container -->
+
+<!-- ===== CONFIRM DELETE MODAL ===== -->
+<div class="modal-overlay d-none" id="deleteModal">
+  <div class="modal-box modal-sm">
+    <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+    <h3>Delete Estimate</h3>
+    <p id="deleteModalMsg">Are you sure you want to delete this estimate? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" id="deleteConfirmBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js?v=5"></script>
+<script src="history.js?v=5"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    authInit();
+    document.getElementById('menuToggle').addEventListener('click', function () {
+      document.getElementById('mainNav').classList.toggle('open');
+    });
+  });
+</script>
+</body>
+</html>

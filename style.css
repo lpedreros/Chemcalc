@@ -729,7 +729,7 @@ h1 {
 }
 .modal-box {
   background: #2c2c2e; border-radius: 12px; padding: 2rem;
-  width: 100%; max-width: 420px; position: relative;
+  width: 100%; max-width: 700px; position: relative;
   box-shadow: 0 8px 32px rgba(0,0,0,0.6);
   margin: auto;
   max-height: 90vh;
@@ -1418,3 +1418,270 @@ body.pro-user .internal-col { display: table-cell !important; }
   transition: background 0.2s;
 }
 .btn-modal-secondary:hover { background: #3a5070; }
+
+
+/* ============================================================
+   ESTIMATE HISTORY — merged from history.css
+   ============================================================ */
+/* ============================================================
+   ESTIMATE HISTORY — history.css
+   chemcalc.co | Think & Engage LLC
+   ============================================================ */
+
+/* ── Page layout ─────────────────────────────────────────── */
+.hist-container {
+  max-width: 1100px;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.hist-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.hist-page-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #89CFF0;
+  margin: 0 0 0.2rem;
+}
+
+.hist-subtitle {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.hist-new-btn {
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* ── Auth / Pro gates ────────────────────────────────────── */
+.hist-gate {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.hist-gate a {
+  color: #89CFF0;
+}
+
+/* ── Stats bar ───────────────────────────────────────────── */
+.hist-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.hist-stat {
+  background: #2c2c2e;
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+  flex: 1;
+}
+
+.hist-stat-val {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #89CFF0;
+  line-height: 1.2;
+}
+
+.hist-stat-lbl {
+  font-size: 0.72rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.hist-toolbar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.hist-search {
+  flex: 1;
+  min-width: 200px;
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.hist-search::placeholder { color: #666; }
+.hist-search:focus { outline: none; border-color: #89CFF0; }
+
+.hist-filter {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.hist-filter:focus { outline: none; border-color: #89CFF0; }
+
+/* ── Table ───────────────────────────────────────────────── */
+.hist-table-wrap {
+  background: #2c2c2e;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.hist-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.hist-table thead tr {
+  background: #1c1c1e;
+  border-bottom: 2px solid #444;
+}
+
+.hist-table thead th {
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  white-space: nowrap;
+}
+
+.hist-table tbody tr {
+  border-bottom: 1px solid #3a3a3c;
+  transition: background 0.15s;
+}
+
+.hist-table tbody tr:last-child { border-bottom: none; }
+.hist-table tbody tr:hover { background: #333; }
+
+.hist-table td {
+  padding: 0.7rem 0.85rem;
+  vertical-align: middle;
+  color: #e0e0e0;
+}
+
+/* Column widths */
+.col-est-num  { min-width: 130px; }
+.col-client   { min-width: 130px; }
+.col-vessel   { min-width: 130px; }
+.col-total    { min-width: 90px; text-align: right; }
+.col-date     { min-width: 90px; white-space: nowrap; }
+.col-status   { min-width: 130px; }
+.col-actions  { min-width: 170px; white-space: nowrap; }
+
+/* Estimate # link */
+.hist-est-link {
+  color: #89CFF0;
+  font-weight: 600;
+  text-decoration: none;
+}
+.hist-est-link:hover { text-decoration: underline; }
+
+/* ── Status select ───────────────────────────────────────── */
+.hist-status-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  max-width: 130px;
+  text-align: center;
+}
+
+.hist-status-select:focus { outline: none; }
+
+.status-draft       { background: #3a3a3c; color: #aaa; }
+.status-sent        { background: #1a3a5c; color: #89CFF0; }
+.status-approved    { background: #1a3d2b; color: #4ade80; }
+.status-inprogress  { background: #3d2e0a; color: #fbbf24; }
+.status-completed   { background: #1a3d2b; color: #86efac; }
+.status-invoiced    { background: #2d1a5c; color: #c084fc; }
+.status-declined    { background: #3d1a1a; color: #f87171; }
+
+/* ── Action buttons ──────────────────────────────────────── */
+.hist-action-btn {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 0.3rem;
+  transition: opacity 0.15s;
+}
+
+.hist-action-btn:hover { opacity: 0.8; }
+
+.hist-open { background: #89CFF0; color: #1c1c1e; }
+.hist-dup  { background: #48484a; color: #fff; }
+.hist-del  { background: #3d1a1a; color: #f87171; }
+
+/* ── Empty / loading states ──────────────────────────────── */
+.hist-empty,
+.hist-loading {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ── Delete modal ────────────────────────────────────────── */
+.modal-sm { max-width: 420px; }
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.btn-danger {
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-danger:hover { background: #e74c3c; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .hist-page-header { flex-direction: column; }
+  .hist-stats { gap: 0.5rem; }
+  .hist-stat { min-width: 80px; padding: 0.6rem 0.75rem; }
+  .hist-stat-val { font-size: 1.1rem; }
+  .col-vessel, .col-date { display: none; }
+  .hist-action-btn { padding: 0.25rem 0.5rem; font-size: 0.72rem; }
+}
