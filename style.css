@@ -1305,34 +1305,40 @@ body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; point
     border: none !important; font-size: 10pt !important; font-weight: 700 !important;
   }
 
-  /* ── Client + Vessel: compact two-column grid ── */
-  .print-info-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 12pt;
-    margin-bottom: 5pt;
-  }
-  .print-info-grid .row { display: contents !important; }
-  .print-info-grid .col-md-6, .print-info-grid .col-md-4, .print-info-grid .col-md-3 {
-    display: block !important; width: auto !important; padding: 0 !important;
-  }
-  .print-info-pair {
+  /* ── Estimate / Client / Vessel: all fields horizontal in one row ── */
+  /* Target all three info cards' Bootstrap rows */
+  .est-card .row {
     display: flex !important;
-    flex-direction: column;
-    margin-bottom: 3pt;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0 10pt !important;
+    align-items: flex-start !important;
   }
-
-  /* ── Estimate info: single row ── */
-  .est-card:first-of-type .row {
-    display: flex !important;
-    flex-wrap: wrap;
-    gap: 0 16pt;
-  }
-  .est-card:first-of-type .col-md-3 {
-    flex: 0 0 auto !important;
+  /* Each column becomes auto-width, not full-width */
+  .est-card .col-md-3,
+  .est-card .col-md-4,
+  .est-card .col-md-6 {
+    flex: 1 1 0 !important;
     width: auto !important;
+    min-width: 0 !important;
     padding: 0 !important;
   }
+  /* Labels and values stack vertically within each cell */
+  .est-card .est-label {
+    display: block !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .est-card .est-input {
+    display: block !important;
+    width: 100% !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Estimate # gets a bit more room since it's long */
+  #estimateNumber { font-size: 7.5pt !important; }
 
   /* ── Repair task tables ── */
   .est-table, .repair-task-table {
