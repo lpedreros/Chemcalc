@@ -279,30 +279,7 @@ async function addToTrello() {
     console.warn('Auto-save for Trello link failed:', e);
   }
 
-  setStatus('Generating PDF…');
-
-  // 1. Generate PDF blob (respects current print style toggle)
-  var printStyle = (typeof currentPrintStyle !== 'undefined') ? currentPrintStyle : 'summary';
-  var pdfBlob = null;
-  try {
-    pdfBlob = await _generateEstimatePDF(printStyle);
-  } catch (e) {
-    console.error('PDF generation failed:', e);
-    // Continue without PDF attachment
-  }
-
-  // 2. Upload PDF to Supabase Storage (if blob generated)
-  var pdfUrl = null;
-  if (pdfBlob) {
-    setStatus('Uploading PDF…');
-    try {
-      pdfUrl = await _uploadPDFToSupabase(pdfBlob, printStyle);
-    } catch (e) {
-      console.error('PDF upload failed:', e);
-    }
-  }
-
-  // 3. Build card content
+  // 2. Build card content
   var data = (typeof collectEstimateData === 'function') ? collectEstimateData() : {};
   var clientName = ((data.clientFirst || '') + ' ' + (data.clientLast || '')).trim() || 'Unknown Client';
   var vessel = [data.boatYear, data.boatMake, data.boatModel].filter(Boolean).join(' ') || 'Unknown Vessel';
@@ -341,16 +318,11 @@ async function addToTrello() {
     ? 'https://chemcalc.co/estimate.html?draft=' + estimateUUID
     : 'https://chemcalc.co/estimate.html';
   descLines.push('');
-  descLines.push('[\ud83d\udd17 View Estimate on ChemCalc](' + estimateLink + ')');
-
-  if (pdfUrl) {
-    var pdfLabel = (printStyle === 'itemized') ? '\ud83d\udcce PDF Estimate (Itemized)' : '\ud83d\udcce PDF Estimate (Summary)';
-    descLines.push('[' + pdfLabel + '](' + pdfUrl + ')');
-  }
+  descLines.push('[?? View Estimate on ChemCalc](' + estimateLink + ')');
 
   var desc = descLines.join('\n');
 
-  // 4. Create Trello card
+  // 3. Create Trello card
   setStatus('Creating Trello card…');
   try {
     var cardUrl = 'https://api.trello.com/1/cards' +
@@ -375,22 +347,6 @@ async function addToTrello() {
     }
 
     var card = await cardResp.json();
-
-    // 5. Attach PDF URL as a Trello attachment (if we have one)
-    if (pdfUrl && card.id) {
-      var attUrl = 'https://api.trello.com/1/cards/' + card.id + '/attachments' +
-        '?key=' + encodeURIComponent(_trelloKey) +
-        '&token=' + encodeURIComponent(_trelloToken);
-      var attSuffix = (printStyle === 'itemized') ? '_itemized' : '';
-      await fetch(attUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          url:  pdfUrl,
-          name: (data.estimateNumber || 'estimate') + attSuffix + '.pdf'
-        }).toString()
-      });
-    }
 
     setStatus('');
     alert('? Card added to Trello: "' + _trelloListName + '" on "' + _trelloBoardName + '"');
