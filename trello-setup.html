@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trello Setup Guide | ChemCalc Estimator</title>
+  <meta name="description" content="Step-by-step instructions for connecting your Trello account to the ChemCalc Estimator. Send estimates directly to your Trello board in seconds." />
+  <meta name="keywords" content="ChemCalc Trello setup, connect Trello estimator, Trello API key, marine estimator Trello, ChemCalc Pro" />
+  <link rel="canonical" href="https://chemcalc.co/trello-setup.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Trello Setup Guide | ChemCalc Estimator" />
+  <meta property="og:description" content="Step-by-step instructions for connecting your Trello account to the ChemCalc Estimator." />
+  <meta property="og:url" content="https://chemcalc.co/trello-setup.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og-about.jpg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Trello Setup Guide | ChemCalc Estimator" />
+  <meta name="twitter:description" content="Step-by-step instructions for connecting your Trello account to the ChemCalc Estimator." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og-about.jpg" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Connect Trello to ChemCalc Estimator",
+    "url": "https://chemcalc.co/trello-setup.html",
+    "description": "Step-by-step guide for connecting a Trello account to the ChemCalc Estimator to send estimates directly to a Trello board.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "ChemCalc",
+      "url": "https://chemcalc.co/"
+    }
+  }
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-DTECSH4N52");
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png" />
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- AI Chatbot -->
+  <link rel="stylesheet" href="/chatbot_styles.css" />
+  <script src="/chatbot_standalone.js" defer></script>
+</head>
+<body>
+
+<!-- Header -->
+<header class="container header">
+  <h1>ChemCalc</h1>
+  <div class="powered-by-header">
+    <span>Powered by</span>
+    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" />
+  </div>
+  <button class="menu-toggle">&#9776;</button>
+  <nav id="mainNav" class="nav">
+    <a href="index.html">Home</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="estimate.html">Estimator</a>
+    <a href="services.html">Services</a>
+    <a href="kits.html">Kits</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<!-- Main Content -->
+<main class="container py-5" style="max-width: 780px;">
+
+  <h1 class="text-center mb-2">Connecting Trello to ChemCalc</h1>
+  <p class="text-center mb-5" style="color: #aaa;">A step-by-step guide for ChemCalc Pro users</p>
+
+  <!-- What this does -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">What this does</h5>
+      <p class="card-text">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click. The card will include the client name, vessel info, scope of work, task hours, grand total, and a direct link back to the estimate.</p>
+    </div>
+  </div>
+
+  <!-- What you need -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">What you will need</h5>
+      <ul class="mb-0">
+        <li>A Trello account — free at <a href="https://trello.com" target="_blank" rel="noopener">trello.com</a></li>
+        <li>A Trello board with at least one list already set up (e.g., "New Estimates" or "Leads")</li>
+        <li>A ChemCalc Pro account</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Step 1 &mdash; Get your Trello API Key</h5>
+      <ol class="mb-0">
+        <li>Go to <a href="https://trello.com/power-ups/admin" target="_blank" rel="noopener">trello.com/power-ups/admin</a></li>
+        <li>Click <strong>New Power-Up</strong> in the top right corner</li>
+        <li>Fill in any name (e.g., "ChemCalc"), select your workspace, and click <strong>Create</strong></li>
+        <li>On the next screen, click <strong>API Key</strong> in the left sidebar</li>
+        <li>Your API Key will be displayed at the top of the page — copy it and keep this tab open</li>
+      </ol>
+      <p class="mt-3 mb-0" style="color: #aaa; font-size: 0.9rem;">Your API Key is not a password, but treat it like one. Do not share it publicly.</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Step 2 &mdash; Open My Business Info in ChemCalc</h5>
+      <ol class="mb-0">
+        <li>Log in to your ChemCalc account at <a href="https://chemcalc.co/estimate.html" target="_blank" rel="noopener">chemcalc.co/estimate.html</a></li>
+        <li>Click <strong>My Business Info</strong> at the top of the page</li>
+        <li>Scroll down to the <strong>Trello Integration</strong> section</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Step 3 &mdash; Enter your API Key and Authorize</h5>
+      <ol class="mb-0">
+        <li>Paste your API Key into the <strong>Trello API Key</strong> field</li>
+        <li>Click <strong>Authorize Trello</strong></li>
+        <li>A Trello popup will open asking you to confirm access &mdash; click <strong>Allow</strong></li>
+        <li>The popup will close automatically and ChemCalc will confirm the connection</li>
+      </ol>
+      <p class="mt-3 mb-0" style="color: #aaa; font-size: 0.9rem;">If the popup does not open, check that your browser allows popups for chemcalc.co.</p>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Step 4 &mdash; Select your Board and List</h5>
+      <ol class="mb-0">
+        <li>Once authorized, a <strong>Board</strong> dropdown will appear</li>
+        <li>Select the Trello board you want estimates sent to</li>
+        <li>A <strong>List</strong> dropdown will appear &mdash; select the list within that board</li>
+        <li>Click <strong>Save Business Info</strong></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Step 5 &mdash; Send an Estimate to Trello</h5>
+      <ol class="mb-0">
+        <li>Build your estimate as normal</li>
+        <li>Click the <strong>Add to Trello</strong> button</li>
+        <li>ChemCalc will create a Trello card containing the client info, vessel, scope of work, task hours, and a direct link back to the estimate</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Troubleshooting -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title">Troubleshooting</h5>
+      <table class="table table-sm mb-0" style="color: inherit;">
+        <thead>
+          <tr>
+            <th>Problem</th>
+            <th>Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Popup does not open</td>
+            <td>Allow popups for chemcalc.co in your browser settings</td>
+          </tr>
+          <tr>
+            <td>"Could not load boards" error</td>
+            <td>Your API Key may be incorrect &mdash; double-check Step 1</td>
+          </tr>
+          <tr>
+            <td>Board dropdown is empty</td>
+            <td>Make sure you have at least one open board in your Trello account</td>
+          </tr>
+          <tr>
+            <td>Card was not created</td>
+            <td>Confirm your list is selected and click Save Business Info before trying again</td>
+          </tr>
+          <tr>
+            <td>Token expired</td>
+            <td>Click <strong>Authorize Trello</strong> again to get a fresh token</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="text-center">
+    <a href="estimate.html" class="btn btn-primary">Go to the Estimator</a>
+  </div>
+
+</main>
+
+<!-- Donation Button -->
+<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal">Donate</button>
+
+<!-- Donation Modal -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
+      <div class="modal-header" style="border-bottom: 1px solid #48484a;">
+        <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence.</p>
+        <p>Your support goes toward site development, content updates, and continuous improvement of our services.</p>
+        <hr style="border-color: #48484a;">
+        <div class="donation-options">
+          <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+            <input type="hidden" name="no_recurring" value="0" />
+            <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid #48484a;">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer text-center">
+  <div class="legal-links mb-2">
+    <a href="/privacy.html">Privacy Policy</a> |
+    <a href="/terms.html">Terms of Use</a> |
+    <a href="/cookie.html">Cookie Policy</a>
+  </div>
+  <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
+  <div class="powered-by">
+    <span>Powered by</span>
+    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" />
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>

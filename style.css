@@ -631,6 +631,7 @@ h1 {
 .col-del { width: 36px; text-align: center; }
 .est-table input[type="text"],
 
+
 .est-table input[type="number"] {
   background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
   color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 60px;
@@ -990,7 +991,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
      Do not add mode-specific rules here.
   ============================================================ */
 
-  @page { margin: 0.45in 0.5in; size: letter portrait; }
+  @page { margin: 0.45in .5in; size: letter portrait; }
 
   *, *::before, *::after { box-sizing: border-box !important; }
 
@@ -1022,7 +1023,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .help-icon, .help-popover { display: none !important; }
 
   /* -- Container -- */
-  .est-container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+  .est-container { max-width: 100% !important; padding: 0 4pt !important; margin: 0 !important; }
 
   /* -- PRINT HEADER -- */
   .print-header-block {
@@ -1082,6 +1083,15 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
     color: #111 !important;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+  /* Estimate name — shown below REPAIR ESTIMATE title when filled in */
+  .print-est-name {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    margin-top: 2pt !important;
+    text-align: center;
+    font-style: italic;
   }
   .print-doc-meta {
     display: flex !important;
@@ -1196,8 +1206,9 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
     flex: 1 1 0 !important;
     width: auto !important;
     min-width: 0 !important;
-    padding: 0 !important;
+    padding: 0 0 0 4pt !important;
   }
+
   .est-card .est-label {
     display: block !important;
     white-space: nowrap;
@@ -1209,6 +1220,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
     width: 100% !important;
     white-space: nowrap;
     overflow: hidden;
+
     text-overflow: ellipsis;
   }
   #estimateNumber { font-size: 7.5pt !important; }
@@ -1316,6 +1328,11 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   /* Hide the whole scope card if its textarea is placeholder-only */
   #scopeCard:has(.est-textarea:placeholder-shown) {
     display: none !important;
+  }
+  /* Hide input fields that show only their placeholder (no user value entered) */
+  /* Exception: readonly fields (estimate #, date, valid until) always show */
+  .est-card .est-input:not([readonly]):placeholder-shown {
+    visibility: hidden !important;
   }
 
   /* -- Legal & signature -- */

@@ -244,6 +244,14 @@ function populatePrintHeader() {
   var estNum = document.getElementById('estimateNumber').value;
   var estDate = document.getElementById('estimateDate').value;
   var estValid = document.getElementById('estimateValidUntil').value;
+  // Estimate name (optional — shown below REPAIR ESTIMATE title on PDF)
+  var estNameEl = document.getElementById('estimateName');
+  var estName   = estNameEl ? estNameEl.value.trim() : '';
+  var nameBlock = document.getElementById('printEstNameBlock');
+  if (nameBlock) {
+    nameBlock.textContent = estName;
+    nameBlock.style.display = estName ? '' : 'none';
+  }
   setText('printEstNum',   estNum   ? 'Est. #' + estNum : '');
   setText('printEstDate',  estDate  ? 'Date: ' + estDate : '');
   setText('printEstValid', estValid ? 'Valid: ' + estValid : '');
@@ -268,6 +276,30 @@ function populatePrintHeader() {
 function setText(id, val) {
   var el = document.getElementById(id);
   if (el) el.textContent = val;
+}
+
+/* -- Phone auto-formatter: produces (xxx) xxx-xxxx as user types -- */
+function fmtPhone(input) {
+  var digits = input.value.replace(/\D/g, '').slice(0, 10);
+  var fmt = '';
+  if (digits.length > 0) fmt = '(' + digits.slice(0, 3);
+  if (digits.length >= 4) fmt += ') ' + digits.slice(3, 6);
+  if (digits.length >= 7) fmt += '-' + digits.slice(6, 10);
+  input.value = fmt;
+}
+
+/* -- Email validator: clears field and shows error if invalid on blur -- */
+function validateEmail(input) {
+  var val = input.value.trim();
+  if (!val) return; // blank is fine
+  var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  var errEl = document.getElementById('clientEmailError');
+  if (!valid) {
+    input.value = '';
+    if (errEl) { errEl.style.display = ''; setTimeout(function(){ errEl.style.display = 'none'; }, 3000); }
+  } else {
+    if (errEl) errEl.style.display = 'none';
+  }
 }
 
 /* -- Affiliate links map (keyed from affiliate_links.js globals) -- */
