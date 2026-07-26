@@ -3,11 +3,8 @@
    Supabase email + Google OAuth, session management, profile
    ============================================================ */
 
-const SUPABASE_URL  = 'https://rnrzjlfpwxzomupnxikt.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJucnpqbGZwd3h6b211cG54aWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NTQwNDAsImV4cCI6MjA5ODMzMDA0MH0.saHft_c7A18Z4EQ0D69Zqxxcb8IS9ZC0S6rE4zwd9S0';
-
-// Supabase client (loaded via CDN in estimate.html)
-const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+// Supabase client _sb is now initialized globally in supabase-client.js
+// Ensure supabase-client.js is loaded before auth.js
 
 // Current session state
 let currentUser    = null;

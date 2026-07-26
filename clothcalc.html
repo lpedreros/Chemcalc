@@ -401,8 +401,25 @@
     <!-- Custom JS -->
     <script src="clothcalc.js"></script>
     <script src="affiliate_links.js"></script>
-		<script src="feedback.js"></script> 
-    <script>
+		<script src="feedback.js"></script> <!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+	<!-- ============================================================
+     BOTTOM of every page, immediately before the closing </body> tag.
+     
+     What it does:
+     - Loads the Supabase JS library (CDN)
+     - Loads supabase-client.js (shared DB connection)
+     - Loads chatbot.js (BoatMD — appears on every page)
+     
+     To add a new global script in future:
+     Add ONE line here. It will apply to all pages.
+     ============================================================ -->
+    <!-- Supabase JS Library & Shared Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="Library/supabase-client.js"></script>
+    <!-- BoatMD Chatbot (global — loads on every page) -->
+    <script src="Library/chatbot.js"></script>
+<!-- #EndLibraryItem -->
+<script>
         // Generate QR Code for sharing
         var qrcodeShare = new QRCode(document.getElementById("qrcode"), {
             text: window.location.href,
@@ -430,7 +447,7 @@
                 window.print();
             });
         }
-    </script>
+        </script>
 </body>
 </html>
 

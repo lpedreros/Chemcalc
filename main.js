@@ -4,16 +4,101 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("search-input");
 
     // Mobile menu toggle
-  var menuToggle = document.querySelector('.menu-toggle');
-  var nav = document.getElementById('mainNav');
-  if (menuToggle && nav) {
-    menuToggle.addEventListener('click', function() {
-      nav.classList.toggle('active');
-    });
-  }
-	
-	// Function to fetch and inject product list HTML
+    var menuToggle = document.querySelector('.menu-toggle');
+    var nav = document.getElementById('mainNav');
+    if (menuToggle && nav) {
+        menuToggle.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Function to fetch product list from Supabase affiliate_materials table
     async function loadProductList() {
+        if (typeof _sb !== 'undefined' && _sb !== null) {
+            try {
+                const { data, error } = await _sb
+                    .from('affiliate_materials')
+                    .select('name, url, section, tags, is_favorite')
+                    .order('section', { ascending: true })
+                    .order('name', { ascending: true });
+
+                if (error) {
+                    console.warn("Supabase fetch error, falling back to static HTML:", error.message);
+                    await loadFallbackProductList();
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    renderProductsFromData(data);
+                    return;
+                }
+            } catch (err) {
+                console.warn("Exception during Supabase fetch, falling back to static HTML:", err);
+                await loadFallbackProductList();
+                return;
+            }
+        }
+        
+        // If _sb is not defined or data was empty, fallback
+        await loadFallbackProductList();
+    }
+
+    // Render HTML structure from JSON data
+    function renderProductsFromData(data) {
+        // Group items by section
+        const grouped = {};
+        data.forEach(item => {
+            const sec = item.section || "OTHER";
+            if (!grouped[sec]) grouped[sec] = [];
+            grouped[sec].push(item);
+        });
+
+        let html = '';
+        const sections = Object.keys(grouped).sort();
+
+        sections.forEach(section => {
+            html += `<button type="button" class="collapsible">${escapeHtml(section)}</button>\n`;
+            html += `<div class="content">\n  <ul>\n`;
+            
+            grouped[section].forEach(item => {
+                // Ensure tags are a comma-separated string
+                let tagsStr = "";
+                if (Array.isArray(item.tags)) {
+                    tagsStr = item.tags.join(",");
+                } else if (typeof item.tags === 'string') {
+                    tagsStr = item.tags;
+                }
+                
+                // Add favorite tag if the flag is true
+                if (item.is_favorite) {
+                    const tagArray = tagsStr ? tagsStr.split(',').map(t => t.trim()) : [];
+                    if (!tagArray.includes('favorite')) {
+                        tagArray.push('favorite');
+                        tagsStr = tagArray.join(',');
+                    }
+                }
+
+                const url = item.url ? escapeHtml(item.url) : "#";
+                const name = escapeHtml(item.name || "Unnamed Item");
+                
+                html += `    <li data-tags="${escapeHtml(tagsStr)}"><a href="${url}" target="_blank" rel="noopener">${name}</a></li>\n`;
+            });
+            
+            html += `  </ul>\n</div>\n`;
+        });
+
+        productListContainer.innerHTML = html;
+        initializePageFunctions();
+    }
+
+    // Fallback: fetch static products.html
+    async function loadFallbackProductList() {
         try {
             const response = await fetch("products.html");
             if (!response.ok) {
@@ -23,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             const html = await response.text();
             productListContainer.innerHTML = html;
-            initializePageFunctions(); // Call functions that depend on the product list being loaded
+            initializePageFunctions();
         } catch (error) {
             console.error("Error fetching product list:", error);
             productListContainer.innerHTML = "<p class=\"text-danger\">Error loading product list. Please check your connection or contact support.</p>";
@@ -263,4 +348,3 @@ document.addEventListener("DOMContentLoaded", function() {
     loadProductList();
 
 });
-

@@ -92,18 +92,47 @@
         document.getElementById('chatbot-window').style.display = 'none';
     }
 
-    // Load affiliate links data
+    // Load affiliate links data from Supabase, fallback to local file
     async function loadAffiliateLinks() {
+        // Try Supabase first if the client is available
+        if (typeof _sb !== 'undefined' && _sb !== null) {
+            try {
+                const { data, error } = await _sb
+                    .from('affiliate_materials')
+                    .select('aff_key, name, url');
+                
+                if (!error && data && data.length > 0) {
+                    affiliateLinksData = {};
+                    data.forEach(item => {
+                        if (item.aff_key) {
+                            affiliateLinksData[item.aff_key] = {
+                                name: item.name,
+                                url: item.url
+                            };
+                        }
+                    });
+                    console.log('Loaded', Object.keys(affiliateLinksData).length, 'affiliate products from DB');
+                    return; // Success, exit function
+                } else {
+                    console.warn('Supabase fetch returned no data or error:', error?.message);
+                }
+            } catch (err) {
+                console.warn('Exception during Supabase fetch:', err);
+            }
+        }
+
+        // Fallback: load from static affiliate_links.js
         try {
+            console.log('Falling back to static affiliate_links.js');
             const response = await fetch('/affiliate_links.js');
             const text = await response.text();
             const match = text.match(/const\s+affiliateLinksData\s*=\s*({[\s\S]*?});?\s*$/);
             if (match) {
                 affiliateLinksData = JSON.parse(match[1]);
-                console.log('Loaded', Object.keys(affiliateLinksData).length, 'affiliate products');
+                console.log('Loaded', Object.keys(affiliateLinksData).length, 'affiliate products from fallback');
             }
         } catch (error) {
-            console.warn('Could not load affiliate links:', error);
+            console.warn('Could not load affiliate links fallback:', error);
         }
     }
 
@@ -170,6 +199,7 @@
             const channel = priorityChannels[i];
             results.push({
                 title: 'Search ' + channel.name + ' for "' + query + '"',
+
                 url: channel.url,
                 publishedTime: 'Recommended channel'
             });

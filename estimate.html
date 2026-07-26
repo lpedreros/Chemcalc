@@ -61,6 +61,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
 </head>
 <body>
 
@@ -551,6 +552,7 @@
 
     <!-- Signup panel -->
     <div id="authPanelSignup" style="display:none;">
+
       <p class="modal-sub">Create a free account to save your estimates.</p>
       <label class="est-label">Full Name</label>
       <input type="text" id="signupName" class="est-input" placeholder="Your name" />
@@ -847,6 +849,23 @@
     <span class="feedback-icon">&#128075;</span><span class="feedback-label"> Feedback</span>
   </a>
 </div>
-
+<!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+<!-- ============================================================
+     BOTTOM of every page, immediately before the closing </body> tag.
+     
+     What it does:
+     - Loads the Supabase JS library (CDN)
+     - Loads supabase-client.js (shared DB connection)
+     - Loads chatbot.js (BoatMD — appears on every page)
+     
+     To add a new global script in future:
+     Add ONE line here. It will apply to all pages.
+     ============================================================ -->
+<!-- Supabase JS Library & Shared Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="Library/supabase-client.js"></script>
+<!-- BoatMD Chatbot (global — loads on every page) -->
+<script src="Library/chatbot.js"></script>
+<!-- #EndLibraryItem -->
 </body>
 </html>
