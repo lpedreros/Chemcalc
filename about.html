@@ -59,24 +59,22 @@
 	<link rel="stylesheet" href="/chatbot_styles.css">
 	<script src="/chatbot_standalone.js" defer></script>
 </head>
-<body><!-- #BeginLibraryItem "/Nav header.lbi" -->
-
-<!-- Header Section -->
-<header class="container header">
+<body><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">
   <h1>ChemCalc</h1>
   <div class="powered-by-header">
     <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" />
+    <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
   </div>
-  <button class="menu-toggle">☰</button>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
   <nav id="mainNav" class="nav">
-    <a href="index.html">Home</a>
-    <a href="calculators.html">Calculators</a>
-    <a href="estimate.html">Estimator</a>
-    <a href="services.html">Services</a>
-    <a href="kits.html">Kits</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
+    <a href="/index.html">Home</a>
+    <a href="/calculators.html">Calculators</a>
+    <a href="/estimate.html">Estimator</a>
+    <a href="/services.html">Services</a>
+    <a href="/kits.html">Kits</a>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+    <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
   </nav>
 </header>
 <!-- #EndLibraryItem --><!-- About Section -->
@@ -212,9 +210,7 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <!-- Custom JS -->
-<script src="main.js"></script>
-<!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
-	<!-- ============================================================
+<script src="main.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
      BOTTOM of every page, immediately before the closing </body> tag.
      
      What it does:
@@ -225,12 +221,42 @@
      To add a new global script in future:
      Add ONE line here. It will apply to all pages.
      ============================================================ -->
-    <!-- Supabase JS Library & Shared Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="Library/supabase-client.js"></script>
-    <!-- BoatMD Chatbot (global — loads on every page) -->
-    <script src="Library/chatbot.js"></script>
-<!-- #EndLibraryItem -->
-</body>
+
+<!-- Supabase JS Library & Shared Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="Library/supabase-client.js"></script>
+
+<!-- BoatMD Chatbot (global — loads on every page) -->
+<script src="Library/chatbot.js"></script>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 1. Hide current page link from nav
+    // Build the current page path to match root-relative hrefs (e.g. /index.html)
+    var currentPath = window.location.pathname;
+    // Normalise bare domain root to /index.html
+    if (currentPath === "/" || currentPath === "") currentPath = "/index.html";
+    var navLinks = document.querySelectorAll("#mainNav a");
+    navLinks.forEach(function(link) {
+        if (link.getAttribute("href") === currentPath) {
+            link.style.display = "none";
+        }
+    });
+
+    // 2. Mobile menu toggle
+    // data-bound prevents double-binding if a page already has its own toggle handler
+    var menuToggle = document.getElementById("menuToggle");
+    var mainNav = document.getElementById("mainNav");
+    if (menuToggle && mainNav && !menuToggle.hasAttribute("data-bound")) {
+        menuToggle.setAttribute("data-bound", "true");
+        menuToggle.addEventListener("click", function() {
+            mainNav.classList.toggle("active");
+        });
+    }
+
+});
+</script>
+<!-- #EndLibraryItem --></body>
 </html>
 

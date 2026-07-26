@@ -1,0 +1,29 @@
+<!-- Global Nav & Page Scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 1. Hide current page link from nav
+    // Build the current page path to match root-relative hrefs (e.g. /index.html)
+    var currentPath = window.location.pathname;
+    // Normalise bare domain root to /index.html
+    if (currentPath === "/" || currentPath === "") currentPath = "/index.html";
+    var navLinks = document.querySelectorAll("#mainNav a");
+    navLinks.forEach(function(link) {
+        if (link.getAttribute("href") === currentPath) {
+            link.style.display = "none";
+        }
+    });
+
+    // 2. Mobile menu toggle
+    // data-bound prevents double-binding if a page already has its own toggle handler
+    var menuToggle = document.getElementById("menuToggle");
+    var mainNav = document.getElementById("mainNav");
+    if (menuToggle && mainNav && !menuToggle.hasAttribute("data-bound")) {
+        menuToggle.setAttribute("data-bound", "true");
+        menuToggle.addEventListener("click", function() {
+            mainNav.classList.toggle("active");
+        });
+    }
+
+});
+</script>
