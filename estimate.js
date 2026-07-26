@@ -577,6 +577,7 @@ function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
   var buyHtml = buildBuyLink(item.affKey, item.source);
 
   tr.innerHTML =
+    '<td class="col-drag d-print-none"><span class="drag-handle">&#9776;</span></td>' +
     '<td><input type="text" class="item-name-input" value="' + escHtml(item.name) + '" oninput="recalcRow(this)" placeholder="Item name" /></td>' +
     '<td class="col-cost"><input type="number" class="cost-input" value="' + (item.cost || '') + '" min="0" step="0.01" oninput="recalcRow(this)" placeholder="0.00" /></td>' +
     '<td class="col-markup"><input type="number" class="markup-row-input" value="' + markupPct + '" min="0" max="500" step="1" oninput="recalcRow(this)" /></td>' +
@@ -616,6 +617,41 @@ function reportBrokenLink(affKey) {
   if (profile && profile.full_name) params.set('name', profile.full_name);
   if (user && user.email) params.set('email', user.email);
   window.open('/contact.html?' + params.toString(), '_blank');
+}
+
+/* -- Drag-and-drop reordering (SortableJS) -- */
+function initSortable() {
+  // Materials table rows
+  var matBody = document.getElementById('materialsBody');
+  if (matBody && !matBody._sortable) {
+    matBody._sortable = Sortable.create(matBody, {
+      animation: 150,
+      handle: '.drag-handle',
+      onEnd: function() { recalcSection('materialsBody','materialsMarkup','materialsSubtotal','sumMaterials'); }
+    });
+  }
+  // Repair cards (reorder entire tasks)
+  var tasksContainer = document.getElementById('tasksContainer');
+  if (tasksContainer && !tasksContainer._sortable) {
+    tasksContainer._sortable = Sortable.create(tasksContainer, {
+      animation: 150,
+      handle: '.drag-handle-card',
+      onEnd: function() { updateLaborSummary(); }
+    });
+  }
+  // Task rows within each repair card
+  document.querySelectorAll('.repair-task-table tbody').forEach(function(tbody) {
+    if (!tbody._sortable) {
+      tbody._sortable = Sortable.create(tbody, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: function() {
+          var id = tbody.closest('.repair-card').getAttribute('data-task-id');
+          recalcTask(parseInt(id));
+        }
+      });
+    }
+  });
 }
 
 function recalcRow(input) {

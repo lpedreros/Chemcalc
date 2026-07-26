@@ -640,7 +640,7 @@ h1 {
 .est-table tbody td { padding: 0.4rem 0.5rem; vertical-align: middle; }
 .est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid #333; }
 .col-cost, .col-markup, .col-retail, .col-qty, .col-total { width: 100px; }
-.col-link { width: 60px; text-align: center; }
+.col-link { width: 90px; text-align: center; white-space: nowrap; }
 .col-del { width: 36px; text-align: center; }
 .est-table input[type="text"],
 
