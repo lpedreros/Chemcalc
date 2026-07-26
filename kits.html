@@ -205,10 +205,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- Supabase Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-client.js"></script>
-
 <!-- Custom JS -->
 <script src="affiliate_links.js"></script> <!-- This file might be deprecated or its content merged if it only contains data -->
 <script src="main.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
@@ -225,14 +221,12 @@
 
 <!-- Supabase JS Library & Shared Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="Library/supabase-client.js"></script>
+<script src="/supabase-client.js"></script>
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
-<script src="Library/chatbot.js"></script>
-<!-- #EndLibraryItem -->
-	<!-- #BeginLibraryItem "/Library/global-scripts.lbi" -->
-	<!-- Global Nav & Page Scripts -->
-    <script>
+<script src="/chatbot.js"></script>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
+<script>
 document.addEventListener("DOMContentLoaded", function() {
 
     // 1. Hide current page link from nav
@@ -259,8 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-    </script>
-<!-- #EndLibraryItem -->
-	</body>
+</script>
+<!-- #EndLibraryItem --></body>
 </html>
 
