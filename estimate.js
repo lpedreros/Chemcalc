@@ -605,12 +605,16 @@ function reportBrokenLink(affKey) {
   var data = (typeof affiliateLinksData !== 'undefined' && affiliateLinksData[affKey]) ? affiliateLinksData[affKey] : {};
   var productName = data.name || affKey;
   var productUrl = data.url || 'No URL found';
+  var profile = (typeof getProfile === 'function') ? getProfile() : null;
+  var user = (typeof getUser === 'function') ? getUser() : null;
   var params = new URLSearchParams({
     subject: 'Broken Link Report',
     product: productName,
     affKey: affKey,
     url: productUrl
   });
+  if (profile && profile.full_name) params.set('name', profile.full_name);
+  if (user && user.email) params.set('email', user.email);
   window.open('/contact.html?' + params.toString(), '_blank');
 }
 

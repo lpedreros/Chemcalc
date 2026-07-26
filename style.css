@@ -520,6 +520,7 @@ h1 {
 
 /* Report broken link button (next to Buy Here) */
 .btn-report-link {
+  display: inline;
   background: none;
   border: none;
   color: #f5a623;

@@ -205,7 +205,30 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <!-- Custom JS -->
-<script src="main.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
+<!-- Pre-fill contact form from URL params (broken link reports from estimator) -->
+<script>
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('subject') === 'Broken Link Report') {
+    document.getElementById('repairs').value =
+      'BROKEN LINK REPORT\n\n' +
+      'Product: ' + (params.get('product') || 'Unknown') + '\n' +
+      'Aff Key: ' + (params.get('affKey') || 'Unknown') + '\n' +
+      'URL: ' + (params.get('url') || 'Unknown') + '\n\n' +
+      'Issue: ';
+    if (params.get('name')) document.getElementById('name').value = params.get('name');
+    if (params.get('email')) document.getElementById('email').value = params.get('email');
+    ['boatDetails','hin','location','availability','phone'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.removeAttribute('required');
+    });
+  }
+})();
+</script>
+
+
+<script src="main.js"></script>
+<!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
      BOTTOM of every page, immediately before the closing </body> tag.
      
      What it does:
