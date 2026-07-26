@@ -518,6 +518,18 @@ h1 {
 .btn-view-toggle.active { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
 .btn-view-toggle:hover:not(.active) { background: #2c2c2e; color: #fff; }
 
+/* Report broken link button (next to Buy Here) */
+.btn-report-link {
+  background: none;
+  border: none;
+  color: #f5a623;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0 4px;
+  opacity: 0.6;
+}
+.btn-report-link:hover { opacity: 1; }
+
 /* Pro-feature elements: always visible, grayed/locked for free users */
 .pro-feature.pro-locked {
   opacity: 0.45;
@@ -954,7 +966,6 @@ body.customer-view .repair-task-table thead { display: none !important; }
 body.customer-view .btn-add-task-row { display: none !important; }
 body.customer-view #internalSummaryFull { display: none !important; }
 body.customer-view #customerSummary { display: flex !important; }
-body.customer-view .est-toolbar .toolbar-group:first-child { opacity: 0.5; pointer-events: none; }
 /* Hide materials/paint cards and all cost/markup/retail columns in customer view */
 body.customer-view #materialsCard { display: none !important; }
 body.customer-view #paintCard { display: none !important; }

@@ -594,9 +594,24 @@ function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
 function buildBuyLink(affKey, source) {
   var url = affKey ? getAffiliateLink(affKey) : null;
   if (url) {
-    return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>';
+    var reportBtn = '<button class="btn-report-link" onclick="reportBrokenLink(\'' + escHtml(affKey) + '\')" title="Report missing or broken link">&#9888;</button>';
+    return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>' + reportBtn;
   }
   return '<span class="buy-link-none">-</span>';
+}
+
+/* -- Report broken/missing affiliate link -- */
+function reportBrokenLink(affKey) {
+  var data = (typeof affiliateLinksData !== 'undefined' && affiliateLinksData[affKey]) ? affiliateLinksData[affKey] : {};
+  var productName = data.name || affKey;
+  var productUrl = data.url || 'No URL found';
+  var params = new URLSearchParams({
+    subject: 'Broken Link Report',
+    product: productName,
+    affKey: affKey,
+    url: productUrl
+  });
+  window.open('/contact.html?' + params.toString(), '_blank');
 }
 
 function recalcRow(input) {

@@ -896,5 +896,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
-<!-- #EndLibraryItem --></body>
+<!-- #EndLibraryItem -->
+	<!-- Pre-fill contact form from URL params (e.g., broken link reports) -->
+<script>
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('subject') === 'Broken Link Report') {
+    var msg = 'BROKEN LINK REPORT\n\n' +
+      'Product: ' + (params.get('product') || 'Unknown') + '\n' +
+      'Aff Key: ' + (params.get('affKey') || 'Unknown') + '\n' +
+      'URL: ' + (params.get('url') || 'Unknown') + '\n\n' +
+      'Issue: ';
+    document.getElementById('repairs').value = msg;
+    ['boatDetails','hin','location','availability','phone'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.removeAttribute('required');
+    });
+  }
+})();
+</script>
+
+	</body>
 </html>
