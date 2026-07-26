@@ -515,6 +515,7 @@ function initEstimate() {
   setTimeout(populatePrintHeader, 0);
   // Apply initial format so body classes are set correctly
   setFormat('summary');
+  initSortable();
 }
 
 function checkExpiry() {
@@ -748,6 +749,7 @@ function addRepairTask(taskName, taskList) {
     var price = t.hours * rate;
     rowsHtml +=
       '<tr>' +
+      '<td class="col-drag d-print-none"><span class="drag-handle">&#9776;</span></td>' +
       '<td><input type="text" value="' + escHtml(t.name) + '" oninput="recalcTask(' + id + ')" /></td>' +
       '<td><input type="number" class="task-hours" value="' + t.hours + '" min="0" step="0.25" oninput="recalcTask(' + id + ')" /></td>' +
       '<td><span class="task-price-display">' + fmtCurrency(price) + '</span></td>' +
@@ -757,6 +759,7 @@ function addRepairTask(taskName, taskList) {
 
   card.innerHTML =
     '<div class="repair-card-header">' +
+      '<span class="drag-handle-card">&#9776;</span>' +
       '<input type="text" class="repair-name-input" value="' + escHtml(name) + '" oninput="updateLaborSummary()" placeholder="Repair name" />' +
       '<div class="repair-card-actions d-print-none">' +
         '<button class="btn-save-template d-print-none" onclick="saveTaskAsTemplate(' + id + ')" title="Save as My Template">&#9733; Save as Template</button>' +
@@ -766,10 +769,11 @@ function addRepairTask(taskName, taskList) {
     '</div>' +
     '<div class="table-responsive">' +
       '<table class="repair-task-table" id="taskTable' + id + '">' +
-        '<thead><tr><th>Task</th><th>Hours</th><th>Price</th><th class="d-print-none"></th></tr></thead>' +
+        '<thead><tr><th class="col-drag d-print-none"></th><th>Task</th><th>Hours</th><th>Price</th><th class="d-print-none"></th></tr></thead>' +
         '<tbody>' + rowsHtml + '</tbody>' +
         '<tfoot>' +
           '<tr class="repair-subtotal-row">' +
+            '<td class="d-print-none"></td>' +
             '<td colspan="2" class="repair-subtotal-label">Labor Subtotal</td>' +
             '<td class="repair-subtotal-val" id="taskSubtotal' + id + '">' + fmtCurrency(calcTaskTotal(tasks)) + '</td>' +
             '<td class="d-print-none"></td>' +
@@ -788,6 +792,7 @@ function addRepairTask(taskName, taskList) {
   document.getElementById('tasksContainer').appendChild(card);
   recalcTask(id);
   updateLaborSummary();
+  initSortable();
 }
 
 function calcTaskTotal(tasks) {
@@ -1295,6 +1300,7 @@ function exportPDF() {
     setView('customer');
     setTimeout(function () { window.print(); }, 150);
   }
+
 }
 
 function shareEstimate() {
