@@ -444,7 +444,7 @@ h1 {
    ============================================================ */
 
 /* -- Page layout -- */
-.est-container { max-width: 1100px; padding-bottom: 3rem; }
+.est-container { max-width: 1200px; padding-bottom: 3rem; }
 .est-page-header { text-align: center; margin-bottom: 1.5rem; padding-top: 0.5rem; }
 .est-page-header h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
 .est-subtitle { color: #aaa; font-size: 1rem; margin: 0; }
