@@ -29,7 +29,7 @@ function setUserTier(tier) {
   var btnFmtItemized = document.getElementById('btnFmtItemized');
   if (btnFmtItemized) btnFmtItemized.innerHTML = isPro ? 'Itemized' : 'Itemized &#128274;';
   var btnFmtInternal = document.getElementById('btnFmtInternal');
-  if (btnFmtInternal) btnFmtInternal.innerHTML = isPro ? 'Internal Copy' : 'Internal Copy &#128274;';
+  if (btnFmtInternal) btnFmtInternal.innerHTML = 'Internal Copy';
 
   // Internal summary (logged-in only)
   var internalSummary = document.getElementById('internalSummary');
@@ -514,7 +514,7 @@ function initEstimate() {
   // Populate print header once dates are set
   setTimeout(populatePrintHeader, 0);
   // Apply initial format so body classes are set correctly
-  setFormat('summary');
+  setFormat('internal');
   initSortable();
 }
 
@@ -622,7 +622,6 @@ function reportBrokenLink(affKey) {
 
 /* -- Drag-and-drop reordering (SortableJS) -- */
 function initSortable() {
-  if (typeof Sortable === 'undefined') return;
   // Materials table rows
   var matBody = document.getElementById('materialsBody');
   if (matBody && !matBody._sortable) {
@@ -1024,6 +1023,7 @@ function calcSectionCost(bodyId) {
     var qty = parseFloat(qtyEl ? qtyEl.value : 0) || 0;
     total += cost * qty;
   });
+
   return total;
 }
 
@@ -1051,21 +1051,6 @@ function saveDraft() {
   });
 }
 
-/* -- Format draft timestamp as MM/DD/YYYY h:mm AM/PM -- */
-function formatDraftTimestamp(isoStr) {
-  if (!isoStr) return '';
-  var d = new Date(isoStr);
-  if (isNaN(d)) return '';
-  var mo = d.getMonth() + 1;
-  var day = d.getDate();
-  var yr = d.getFullYear();
-  var hr = d.getHours();
-  var min = d.getMinutes();
-  var ampm = hr >= 12 ? 'PM' : 'AM';
-  hr = hr % 12 || 12;
-  return mo + '/' + day + '/' + yr + ' ' + hr + ':' + (min < 10 ? '0' : '') + min + ' ' + ampm;
-}
-
 function openLoadDraftModal() {
   if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
   var list = document.getElementById('savedEstimatesList');
@@ -1085,7 +1070,7 @@ function openLoadDraftModal() {
         item.innerHTML =
           '<div>' +
             '<div>' + escHtml(row.estimate_number) + ' - ' + escHtml((row.customer_first || '') + ' ' + (row.customer_last || '')) + '</div>' +
-            '<div class="saved-item-meta">' + formatDraftTimestamp(row.updated_at || row.created_at) + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
+            '<div class="saved-item-meta">' + escHtml(row.created_at ? row.created_at.slice(0,10) : '') + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
           '</div>' +
           '<button class="saved-item-del" onclick="deleteSavedEstimate(\'' + row.id + '\')" title="Delete">&#10005;</button>';
         item.addEventListener('click', function(e) {
@@ -1320,6 +1305,7 @@ function exportPDF() {
 }
 
 function shareEstimate() {
+
   var data = collectEstimateData();
   var title = 'Repair Estimate ' + data.estimateNumber;
   var clientDisplay = (data.clientCompany || '').trim() || ((data.clientFirst || '') + ' ' + (data.clientLast || '')).trim() || 'Client';
@@ -1407,7 +1393,7 @@ var _tsTemplatesLoaded = false;
 function openTaskStarter() {
   var taskCount = document.querySelectorAll('.repair-card').length;
   var pro = _checkPro();
-  if (!pro && taskCount >= 5) { openModal('upgradeModal'); return; }
+  if (!pro && taskCount >= 2) { openModal('upgradeModal'); return; }
   tsShowTab('presets');
   tsRenderPresets();
   if (pro) tsLoadUserTemplates();

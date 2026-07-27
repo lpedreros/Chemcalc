@@ -151,7 +151,7 @@
     <div class="toolbar-group">
       <label class="est-label mb-0">Format:</label>
       <div class="view-toggle-wrap" id="formatToggleWrap">
-        <button id="btnFmtSummary" class="btn-view-toggle active"
+        <button id="btnFmtSummary" class="btn-view-toggle"
           onclick="setFormat('summary')"
           title="Best for quick, small jobs or picky clients. Shows only the final category totals. Keeps the focus on the bottom line so clients don't try to haggle over individual material costs.">
           Summary
@@ -161,8 +161,8 @@
           title="Best for large insurance claims or transparent corporate accounts. Fully breaks down retail pricing for labor, materials, and paint so the client sees exactly where their money is going.">
           Itemized
         </button>
-        <button id="btnFmtInternal" class="btn-view-toggle pro-feature"
-          onclick="proSetFormat('internal')"
+        <button id="btnFmtInternal" class="btn-view-toggle active"
+          onclick="setFormat('internal')"
           title="For your eyes only! Displays your raw wholesale costs, precise material markups, and total gross profit margins. Use this on the dock to make sure you are actually making money on the job before handing it to the client.">
           Internal Copy
         </button>
@@ -299,7 +299,6 @@
       <table class="est-table" id="materialsTable">
         <thead>
           <tr>
-            <th class="col-drag d-print-none"></th>
             <th>Item</th>
             <th class="col-cost">Your Cost ($)</th>
             <th class="col-markup">Markup %</th>
@@ -314,7 +313,6 @@
         <tbody id="materialsBody"></tbody>
         <tfoot>
           <tr class="subtotal-row">
-            <td class="col-drag d-print-none"></td>
             <td class="subtotal-label" colspan="2">Materials Subtotal</td>
             <td class="col-cost"></td>
             <td class="col-markup"></td>
@@ -648,7 +646,7 @@
       </div>
       <div class="col-md-6">
         <label class="est-label">Phone</label>
-        <input type="tel" id="bizPhone" class="est-input" placeholder="(555) 555-5555" oninput="fmtPhone(this)" />
+        <input type="tel" id="bizPhone" class="est-input" placeholder="(555) 555-5555" />
       </div>
       <div class="col-md-6">
         <label class="est-label">Email</label>
