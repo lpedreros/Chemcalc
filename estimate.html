@@ -299,6 +299,7 @@
       <table class="est-table" id="materialsTable">
         <thead>
           <tr>
+            <th class="col-drag d-print-none"></th>
             <th>Item</th>
             <th class="col-cost">Your Cost ($)</th>
             <th class="col-markup">Markup %</th>
@@ -313,6 +314,7 @@
         <tbody id="materialsBody"></tbody>
         <tfoot>
           <tr class="subtotal-row">
+            <td class="col-drag d-print-none"></td>
             <td class="subtotal-label" colspan="2">Materials Subtotal</td>
             <td class="col-cost"></td>
             <td class="col-markup"></td>
@@ -646,7 +648,7 @@
       </div>
       <div class="col-md-6">
         <label class="est-label">Phone</label>
-        <input type="tel" id="bizPhone" class="est-input" placeholder="(555) 555-5555" />
+        <input type="tel" id="bizPhone" class="est-input" placeholder="(555) 555-5555" oninput="fmtPhone(this)" />
       </div>
       <div class="col-md-6">
         <label class="est-label">Email</label>

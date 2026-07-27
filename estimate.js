@@ -622,6 +622,7 @@ function reportBrokenLink(affKey) {
 
 /* -- Drag-and-drop reordering (SortableJS) -- */
 function initSortable() {
+  if (typeof Sortable === 'undefined') return;
   // Materials table rows
   var matBody = document.getElementById('materialsBody');
   if (matBody && !matBody._sortable) {
@@ -1050,6 +1051,21 @@ function saveDraft() {
   });
 }
 
+/* -- Format draft timestamp as MM/DD/YYYY h:mm AM/PM -- */
+function formatDraftTimestamp(isoStr) {
+  if (!isoStr) return '';
+  var d = new Date(isoStr);
+  if (isNaN(d)) return '';
+  var mo = d.getMonth() + 1;
+  var day = d.getDate();
+  var yr = d.getFullYear();
+  var hr = d.getHours();
+  var min = d.getMinutes();
+  var ampm = hr >= 12 ? 'PM' : 'AM';
+  hr = hr % 12 || 12;
+  return mo + '/' + day + '/' + yr + ' ' + hr + ':' + (min < 10 ? '0' : '') + min + ' ' + ampm;
+}
+
 function openLoadDraftModal() {
   if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
   var list = document.getElementById('savedEstimatesList');
@@ -1069,7 +1085,7 @@ function openLoadDraftModal() {
         item.innerHTML =
           '<div>' +
             '<div>' + escHtml(row.estimate_number) + ' - ' + escHtml((row.customer_first || '') + ' ' + (row.customer_last || '')) + '</div>' +
-            '<div class="saved-item-meta">' + escHtml(row.created_at ? row.created_at.slice(0,10) : '') + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
+            '<div class="saved-item-meta">' + formatDraftTimestamp(row.updated_at || row.created_at) + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
           '</div>' +
           '<button class="saved-item-del" onclick="deleteSavedEstimate(\'' + row.id + '\')" title="Delete">&#10005;</button>';
         item.addEventListener('click', function(e) {

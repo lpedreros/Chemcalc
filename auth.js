@@ -185,7 +185,7 @@ async function loadEstimatesFromSupabase() {
   if (!currentUser) return [];
   const { data, error } = await _sb
     .from('estimates')
-    .select('id, estimate_number, customer_first, customer_last, boat_make, boat_model, grand_total, created_at, status')
+    .select('id, estimate_number, customer_first, customer_last, boat_make, boat_model, grand_total, created_at, updated_at, status')
     .eq('user_id', currentUser.id)
     .order('created_at', { ascending: false });
   if (error) return [];
