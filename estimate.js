@@ -1024,6 +1024,7 @@ function calcSectionCost(bodyId) {
     total += cost * qty;
   });
 
+
   return total;
 }
 
@@ -1637,4 +1638,18 @@ async function tsDeleteUserTemplate(id, e) {
   if (error) { alert('Delete failed: ' + error.message); return; }
   _userTemplates = _userTemplates.filter(function(t) { return t.id !== id; });
   tsRenderMyTemplates();
+}
+
+/* -- Help modal (estimate.html) ----------------------------- */
+/* Shows free or pro content based on current user tier.       */
+function openHelpModal() {
+  var proUser = (typeof window.isPro === 'function') ? window.isPro() : false;
+  // Activate the correct content section
+  document.querySelectorAll('#helpModal .help-modal-section').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  var sectionId = proUser ? 'helpContentPro' : 'helpContentFree';
+  var section = document.getElementById(sectionId);
+  if (section) section.classList.add('active');
+  openModal('helpModal');
 }

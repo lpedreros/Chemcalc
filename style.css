@@ -2416,3 +2416,123 @@ body,
 @media print {
   .fap { display: none !important; }
 }
+
+/* ============================================================
+   FLOATING HELP BUTTON & HELP MODAL
+   Used on estimate.html and kits.html
+   ============================================================ */
+.help-float-btn {
+  position: fixed;
+  bottom: 4.5rem;
+  right: 1.5rem;
+  z-index: 9998;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #2c2c2e;
+  border: 2px solid #89CFF0;
+  color: #89CFF0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  transition: background 0.2s, border-color 0.2s;
+  line-height: 1;
+}
+.help-float-btn:hover {
+  background: #3a3a3c;
+  border-color: #70b8d0;
+}
+/* kits.html: donate btn is bottom:20px, help btn sits above it */
+.kits-page .help-float-btn {
+  bottom: 4rem;
+  right: 1.25rem;
+}
+/* Help modal content sections */
+.help-modal-section { display: none; }
+.help-modal-section.active { display: block; }
+.help-modal-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 1rem;
+  counter-reset: step-counter;
+}
+.help-modal-steps li {
+  position: relative;
+  padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+  margin-bottom: 0.5rem;
+  background: #1c1c1e;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  counter-increment: step-counter;
+}
+.help-modal-steps li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: #89CFF0;
+  color: #1c1c1e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.help-modal-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 1rem;
+}
+.help-modal-bullets li {
+  padding: 0.45rem 0.5rem 0.45rem 1.5rem;
+  margin-bottom: 0.4rem;
+  background: #1c1c1e;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  position: relative;
+}
+.help-modal-bullets li::before {
+  content: "\25B8";
+  position: absolute;
+  left: 0.5rem;
+  color: #89CFF0;
+}
+.help-modal-pitch {
+  color: #aaa;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.help-modal-cta-box {
+  background: #1c1c1e;
+  border: 1px solid #48484a;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+.help-modal-cta-box p {
+  color: #aaa;
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .help-float-btn { bottom: 5.5rem; right: 1rem; }
+  .kits-page .help-float-btn { bottom: 4rem; right: 1rem; }
+}
+@media print {
+  .help-float-btn { display: none !important; }
+}
