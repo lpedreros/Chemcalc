@@ -67,7 +67,8 @@
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 	<!-- AI Chatbot -->
 	<link rel="stylesheet" href="/chatbot_styles.css">
-	</head>
+	<script src="/chatbot_standalone.js" defer></script>
+</head>
 <body>
 
 <!-- AdSense AMP 
@@ -342,6 +343,33 @@
 
     <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+
+<!-- Help Button -->
+<button class="help-float-btn" id="clothHelpBtn" data-toggle="modal" data-target="#clothHelpModal" title="How to use this calculator">?</button>
+
+<!-- Help Modal -->
+<div class="modal fade" id="clothHelpModal" tabindex="-1" role="dialog" aria-labelledby="clothHelpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color:#2c2c2e;color:#fff;border:none;">
+      <div class="modal-header" style="border-bottom:1px solid #48484a;">
+        <h5 class="modal-title" id="clothHelpModalLabel">How to Use the Fiberglass Cloth Calculator</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#fff;"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <p>Calculate exactly how much resin you need to saturate your fiberglass cloth &mdash; no over-mixing, no waste.</p>
+        <ul class="help-modal-bullets">
+          <li><strong>Choose your system</strong> &mdash; Epoxy or Polyester/Vinylester.</li>
+          <li><strong>Enter length and width</strong> &mdash; the dimensions of your cloth panel.</li>
+          <li><strong>Select your units</strong> &mdash; inches, feet, or centimeters.</li>
+          <li><strong>Choose your resin type</strong> &mdash; the calculator adjusts the saturation ratio accordingly.</li>
+          <li><strong>Select cloth weight</strong> &mdash; heavier cloth absorbs more resin.</li>
+          <li><strong>Read your results</strong> &mdash; resin volume in oz, mL, and the number of layers covered.</li>
+        </ul>
+        <p class="text-muted" style="font-size:0.85rem;">Results update automatically as you type.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
