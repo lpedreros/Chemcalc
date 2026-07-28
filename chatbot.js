@@ -15,7 +15,9 @@
     let affiliateLinksData = null;
 
     // Initialize chatbot
+    // Guard: if another copy of this script already ran, do nothing.
     function initChatbot() {
+        if (document.getElementById('chemcalc-chatbot')) return;
         injectChatbotHTML();
         attachEventListeners();
         loadAffiliateLinks();

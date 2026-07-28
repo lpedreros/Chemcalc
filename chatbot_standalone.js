@@ -16,7 +16,9 @@
     let affiliateLinksData = null;
 
     // Initialize chatbot
+    // Guard: if another copy of this script already ran, do nothing.
     function initChatbot() {
+        if (document.getElementById('chemcalc-chatbot')) return;
         injectChatbotHTML();
         attachEventListeners();
         loadAffiliateLinks();
@@ -230,7 +232,7 @@
 
         // Add videos if present
         if (response.videos && response.videos.length > 0) {
-            html += '<div class="chatbot-section-title">📺 Video Tutorials:</div>';
+            html += '<div class="chatbot-section-title">?? Video Tutorials:</div>';
             html += '<div class="chatbot-videos">';
             response.videos.forEach(video => {
                 html += `
@@ -250,7 +252,7 @@
 
         // Add products if present
         if (response.products && response.products.length > 0) {
-            html += '<div class="chatbot-section-title">🛠️ Recommended Products:</div>';
+            html += '<div class="chatbot-section-title">??? Recommended Products:</div>';
             html += '<div class="chatbot-products">';
             response.products.forEach(product => {
                 html += `
