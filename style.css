@@ -2423,7 +2423,7 @@ body,
    ============================================================ */
 .help-float-btn {
   position: fixed;
-  bottom: 8rem;
+  bottom: 10rem;
   right: 1.5rem;
   z-index: 9998;
   width: 2.4rem;
@@ -2446,11 +2446,7 @@ body,
   background: #3a3a3c;
   border-color: #70b8d0;
 }
-/* kits.html: donate btn is bottom:20px, help btn sits above it */
-.kits-page .help-float-btn {
-  bottom: 4rem;
-  right: 1.25rem;
-}
+
 /* Help modal content sections */
 .help-modal-section { display: none; }
 .help-modal-section.active { display: block; }
@@ -2530,8 +2526,7 @@ body,
 }
 /* Mobile adjustments */
 @media (max-width: 767px) {
-  .help-float-btn { bottom: 5.5rem; right: 1rem; }
-  .kits-page .help-float-btn { bottom: 4rem; right: 1rem; }
+  .help-float-btn { bottom: 10rem; right: 1rem; }
 }
 @media print {
   .help-float-btn { display: none !important; }

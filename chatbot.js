@@ -302,13 +302,13 @@
         let html = '<p>' + escapeHtml(response.text) + '</p>';
 
         if (response.videos && response.videos.length > 0) {
-            html += '<div class="chatbot-section-title">?? Video Tutorials:</div>';
+            html += '<div class="chatbot-section-title">&#x1F4FA; Video Tutorials:</div>';
             html += '<div class="chatbot-videos">';
             for (let i = 0; i < response.videos.length; i++) {
                 const video = response.videos[i];
                 html += '<div class="chatbot-video-item">';
                 html += '<a href="' + escapeHtml(video.url) + '" target="_blank" rel="noopener noreferrer" style="display: block; padding: 0.75rem;">';
-                html += '<div class="video-title" style="font-weight: 500;">?? ' + escapeHtml(video.title) + '</div>';
+                html += '<div class="video-title" style="font-weight: 500;">&#x25B6; ' + escapeHtml(video.title) + '</div>';
                 if (video.publishedTime) {
                     html += '<div class="video-meta">' + escapeHtml(video.publishedTime) + '</div>';
                 }
@@ -319,7 +319,7 @@
         }
 
         if (response.products && response.products.length > 0) {
-            html += '<div class="chatbot-section-title">??? Recommended Products:</div>';
+            html += '<div class="chatbot-section-title">&#x1F6E0; Recommended Products:</div>';
             html += '<div class="chatbot-products">';
             for (let i = 0; i < response.products.length; i++) {
                 const product = response.products[i];
