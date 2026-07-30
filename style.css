@@ -2531,3 +2531,19 @@ body,
 @media print {
   .help-float-btn { display: none !important; }
 }
+
+/* ===== UPGRADE MODAL — PLAN TOGGLE ===== */
+.plan-toggle-row {
+  display: flex; gap: 0.4rem; margin: 0.6rem 0 0.5rem;
+}
+.plan-toggle-btn {
+  flex: 1; padding: 0.4rem 0.5rem; border-radius: 6px; border: 1px solid #555;
+  background: #2c2c2e; color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+}
+.plan-toggle-btn.active {
+  background: #89CFF0; color: #1c1c1e; border-color: #89CFF0; font-weight: 700;
+}
+.plan-toggle-save {
+  font-size: 0.72rem; background: #7ed47e; color: #1c1c1e;
+  padding: 0.1rem 0.35rem; border-radius: 4px; margin-left: 0.3rem; font-weight: 700;
+}

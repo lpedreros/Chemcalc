@@ -76,6 +76,8 @@
   <link rel="stylesheet" href="style.css">
 	<!-- AI Chatbot -->
 	<link rel="stylesheet" href="/chatbot_styles.css">
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="/supabase-client.js"></script>
 	</head>
 <body class="kits-page">
 
@@ -151,37 +153,6 @@
 
 </main><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 
-<!-- Floating Help Button -->
-<button class="help-float-btn" id="kitsHelpBtn" data-toggle="modal" data-target="#kitsHelpModal" title="How to use this page">?</button>
-
-<!-- Kits Help Modal -->
-<div class="modal fade" id="kitsHelpModal" tabindex="-1" role="dialog" aria-labelledby="kitsHelpModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-      <div class="modal-header" style="border-bottom: 1px solid #48484a;">
-        <h5 class="modal-title" id="kitsHelpModalLabel">How to Use This Page</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p style="color:#aaa; font-size:0.9rem; line-height:1.6;">Not sure where to start? This page has 140+ recommended marine repair materials, tools, and PPE &mdash; all hand-picked and linked directly to the products I actually use on the job. Click through and buy directly from Amazon or the supplier. It supports ChemCalc at no extra cost to you.</p>
-        <p class="modal-sub" style="color:#89CFF0; font-size:0.88rem; font-weight:600; margin-bottom:0.5rem;">How to find what you need:</p>
-        <ul class="help-modal-bullets">
-          <li><strong>Search by name or description</strong> &mdash; Type any product name, material type, or keyword in the search box above the list.</li>
-          <li><strong>Filter by category</strong> &mdash; Use the filter buttons (Resin, Tools, PPE, etc.) to narrow down by type. You can combine multiple filters.</li>
-          <li><strong>Expand a section</strong> &mdash; Click any section header to expand or collapse that category.</li>
-          <li><strong>Star your favorites</strong> &mdash; Click the &#9734; star next to any item to mark it as a favorite. Your favorites are saved in your browser for next time.</li>
-          <li><strong>Need something custom?</strong> &mdash; Use the &ldquo;Request Custom Link List&rdquo; or &ldquo;Request Assembled Kit&rdquo; cards at the top of the page to get a personalized list or a pre-assembled kit shipped to you.</li>
-        </ul>
-      </div>
-      <div class="modal-footer" style="border-top: 1px solid #48484a;">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Got It</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
 
@@ -241,17 +212,11 @@
      BOTTOM of every page, immediately before the closing </body> tag.
      
      What it does:
-     - Loads the Supabase JS library (CDN)
-     - Loads supabase-client.js (shared DB connection)
      - Loads chatbot.js (BoatMD — appears on every page)
      
      To add a new global script in future:
      Add ONE line here. It will apply to all pages.
      ============================================================ -->
-
-<!-- Supabase JS Library & Shared Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/supabase-client.js"></script>
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>

@@ -141,7 +141,7 @@
       <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
       <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
       <button class="btn-tier pro-feature" id="bizInfoBtn" onclick="proAction('bizInfoModal')">&#9998; My Business Info</button>
-      <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Join Free Beta</button>
+      <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
     </span>
   </div>
 
@@ -577,7 +577,7 @@
 <div class="modal-overlay" id="upgradeModal" style="display:none;" onclick="overlayClose(event,'upgradeModal')">
   <div class="modal-box modal-wide" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('upgradeModal')">&#10005;</button>
-    <h3 class="modal-title">Unlock Pro Features - Free During Beta</h3>
+    <h3 class="modal-title">Upgrade to ChemCalc Pro</h3>
     <div class="plan-row">
       <!-- FREE -->
       <div class="plan-card">
@@ -598,23 +598,29 @@
       </div>
       <!-- PRO -->
       <div class="plan-card plan-featured">
-        <div class="plan-badge">Free During Launch &#127881;</div>
-        <div class="plan-name">Beta Pro</div>
-        <div class="plan-price"><span class="plan-price-strike">$19</span> <span class="plan-price-free">FREE</span></div>
+        <div class="plan-badge">Most Popular &#11088;</div>
+        <div class="plan-name">Pro</div>
+        <!-- Plan toggle -->
+        <div class="plan-toggle-row">
+          <button id="planToggleMonthly" class="plan-toggle-btn active" onclick="setUpgradePlan('monthly')">Monthly</button>
+          <button id="planToggleAnnual"  class="plan-toggle-btn"        onclick="setUpgradePlan('annual')">Annual <span class="plan-toggle-save">Save 45%</span></button>
+        </div>
+        <div class="plan-price" id="selectedPlanPrice">$15/month</div>
         <ul class="plan-features">
           <li class="feat-yes">&#10003; Everything in Free</li>
-          <li class="feat-yes">&#10003; Save &amp; load drafts (browser)</li>
+          <li class="feat-yes">&#10003; Save &amp; load drafts (cloud)</li>
           <li class="feat-yes">&#10003; Itemized PDF export</li>
           <li class="feat-yes">&#10003; Custom logo &amp; estimate prefix</li>
           <li class="feat-yes">&#10003; Contractor pricing view</li>
           <li class="feat-yes">&#10003; Scope of work on PDF</li>
           <li class="feat-yes">&#10003; Estimate history &amp; database</li>
           <li class="feat-yes">&#10003; Trello card auto-creation</li>
+          <li class="feat-yes">&#10003; Materials library</li>
         </ul>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('upgradeModal'); openModal('authModal')">Join Free Beta - Unlock Now</button>
+        <button id="stripeCheckoutBtn" class="btn-plan btn-plan-pro" onclick="launchStripeCheckout()">Upgrade to Pro</button>
       </div>
     </div>
-    <p class="plan-beta-note">&#128276; Future price will be $19/mo - sign up now to lock in free access and get early-adopter pricing when we launch.</p>
+    <p class="plan-beta-note">&#128274; Secure checkout powered by Stripe. Cancel anytime.</p>
   </div>
 </div>
 
@@ -799,7 +805,8 @@
 <script src="auth.js?v=5"></script>
 <script src="estimate.js?v=5"></script>
 <script src="trello.js?v=5"></script>
-<script src="materials_library.js?v=5"></script>
+<script src="/materials_library.js?v=5"></script>
+<script src="/stripe-checkout.js?v=1"></script>
 <!-- ===== FLOATING ACTION PANEL ===== -->
 <div class="fap d-print-none" id="floatActionPanel">
 
@@ -866,7 +873,7 @@
       </ol>
       <div class="help-modal-cta-box">
         <p><strong>Want to quote even faster?</strong> Upgrade to Pro to unlock unlimited tasks, save and load your estimates, build your own custom materials library, and access the Internal Copy view to see your exact profit margins on the dock.</p>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('upgradeModal')">Join Free Beta</button>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('upgradeModal')">Upgrade to Pro</button>
       </div>
     </div>
 
@@ -880,6 +887,7 @@
         <li><strong>Save your estimates</strong> &mdash; Use the &ldquo;Save Draft&rdquo; button in the toolbar to store your work. Load it later from any device.</li>
         <li><strong>Control what the client sees</strong> &mdash; Use the Format buttons at the top. <strong>Summary</strong> hides all material details to prevent haggling. <strong>Itemized</strong> breaks everything down for insurance claims or corporate accounts.</li>
         <li><strong>Create custom templates</strong> &mdash; Once you build a repair task you do often, click &ldquo;Save as Template&rdquo; on the task header to reuse it on future estimates.</li>
+        <li><strong>Manage your materials library</strong> &mdash; Click <strong>&#9998; My Business Info</strong> in the toolbar to view, edit, add, or remove items from your personal materials library.</li>
       </ul>
     </div>
 
@@ -895,17 +903,11 @@
      BOTTOM of every page, immediately before the closing </body> tag.
      
      What it does:
-     - Loads the Supabase JS library (CDN)
-     - Loads supabase-client.js (shared DB connection)
      - Loads chatbot.js (BoatMD — appears on every page)
      
      To add a new global script in future:
      Add ONE line here. It will apply to all pages.
      ============================================================ -->
-
-<!-- Supabase JS Library & Shared Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/supabase-client.js"></script>
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>
@@ -938,8 +940,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
-<!-- #EndLibraryItem -->
-	<!-- Pre-fill contact form from URL params (e.g., broken link reports) -->
+<!-- #EndLibraryItem --><!-- Pre-fill contact form from URL params (e.g., broken link reports) -->
 <script>
 (function() {
   var params = new URLSearchParams(window.location.search);

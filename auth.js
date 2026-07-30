@@ -49,18 +49,19 @@ function applyAuthUI() {
   const loginBtn   = document.getElementById('loginBtn');
   const logoutBtn  = document.getElementById('logoutBtn');
   const tier       = currentProfile ? currentProfile.tier : 'free';
+  const proActive   = isPro();
 
   if (currentUser) {
     const name = currentProfile?.full_name || currentUser.email;
     const betaTester = currentProfile?.beta_tester === true;
     if (tierLabel) {
-      const lockIcon = tier === 'pro' ? '\uD83D\uDD13' : '\uD83D\uDD10';
-      const tierText = tier === 'pro' ? 'Pro' : 'Free';
+      const lockIcon = proActive ? '\uD83D\uDD13' : '\uD83D\uDD10';
+      const tierText = proActive ? 'Pro' : 'Free';
       const badgeHTML = betaTester
         ? ' <span class="beta-crew-badge" title="Beta Crew Member"><img src="kite_icon_32.png" alt="kite" class="kite-icon"> Beta Crew</span>'
         : '';
       tierLabel.innerHTML = lockIcon + ' ' + tierText + ' \u2014 ' + name + badgeHTML;
-      tierLabel.className = 'tier-label' + (tier === 'pro' ? ' pro' : '');
+      tierLabel.className = 'tier-label' + (proActive ? ' pro' : '');
     }
     if (loginBtn)  loginBtn.style.display  = 'none';
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
@@ -74,7 +75,7 @@ function applyAuthUI() {
   }
 
   // Tell estimate.js what tier we're on
-  if (typeof setUserTier === 'function') setUserTier(tier);
+  if (typeof setUserTier === 'function') setUserTier(proActive ? 'pro' : tier);
 }
 
 /* ── Email / Password login ──────────────────────────────── */
@@ -215,5 +216,5 @@ async function deleteEstimateById(id) {
 function getProfile()    { return currentProfile; }
 function getUser()       { return currentUser; }
 function isLoggedIn()    { return !!currentUser; }
-function isPro()         { return currentProfile?.tier === 'pro'; }
+function isPro()         { return currentProfile?.tier === 'pro' || currentProfile?.subscription_status === 'active'; }
 function isBetaTester()  { return currentProfile?.beta_tester === true; }

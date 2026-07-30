@@ -53,14 +53,24 @@
 	<link rel="stylesheet" href="/chatbot_styles.css">
 	</head>
 <body>
-  <!-- Header -->
-  <!-- #BeginLibraryItem "/Library/nav.lbi" -->
-  <header class="container header d-print-none">
-    <h1>ChemCalc</h1>
-    <div class="powered-by-header"> <span>Powered by</span> <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" /> </div>
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
-    <nav id="mainNav" class="nav"> <a href="/index.html">Home</a> <a href="/calculators.html">Calculators</a> <a href="/estimate.html">Estimator</a> <a href="/services.html">Services</a> <a href="/kits.html">Kits</a> <a href="/about.html">About</a> <a href="/contact.html">Contact</a> <a href="/history.html" id="navHistoryLink" class="d-none">History</a> </nav>
-  </header>
+  <!-- Header --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">
+  <h1>ChemCalc</h1>
+  <div class="powered-by-header">
+    <span>Powered by</span>
+    <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
+  <nav id="mainNav" class="nav">
+    <a href="/index.html">Home</a>
+	<a href="/calculators.html">Calculators</a>
+    <a href="/estimate.html">Estimator</a>
+    <a href="/services.html">Services</a>
+    <a href="/kits.html">Kits</a>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+    <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
+  </nav>
+</header>
 <!-- #EndLibraryItem --><!-- Main Content -->
 <main class="container my-4">
     <h1 class="text-center mb-4">Terms of Use</h1>
@@ -133,17 +143,11 @@
      BOTTOM of every page, immediately before the closing </body> tag.
      
      What it does:
-     - Loads the Supabase JS library (CDN)
-     - Loads supabase-client.js (shared DB connection)
      - Loads chatbot.js (BoatMD — appears on every page)
      
      To add a new global script in future:
      Add ONE line here. It will apply to all pages.
      ============================================================ -->
-
-<!-- Supabase JS Library & Shared Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/supabase-client.js"></script>
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>
