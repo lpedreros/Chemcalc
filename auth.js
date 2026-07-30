@@ -45,11 +45,13 @@ async function loadProfile() {
 
 /* ── Apply UI based on auth state ────────────────────────── */
 function applyAuthUI() {
-  const tierLabel  = document.getElementById('tierLabel');
-  const loginBtn   = document.getElementById('loginBtn');
-  const logoutBtn  = document.getElementById('logoutBtn');
-  const tier       = currentProfile ? currentProfile.tier : 'free';
-  const proActive   = isPro();
+  const tierLabel    = document.getElementById('tierLabel');
+  const loginBtn     = document.getElementById('loginBtn');
+  const logoutBtn    = document.getElementById('logoutBtn');
+  const upgradeBtn   = document.querySelector('.btn-tier-upgrade');
+  const manageSubBtn = document.getElementById('manageSubBtn');
+  const tier         = currentProfile ? currentProfile.tier : 'free';
+  const proActive    = isPro();
 
   if (currentUser) {
     const name = currentProfile?.full_name || currentUser.email;
@@ -65,13 +67,18 @@ function applyAuthUI() {
     }
     if (loginBtn)  loginBtn.style.display  = 'none';
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    // Show Manage Subscription for Pro, Upgrade button for Free
+    if (upgradeBtn)   upgradeBtn.style.display   = proActive ? 'none'         : 'inline-block';
+    if (manageSubBtn) manageSubBtn.style.display = proActive ? 'inline-block' : 'none';
   } else {
     if (tierLabel) {
       tierLabel.textContent = '\uD83D\uDD10 Free Plan';
       tierLabel.className   = 'tier-label';
     }
-    if (loginBtn)  loginBtn.style.display  = 'inline-block';
-    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (loginBtn)     loginBtn.style.display     = 'inline-block';
+    if (logoutBtn)    logoutBtn.style.display    = 'none';
+    if (upgradeBtn)   upgradeBtn.style.display   = 'inline-block';
+    if (manageSubBtn) manageSubBtn.style.display = 'none';
   }
 
   // Tell estimate.js what tier we're on
