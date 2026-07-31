@@ -1,3 +1,0 @@
-cd "Z:\Documents\Work\Think & Engage. LLC\Website\Chemcalc"
-
-python3 -m http.server
