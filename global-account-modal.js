@@ -278,7 +278,9 @@
     if (emailEl) emailEl.value = user.email || '';
 
     // Detect Google provider — gray out password fields
-    var isGoogle = user.app_metadata && user.app_metadata.provider === 'google';
+    // Check app_metadata.provider OR identities array (Supabase sometimes only has one)
+    var isGoogle = (user.app_metadata && user.app_metadata.provider === 'google') ||
+      (user.identities && user.identities.some(function(i) { return i.provider === 'google'; }));
     var googleNote = document.getElementById('profileGoogleNote');
     var pwFields = document.getElementById('profilePasswordFields');
     if (isGoogle) {

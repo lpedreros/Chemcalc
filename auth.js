@@ -11,7 +11,10 @@ let currentUser    = null;
 let currentProfile = null;
 
 /* ── Initialise on page load ─────────────────────────────── */
+let authInitDone = false;
 async function authInit() {
+  if (authInitDone) return;
+  authInitDone = true;
   const { data: { session } } = await _sb.auth.getSession();
   if (session) {
     currentUser = session.user;
@@ -226,3 +229,10 @@ function getUser()       { return currentUser; }
 function isLoggedIn()    { return !!currentUser; }
 function isPro()         { return currentProfile?.tier === 'pro' || currentProfile?.subscription_status === 'active'; }
 function isBetaTester()  { return currentProfile?.beta_tester === true; }
+
+/* ── Auto-init: run authInit on every page that loads auth.js ── */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', authInit);
+} else {
+  authInit();
+}

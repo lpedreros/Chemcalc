@@ -695,14 +695,14 @@ h1 {
 .col-link   { width: 76px; text-align: center; white-space: nowrap; }
 .col-del    { width: 26px; text-align: center; }
 /* Actions header — stacked label, centered, fits 3 narrow icon buttons */
-.col-actions { width: 78px; text-align: center; white-space: normal; line-height: 1.2; }
+.col-actions { width: 130px; text-align: center; white-space: normal; line-height: 1.2; }
 /* Actions cell — stack buy link on top, then icon buttons side by side */
 td.col-actions { display: table-cell; }
 td.col-actions .buy-link,
-td.col-actions .buy-link-none { display: block; margin-bottom: 3px; text-align: center; }
+td.col-actions .buy-link-none { display: inline-block; margin-right: 2px; text-align: center; }
+td.col-actions .btn-report-link { display: inline-block; padding: 0 3px; font-size: 0.95rem; vertical-align: middle; }
 td.col-actions .btn-save-lib,
-td.col-actions .btn-del-row,
-td.col-actions .btn-report-link { display: inline-block; padding: 0 3px; font-size: 0.95rem; }
+td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 0.95rem; }
 /* Item column — no fixed width, takes all remaining space */
 .col-item   { width: auto; }
 .est-table input[type="text"],
