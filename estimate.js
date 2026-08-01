@@ -1100,6 +1100,7 @@ function loadDraft(data) {
   document.getElementById('estimateDate').value = data.estimateDate || '';
   document.getElementById('estimateValidUntil').value = data.estimateValidUntil || '';
   document.getElementById('hourlyRate').value = data.hourlyRate || 100;
+  if (document.getElementById('estimateName')) document.getElementById('estimateName').value = data.estimateName || '';
   if (document.getElementById('clientCompany')) document.getElementById('clientCompany').value = data.clientCompany || '';
   document.getElementById('clientFirst').value = data.clientFirst || '';
   document.getElementById('clientLast').value = data.clientLast || '';
