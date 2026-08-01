@@ -6,7 +6,7 @@
 <file name="chatbot.js" server="157.173.209.17" local="134300797039991064" remote="134300796600000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134300753600857745" remote="134300753400000000" Dst="2" />
 <file name="estimate.html" server="157.173.209.17" local="134300761341715119" remote="134300761200000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134300761341670689" remote="134300761200000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134300845978889286" remote="134300845800000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134295869097065901" remote="134295868800000000" Dst="2" />
 <file name="estimate.js" server="157.173.209.17" local="134300775476241710" remote="134300775000000000" Dst="2" />
 <file name="auth.js" server="157.173.209.17" local="134300797094605455" remote="134300796600000000" Dst="2" />
@@ -61,9 +61,9 @@
 <file name="stripe-checkout.js" server="157.173.209.17" local="134299125690523734" remote="134299125600000000" Dst="2" />
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134296732200000000" remote="134296732200000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134273242800000000" remote="134273242800000000" Dst="2" />
-<file name="calc-tracker.js" server="157.173.209.17" local="134300735314939279" remote="134300735400000000" Dst="2" />
+<file name="calc-tracker.js" server="157.173.209.17" local="134300846088025623" remote="134300845800000000" Dst="2" />
 <file name="email-results.js" server="157.173.209.17" local="134300735314969167" remote="134300735400000000" Dst="2" />
 <file name="global-auth.js" server="157.173.209.17" local="134300816894973604" remote="134300817000000000" Dst="2" />
 <file name="index.ts" server="157.173.209.17" local="134300735315127642" remote="134300735400000000" Dst="2" />
-<file name="global-account-modal.js" server="157.173.209.17" local="134300816945934611" remote="134300817000000000" Dst="2" />
+<file name="global-account-modal.js" server="157.173.209.17" local="134300832604534464" remote="134300832600000000" Dst="2" />
 </dwsync>

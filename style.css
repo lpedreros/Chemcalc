@@ -868,7 +868,10 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   margin: auto;
   max-height: 90vh;
   overflow-y: auto;
+  scrollbar-width: none;           /* Firefox */
+  -ms-overflow-style: none;        /* IE/Edge */
 }
+.modal-box::-webkit-scrollbar { display: none; } /* Chrome/Safari/Edge */
 .modal-wide { max-width: 1100px; width: 96vw; }
 .modal-close {
   position: sticky; float: right;
@@ -2597,7 +2600,7 @@ body,
   gap: 0;
   margin-bottom: 1.25rem;
   border-bottom: 2px solid #333;
-  overflow-x: auto;
+  overflow: hidden;
 }
 .acct-tab {
   background: none;

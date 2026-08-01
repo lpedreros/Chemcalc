@@ -594,7 +594,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let mekpDrops = 0;
 
     if (resinType === "epoxy") {
-      const ratioParts = epoxyMixRatio.split(":").map(Number);
+      const ratioParts = epoxyMixRatio.replace(/[^0-9:]/g, '').split(":").map(Number);
       if (ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0) {
         hardenerVolumeLiters = resinVolumeLiters * (ratioParts[1] / ratioParts[0]);
       }
@@ -641,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hardener display logic is managed by the epoxy check earlier for visibility,
     // here we just set the text content if applicable.
     if (resinType === "epoxy" && hardenerVolumeLiters > 0) {
-        hardenerAmountEl.textContent = `Hardener: ${formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem)}`;
+        hardenerAmountEl.textContent = formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem);
     } 
     // No 'else' needed here for hardenerAmountEl.textContent as it's hidden for other resin types.
     
