@@ -61,7 +61,7 @@
     try {
       var result = await _sb
         .from('profiles')
-        .select('full_name, tier')
+        .select('full_name, tier, subscription_status')
         .eq('id', userId)
         .single();
       return result.data || null;
@@ -88,7 +88,7 @@
       var profile = await fetchProfile(session.user.id);
       updateIndicator(session.user, profile);
       // Store tier in sessionStorage for chatbot and other scripts to read
-      sessionStorage.setItem('chemcalc_user_tier', (profile && profile.tier === 'pro') ? 'pro' : 'free');
+      sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
       // Autofill email fields on calculator pages (e.g. "Email Me" box)
       autofillEmailFields(session.user.email);
     } else {
@@ -102,7 +102,7 @@
         var profile = await fetchProfile(newSession.user.id);
         updateIndicator(newSession.user, profile);
         autofillEmailFields(newSession.user.email);
-        sessionStorage.setItem('chemcalc_user_tier', (profile && profile.tier === 'pro') ? 'pro' : 'free');
+        sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
       } else {
         updateIndicator(null, null);
         sessionStorage.setItem('chemcalc_user_tier', 'free');

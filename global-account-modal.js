@@ -134,12 +134,6 @@
           .eq('id', session.user.id)
           .single();
         if (profileResult.data) _cachedProfile = profileResult.data;
-        // Store tier in sessionStorage for chatbot to read
-        if (_cachedProfile && (_cachedProfile.tier === 'pro' || _cachedProfile.subscription_status === 'active')) {
-          sessionStorage.setItem('chemcalc_user_tier', 'pro');
-        } else {
-          sessionStorage.setItem('chemcalc_user_tier', 'free');
-        }
       }
     } catch (e) { /* fail silently */ }
 
@@ -152,15 +146,9 @@
           .eq('id', newSession.user.id)
           .single();
         if (profileResult.data) _cachedProfile = profileResult.data;
-        if (_cachedProfile && (_cachedProfile.tier === 'pro' || _cachedProfile.subscription_status === 'active')) {
-          sessionStorage.setItem('chemcalc_user_tier', 'pro');
-        } else {
-          sessionStorage.setItem('chemcalc_user_tier', 'free');
-        }
       } else {
         _cachedUser = null;
         _cachedProfile = null;
-        sessionStorage.setItem('chemcalc_user_tier', 'free');
       }
     });
   }
