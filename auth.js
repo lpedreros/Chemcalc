@@ -113,7 +113,7 @@ async function doGoogleLogin() {
   const { error } = await _sb.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'https://chemcalc.co/estimate.html',
+      redirectTo: window.location.href,
       queryParams: {
         prompt: 'select_account'
       }

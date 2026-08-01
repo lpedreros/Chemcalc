@@ -22,9 +22,11 @@
     const HISTORY_KEY = 'chatbot_history';
 
     function isProUser() {
-      // Check the global currentProfile set by auth.js / global-auth.js
+      // 1. Check the global currentProfile set by auth.js (estimate.html)
       if (typeof currentProfile !== 'undefined' && currentProfile && currentProfile.tier === 'pro') return true;
-      // Fallback: check the tier-label element that auth.js updates
+      // 2. Check sessionStorage tier set by global-account-modal.js (all pages)
+      if (sessionStorage.getItem('chemcalc_user_tier') === 'pro') return true;
+      // 3. Fallback: check the tier-label element that auth.js updates
       var label = document.getElementById('tierLabel');
       if (label && label.textContent.toLowerCase().indexOf('pro') !== -1) return true;
       return false;
@@ -69,12 +71,17 @@
         injectChatbotHTML();
         attachEventListeners();
         loadAffiliateLinks();
-        // Restore conversation history for Pro users after a short delay
-        // (delay allows auth.js / global-auth.js to resolve the session first)
+        // Restore conversation history for Pro users after auth resolves.
+        // Try at 1s; if tier not yet resolved, retry at 2.5s.
         setTimeout(function() {
           var mc = document.getElementById('chatbot-messages');
-          if (mc) restoreHistory(mc);
-        }, 800);
+          if (mc && isProUser()) {
+            restoreHistory(mc);
+          } else if (mc) {
+            // Retry once more — auth may still be resolving
+            setTimeout(function() { restoreHistory(mc); }, 1500);
+          }
+        }, 1000);
     }
 
     // Inject chatbot HTML into page

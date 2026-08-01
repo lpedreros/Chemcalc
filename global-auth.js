@@ -87,11 +87,13 @@
     if (session && session.user) {
       var profile = await fetchProfile(session.user.id);
       updateIndicator(session.user, profile);
-
+      // Store tier in sessionStorage for chatbot and other scripts to read
+      sessionStorage.setItem('chemcalc_user_tier', (profile && profile.tier === 'pro') ? 'pro' : 'free');
       // Autofill email fields on calculator pages (e.g. "Email Me" box)
       autofillEmailFields(session.user.email);
     } else {
       updateIndicator(null, null);
+      sessionStorage.setItem('chemcalc_user_tier', 'free');
     }
 
     // Listen for login / logout events
@@ -100,8 +102,10 @@
         var profile = await fetchProfile(newSession.user.id);
         updateIndicator(newSession.user, profile);
         autofillEmailFields(newSession.user.email);
+        sessionStorage.setItem('chemcalc_user_tier', (profile && profile.tier === 'pro') ? 'pro' : 'free');
       } else {
         updateIndicator(null, null);
+        sessionStorage.setItem('chemcalc_user_tier', 'free');
       }
     });
   }

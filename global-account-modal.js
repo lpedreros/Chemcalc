@@ -1,11 +1,16 @@
 // global-account-modal.js
 // Injects the Login modal and the tabbed Account modal on every page.
-// Depends on: supabase-client.js (_sb), auth.js (doLogin, doSignup, doGoogleLogin, doLogout, getUser, getProfile, isPro)
+// SELF-CONTAINED: defines its own doLogin, doSignup, doGoogleLogin, doLogout,
+// getUser, getProfile, isPro so it works WITHOUT auth.js on non-estimator pages.
+// On estimate.html, auth.js loads first and defines these — this script will
+// NOT overwrite them (uses "if not already defined" guards).
+//
+// Depends on: supabase-client.js (_sb)
 // On estimate.html, additional tabs (Biz Info, Trello, Materials Library) are shown
 // because estimate.js and materials_library.js provide the required functions.
 //
 // Usage: <script src="/global-account-modal.js"></script>
-//        (load AFTER auth.js, BEFORE page-specific scripts)
+//        (load AFTER supabase-client.js on all pages)
 (function () {
   'use strict';
 
@@ -13,6 +18,156 @@
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SELF-CONTAINED AUTH FUNCTIONS
+  // These only define themselves if not already present (auth.js on estimate.html
+  // defines them first, so they won't be overwritten there).
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // Internal user/profile cache (used only when auth.js is NOT loaded)
+  var _cachedUser = null;
+  var _cachedProfile = null;
+
+  // ── getUser / getProfile / isPro ─────────────────────────────────────────
+  if (typeof window.getUser !== 'function') {
+    window.getUser = function () { return _cachedUser; };
+  }
+  if (typeof window.getProfile !== 'function') {
+    window.getProfile = function () { return _cachedProfile; };
+  }
+  if (typeof window.isPro !== 'function') {
+    window.isPro = function () {
+      var p = _cachedProfile;
+      return (p && p.tier === 'pro') || (p && p.subscription_status === 'active');
+    };
+  }
+
+  // ── doLogin (email/password) ─────────────────────────────────────────────
+  if (typeof window.doLogin !== 'function') {
+    window.doLogin = async function () {
+      var email = document.getElementById('loginEmail').value.trim();
+      var password = document.getElementById('loginPassword').value;
+      var errEl = document.getElementById('loginError');
+      if (errEl) errEl.textContent = '';
+      if (!email || !password) {
+        if (errEl) errEl.textContent = 'Please enter your email and password.';
+        return;
+      }
+      var result = await _sb.auth.signInWithPassword({ email: email, password: password });
+      if (result.error) {
+        if (errEl) errEl.textContent = result.error.message;
+      } else {
+        closeModal('loginModal');
+      }
+    };
+  }
+
+  // ── doGoogleLogin ────────────────────────────────────────────────────────
+  if (typeof window.doGoogleLogin !== 'function') {
+    window.doGoogleLogin = async function () {
+      var result = await _sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.href,
+          queryParams: { prompt: 'select_account' }
+        }
+      });
+      if (result.error) alert('Google sign-in failed: ' + result.error.message);
+    };
+  }
+
+  // ── doSignup ─────────────────────────────────────────────────────────────
+  if (typeof window.doSignup !== 'function') {
+    window.doSignup = async function () {
+      var email = document.getElementById('signupEmail').value.trim();
+      var password = document.getElementById('signupPassword').value;
+      var name = document.getElementById('signupName').value.trim();
+      var errEl = document.getElementById('signupError');
+      if (errEl) errEl.textContent = '';
+      if (!email || !password || !name) {
+        if (errEl) errEl.textContent = 'All fields are required.';
+        return;
+      }
+      if (password.length < 8) {
+        if (errEl) errEl.textContent = 'Password must be at least 8 characters.';
+        return;
+      }
+      var result = await _sb.auth.signUp({
+        email: email,
+        password: password,
+        options: { data: { full_name: name } }
+      });
+      if (result.error) {
+        if (errEl) errEl.textContent = result.error.message;
+      } else {
+        closeModal('loginModal');
+        alert('Account created! Check your email to confirm your address, then log in.');
+      }
+    };
+  }
+
+  // ── doLogout ─────────────────────────────────────────────────────────────
+  if (typeof window.doLogout !== 'function') {
+    window.doLogout = async function () {
+      await _sb.auth.signOut();
+      _cachedUser = null;
+      _cachedProfile = null;
+      // Close the account modal if open
+      closeModal('accountModal');
+    };
+  }
+
+  // ── Internal: resolve session and cache user/profile ─────────────────────
+  // This runs on page load so that getUser/getProfile/isPro return correct values.
+  // On estimate.html, auth.js handles this via authInit() — but on other pages
+  // this is the only mechanism.
+  async function resolveSession() {
+    if (typeof _sb === 'undefined' || !_sb) return;
+    try {
+      var sessionResult = await _sb.auth.getSession();
+      var session = sessionResult.data && sessionResult.data.session;
+      if (session && session.user) {
+        _cachedUser = session.user;
+        var profileResult = await _sb.from('profiles')
+          .select('full_name, tier, subscription_status, company_name, beta_tester')
+          .eq('id', session.user.id)
+          .single();
+        if (profileResult.data) _cachedProfile = profileResult.data;
+        // Store tier in sessionStorage for chatbot to read
+        if (_cachedProfile && (_cachedProfile.tier === 'pro' || _cachedProfile.subscription_status === 'active')) {
+          sessionStorage.setItem('chemcalc_user_tier', 'pro');
+        } else {
+          sessionStorage.setItem('chemcalc_user_tier', 'free');
+        }
+      }
+    } catch (e) { /* fail silently */ }
+
+    // Listen for auth changes (login/logout from this page)
+    _sb.auth.onAuthStateChange(async function (event, newSession) {
+      if (newSession && newSession.user) {
+        _cachedUser = newSession.user;
+        var profileResult = await _sb.from('profiles')
+          .select('full_name, tier, subscription_status, company_name, beta_tester')
+          .eq('id', newSession.user.id)
+          .single();
+        if (profileResult.data) _cachedProfile = profileResult.data;
+        if (_cachedProfile && (_cachedProfile.tier === 'pro' || _cachedProfile.subscription_status === 'active')) {
+          sessionStorage.setItem('chemcalc_user_tier', 'pro');
+        } else {
+          sessionStorage.setItem('chemcalc_user_tier', 'free');
+        }
+      } else {
+        _cachedUser = null;
+        _cachedProfile = null;
+        sessionStorage.setItem('chemcalc_user_tier', 'free');
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // MODAL INFRASTRUCTURE
+  // ══════════════════════════════════════════════════════════════════════════
 
   // ── Modal open/close (global, replaces estimate.js versions) ─────────────
   window.openModal = function (id) {
@@ -208,7 +363,7 @@
       '  <p class="lib-status" id="libStatus"></p>' +
       '  <div class="lib-table-wrap">' +
       '    <table class="est-table lib-table">' +
-      '      <colgroup><col style="width:28%"/><col style="width:15%"/><col style="width:10%"/><col style="width:10%"/><col/><col style="width:60px"/></colgroup>' +
+      '      <colgroup><col style="width:35%"><col style="width:12%"><col style="width:12%"><col style="width:12%"><col style="width:20%"><col style="width:9%"></colgroup>' +
       '      <thead><tr><th>Name</th><th>Type</th><th>Cost</th><th>Markup %</th><th>Buy URL</th><th></th></tr></thead>' +
       '      <tbody id="libTableBody"><tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">Loading...</td></tr></tbody>' +
       '    </table>' +
@@ -278,7 +433,6 @@
     if (emailEl) emailEl.value = user.email || '';
 
     // Detect Google provider — gray out password fields
-    // Check app_metadata.provider OR identities array (Supabase sometimes only has one)
     var isGoogle = (user.app_metadata && user.app_metadata.provider === 'google') ||
       (user.identities && user.identities.some(function(i) { return i.provider === 'google'; }));
     var googleNote = document.getElementById('profileGoogleNote');
@@ -337,9 +491,9 @@
         if (statusEl) { statusEl.textContent = 'Passwords do not match.'; statusEl.style.color = '#ff6b6b'; }
         return;
       }
-      var { error } = await _sb.auth.updateUser({ password: newPw });
-      if (error) {
-        if (statusEl) { statusEl.textContent = 'Password update failed: ' + error.message; statusEl.style.color = '#ff6b6b'; }
+      var result = await _sb.auth.updateUser({ password: newPw });
+      if (result.error) {
+        if (statusEl) { statusEl.textContent = 'Password update failed: ' + result.error.message; statusEl.style.color = '#ff6b6b'; }
         return;
       }
     }
@@ -366,9 +520,17 @@
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inject);
-  } else {
+  function init() {
     inject();
+    // Resolve session on non-estimator pages (auth.js handles it on estimate.html)
+    if (!isEstimatorPage) {
+      resolveSession();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
