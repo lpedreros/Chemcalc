@@ -1073,7 +1073,7 @@ function openLoadDraftModal() {
         item.innerHTML =
           '<div>' +
             '<div>' + escHtml(row.estimate_number) + ' - ' + escHtml((row.customer_first || '') + ' ' + (row.customer_last || '')) + '</div>' +
-            '<div class="saved-item-meta">' + escHtml(row.created_at ? row.created_at.slice(0,10) : '') + ' | ' + escHtml(row.boat_make || '') + ' ' + escHtml(row.boat_model || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
+            '<div class="saved-item-meta">' + escHtml(row.created_at ? row.created_at.slice(0,10) : '') + ' | ' + escHtml(row.estimate_name || ((row.boat_make || '') + ' ' + (row.boat_model || '')).trim() || '') + ' | $' + (row.grand_total || 0).toFixed(2) + '</div>' +
           '</div>' +
           '<button class="saved-item-del" onclick="deleteSavedEstimate(\'' + row.id + '\')" title="Delete">&#10005;</button>';
         item.addEventListener('click', function(e) {
@@ -1180,6 +1180,7 @@ function collectEstimateData() {
   });
 
   return {
+    estimateName: document.getElementById('estimateName') ? document.getElementById('estimateName').value : '',
     estimateNumber: document.getElementById('estimateNumber').value,
     estimateDate: document.getElementById('estimateDate').value,
     estimateValidUntil: document.getElementById('estimateValidUntil').value,

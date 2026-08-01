@@ -2590,3 +2590,57 @@ body,
   font-size: 0.72rem; background: #7ed47e; color: #1c1c1e;
   padding: 0.1rem 0.35rem; border-radius: 4px; margin-left: 0.3rem; font-weight: 700;
 }
+
+/* ═══ Global Account Modal Tabs ═══════════════════════════════════════════ */
+.acct-tabs-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid #333;
+  overflow-x: auto;
+}
+.acct-tab {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+.acct-tab.active { color: #5bb8d4; border-bottom-color: #5bb8d4; }
+.acct-tab:hover:not(.active) { color: #fff; }
+.acct-panels { padding: 0.5rem 0; }
+.acct-tab-panel { animation: fadeIn 0.2s ease; }
+.acct-section-title { color: #fff; font-size: 1.1rem; margin-bottom: 0.75rem; }
+.acct-subsection-title { color: #ccc; font-size: 0.95rem; margin-bottom: 0.5rem; }
+.sub-tier-display { color: #ccc; font-size: 1rem; margin-bottom: 1rem; }
+.sub-tier-display strong { color: #5bb8d4; }
+.plan-toggle-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+.btn-plan-toggle {
+  background: #1e2a3a;
+  border: 1px solid #3a5070;
+  color: #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-plan-toggle.active { background: #2a4060; border-color: #5bb8d4; color: #fff; }
+.btn-plan-toggle:hover:not(.active) { background: #253550; }
+.btn-logout-sm {
+  background: none;
+  border: 1px solid #e05252;
+  color: #e05252;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+.btn-logout-sm:hover { background: rgba(224, 82, 82, 0.15); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

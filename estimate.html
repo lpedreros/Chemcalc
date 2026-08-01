@@ -140,7 +140,7 @@
     <span class="tier-actions">
       <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
       <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
-      <button class="btn-tier pro-feature" id="bizInfoBtn" onclick="proAction('bizInfoModal')">&#9998; My Business Info</button>
+      <button class="btn-tier pro-feature" id="bizInfoBtn" onclick="openAccountModal()">&#9998; My Account</button>
       <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
       <button class="btn-tier" id="manageSubBtn" style="display:none;" onclick="window.open('https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00','_blank')">&#9881; Manage Subscription</button>
     </span>
@@ -521,52 +521,7 @@
   </div>
 </div>
 
-<!-- ===== LOGIN MODAL ===== -->
-<div class="modal-overlay" id="loginModal" style="display:none;" onclick="overlayClose(event,'loginModal')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('loginModal')">&#10005;</button>
-    <!-- Tab switcher -->
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Log In</button>
-      <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
-    </div>
-
-    <!-- Login panel -->
-    <div id="authPanelLogin">
-      <p class="modal-sub">Access your saved estimates and contractor pricing.</p>
-      <label class="est-label">Email</label>
-      <input type="email" id="loginEmail" class="est-input" placeholder="email@example.com" />
-      <label class="est-label mt-3">Password</label>
-      <input type="password" id="loginPassword" class="est-input" placeholder="Password" />
-      <p class="auth-error" id="loginError"></p>
-      <button class="btn-modal-primary mt-3" onclick="doLogin()">Log In</button>
-      <div class="auth-divider"><span>or</span></div>
-      <button class="btn-google" onclick="doGoogleLogin()">
-        <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-        Continue with Google
-      </button>
-    </div>
-
-    <!-- Signup panel -->
-    <div id="authPanelSignup" style="display:none;">
-
-      <p class="modal-sub">Create a free account to save your estimates.</p>
-      <label class="est-label">Full Name</label>
-      <input type="text" id="signupName" class="est-input" placeholder="Your name" />
-      <label class="est-label mt-3">Email</label>
-      <input type="email" id="signupEmail" class="est-input" placeholder="email@example.com" />
-      <label class="est-label mt-3">Password</label>
-      <input type="password" id="signupPassword" class="est-input" placeholder="Min. 8 characters" />
-      <p class="auth-error" id="signupError"></p>
-      <button class="btn-modal-primary mt-3" onclick="doSignup()">Create Account</button>
-      <div class="auth-divider"><span>or</span></div>
-      <button class="btn-google" onclick="doGoogleLogin()">
-        <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-        Continue with Google
-      </button>
-    </div>
-  </div>
-</div>
+<!-- loginModal removed — now injected by global-account-modal.js -->
 
 <!-- ===== UPGRADE MODAL ===== -->
 <div class="modal-overlay" id="upgradeModal" style="display:none;" onclick="overlayClose(event,'upgradeModal')">
@@ -630,146 +585,7 @@
   </div>
 </div>
 
-<!-- ===== PRO BUSINESS INFO MODAL ===== -->
-<div class="modal-overlay" id="bizInfoModal" style="display:none;" onclick="overlayClose(event,'bizInfoModal')">
-  <div class="modal-box modal-wide" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('bizInfoModal')">&#10005;</button>
-    <h3 class="modal-title">&#9998; My Business Info</h3>
-    <p class="modal-sub">This appears on your printed and exported estimates. Saved locally in your browser.</p>
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label class="est-label">Company Name</label>
-        <input type="text" id="bizName" class="est-input" placeholder="e.g. Daytona Marine Group" />
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Tagline / Trade</label>
-        <input type="text" id="bizTagline" class="est-input" placeholder="e.g. Marine Repair &amp; Refinishing" />
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Phone</label>
-        <input type="tel" id="bizPhone" class="est-input" placeholder="(555) 555-5555" />
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Email</label>
-        <input type="email" id="bizEmail" class="est-input" placeholder="info@yourcompany.com" />
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Website</label>
-        <input type="text" id="bizWebsite" class="est-input" placeholder="www.yourcompany.com" />
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Address</label>
-        <input type="text" id="bizAddress" class="est-input" placeholder="123 Marina Blvd, Daytona Beach, FL" />
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Estimate # Prefix</label>
-        <input type="text" id="bizPrefix" class="est-input" placeholder="e.g. DMG or TE" maxlength="6" />
-        <p class="scope-hint">Estimates will be numbered DMG-20260629-1234</p>
-      </div>
-      <div class="col-md-6">
-        <label class="est-label">Logo URL <span class="scope-hint">(link to your logo image)</span></label>
-        <input type="url" id="bizLogoUrl" class="est-input" placeholder="https://yoursite.com/logo.png" />
-      </div>
-    </div>
-    <!-- Trello Integration (Pro) -->
-    <hr class="trello-divider" />
-    <h5 class="trello-section-title">&#128203; Trello Integration <span class="pro-badge-inline">Pro</span></h5>
-    <p class="modal-sub">Connect your Trello account to send estimates directly to your board.</p>
-    <div class="row g-3">
-      <div class="col-12">
-        <label class="est-label">Trello API Key</label>
-        <div class="trello-key-row">
-          <input type="text" id="trelloApiKey" class="est-input" placeholder="Paste your Trello API key here" />
-          <button class="btn-trello-auth" id="trelloAuthBtn" onclick="trelloAuthorize()">Authorize Trello &#8599;</button>
-        </div>
-        <p class="scope-hint">Get your API key at <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a></p>
-      </div>
-      <div class="col-12" id="trelloTokenRow" style="display:none;">
-        <label class="est-label">Trello Token <span class="scope-hint">(auto-filled after authorization)</span></label>
-        <input type="text" id="trelloToken" class="est-input" placeholder="Token will appear here after you authorize" readonly />
-      </div>
-      <div class="col-12" id="trelloBoardRow" style="display:none;">
-        <label class="est-label">Default Board &amp; List</label>
-        <div class="trello-picker-row">
-          <select id="trelloBoardSelect" class="est-input" onchange="trelloLoadLists()">
-            <option value="">- Select a board -</option>
-          </select>
-          <select id="trelloListSelect" class="est-input">
-            <option value="">- Select a list -</option>
-          </select>
-        </div>
-        <button class="btn-trello-load" onclick="trelloLoadBoards()">&#8635; Refresh Boards</button>
-      </div>
-      <div class="col-12">
-        <p class="trello-status" id="trelloStatus"></p>
-      </div>
-    </div>
-    <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">&#10003; Save Business Info</button>
-    <p class="modal-footer-link" id="bizSaveStatus"></p>
-
-    <!-- Materials Library (Pro) -->
-    <hr class="trello-divider" />
-    <h5 class="trello-section-title">&#128218; My Materials Library <span class="pro-badge-inline">Pro</span></h5>
-    <p class="modal-sub">Save your go-to materials and paint products. Start typing in any item name field to search your library.</p>
-
-    <!-- Add new item form -->
-    <div class="lib-add-form row g-2 mb-3">
-      <div class="col-12 col-md-4">
-        <input type="text" id="libNewName" class="est-input" placeholder="Item name (required)" />
-      </div>
-      <div class="col-6 col-md-2">
-        <select id="libNewType" class="est-input">
-          <option value="material">Material</option>
-          <option value="paint">Paint</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div class="col-6 col-md-1">
-        <input type="text" id="libNewUnit" class="est-input" placeholder="Unit" value="each" />
-      </div>
-      <div class="col-6 col-md-2">
-        <input type="number" id="libNewCost" class="est-input" placeholder="Cost $" min="0" step="0.01" />
-      </div>
-      <div class="col-6 col-md-1">
-        <input type="number" id="libNewMarkup" class="est-input" placeholder="Markup %" value="40" min="0" step="1" />
-      </div>
-      <div class="col-12 col-md-3">
-        <input type="url" id="libNewUrl" class="est-input" placeholder="Buy URL (optional)" />
-      </div>
-      <div class="col-12 col-md-2">
-        <button class="btn-modal-secondary w-100" onclick="addLibraryItemFromForm()">+ Add Item</button>
-      </div>
-    </div>
-    <p class="lib-status" id="libStatus"></p>
-
-    <!-- Library table -->
-    <div class="lib-table-wrap">
-      <table class="est-table lib-table">
-        <colgroup>
-          <col class="col-name" style="width:28%" />
-          <col class="col-type" style="width:15%" />
-          <col class="col-cost" style="width:10%" />
-          <col class="col-markup" style="width:10%" />
-          <col class="col-url" />
-          <col class="col-actions" style="width:60px" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Cost</th>
-            <th>Markup %</th>
-            <th>Buy URL</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="libTableBody">
-          <tr><td colspan="6" style="text-align:center;color:#888;padding:1rem;">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+<!-- bizInfoModal removed — now injected by global-account-modal.js -->
 
 <!-- ===== LOG CONFIRM MODAL ===== -->
 <div class="modal-overlay" id="logModal" style="display:none;" onclick="overlayClose(event,'logModal')">
@@ -798,6 +614,7 @@
 <script src="task_presets.js?v=1"></script>
 <script src="affiliate_links.js?v=5"></script>
 <script src="auth.js?v=5"></script>
+<script src="/global-account-modal.js?v=1"></script>
 <script src="estimate.js?v=5"></script>
 <script src="trello.js?v=5"></script>
 <script src="/materials_library.js?v=5"></script>

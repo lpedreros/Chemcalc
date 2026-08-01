@@ -166,6 +166,7 @@ async function saveEstimateToSupabase(payload) {
     user_id:         currentUser.id,
     company_name:    currentProfile?.company_name || 'ChemCalc',
     estimate_number: payload.estimateNumber,
+    estimate_name:   payload.estimateName || '',
     valid_until:     payload.estimateValidUntil || null,
     customer_first:  payload.clientFirst  || '',
     customer_last:   payload.clientLast   || '',
@@ -193,7 +194,7 @@ async function loadEstimatesFromSupabase() {
   if (!currentUser) return [];
   const { data, error } = await _sb
     .from('estimates')
-    .select('id, estimate_number, customer_first, customer_last, boat_make, boat_model, grand_total, created_at, updated_at, status')
+    .select('id, estimate_number, estimate_name, customer_first, customer_last, boat_make, boat_model, grand_total, created_at, updated_at, status')
     .eq('user_id', currentUser.id)
     .order('created_at', { ascending: false });
   if (error) return [];

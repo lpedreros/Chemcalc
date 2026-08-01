@@ -40,10 +40,10 @@
         : user.email.split('@')[0];
 
       el.innerHTML =
-        '<span class="nav-auth-name">Hi, ' + escHtml(displayName) + '</span>';
+        '<a href="#" class="nav-auth-name" onclick="openAccountModal(); return false;">Hi, ' + escHtml(displayName) + '</a>';
     } else {
       el.innerHTML =
-        '<a href="/estimate.html#login" class="nav-auth-login">Log In / Sign Up</a>';
+        '<a href="#" class="nav-auth-login" onclick="openModal(\'loginModal\'); return false;">Log In / Sign Up</a>';
     }
   }
 
