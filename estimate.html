@@ -62,6 +62,7 @@
   <link rel="stylesheet" href="style.css" />
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="/supabase-client.js"></script>
+	<script src="/global-auth.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 </head>
 <body>
@@ -299,29 +300,23 @@
       <table class="est-table" id="materialsTable">
         <thead>
           <tr>
-            <th>Item</th>
-            <th class="col-cost">Your Cost ($)</th>
-            <th class="col-markup">Markup %</th>
-            <th class="col-retail">Retail Price</th>
+            <th class="col-drag d-print-none"></th>
+            <th class="col-item">Item</th>
+            <th class="col-cost">Your<br>Cost ($)</th>
+            <th class="col-markup">Markup<br>%</th>
+            <th class="col-retail">Retail<br>Price</th>
             <th class="col-qty">Qty</th>
-            <th class="col-total">Line Total</th>
-            <th class="col-link d-print-none">Buy</th>
-            <th class="col-del d-print-none"></th>
-            <th class="col-del d-print-none"></th>
+            <th class="col-total">Line<br>Total</th>
+            <th class="col-actions d-print-none">Link /<br>Save / Del</th>
           </tr>
         </thead>
         <tbody id="materialsBody"></tbody>
         <tfoot>
           <tr class="subtotal-row">
-            <td class="subtotal-label" colspan="2">Materials Subtotal</td>
-            <td class="col-cost"></td>
-            <td class="col-markup"></td>
-            <td class="col-retail"></td>
-            <td class="col-qty"></td>
+            <td class="col-drag d-print-none"></td>
+            <td class="subtotal-label col-item" colspan="5">Materials Subtotal</td>
             <td class="col-total subtotal-val" id="materialsSubtotal">$0.00</td>
-            <td class="col-link d-print-none"></td>
-            <td class="col-del d-print-none"></td>
-            <td class="col-del d-print-none"></td>
+            <td class="col-actions d-print-none"></td>
           </tr>
         </tfoot>
       </table>
@@ -899,7 +894,15 @@
   <a href="/contact.html" target="_blank" class="feedback-link">
     <span class="feedback-icon">&#128075;</span><span class="feedback-label"> Feedback</span>
   </a>
-</div><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+</div><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
+     BOTTOM of every page, immediately before the closing </body> tag.
+     
+     What it does:
+     - Loads chatbot.js (BoatMD — appears on every page)
+     
+     To add a new global script in future:
+     Add ONE line here. It will apply to all pages.
+     ============================================================ -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>
