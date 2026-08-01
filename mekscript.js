@@ -144,6 +144,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         displayAffiliateLinks();
+
+        // ── Analytics: log this calculation (fire-and-forget) ──
+        // Guard: only log when user has entered a real resin amount AND a temperature
+        if (typeof logCalculation === 'function' && resinAmount > 0 && !isNaN(tempC)) {
+          logCalculation('mekp', {
+            resinAmount:      resinAmount,
+            volumeUnit:       selectedVolumeUnit,
+            temperature:      temp,
+            tempUnit:         selectedTempUnit,
+            usingDuratec:     useDuratec,
+            mekpPercentage:   mekpPercentage,
+            percentageSource: percentageSource
+          }, {
+            mekpVolume: mekpCcsP.textContent,
+            mekpDrops:  mekpDropsP.textContent,
+            recommended: mekpRecommendedP.textContent
+          });
+        }
     } else {
         mekpRecommendedP.textContent = "Recommended MEKP % (based on temperature): —";
         mekpPercentageP.textContent = "Using: —";

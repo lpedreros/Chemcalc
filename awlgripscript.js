@@ -370,6 +370,25 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     displayAffiliateLinks(paintType, methodType);
+
+    // ── Analytics: log this calculation (fire-and-forget) ──
+    // Guard: only log when user has entered a real input value
+    if (typeof logCalculation === 'function' && inVal > 0) {
+      logCalculation('awlgrip', {
+        paintType:   paintType,
+        methodType:  methodType,
+        inputMethod: selectedInputMethod,
+        inputValue:  inVal,
+        inputUnit:   inUnit,
+        unitSystem:  sysType
+      }, {
+        paintBase:   outP.textContent,
+        converter:   outC.textContent,
+        reducer:     outR.textContent,
+        accelerator: (paintType === 'awlcraft2000') ? outA.textContent : null,
+        coverage:    outCov.textContent
+      });
+    }
   }
 
   function reset(msg) {

@@ -14,6 +14,54 @@
     let isProcessing = false;
     let affiliateLinksData = null;
 
+    // ── Session persistence (Pro users only) ─────────────────────────────────
+    // Conversation history is stored in sessionStorage under key 'chatbot_history'.
+    // It persists across page navigations within the same browser tab.
+    // It is cleared when the tab is closed (sessionStorage behaviour).
+    // For free users, history is NOT saved — each page load starts fresh.
+    const HISTORY_KEY = 'chatbot_history';
+
+    function isProUser() {
+      // Check the global currentProfile set by auth.js / global-auth.js
+      if (typeof currentProfile !== 'undefined' && currentProfile && currentProfile.tier === 'pro') return true;
+      // Fallback: check the tier-label element that auth.js updates
+      var label = document.getElementById('tierLabel');
+      if (label && label.textContent.toLowerCase().indexOf('pro') !== -1) return true;
+      return false;
+    }
+
+    function saveHistory(messagesContainer) {
+      if (!isProUser()) return;
+      // Serialize the inner HTML of all message divs
+      var msgs = messagesContainer.querySelectorAll('.chatbot-message');
+      var history = [];
+      msgs.forEach(function(m) {
+        history.push({ cls: m.className, html: m.innerHTML });
+      });
+      try {
+        sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      } catch (e) { /* storage full or unavailable — fail silently */ }
+    }
+
+    function restoreHistory(messagesContainer) {
+      if (!isProUser()) return;
+      try {
+        var raw = sessionStorage.getItem(HISTORY_KEY);
+        if (!raw) return;
+        var history = JSON.parse(raw);
+        if (!Array.isArray(history) || history.length === 0) return;
+        // Replace the default welcome message with the saved history
+        messagesContainer.innerHTML = '';
+        history.forEach(function(item) {
+          var div = document.createElement('div');
+          div.className = item.cls;
+          div.innerHTML = item.html;
+          messagesContainer.appendChild(div);
+        });
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } catch (e) { /* corrupt data — ignore and start fresh */ }
+    }
+
     // Initialize chatbot
     // Guard: if another copy of this script already ran, do nothing.
     function initChatbot() {
@@ -21,6 +69,12 @@
         injectChatbotHTML();
         attachEventListeners();
         loadAffiliateLinks();
+        // Restore conversation history for Pro users after a short delay
+        // (delay allows auth.js / global-auth.js to resolve the session first)
+        setTimeout(function() {
+          var mc = document.getElementById('chatbot-messages');
+          if (mc) restoreHistory(mc);
+        }, 800);
     }
 
     // Inject chatbot HTML into page
@@ -340,6 +394,7 @@
         messageDiv.innerHTML = html;
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        saveHistory(messagesContainer);
     }
 
     // Add message to chat
@@ -350,6 +405,7 @@
         messageDiv.innerHTML = '<p>' + escapeHtml(text) + '</p>';
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        saveHistory(messagesContainer);
     }
 
     // Add typing indicator

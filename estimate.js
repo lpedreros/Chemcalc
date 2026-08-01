@@ -585,9 +585,11 @@ function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
     '<td class="col-retail"><span class="retail-display">' + fmtCurrency(retailPrice) + '</span></td>' +
     '<td class="col-qty"><input type="number" class="qty-input" value="' + (item.qty || 1) + '" min="0" step="0.01" oninput="recalcRow(this)" /></td>' +
     '<td class="col-total"><span class="line-total-display">' + fmtCurrency(lineTotal) + '</span></td>' +
-    '<td class="col-link d-print-none">' + buyHtml + '</td>' +
-    '<td class="col-del d-print-none"><button class="btn-save-lib" onclick="saveRowToLibrary(this)" title="Save to My Library">&#9733;</button></td>' +
-    '<td class="col-del d-print-none"><button class="btn-del-row" onclick="delRow(this, \'' + subtotalId + '\', \'' + sumId + '\')" title="Remove">&#10005;</button></td>';
+    '<td class="col-actions d-print-none">' +
+      buyHtml +
+      '<button class="btn-save-lib" onclick="saveRowToLibrary(this)" title="Save to My Library">&#9733;</button>' +
+      '<button class="btn-del-row" onclick="delRow(this, \'' + subtotalId + '\', \'' + sumId + '\')" title="Remove">&#10005;</button>' +
+    '</td>';
 
   tbody.appendChild(tr);
   recalcSection(bodyId, markupId, subtotalId, sumId);

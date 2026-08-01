@@ -15,18 +15,18 @@
 <file name="ads.txt" server="157.173.209.17" local="134258640942074687" remote="134272519200000000" Dst="2" />
 <file name="affiliate_links.json" server="157.173.209.17" local="134258640942074687" remote="134272519200000000" Dst="2" />
 <file name="awlgrip-safety.html" server="157.173.209.17" local="134299778182731515" remote="134299781400000000" Dst="2" />
-<file name="awlgrip.html" server="157.173.209.17" local="134299778183359069" remote="134299781400000000" Dst="2" />
-<file name="awlgripscript.js" server="157.173.209.17" local="134258640942079690" remote="134272519200000000" Dst="2" />
+<file name="awlgrip.html" server="157.173.209.17" local="134300641859192138" remote="134300643600000000" Dst="2" />
+<file name="awlgripscript.js" server="157.173.209.17" local="134300642173758339" remote="134300643600000000" Dst="2" />
 <file name="calculators.html" server="157.173.209.17" local="134299778225589377" remote="134299781400000000" Dst="2" />
 <file name="chatbot_api.py" server="157.173.209.17" local="134258640942084689" remote="134272519200000000" Dst="2" />
 <file name="chatbot_styles.css" server="157.173.209.17" local="134258640942084689" remote="134272519200000000" Dst="2" />
-<file name="clothcalc.html" server="157.173.209.17" local="134299778226081471" remote="134299781400000000" Dst="2" />
-<file name="clothcalc.js" server="157.173.209.17" local="134258640942089689" remote="134272519200000000" Dst="2" />
+<file name="clothcalc.html" server="157.173.209.17" local="134300641780298724" remote="134300643600000000" Dst="2" />
+<file name="clothcalc.js" server="157.173.209.17" local="134300642455644863" remote="134300643600000000" Dst="2" />
 <file name="CNAME" server="157.173.209.17" local="134258640942064735" remote="134272519200000000" Dst="2" />
 <file name="contact.html" server="157.173.209.17" local="134299778227251048" remote="134299781400000000" Dst="2" />
 <file name="cookie.html" server="157.173.209.17" local="134299778227783641" remote="134299781400000000" Dst="2" />
-<file name="epifanespoly.html" server="157.173.209.17" local="134299778228630868" remote="134299781400000000" Dst="2" />
-<file name="epifanesScript.js" server="157.173.209.17" local="134258640942094735" remote="134272519200000000" Dst="2" />
+<file name="epifanespoly.html" server="157.173.209.17" local="134300641931149845" remote="134300643600000000" Dst="2" />
+<file name="epifanesScript.js" server="157.173.209.17" local="134300642261803443" remote="134300643600000000" Dst="2" />
 <file name="feedback.js" server="157.173.209.17" local="134258640942094735" remote="134272519200000000" Dst="2" />
 <file name="kits.html" server="157.173.209.17" local="134299778230574487" remote="134299781400000000" Dst="2" />
 <file name="lazy-responsive.js" server="157.173.209.17" local="134258640942164738" remote="134272519200000000" Dst="2" />
@@ -36,8 +36,8 @@
 <file name="manifest.json" server="157.173.209.17" local="134258640942169688" remote="134272519200000000" Dst="2" />
 <file name="mekp-init.js" server="157.173.209.17" local="134258640942169688" remote="134272519200000000" Dst="2" />
 <file name="mekp-safety.html" server="157.173.209.17" local="134299778231810052" remote="134299781400000000" Dst="2" />
-<file name="mekpcalc.html" server="157.173.209.17" local="134299778232392969" remote="134299781400000000" Dst="2" />
-<file name="mekscript.js" server="157.173.209.17" local="134258640942174687" remote="134272519200000000" Dst="2" />
+<file name="mekpcalc.html" server="157.173.209.17" local="134300641688497162" remote="134300643600000000" Dst="2" />
+<file name="mekscript.js" server="157.173.209.17" local="134300642368157974" remote="134300643600000000" Dst="2" />
 <file name="print_style_fix_v4.css" server="157.173.209.17" local="134258640942179687" remote="134272519200000000" Dst="2" />
 <file name="privacy.html" server="157.173.209.17" local="134299778232957589" remote="134299781400000000" Dst="2" />
 <file name="product_list.csv" server="157.173.209.17" local="134258640942179687" remote="134272519200000000" Dst="2" />
@@ -61,4 +61,6 @@
 <file name="stripe-checkout.js" server="157.173.209.17" local="134299125690523734" remote="134299125600000000" Dst="2" />
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134296732200000000" remote="134296732200000000" Dst="2" />
 <file name="Nav header.lbi" server="157.173.209.17" local="134273242800000000" remote="134273242800000000" Dst="2" />
+<file name="calc-tracker.js" server="157.173.209.17" local="134300642500161656" remote="134300643600000000" Dst="2" />
+<file name="email-results.js" server="157.173.209.17" local="134300642013477445" remote="134300643600000000" Dst="2" />
 </dwsync>

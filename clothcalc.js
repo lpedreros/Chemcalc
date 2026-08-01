@@ -675,6 +675,30 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     displayAffiliateLinks(resinType);
+
+    // ── Analytics: log this calculation (fire-and-forget) ──
+    // Guard: only log when user has entered real dimensions (function already returns early for <= 0)
+    if (typeof logCalculation === 'function' && length > 0 && width > 0) {
+      logCalculation('clothcalc', {
+        length:       length,
+        width:        width,
+        units:        units,
+        resinType:    resinType,
+        epoxyMixRatio: (resinType === 'epoxy') ? epoxyMixRatio : null,
+        temperature:  temp,
+        tempUnit:     isFahrenheit ? 'fahrenheit' : 'celsius',
+        layers:       Array.from(layers).map(l => l.querySelector('.material-type').value),
+        resultSystem: selectedSystem,
+        resultUnit:   resultUnit
+      }, {
+        resinVolume:   resinVolumeEl.textContent,
+        resinWeight:   resinWeightEl.textContent,
+        hardener:      (resinType === 'epoxy') ? hardenerAmountEl.textContent : null,
+        mekpVolume:    (resinType !== 'epoxy') ? mekpCcsEl.textContent : null,
+        workingTime:   workingTimeEl.textContent,
+        estimatedCost: estimatedCostEl.textContent
+      });
+    }
   }
 
   function setupEventListeners() {

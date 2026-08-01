@@ -60,6 +60,33 @@ h1 {
 .nav a:hover {
     text-decoration: underline;
 }
+/* ── Global auth indicator (injected by global-auth.js) ── */
+.nav-auth-indicator {
+  margin-left: 1.2em;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+}
+.nav-auth-name {
+  color: #89CFF0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.nav-auth-login {
+  color: #89CFF0;
+  text-decoration: none;
+  border: 1px solid #89CFF0;
+  border-radius: 12px;
+  padding: 2px 10px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-auth-login:hover {
+  background: #89CFF0;
+  color: #1c1c1e;
+  text-decoration: none;
+}
 .powered-by-header img {
     height: 1.5em;
     width: auto;
@@ -652,24 +679,40 @@ h1 {
 .est-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #eee; }
 .est-table thead th {
   background: #1c1c1e; color: #89CFF0; padding: 0.55rem 0.6rem;
-  text-align: left; font-weight: 600; white-space: nowrap; border-bottom: 2px solid #333;
+  text-align: left; font-weight: 600; white-space: normal; line-height: 1.25;
+  border-bottom: 2px solid #333; vertical-align: bottom;
 }
 .est-table tbody tr { border-bottom: 1px solid #2c2c2e; transition: background 0.15s; }
 .est-table tbody tr:hover { background: rgba(255,255,255,0.03); }
 .est-table tbody td { padding: 0.4rem 0.5rem; vertical-align: middle; }
 .est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid #333; }
-.col-cost, .col-markup, .col-retail, .col-qty, .col-total { width: 100px; }
-.col-link { width: 90px; text-align: center; white-space: nowrap; }
-.col-del { width: 36px; text-align: center; }
+/* Fixed columns — minimum useful widths so Item column gets all remaining space */
+.col-cost   { width: 72px; }
+.col-markup { width: 58px; }
+.col-retail { width: 68px; }
+.col-qty    { width: 46px; }
+.col-total  { width: 68px; }
+.col-link   { width: 76px; text-align: center; white-space: nowrap; }
+.col-del    { width: 26px; text-align: center; }
+/* Actions header — stacked label, centered, fits 3 narrow icon buttons */
+.col-actions { width: 78px; text-align: center; white-space: normal; line-height: 1.2; }
+/* Actions cell — stack buy link on top, then icon buttons side by side */
+td.col-actions { display: table-cell; }
+td.col-actions .buy-link,
+td.col-actions .buy-link-none { display: block; margin-bottom: 3px; text-align: center; }
+td.col-actions .btn-save-lib,
+td.col-actions .btn-del-row,
+td.col-actions .btn-report-link { display: inline-block; padding: 0 3px; font-size: 0.95rem; }
+/* Item column — no fixed width, takes all remaining space */
+.col-item   { width: auto; }
 .est-table input[type="text"],
-
-
 .est-table input[type="number"] {
   background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
-  color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 60px;
+  color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 40px;
 }
 .est-table input:focus { outline: none; border-color: #89CFF0; }
-.est-table .item-name-input { min-width: 160px; }
+/* Item name input fills its column fully */
+.est-table .item-name-input { width: 100%; min-width: 0; }
 .retail-display { color: #89CFF0; font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
 .subtotal-row td { background: #1c1c1e; }

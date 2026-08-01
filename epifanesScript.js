@@ -123,6 +123,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resultThinnerDisplay) { 
         resultThinnerDisplay.textContent = "Thinner (Optional): Use Epifanes Polyurethane Thinner (Brush or Spray) as needed, typically 0-5% for brushing, 5-15% for spraying. Refer to TDS.";
     }
+
+    // ── Analytics: log this calculation (fire-and-forget) ──
+    // Guard: function already returns early for <= 0, but be explicit
+    if (typeof logCalculation === 'function' && totalVolumeValue > 0) {
+      logCalculation('epifanes', {
+        totalVolume: totalVolumeValue,
+        unit:        unit
+      }, {
+        base:     resultBaseDisplay.innerHTML,
+        hardener: resultHardenerDisplay.innerHTML
+      });
+    }
   }
 
   totalVolumeInput.addEventListener("input", calculateEpifanes);
