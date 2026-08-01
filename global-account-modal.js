@@ -154,6 +154,76 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
+  // SELF-CONTAINED STRIPE CHECKOUT FUNCTIONS
+  // On estimate.html, stripe-checkout.js defines these first — guards prevent overwrite.
+  // ══════════════════════════════════════════════════════════════════════════
+
+  var _selectedPlan = 'monthly';
+
+  var STRIPE_CONFIG = {
+    prices: {
+      monthly: 'price_1TyymXFiIkcVqHXIoYOTuDGw',
+      annual:  'price_1TyymWFiIkcVqHXIYtb5w8X9'
+    },
+    checkoutFunctionUrl: 'https://rnrzjlfpwxzomupnxikt.supabase.co/functions/v1/create-checkout'
+  };
+
+  if (typeof window.setUpgradePlan !== 'function') {
+    window.setUpgradePlan = function (plan) {
+      _selectedPlan = plan;
+      var monthlyBtn = document.getElementById('planToggleMonthly');
+      var annualBtn  = document.getElementById('planToggleAnnual');
+      if (monthlyBtn) monthlyBtn.classList.toggle('active', plan === 'monthly');
+      if (annualBtn)  annualBtn.classList.toggle('active',  plan === 'annual');
+    };
+  }
+
+  if (typeof window.launchStripeCheckout !== 'function') {
+    window.launchStripeCheckout = async function () {
+      var user = typeof getUser === 'function' ? getUser() : null;
+      if (!user) {
+        closeModal('accountModal');
+        openModal('loginModal');
+        return;
+      }
+      var btn = document.getElementById('stripeCheckoutBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Redirecting to checkout\u2026';
+      }
+      try {
+        var sessionResult = await _sb.auth.getSession();
+        var session = sessionResult.data && sessionResult.data.session;
+        var authHeader = (session && session.access_token)
+          ? { 'Authorization': 'Bearer ' + session.access_token }
+          : {};
+        var res = await fetch(STRIPE_CONFIG.checkoutFunctionUrl, {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader),
+          body: JSON.stringify({
+            priceId:    STRIPE_CONFIG.prices[_selectedPlan],
+            email:      user.email,
+            userId:     user.id,
+            successUrl: window.location.href + '?upgrade=success',
+            cancelUrl:  window.location.href + '?upgrade=cancelled'
+          })
+        });
+        if (!res.ok) throw new Error('Checkout session creation failed.');
+        var data = await res.json();
+        if (!data.url) throw new Error('No checkout URL returned.');
+        window.location.href = data.url;
+      } catch (err) {
+        console.error('Stripe checkout error:', err);
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Upgrade to Pro';
+        }
+        alert('Could not start checkout. Please try again or contact support.');
+      }
+    };
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
   // MODAL INFRASTRUCTURE
   // ══════════════════════════════════════════════════════════════════════════
 

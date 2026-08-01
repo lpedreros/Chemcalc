@@ -51,52 +51,63 @@ async function getLocation() {
   }
 }
 
+// ── Debounce timer ──────────────────────────────────────────
+// Prevents logging on every keystroke. Only logs after user stops
+// typing/changing inputs for 2 seconds.
+let _logTimer = null;
+
 // ── Main log function ────────────────────────────────────────
 // Called by each calculator script after every calculation.
+// DEBOUNCED: waits 2 seconds of inactivity before actually inserting.
 //
 // @param {string} calculator  - Identifier: 'awlgrip' | 'mekp' | 'clothcalc' | 'epifanes'
 // @param {object} inputs      - Plain object of all input values at time of calculation
 // @param {object} results     - Plain object of all output values shown to the user
 //
 // This is fire-and-forget: a failure here never breaks the calculator.
-async function logCalculation(calculator, inputs, results) {
-  try {
-    if (typeof _sb === 'undefined' || !_sb) {
-      console.warn('[calc-tracker] Supabase client (_sb) not available. Skipping log.');
-      return;
-    }
+function logCalculation(calculator, inputs, results) {
+  // Cancel any pending log — only the final value gets recorded
+  if (_logTimer) clearTimeout(_logTimer);
 
-    const sessionId = getSessionId();
-    const location  = await getLocation();
-
-    // Get logged-in user ID if available (null for anonymous)
-    let userId = null;
+  _logTimer = setTimeout(async function () {
     try {
-      const { data: { user } } = await _sb.auth.getUser();
-      userId = user ? user.id : null;
-    } catch (e) { /* anonymous — that's fine */ }
+      if (typeof _sb === 'undefined' || !_sb) {
+        console.warn('[calc-tracker] Supabase client (_sb) not available. Skipping log.');
+        return;
+      }
 
-    const { error } = await _sb
-      .from('calculator_events')
-      .insert({
-        calculator:     calculator,
-        inputs:         inputs,
-        results:        results,
-        user_id:        userId,
-        session_id:     sessionId,
-        country:        location.country,
-        city:           location.city,
-        email_captured: false
-      });
+      const sessionId = getSessionId();
+      const location  = await getLocation();
 
-    if (error) {
-      console.warn('[calc-tracker] Insert failed:', error.message);
+      // Get logged-in user ID if available (null for anonymous)
+      let userId = null;
+      try {
+        const { data: { user } } = await _sb.auth.getUser();
+        userId = user ? user.id : null;
+      } catch (e) { /* anonymous — that's fine */ }
+
+      const { error } = await _sb
+        .from('calculator_events')
+        .insert({
+          calculator:     calculator,
+          inputs:         inputs,
+          results:        results,
+          user_id:        userId,
+          session_id:     sessionId,
+          country:        location.country,
+          city:           location.city,
+          email_captured: false
+        });
+
+      if (error) {
+        console.warn('[calc-tracker] Insert failed:', error.message);
+      }
+
+    } catch (err) {
+      // Never let a tracking error surface to the user
+      console.warn('[calc-tracker] Unexpected error:', err.message);
     }
-
-  } catch (err) {
-    // Never let a tracking error surface to the user
-    console.warn('[calc-tracker] Unexpected error:', err.message);
-  }
+  }, 2000); // 2-second debounce
 }
 
 // ── Mark email captured ──────────────────────────────────────
