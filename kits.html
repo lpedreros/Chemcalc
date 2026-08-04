@@ -163,8 +163,9 @@
 <div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
-    <!-- FREE USER CONTENT -->
-    <div class="help-modal-section" id="helpContentFree">
+    <!-- FREE USER (LOGGED IN) CONTENT -->
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
       <h3 class="modal-title">How to Use the Kits &amp; Materials Page</h3>
       <p class="help-modal-pitch">This page has 140+ hand-picked marine repair materials, tools, and PPE &mdash; every product linked directly to Amazon or the supplier. Clicking through and buying supports ChemCalc at no extra cost to you.</p>
       <p class="modal-sub">How to find what you need:</p>
@@ -177,6 +178,21 @@
       <div class="help-modal-cta-box">
         <p><strong>Want your favorites saved across devices?</strong> Sign up for Pro and your starred items sync to your account automatically.</p>
         <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the Kits &amp; Materials Page</h3>
+      <p class="help-modal-pitch">This page has 140+ hand-picked marine repair materials, tools, and PPE &mdash; every product linked directly to Amazon or the supplier. Clicking through and buying supports ChemCalc at no extra cost to you.</p>
+      <p class="modal-sub">How to find what you need:</p>
+      <ol class="help-modal-steps">
+        <li><strong>Search by name</strong> &mdash; Type any product name, material type, or keyword in the search box.</li>
+        <li><strong>Filter by category</strong> &mdash; Use the filter buttons (Resin, Tools, PPE, etc.) to narrow the list. You can combine multiple filters.</li>
+        <li><strong>Expand a section</strong> &mdash; Click any section header to expand or collapse that category.</li>
+        <li><strong>Star your favorites</strong> &mdash; Click the &#9734; star next to any item to bookmark it for next time.</li>
+      </ol>
+      <div class="help-modal-cta-box">
+        <p><strong>Want your favorites saved across devices?</strong> Sign up for Pro and your starred items sync to your account automatically.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
       </div>
     </div>
     <!-- PRO USER CONTENT -->

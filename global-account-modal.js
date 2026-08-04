@@ -599,13 +599,29 @@
 // Shows the correct Free or Pro content section based on the user's tier.
 // NOTE: estimate.js also defines this function — the version here is identical
 // so there is no conflict; whichever loads last wins (same behaviour either way).
+// ── openHelpModal (three-state: guest / free / pro) ────────────────────────
+// Shows different help content based on auth state:
+//   - Not logged in → helpContentGuest (Sign Up / Log In)
+//   - Logged in, Free tier → helpContentFree (Upgrade to Pro)
+//   - Logged in, Pro tier → helpContentPro (full reference)
 function openHelpModal() {
+  var user = (typeof window.getUser === 'function') ? window.getUser() : null;
   var proUser = (typeof window.isPro === 'function') ? window.isPro() : false;
-  // Hide all content sections, then show the correct one
+
+  // Determine which section to show
+  var sectionId;
+  if (!user) {
+    sectionId = 'helpContentGuest';
+  } else if (proUser) {
+    sectionId = 'helpContentPro';
+  } else {
+    sectionId = 'helpContentFree';
+  }
+
+  // Hide all sections, show the correct one
   document.querySelectorAll('#helpModal .help-modal-section').forEach(function(s) {
     s.classList.remove('active');
   });
-  var sectionId = proUser ? 'helpContentPro' : 'helpContentFree';
   var section = document.getElementById(sectionId);
   if (section) section.classList.add('active');
   openModal('helpModal');

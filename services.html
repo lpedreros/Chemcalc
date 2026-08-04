@@ -311,8 +311,9 @@
 <div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
-    <!-- FREE USER CONTENT -->
-    <div class="help-modal-section" id="helpContentFree">
+    <!-- FREE USER (LOGGED IN) CONTENT -->
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
       <h3 class="modal-title">What Does ChemCalc Offer?</h3>
       <p class="help-modal-pitch">ChemCalc is more than calculators &mdash; we offer hands-on marine repair services, training, and custom fabrication for boat owners and yards on the Gulf Coast and beyond.</p>
       <ul class="help-modal-bullets">
@@ -326,6 +327,22 @@
       <div class="help-modal-cta-box">
         <p>Sign up for <strong>Pro</strong> to access the full Repair Estimator and build detailed job quotes.</p>
         <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">What Does ChemCalc Offer?</h3>
+      <p class="help-modal-pitch">ChemCalc is more than calculators &mdash; we offer hands-on marine repair services, training, and custom fabrication for boat owners and yards on the Gulf Coast and beyond.</p>
+      <ul class="help-modal-bullets">
+        <li><strong>Professional Repair Services</strong> &mdash; Fiberglass, gelcoat, paint, and structural repairs. Mobile service covers Central Florida (Cape to Ormond Beach).</li>
+        <li><strong>Training &amp; Tele-Guiding</strong> &mdash; Learn to do your own repairs with expert remote guidance.</li>
+        <li><strong>Kit Subscriptions</strong> &mdash; Pre-assembled repair kits with everything you need, delivered to your door.</li>
+        <li><strong>Custom Fabrication</strong> &mdash; Fish boxes, hatches, sonar tube pads, GPS anchor pads, and more.</li>
+        <li><strong>Custom Vinyl Lettering</strong> &mdash; Boat names, registration numbers, and graphics.</li>
+      </ul>
+      <p>Ready to get started? Use the <strong>Contact Us</strong> button at the bottom of this page to request a consultation.</p>
+      <div class="help-modal-cta-box">
+        <p><strong>Upgrade to Pro</strong> to access the full Repair Estimator and build detailed job quotes.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
       </div>
     </div>
     <!-- PRO USER CONTENT -->

@@ -217,8 +217,9 @@
 <div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
-    <!-- FREE USER CONTENT -->
-    <div class="help-modal-section" id="helpContentFree">
+    <!-- FREE USER (LOGGED IN) CONTENT -->
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
       <h3 class="modal-title">How to Use the MEKP Calculator</h3>
       <p class="help-modal-pitch">MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
       <ol class="help-modal-steps">
@@ -235,6 +236,25 @@
       <div class="help-modal-cta-box">
         <p>Upgrade to <strong>Pro</strong> to save your estimates, email results, and access the full Repair Estimator.</p>
         <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the MEKP Calculator</h3>
+      <p class="help-modal-pitch">MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+        <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+        <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+        <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to save your estimates, email results, and access the full Repair Estimator.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
       </div>
     </div>
     <!-- PRO USER CONTENT -->
