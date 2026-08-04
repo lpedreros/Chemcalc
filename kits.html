@@ -153,7 +153,47 @@
     <!-- Product list will be injected here by JavaScript from new_kits_product_list.html content -->
   </div>
 
-</main><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+</main>
+
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
+<!-- #EndLibraryItem -->
+
+<!-- ===== KITS HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the Kits &amp; Materials Page</h3>
+      <p class="help-modal-pitch">This page has 140+ hand-picked marine repair materials, tools, and PPE &mdash; every product linked directly to Amazon or the supplier. Clicking through and buying supports ChemCalc at no extra cost to you.</p>
+      <p class="modal-sub">How to find what you need:</p>
+      <ol class="help-modal-steps">
+        <li><strong>Search by name</strong> &mdash; Type any product name, material type, or keyword in the search box.</li>
+        <li><strong>Filter by category</strong> &mdash; Use the filter buttons (Resin, Tools, PPE, etc.) to narrow the list. You can combine multiple filters.</li>
+        <li><strong>Expand a section</strong> &mdash; Click any section header to expand or collapse that category.</li>
+        <li><strong>Star your favorites</strong> &mdash; Click the &#9734; star next to any item to bookmark it for next time.</li>
+      </ol>
+      <div class="help-modal-cta-box">
+        <p><strong>Want your favorites saved across devices?</strong> Sign up for Pro and your starred items sync to your account automatically.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">Kits &amp; Materials &mdash; Pro Quick Reference</h3>
+      <p class="help-modal-pitch">Your starred favorites are saved to your account and sync across all your devices. Use the search and filters to find exactly what you need fast.</p>
+      <ul class="help-modal-bullets">
+        <li><strong>Search</strong> &mdash; Type any product name, keyword, or material type in the search box above the list.</li>
+        <li><strong>Filter</strong> &mdash; Click any filter button to narrow by category. Click multiple to combine. Click &ldquo;Show All&rdquo; to reset.</li>
+        <li><strong>Star favorites</strong> &mdash; Click &#9734; on any item to save it. Your stars are stored in your Pro profile and load automatically when you log in.</li>
+        <li><strong>Need something custom?</strong> &mdash; Use the &ldquo;Request Assembled Kit&rdquo; or &ldquo;Request Custom Link List&rdquo; cards at the top of the page.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>

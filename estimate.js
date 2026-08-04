@@ -835,7 +835,9 @@ function addTaskRow(id) {
   var tbody = document.querySelector('#taskTable' + id + ' tbody');
   var rate = parseFloat(document.getElementById('hourlyRate').value) || 100;
   var tr = document.createElement('tr');
+  // drag-handle column must match thead structure so SortableJS can grab the row
   tr.innerHTML =
+    '<td class="col-drag d-print-none"><span class="drag-handle">&#9776;</span></td>' +
     '<td><input type="text" value="" oninput="recalcTask(' + id + ')" placeholder="Task name" /></td>' +
     '<td><input type="number" class="task-hours" value="0" min="0" step="0.25" oninput="recalcTask(' + id + ')" /></td>' +
     '<td><span class="task-price-display">' + fmtCurrency(0) + '</span></td>' +

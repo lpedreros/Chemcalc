@@ -1,0 +1,4 @@
+<!-- Floating Help Button -->
+<!-- Each page must have its own help modal with a matching data-target ID -->
+<!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>

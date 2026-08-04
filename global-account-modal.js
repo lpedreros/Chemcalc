@@ -592,3 +592,21 @@
     init();
   }
 })();
+
+
+// ── Global Help Modal Opener ─────────────────────────────────────────────────
+// Used by HelpButton.lbi on every page that has a #helpModal.
+// Shows the correct Free or Pro content section based on the user's tier.
+// NOTE: estimate.js also defines this function — the version here is identical
+// so there is no conflict; whichever loads last wins (same behaviour either way).
+function openHelpModal() {
+  var proUser = (typeof window.isPro === 'function') ? window.isPro() : false;
+  // Hide all content sections, then show the correct one
+  document.querySelectorAll('#helpModal .help-modal-section').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  var sectionId = proUser ? 'helpContentPro' : 'helpContentFree';
+  var section = document.getElementById(sectionId);
+  if (section) section.classList.add('active');
+  openModal('helpModal');
+}

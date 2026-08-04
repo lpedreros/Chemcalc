@@ -210,7 +210,52 @@
     <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
 </div>
 <!-- End Feedback Button Section -->
-  </main><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+  </main>
+
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
+<!-- #EndLibraryItem -->
+
+<!-- ===== EPIFANES CALCULATOR HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the Epifanes Polyurethane Calculator</h3>
+      <p class="help-modal-pitch">Epifanes Poly-urethane is a two-component topcoat that requires precise mixing of base and hardener. This calculator gives you the exact amounts for your batch size, with thinning guidance.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Enter total volume needed</strong> &mdash; Input how much mixed paint or varnish you need.</li>
+        <li><strong>Select volume units</strong> &mdash; Choose mL, oz, L, qt, or gal.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of Component A (Base) and Component B (Hardener). Results update automatically.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Mix ratio:</strong> 2 parts base : 1 part hardener by volume.</li>
+        <li><strong>Pot life:</strong> Approximately 4 hours at 68&deg;F &mdash; mix only what you can use.</li>
+        <li><strong>Thinning:</strong> Add up to 10% Epifanes Thinner No. 2 for spray; 5% for brush/roll.</li>
+        <li><strong>Recoat window:</strong> 16&ndash;24 hours between coats at 68&deg;F.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">Epifanes Calculator &mdash; Pro Quick Reference</h3>
+      <ul class="help-modal-bullets">
+        <li><strong>Mix ratio:</strong> 2 parts base : 1 part hardener by volume. Do not deviate.</li>
+        <li><strong>Pot life:</strong> ~4 hours at 68&deg;F. Shorter in heat, longer in cold.</li>
+        <li><strong>Spray:</strong> Add 10% Epifanes Thinner No. 2 for atomization.</li>
+        <li><strong>Brush/roll:</strong> Add 5% thinner. Apply thin coats for best leveling.</li>
+        <li><strong>Recoat window:</strong> 16&ndash;24 hours between coats at 68&deg;F.</li>
+        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
