@@ -1,5 +1,5 @@
 <header class="container header d-print-none">
-  <h1>ChemCalc</h1>
+  <div class="site-title">ChemCalc</div>
   <div class="powered-by-header">
     <span>Powered by</span>
     <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />

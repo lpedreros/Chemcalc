@@ -79,7 +79,7 @@
         data-ad-client="ca-pub-1179454606770448">
 </amp-auto-ads> -->
 	<!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">
-  <h1>ChemCalc</h1>
+  <div class="site-title">ChemCalc</div>
   <div class="powered-by-header">
     <span>Powered by</span>
     <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
@@ -105,7 +105,7 @@
             <!-- Measurement System Selection (Moved to Top) -->
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Measurement System</h5>
+                    <h2 class="card-title">Measurement System</h2>
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label for="result-system" class="form-label">Choose System</label>
@@ -121,7 +121,7 @@
             <!-- Project Dimensions Card -->
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Project Dimensions</h5>
+                    <h2 class="card-title">Project Dimensions</h2>
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label for="length" class="form-label">Length</label>
@@ -147,7 +147,7 @@
             <!-- Resin & Temperature Card -->
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Resin &amp; Temperature</h5>
+                    <h2 class="card-title">Resin &amp; Temperature</h2>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="resin-type" class="form-label">Resin Type</label>
@@ -189,11 +189,11 @@
             <!-- Material Layers Card -->
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Material Layers</h5>
+                    <h2 class="card-title">Material Layers</h2>
                     <div id="layers-container">
                         <!-- Layer 1 (default) -->
                         <div class="layer mb-3 border p-3 rounded">
-                            <h6 class="layer-title">Layer 1</h6> <!-- Using h6 for sub-heading within card -->
+                            <h3 class="layer-title">Layer 1</h3> <!-- Sub-heading within card -->
                             <div class="row g-3">
                                 <div class="col-md-12">
                                     <label for="material-type-1" class="form-label">Material Type</label>
@@ -239,7 +239,7 @@
             <!-- Cost Estimation Card -->
              <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Cost Estimation (Optional)</h5>
+                    <h2 class="card-title">Cost Estimation (Optional)</h2>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="resin-cost" class="form-label">Resin Cost per Unit</label>
@@ -264,7 +264,7 @@
         <div id="results" class="card mt-4 printable-section" style="display: none;">
             <div class="card-body">
                 <!-- Result Volume Unit Selection (Moved Below Title) -->
-                <h5 class="card-title">Results</h5>
+                <h2 class="card-title">Results</h2>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="result-volume-unit" class="form-label">Volume Unit</label>
@@ -284,7 +284,7 @@
                     <div id="clothEmailCapture" class="mt-3"></div>
                     <!-- MEKP Results Section (Hidden by default) -->
                     <div id="mekp-results-container" style="display: none;" class="mt-3 border-top pt-3">
-                        <h6>MEKP Catalyst Details (for Polyester/Vinylester):</h6>
+                        <h3>MEKP Catalyst Details (for Polyester/Vinylester):</h3>
                         <p>Recommended MEKP %: <span id="mekp-percentage"></span></p>
                         <p>MEKP Volume: <span id="mekp-ccs"></span></p>
                         <p>MEKP Drops: <span id="mekp-drops"></span></p>
@@ -292,7 +292,7 @@
                 </div>
                 <!-- Affiliate Links Placeholder -->
                 <div id="affiliateLinksContainer" style="display: none;" class="mt-3 border-top pt-3">
-                  <h6>Related Products:</h6>
+                  <h3>Related Products:</h3>
                   <ul id="affiliateLinksList"></ul>
                   <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
                 </div>
@@ -310,7 +310,7 @@
           <div class="col-md-6 mb-3">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Tips &amp; Safety</h5>
+                <h2 class="card-title">Tips &amp; Safety</h2>
                 <p>Always work in a well-ventilated area and wear appropriate personal protective equipment (PPE) such as gloves, eye protection, and a respirator when working with resins and solvents.</p>
                 <p>Refer to the specific Technical Data Sheet (TDS) and Safety Data Sheet (SDS) for the materials you are using for detailed handling instructions and safety precautions.</p>
                 <p>Mix resin and hardener/catalyst thoroughly according to manufacturer's instructions. Improper mixing can lead to poor curing.</p>
@@ -322,7 +322,7 @@
           <div class="col-md-6 mb-3">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Other Calculators</h5>
+                <h2 class="card-title">Other Calculators</h2>
                 <ul class="list-unstyled">
                   <li><a href="mekpcalc.html">MEKP Catalyst Calculator</a></li>
                   <li><a href="epifanespoly.html">Epifanes Polyurethane Calculator</a></li>
@@ -333,7 +333,7 @@
             </div>
              <div class="card mt-3">
               <div class="card-body">
-                <h5 class="card-title">Share this Calculator</h5>
+                <h2 class="card-title">Share this Calculator</h2>
                 <div id="qrcode" class="text-center"></div>
               </div>
             </div>
@@ -344,64 +344,11 @@
     <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
 </div>
 <!-- End Feedback Button Section -->
-    </main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button -->
-<!-- Each page must have its own help modal with a matching data-target ID -->
-<!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
-<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
-<!-- #EndLibraryItem --><!-- ===== FIBERGLASS CLOTH CALCULATOR HELP MODAL ===== -->
-<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
-    <!-- FREE USER (LOGGED IN) CONTENT -->
-    <!-- GUEST (NOT LOGGED IN) CONTENT -->
-    <div class="help-modal-section" id="helpContentGuest">
-      <h3 class="modal-title">How to Use the Fiberglass Cloth Calculator</h3>
-      <p class="help-modal-pitch">This calculator tells you exactly how much resin and hardener you need to wet out a given area of fiberglass cloth. It accounts for cloth type, resin system, and temperature so you don&rsquo;t over- or under-mix.</p>
-      <ol class="help-modal-steps">
-        <li><strong>Choose your measurement system</strong> &mdash; Select Imperial (ft&sup2;, &deg;F) or Metric (m&sup2;, &deg;C).</li>
-        <li><strong>Enter dimensions</strong> &mdash; Input length and width of the area you&rsquo;re laminating.</li>
-        <li><strong>Select resin type</strong> &mdash; Polyester, Vinylester, or Epoxy. For epoxy, also choose your mix ratio.</li>
-        <li><strong>Add material layers</strong> &mdash; Select cloth weight/type for each layer. Click &ldquo;+ Add Layer&rdquo; for multi-layer laminates.</li>
-        <li><strong>Enter resin price (optional)</strong> &mdash; Add a price per unit to get a material cost estimate.</li>
-        <li><strong>Read the result</strong> &mdash; Resin and hardener amounts update automatically.</li>
-      </ol>
-      <div class="help-modal-cta-box">
-        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with material cost tracking.</p>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
-      </div>
-    </div>
-    <div class="help-modal-section" id="helpContentFree">
-      <h3 class="modal-title">How to Use the Fiberglass Cloth Calculator</h3>
-      <p class="help-modal-pitch">This calculator tells you exactly how much resin and hardener you need to wet out a given area of fiberglass cloth. It accounts for cloth type, resin system, and temperature so you don&rsquo;t over- or under-mix.</p>
-      <ol class="help-modal-steps">
-        <li><strong>Choose your measurement system</strong> &mdash; Select Imperial (ft&sup2;, &deg;F) or Metric (m&sup2;, &deg;C).</li>
-        <li><strong>Enter dimensions</strong> &mdash; Input length and width of the area you&rsquo;re laminating.</li>
-        <li><strong>Select resin type</strong> &mdash; Polyester, Vinylester, or Epoxy. For epoxy, also choose your mix ratio.</li>
-        <li><strong>Add material layers</strong> &mdash; Select cloth weight/type for each layer. Click &ldquo;+ Add Layer&rdquo; for multi-layer laminates.</li>
-        <li><strong>Enter resin price (optional)</strong> &mdash; Add a price per unit to get a material cost estimate.</li>
-        <li><strong>Read the result</strong> &mdash; Resin and hardener amounts update automatically.</li>
-      </ol>
-      <div class="help-modal-cta-box">
-        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with material cost tracking.</p>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
-      </div>
-    </div>
-    <!-- PRO USER CONTENT -->
-    <div class="help-modal-section" id="helpContentPro">
-      <h3 class="modal-title">Fiberglass Cloth Calculator &mdash; Pro Quick Reference</h3>
-      <ul class="help-modal-bullets">
-        <li><strong>Resin-to-cloth ratio:</strong> Approximately 1:1 by weight for hand layup (varies by cloth weight).</li>
-        <li><strong>Epoxy mix ratio:</strong> Check your resin&rsquo;s TDS &mdash; West System 5:1 and 3:1 are pre-loaded.</li>
-        <li><strong>Polyester/Vinylester:</strong> Use the MEKP Calculator for exact catalyst amounts.</li>
-        <li><strong>Price estimate:</strong> Enter resin cost per unit to get a material cost &mdash; useful for job estimates.</li>
-        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
-      </ul>
-    </div>
-  </div>
-</div>
+    </main>
 
     <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
 
@@ -444,12 +391,13 @@
     <a href="/terms.html">Terms of Use</a> |
     <a href="/cookie.html">Cookie Policy</a>
   </div>
-  <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
+  <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
   <div class="powered-by">
     <span>Powered by</span>
     <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
   </div>
-</footer><!-- #EndLibraryItem --><!-- Bootstrap JS and dependencies -->
+</footer>
+<!-- #EndLibraryItem --><!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -462,7 +410,7 @@
             injectEmailCaptureUI('clothEmailCapture', 'Fiberglass Cloth Saturation', ['resin-volume', 'resin-weight', 'hardener-amount', 'estimated-cost']);
         });
     </script>
-    
+    <script src="affiliate_links.js"></script>
 		<script src="feedback.js"></script>
 	<script>
         // Generate QR Code for sharing
@@ -492,7 +440,15 @@
                 window.print();
             });
         }
-        </script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+        </script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
+     BOTTOM of every page, immediately before the closing </body> tag.
+     
+     What it does:
+     - Loads chatbot.js (BoatMD — appears on every page)
+     
+     To add a new global script in future:
+     Add ONE line here. It will apply to all pages.
+     ============================================================ -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>

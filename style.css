@@ -40,7 +40,7 @@ h1 {
     position: relative;
     margin-bottom: 2em;
 }
-.header h1 {
+.header .site-title {
     font-size: 2em;
     text-align: center;
     width: 100%;

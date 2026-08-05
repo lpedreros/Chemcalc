@@ -124,7 +124,7 @@
         data-ad-client="ca-pub-1179454606770448">
 </amp-auto-ads> -->
 	<!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">
-  <h1>ChemCalc</h1>
+  <div class="site-title">ChemCalc</div>
   <div class="powered-by-header">
     <span>Powered by</span>
     <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
@@ -152,7 +152,7 @@
 
   <!-- Measurement system -->
   <div class="card" id="unitSystemCard"><div class="card-body">
-    <h5 class="card-title">Measurement System</h5>
+    <h2 class="card-title">Measurement System</h2>
     <select id="unitSystem" class="form-control">
       <option value="imperial" selected>Imperial (ft², oz, qt, gal)</option>
       <option value="metric">Metric (m², mL, L)</option>
@@ -161,7 +161,7 @@
 
   <!-- Area / Volume / Dimensions -->
   <div class="card" id="inputMethodCard"><div class="card-body">
-    <h5 class="card-title">How much are you coating or mixing?</h5>
+    <h2 class="card-title">How much are you coating or mixing?</h2>
 
     <!-- Input Method Selection -->
     <div class="mb-3">
@@ -223,7 +223,7 @@
 
   <!-- Application Method -->
   <div class="card" id="methodTypeCard"><div class="card-body">
-    <h5 class="card-title">Application Method</h5>
+    <h2 class="card-title">Application Method</h2>
     <select id="methodType" class="form-control">
       <option value="spray" selected>Spray</option>
       <option value="roll">Roll / Brush</option>
@@ -232,7 +232,7 @@
 
   <!-- Product Type -->
   <div class="card" id="paintTypeCard"><div class="card-body">
-    <h5 class="card-title">Product Type</h5>
+    <h2 class="card-title">Product Type</h2>
     <select id="paintType" class="form-control">
       <option value="awlcraft2000">Awlcraft 2000 Topcoat</option>
       <option value="awlgrip">Awlgrip Topcoat</option>
@@ -242,7 +242,7 @@
 
   <!-- Results -->
   <div class="card mt-4 printable-section" id="resultsCard"><div class="card-body">
-    <h5 class="card-title">Your Mix Results</h5>
+    <h2 class="card-title">Your Mix Results</h2>
     <p id="resultPaint">Paint Base: —</p>
     <p id="resultConverter">Converter / Catalyst: —</p>
     <p id="resultReducer">Reducer: —</p>
@@ -253,7 +253,7 @@
 
     <!-- Affiliate Links Placeholder (Step 006) -->
     <div id="affiliateLinksContainer">
-      <h6>Related Products:</h6>
+      <h3>Related Products:</h3>
       <ul id="affiliateLinksList"></ul>
       <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
     </div>
@@ -271,7 +271,7 @@
   <div class="col-md-6 mb-3">
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Tips &amp; Safety</h5>
+        <h2 class="card-title">Tips &amp; Safety</h2>
         <p><a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a></p>
         <p><a href="legal.html">Legal Disclaimer</a></p>
       </div>
@@ -280,7 +280,7 @@
   <div class="col-md-6 mb-3">
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Other Calculators</h5>
+        <h2 class="card-title">Other Calculators</h2>
         <p><a href="clothcalc.html">Fiberglass Cloth Saturation Calculator</a></p>
         <p><a href="mekpcalc.html">MEKP Mix Calculator</a></p>
         <p><a href="epifanespoly.html">Epifanes Polyurethane Mix Calculator</a></p>
@@ -292,71 +292,8 @@
 <div class="container mt-4 mb-5 text-center">
     <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
 </div>
-<!-- End Feedback Button Section --><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button -->
-<!-- Each page must have its own help modal with a matching data-target ID -->
-<!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
-<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
-<!-- #EndLibraryItem --><!-- ===== AWLGRIP CALCULATOR HELP MODAL ===== -->
-<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
-    <!-- FREE USER (LOGGED IN) CONTENT -->
-    <!-- GUEST (NOT LOGGED IN) CONTENT -->
-    <div class="help-modal-section" id="helpContentGuest">
-      <h3 class="modal-title">How to Use the Awlgrip Paint Mix Calculator</h3>
-      <p class="help-modal-pitch">Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
-      <ol class="help-modal-steps">
-        <li><strong>Select measurement system</strong> &mdash; Choose Imperial (oz, qt, gal, ft&sup2;) or Metric (mL, L, m&sup2;).</li>
-        <li><strong>Enter area or volume</strong> &mdash; Input the surface area you&rsquo;re coating, or enter a paint volume directly.</li>
-        <li><strong>Select application method</strong> &mdash; Spray or Roll/Brush. Reducer ratio changes by method.</li>
-        <li><strong>Select product type</strong> &mdash; Awlcraft 2000, Awlgrip Topcoat, or 545 Epoxy Primer.</li>
-        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of base, converter, and reducer. Results update automatically.</li>
-      </ol>
-      <ul class="help-modal-bullets">
-        <li><strong>Spray:</strong> Typically requires more reducer for proper atomization.</li>
-        <li><strong>Brush/roll:</strong> Use less reducer to maintain film build.</li>
-        <li><strong>Pot life:</strong> 4&ndash;8 hours after mixing &mdash; mix only what you can use in one session.</li>
-        <li><strong>Hot weather:</strong> Use Awlgrip T0006 slow reducer to extend pot life.</li>
-      </ul>
-      <div class="help-modal-cta-box">
-        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
-      </div>
-    </div>
-    <div class="help-modal-section" id="helpContentFree">
-      <h3 class="modal-title">How to Use the Awlgrip Paint Mix Calculator</h3>
-      <p class="help-modal-pitch">Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
-      <ol class="help-modal-steps">
-        <li><strong>Select measurement system</strong> &mdash; Choose Imperial (oz, qt, gal, ft&sup2;) or Metric (mL, L, m&sup2;).</li>
-        <li><strong>Enter area or volume</strong> &mdash; Input the surface area you&rsquo;re coating, or enter a paint volume directly.</li>
-        <li><strong>Select application method</strong> &mdash; Spray or Roll/Brush. Reducer ratio changes by method.</li>
-        <li><strong>Select product type</strong> &mdash; Awlcraft 2000, Awlgrip Topcoat, or 545 Epoxy Primer.</li>
-        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of base, converter, and reducer. Results update automatically.</li>
-      </ol>
-      <ul class="help-modal-bullets">
-        <li><strong>Spray:</strong> Typically requires more reducer for proper atomization.</li>
-        <li><strong>Brush/roll:</strong> Use less reducer to maintain film build.</li>
-        <li><strong>Pot life:</strong> 4&ndash;8 hours after mixing &mdash; mix only what you can use in one session.</li>
-        <li><strong>Hot weather:</strong> Use Awlgrip T0006 slow reducer to extend pot life.</li>
-      </ul>
-      <div class="help-modal-cta-box">
-        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
-        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
-      </div>
-    </div>
-    <!-- PRO USER CONTENT -->
-    <div class="help-modal-section" id="helpContentPro">
-      <h3 class="modal-title">Awlgrip Calculator &mdash; Pro Quick Reference</h3>
-      <ul class="help-modal-bullets">
-        <li><strong>Standard topcoat ratio:</strong> 1 part base : 1 part converter, then add reducer to viscosity.</li>
-        <li><strong>Spray:</strong> Add 10&ndash;15% T0006 (slow) or T0007 (fast) reducer by volume.</li>
-        <li><strong>Brush/roll:</strong> Add 5&ndash;10% reducer. Use 73 Brushing Reducer for best leveling.</li>
-        <li><strong>Pot life:</strong> 4&ndash;8 hours at 77&deg;F. Mix only what you can use in one session.</li>
-        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
-      </ul>
-    </div>
-  </div>
-</div><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+<!-- End Feedback Button Section --><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
 
@@ -399,12 +336,13 @@
     <a href="/terms.html">Terms of Use</a> |
     <a href="/cookie.html">Cookie Policy</a>
   </div>
-  <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
+  <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
   <div class="powered-by">
     <span>Powered by</span>
     <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
   </div>
-</footer><!-- #EndLibraryItem --><script>
+</footer>
+<!-- #EndLibraryItem --><script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js")
     .then(reg => console.log("ServiceWorker registered:", reg))
@@ -414,7 +352,7 @@ if ("serviceWorker" in navigator) {
 document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 <!-- Load affiliate links data first -->
-
+<script src="affiliate_links.js"></script>
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
 <script src="awlgripscript.js"></script>
@@ -428,7 +366,15 @@ document.getElementById("year").textContent = new Date().getFullYear();
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="main.js"></script>
-<script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+<script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
+     BOTTOM of every page, immediately before the closing </body> tag.
+     
+     What it does:
+     - Loads chatbot.js (BoatMD — appears on every page)
+     
+     To add a new global script in future:
+     Add ONE line here. It will apply to all pages.
+     ============================================================ -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>
