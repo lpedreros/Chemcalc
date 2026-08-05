@@ -153,13 +153,11 @@
     <!-- Product list will be injected here by JavaScript from new_kits_product_list.html content -->
   </div>
 
-</main>
-
-<!-- #BeginLibraryItem "/Library/HelpButton.lbi" -->
+</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button -->
+<!-- Each page must have its own help modal with a matching data-target ID -->
+<!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
 <button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
-<!-- #EndLibraryItem -->
-
-<!-- ===== KITS HELP MODAL ===== -->
+<!-- #EndLibraryItem --><!-- ===== KITS HELP MODAL ===== -->
 <div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
@@ -207,10 +205,7 @@
       </ul>
     </div>
   </div>
-</div>
-
-<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
-
+</div><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
 
@@ -253,28 +248,19 @@
     <a href="/terms.html">Terms of Use</a> |
     <a href="/cookie.html">Cookie Policy</a>
   </div>
-  <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
+  <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
   <div class="powered-by">
     <span>Powered by</span>
     <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
   </div>
-</footer>
-<!-- #EndLibraryItem --><!-- Bootstrap JS and dependencies -->
+</footer><!-- #EndLibraryItem --><!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <!-- Custom JS -->
-<script src="affiliate_links.js"></script> <!-- This file might be deprecated or its content merged if it only contains data -->
-<script src="main.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" --><!-- ============================================================
-     BOTTOM of every page, immediately before the closing </body> tag.
-     
-     What it does:
-     - Loads chatbot.js (BoatMD — appears on every page)
-     
-     To add a new global script in future:
-     Add ONE line here. It will apply to all pages.
-     ============================================================ -->
+ <!-- This file might be deprecated or its content merged if it only contains data -->
+<script src="main.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->
 <script src="/chatbot.js"></script>
