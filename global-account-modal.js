@@ -28,7 +28,8 @@
   // Internal user/profile cache (used only when auth.js is NOT loaded)
   var _cachedUser = null;
   var _cachedProfile = null;
-
+  var _sessionReady = null; // Promise: resolves when profile fetch completes
+  
   // ── getUser / getProfile / isPro ─────────────────────────────────────────
   if (typeof window.getUser !== 'function') {
     window.getUser = function () { return _cachedUser; };
@@ -119,10 +120,14 @@
   }
 
   // ── Internal: resolve session and cache user/profile ─────────────────────
-  // This runs on page load so that getUser/getProfile/isPro return correct values.
+  // This runs IMMEDIATELY at script parse time (in <head>) so the profile
+  // fetch starts as early as possible. _sessionReady resolves when done.
   // On estimate.html, auth.js handles this via authInit() — but on other pages
   // this is the only mechanism.
-  async function resolveSession() {
+  function resolveSession() {
+    _sessionReady = _doResolveSession();
+  }
+  async function _doResolveSession() {
     if (typeof _sb === 'undefined' || !_sb) return;
     try {
       var sessionResult = await _sb.auth.getSession();
@@ -473,7 +478,9 @@
   };
 
   // ── Open account modal (called by global-auth.js) ────────────────────────
-  window.openAccountModal = function () {
+  // Awaits _sessionReady so profile is guaranteed loaded before showing tier.
+  window.openAccountModal = async function () {
+    if (_sessionReady) await _sessionReady;
     populateAccountModal();
     openModal('accountModal');
   };
@@ -510,7 +517,9 @@
     }
 
     // Subscription tab
-    var proActive = (typeof isPro === 'function') ? isPro() : false;
+    // Use sessionStorage (set by global-auth.js) as reliable fallback
+    var storedTier = sessionStorage.getItem('chemcalc_user_tier');
+    var proActive = (storedTier === 'pro') || ((typeof isPro === 'function') ? isPro() : false);
     var tierEl = document.getElementById('subTierName');
     var upgradeBlock = document.getElementById('subUpgradeBlock');
     var manageBlock = document.getElementById('subManageBlock');
@@ -578,18 +587,23 @@
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────
-  function init() {
+  // IMPORTANT: resolveSession() starts IMMEDIATELY at script parse time
+  // (only needs _sb which loaded before this script in <head>).
+  // This gives the async profile fetch maximum time to complete before
+  // the user can interact with the page.
+  // inject() still waits for DOMContentLoaded because it needs the DOM.
+  if (!isEstimatorPage) {
+    resolveSession();
+  }
+
+  function injectWhenReady() {
     inject();
-    // Resolve session on non-estimator pages (auth.js handles it on estimate.html)
-    if (!isEstimatorPage) {
-      resolveSession();
-    }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', injectWhenReady);
   } else {
-    init();
+    injectWhenReady();
   }
 })();
 
@@ -604,18 +618,27 @@
 //   - Not logged in → helpContentGuest (Sign Up / Log In)
 //   - Logged in, Free tier → helpContentFree (Upgrade to Pro)
 //   - Logged in, Pro tier → helpContentPro (full reference)
+// RELIABILITY: Uses sessionStorage.chemcalc_user_tier (set by global-auth.js)
+// as primary source. Falls back to getUser()/isPro() from resolveSession().
+// This avoids the race condition where resolveSession() hasn't finished yet.
 function openHelpModal() {
+  // Primary: sessionStorage (set by global-auth.js, which resolves first)
+  var storedTier = sessionStorage.getItem('chemcalc_user_tier');
+  // Secondary: internal cache (set by resolveSession in this file)
   var user = (typeof window.getUser === 'function') ? window.getUser() : null;
   var proUser = (typeof window.isPro === 'function') ? window.isPro() : false;
 
   // Determine which section to show
   var sectionId;
-  if (!user) {
-    sectionId = 'helpContentGuest';
-  } else if (proUser) {
+  if (storedTier === 'pro' || proUser) {
+    // User is Pro (either source confirms it)
     sectionId = 'helpContentPro';
-  } else {
+  } else if (storedTier === 'free' || user) {
+    // User is logged in but on Free tier
     sectionId = 'helpContentFree';
+  } else {
+    // No session detected — guest
+    sectionId = 'helpContentGuest';
   }
 
   // Hide all sections, show the correct one
