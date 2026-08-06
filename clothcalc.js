@@ -622,7 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let estimatedCost = 0;
     if (resinCost > 0) {
       let costPerLiter = 0;
-      if (resinCostUnit === "gallon") costPerLiter = resinCost / literToGallon;
+      if (resinCostUnit === "gal") costPerLiter = resinCost / literToGallon;
       else if (resinCostUnit === "liter") costPerLiter = resinCost;
       else if (resinCostUnit === "kg") costPerLiter = resinCost / resinInfo.density;
       else if (resinCostUnit === "lb") costPerLiter = (resinCost / kgToLb) / resinInfo.density;
