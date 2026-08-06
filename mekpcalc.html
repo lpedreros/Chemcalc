@@ -208,44 +208,119 @@
     <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
 </div>
 <!-- End Feedback Button Section -->
-	<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
-    <!-- Donation Button -->
-    <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
-    <!-- Donation Modal (updated with PayPal snippet) -->
-    <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-          <div class="modal-header" style="border-bottom: 1px solid #48484a;">
-            <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;"> <span aria-hidden="true">&times;</span> </button>
-          </div>
-          <div class="modal-body">
-            <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
-            <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
-            <hr style="border-color: #48484a;">
-            <div class="donation-options">
-              <form action="https://www.paypal.com/donate" method="post" target="_top">
-                <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
-                <input type="hidden" name="no_recurring" value="0" />
-                <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-              </form>
-            </div>
-          </div>
-          <div class="modal-footer" style="border-top: 1px solid #48484a;">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
+<!-- #EndLibraryItem -->
+
+<!-- ===== MEKP CALCULATOR HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
+      <h3 class="modal-title">How to Use the MEKP Calculator</h3>
+      <p class="help-modal-pitch">MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+        <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+        <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+        <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to save your estimates, email results, and access the full Repair Estimator.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
       </div>
     </div>
-    <!-- Footer Section -->
-    <footer class="footer text-center">
-      <div class="legal-links mb-2"> <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a> | <a href="/cookie.html">Cookie Policy</a> </div>
-      <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
-      <div class="powered-by"> <span>Powered by</span> <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo"> </div>
-    </footer>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the MEKP Calculator</h3>
+      <p class="help-modal-pitch">MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+        <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+        <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+        <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to save your estimates, email results, and access the full Repair Estimator.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">MEKP Calculator &mdash; Pro Quick Reference</h3>
+      <ul class="help-modal-bullets">
+        <li><strong>Standard ratio:</strong> 1.5% MEKP by volume of resin.</li>
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Drop to 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Increase to 2% for full cure.</li>
+        <li><strong>Duratec 904-001:</strong> Use 2% for a tack-free finish coat.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess catalyst weakens the laminate.</li>
+        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+
+<!-- Donation Button -->
+<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
+
+<!-- Donation Modal (updated with PayPal snippet) -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
+      <div class="modal-header" style="border-bottom: 1px solid #48484a;">
+        <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+        <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+        <hr style="border-color: #48484a;">
+        <div class="donation-options">
+          <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+            <input type="hidden" name="no_recurring" value="0" />
+            <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid #48484a;">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Section -->
+<footer class="footer text-center">
+  <div class="legal-links mb-2">
+    <a href="/privacy.html">Privacy Policy</a> |
+    <a href="/terms.html">Terms of Use</a> |
+    <a href="/cookie.html">Cookie Policy</a>
+  </div>
+  <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
+  <div class="powered-by">
+    <span>Powered by</span>
+    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo">
+  </div>
+</footer>
 <!-- #EndLibraryItem --><!-- JS: correct order ensures init runs after main script -->
 <script>
 if ("serviceWorker" in navigator) {

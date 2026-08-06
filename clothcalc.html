@@ -345,9 +345,63 @@
 </div>
 <!-- End Feedback Button Section -->
     </main>
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
+<!-- #EndLibraryItem -->
 
-    <!-- Donation Button -->
-<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+<!-- ===== FIBERGLASS CLOTH CALCULATOR HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
+      <h3 class="modal-title">How to Use the Fiberglass Cloth Calculator</h3>
+      <p class="help-modal-pitch">This calculator tells you exactly how much resin and hardener you need to wet out a given area of fiberglass cloth. It accounts for cloth type, resin system, and temperature so you don&rsquo;t over- or under-mix.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Choose your measurement system</strong> &mdash; Select Imperial (ft&sup2;, &deg;F) or Metric (m&sup2;, &deg;C).</li>
+        <li><strong>Enter dimensions</strong> &mdash; Input length and width of the area you&rsquo;re laminating.</li>
+        <li><strong>Select resin type</strong> &mdash; Polyester, Vinylester, or Epoxy. For epoxy, also choose your mix ratio.</li>
+        <li><strong>Add material layers</strong> &mdash; Select cloth weight/type for each layer. Click &ldquo;+ Add Layer&rdquo; for multi-layer laminates.</li>
+        <li><strong>Enter resin price (optional)</strong> &mdash; Add a price per unit to get a material cost estimate.</li>
+        <li><strong>Read the result</strong> &mdash; Resin and hardener amounts update automatically.</li>
+      </ol>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with material cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the Fiberglass Cloth Calculator</h3>
+      <p class="help-modal-pitch">This calculator tells you exactly how much resin and hardener you need to wet out a given area of fiberglass cloth. It accounts for cloth type, resin system, and temperature so you don&rsquo;t over- or under-mix.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Choose your measurement system</strong> &mdash; Select Imperial (ft&sup2;, &deg;F) or Metric (m&sup2;, &deg;C).</li>
+        <li><strong>Enter dimensions</strong> &mdash; Input length and width of the area you&rsquo;re laminating.</li>
+        <li><strong>Select resin type</strong> &mdash; Polyester, Vinylester, or Epoxy. For epoxy, also choose your mix ratio.</li>
+        <li><strong>Add material layers</strong> &mdash; Select cloth weight/type for each layer. Click &ldquo;+ Add Layer&rdquo; for multi-layer laminates.</li>
+        <li><strong>Enter resin price (optional)</strong> &mdash; Add a price per unit to get a material cost estimate.</li>
+        <li><strong>Read the result</strong> &mdash; Resin and hardener amounts update automatically.</li>
+      </ol>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with material cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">Fiberglass Cloth Calculator &mdash; Pro Quick Reference</h3>
+      <ul class="help-modal-bullets">
+        <li><strong>Resin-to-cloth ratio:</strong> Approximately 1:1 by weight for hand layup (varies by cloth weight).</li>
+        <li><strong>Epoxy mix ratio:</strong> Check your resin&rsquo;s TDS &mdash; West System 5:1 and 3:1 are pre-loaded.</li>
+        <li><strong>Polyester/Vinylester:</strong> Use the MEKP Calculator for exact catalyst amounts.</li>
+        <li><strong>Price estimate:</strong> Enter resin cost per unit to get a material cost &mdash; useful for job estimates.</li>
+        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>

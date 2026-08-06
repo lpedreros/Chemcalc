@@ -292,7 +292,74 @@
 <div class="container mt-4 mb-5 text-center">
     <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
 </div>
-<!-- End Feedback Button Section --><!-- #BeginLibraryItem "/Library/Footer.lbi" -->
+<!-- End Feedback Button Section -->
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">?</button>
+<!-- #EndLibraryItem -->
+
+<!-- ===== AWLGRIP CALCULATOR HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
+      <h3 class="modal-title">How to Use the Awlgrip Paint Mix Calculator</h3>
+      <p class="help-modal-pitch">Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Select measurement system</strong> &mdash; Choose Imperial (oz, qt, gal, ft&sup2;) or Metric (mL, L, m&sup2;).</li>
+        <li><strong>Enter area or volume</strong> &mdash; Input the surface area you&rsquo;re coating, or enter a paint volume directly.</li>
+        <li><strong>Select application method</strong> &mdash; Spray or Roll/Brush. Reducer ratio changes by method.</li>
+        <li><strong>Select product type</strong> &mdash; Awlcraft 2000, Awlgrip Topcoat, or 545 Epoxy Primer.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of base, converter, and reducer. Results update automatically.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Spray:</strong> Typically requires more reducer for proper atomization.</li>
+        <li><strong>Brush/roll:</strong> Use less reducer to maintain film build.</li>
+        <li><strong>Pot life:</strong> 4&ndash;8 hours after mixing &mdash; mix only what you can use in one session.</li>
+        <li><strong>Hot weather:</strong> Use Awlgrip T0006 slow reducer to extend pot life.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the Awlgrip Paint Mix Calculator</h3>
+      <p class="help-modal-pitch">Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Select measurement system</strong> &mdash; Choose Imperial (oz, qt, gal, ft&sup2;) or Metric (mL, L, m&sup2;).</li>
+        <li><strong>Enter area or volume</strong> &mdash; Input the surface area you&rsquo;re coating, or enter a paint volume directly.</li>
+        <li><strong>Select application method</strong> &mdash; Spray or Roll/Brush. Reducer ratio changes by method.</li>
+        <li><strong>Select product type</strong> &mdash; Awlcraft 2000, Awlgrip Topcoat, or 545 Epoxy Primer.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of base, converter, and reducer. Results update automatically.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Spray:</strong> Typically requires more reducer for proper atomization.</li>
+        <li><strong>Brush/roll:</strong> Use less reducer to maintain film build.</li>
+        <li><strong>Pot life:</strong> 4&ndash;8 hours after mixing &mdash; mix only what you can use in one session.</li>
+        <li><strong>Hot weather:</strong> Use Awlgrip T0006 slow reducer to extend pot life.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">Awlgrip Calculator &mdash; Pro Quick Reference</h3>
+      <ul class="help-modal-bullets">
+        <li><strong>Standard topcoat ratio:</strong> 1 part base : 1 part converter, then add reducer to viscosity.</li>
+        <li><strong>Spray:</strong> Add 10&ndash;15% T0006 (slow) or T0007 (fast) reducer by volume.</li>
+        <li><strong>Brush/roll:</strong> Add 5&ndash;10% reducer. Use 73 Brushing Reducer for best leveling.</li>
+        <li><strong>Pot life:</strong> 4&ndash;8 hours at 77&deg;F. Mix only what you can use in one session.</li>
+        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- #BeginLibraryItem "/Library/Footer.lbi" -->
 
 <!-- Donation Button -->
 <button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal"> Donate </button>
