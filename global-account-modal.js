@@ -167,8 +167,8 @@
 
   var STRIPE_CONFIG = {
     prices: {
-      monthly: 'price_1TyymXFiIkcVqHXIoYOTuDGw',
-      annual:  'price_1TyymWFiIkcVqHXIYtb5w8X9'
+      monthly: 'price_1U1b72FiIkcVqHXIn9kpkCPQ',
+      annual:  'price_1U1b8jFiIkcVqHXINIsKENRB'
     },
     checkoutFunctionUrl: 'https://rnrzjlfpwxzomupnxikt.supabase.co/functions/v1/create-checkout'
   };
@@ -346,8 +346,8 @@
       '    <div id="subUpgradeBlock">' +
       '      <p class="modal-sub">Upgrade to Pro for cloud saving, materials library, Trello integration, and more.</p>' +
       '      <div class="plan-toggle-row">' +
-      '        <button class="btn-plan-toggle active" id="planToggleMonthly" onclick="setUpgradePlan(\'monthly\')">Monthly — $15/mo</button>' +
-      '        <button class="btn-plan-toggle" id="planToggleAnnual" onclick="setUpgradePlan(\'annual\')">Annual — $99/yr</button>' +
+      '        <button class="btn-plan-toggle active" id="planToggleMonthly" onclick="setUpgradePlan(\'monthly\')">Monthly — $5/mo</button>' +
+      '        <button class="btn-plan-toggle" id="planToggleAnnual" onclick="setUpgradePlan(\'annual\')">Annual — $39/yr</button>' +
       '      </div>' +
       '      <button class="btn-modal-primary mt-3" id="stripeCheckoutBtn" onclick="launchStripeCheckout()">Upgrade to Pro</button>' +
       '    </div>' +

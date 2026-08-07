@@ -8,8 +8,8 @@
 const STRIPE_CONFIG = {
   publishableKey:  'pk_live_51TyyPdFiIkcVqHXIWI8Mbd3vG07BDnPrDBxHZYX4wqyVI98erkuantwRmUb851MxRv4fpMUSZguKIgcPuppmGCUZ00WYRLDBcT',
   prices: {
-    monthly: 'price_1TyymXFiIkcVqHXIoYOTuDGw',
-    annual:  'price_1TyymWFiIkcVqHXIYtb5w8X9'
+    monthly: 'price_1U1b72FiIkcVqHXIn9kpkCPQ',
+    annual:  'price_1U1b8jFiIkcVqHXINIsKENRB'
   },
   // Supabase Edge Function URL — update after deploying
   checkoutFunctionUrl: 'https://rnrzjlfpwxzomupnxikt.supabase.co/functions/v1/create-checkout',
@@ -28,7 +28,7 @@ function setUpgradePlan(plan) {
   if (monthlyBtn) monthlyBtn.classList.toggle('active', plan === 'monthly');
   if (annualBtn)  annualBtn.classList.toggle('active',  plan === 'annual');
   const priceEl = document.getElementById('selectedPlanPrice');
-  if (priceEl) priceEl.textContent = plan === 'monthly' ? '$15/month' : '$99/year';
+  if (priceEl) priceEl.textContent = plan === 'monthly' ? '$5/month' : '$39/year';
 }
 
 /* ── Launch Stripe Checkout ──────────────────────────────── */
