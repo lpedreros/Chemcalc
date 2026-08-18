@@ -6,8 +6,8 @@
 //   - Listens for clicks on affiliate links (anchors with target="_blank"
 //     pointing to an external URL).
 //   - Inserts one row per click into `affiliate_clicks`.
-//   - Does NOT block navigation — uses navigator.sendBeacon pattern via
-//     a fire-and-forget Supabase insert.
+//   - Attaches a browser-session ID shared with calc-tracker.js when present.
+//   - Does NOT block navigation — uses a fire-and-forget Supabase insert.
 //   - Works alongside the existing gtag tracking in main.js.
 //
 // DEPENDENCIES:
@@ -29,6 +29,19 @@
     // Strip leading slash and any directory prefix
     var filename = path.split('/').pop() || 'unknown';
     return filename;
+  }
+
+  /**
+   * Returns one random ID per browser session. Reuses calc-tracker.js's
+   * cc_session_id when that tracker is also loaded on the page.
+   */
+  function getSessionId() {
+    var sessionId = sessionStorage.getItem('cc_session_id');
+    if (!sessionId) {
+      sessionId = 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sessionStorage.setItem('cc_session_id', sessionId);
+    }
+    return sessionId;
   }
 
   /**
@@ -72,12 +85,14 @@
       }
 
       var userId = await getUserId();
+      var sessionId = getSessionId();
 
       var row = {
-        url:         url,
-        link_text:   linkText || null,
-        page_source: pageSource,
-        user_id:     userId
+        product_url:  url,
+        product_name: linkText || null,
+        page:         pageSource,
+        user_id:      userId,
+        session_id:   sessionId
         // created_at / id handled by Supabase defaults
       };
 
