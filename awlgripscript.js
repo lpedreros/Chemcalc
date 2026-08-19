@@ -23,8 +23,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var cov = {
     awlgrip: { spray: { c: 542.9, k: 3 }, roll: { c: 814.8, k: 2 } },
     awlcraft2000: { spray: { c: 725.2, k: 3 } }, 
-    "545primer": { spray: { c: 317.8, k: 2 }, roll: { c: 635.6, k: 2 } }
+    "545primer": { spray: { c: 317.8, k: 2 }, roll: { c: 635.6, k: 2 } },
+    awlcraftse: { spray: { c: 806.7, k: 2 } },
+    awlcraft3000: { spray: { c: 741.5, k: 3 } },
+    awlgriphdtclear: { spray: { c: 537.8, k: 2 } }
   };
+
+  // Products that are spray-only (Roll/Brush disabled)
+  var sprayOnlyProducts = ["awlcraft2000", "awlcraftse", "awlcraft3000", "awlgriphdtclear"];
 
   // DOM elements
   var sys = document.getElementById("unitSystem");
@@ -82,6 +88,18 @@ document.addEventListener("DOMContentLoaded", function() {
         return { conv: m === "spray" ? 1 : 0.5, red: m === "spray" ? 0.25 : 0.2 };
       case "awlcraft2000":
         return { conv: 0.5, red: 0.33 };
+      // ── New products ──────────────────────────────────────
+      case "awlcraftse":
+        // TDS: 4:1 base to G3010, reducer T0006 variable (use 44% of base+conv as TDS states)
+        return { conv: 0.25, red: 0.55 };
+      case "awlcraft3000":
+        // TDS: 2:1 base:G3010, reducer 15-33% of (base+conv) — read from slider
+        var pct = parseFloat((document.getElementById("reducerPercent") || {}).value) || 25;
+        // reducer as fraction of base: (base+conv)*pct/100 / base = (1+0.5)*pct/100 = 1.5*pct/100
+        return { conv: 0.5, red: 1.5 * pct / 100 };
+      case "awlgriphdtclear":
+        // TDS: 1:1:12.5% (Base:Curing Solution:Activator) = 1:1:0.25
+        return { conv: 1, red: 0.25 };
       default:
         return { conv: 0, red: 0 };
     }
@@ -165,6 +183,14 @@ document.addEventListener("DOMContentLoaded", function() {
       } else { 
         reducerKey = "awlgrip_rollbrush_reducer_1quart"; 
       }
+    } else if (paintType === "awlcraftse" || paintType === "awlcraft3000") {
+      baseKeys = [];
+      converterKey = "awlcraft2000awlgrip_spray_converter_1quart";
+      reducerKey = "awlcraft2000awlgrip_spray_reducer_1quart";
+    } else if (paintType === "awlgriphdtclear") {
+      baseKeys = [];
+      converterKey = null;
+      reducerKey = null;
     }
 
     baseKeys.forEach(function(key) {
@@ -240,12 +266,24 @@ document.addEventListener("DOMContentLoaded", function() {
     var inUnit = null;
     var isArea = false;
 
-    var isAwlcraft = paintType === "awlcraft2000";
-    method.querySelector("[value=\"roll\"]").disabled = isAwlcraft;
-    if (isAwlcraft && methodType === "roll") {
+    // Disable Roll/Brush for spray-only products
+    var isSprayOnly = sprayOnlyProducts.indexOf(paintType) !== -1;
+    method.querySelector("[value=\"roll\"]").disabled = isSprayOnly;
+    if (isSprayOnly && methodType === "roll") {
       method.value = "spray"; 
       methodType = method.value; 
     }
+
+    // Show/hide Awlcraft 3000 reducer slider
+    var reducerPercentRow = document.getElementById("reducerPercentRow");
+    if (reducerPercentRow) {
+      reducerPercentRow.style.display = (paintType === "awlcraft3000") ? "block" : "none";
+    }
+    // Show/hide product-specific notes
+    var noteAwlcraftSE = document.getElementById("productNoteAwlcraftSE");
+    var noteHDTClear = document.getElementById("productNoteHDTClear");
+    if (noteAwlcraftSE) noteAwlcraftSE.style.display = (paintType === "awlcraftse") ? "block" : "none";
+    if (noteHDTClear) noteHDTClear.style.display = (paintType === "awlgriphdtclear") ? "block" : "none";
 
     if (selectedInputMethod === "areaVolume") {
       inVal = parseFloat(val.value) || 0;
@@ -343,9 +381,27 @@ document.addEventListener("DOMContentLoaded", function() {
     cVol = cVol ? cVol.toFixed(2) : "Err";
     rVol = rVol ? rVol.toFixed(2) : "Err";
 
-    outP.textContent = "Paint Base: " + pVol + " " + labels[outUnit];
-    outC.textContent = "Converter / Catalyst: " + cVol + " " + labels[outUnit];
-    outR.textContent = "Reducer: " + rVol + " " + labels[outUnit];
+    // Product-specific result labels
+    var baseLabel = "Paint Base";
+    var convLabel = "Converter / Catalyst";
+    var redLabel = "Reducer";
+    if (paintType === "awlcraftse") {
+      baseLabel = "Awlcraft SE Basecoat";
+      convLabel = "Awlcat #2 (G3010) Converter";
+      redLabel = "Reducer (T0006)";
+    } else if (paintType === "awlcraft3000") {
+      baseLabel = "Awlcraft 3000 Base";
+      convLabel = "Awlcat #2 (G3010) Converter";
+      redLabel = "Reducer (" + ((document.getElementById("reducerPercent") || {}).value || 25) + "%)";
+    } else if (paintType === "awlgriphdtclear") {
+      baseLabel = "HDT Clear Base (OC0300)";
+      convLabel = "Curing Solution (OC0010)";
+      redLabel = "Activator";
+    }
+
+    outP.textContent = baseLabel + ": " + pVol + " " + labels[outUnit];
+    outC.textContent = convLabel + ": " + cVol + " " + labels[outUnit];
+    outR.textContent = redLabel + ": " + rVol + " " + labels[outUnit];
 
     // Show accelerator only for Awlcraft 2000, always in mL for easier measurement
     if (paintType === "awlcraft2000") {
@@ -416,6 +472,15 @@ document.addEventListener("DOMContentLoaded", function() {
   resU.addEventListener("change", calc);
   method.addEventListener("change", calc);
   paint.addEventListener("change", calc);
+  // Awlcraft 3000 reducer slider
+  var reducerSlider = document.getElementById("reducerPercent");
+  var reducerSliderLabel = document.getElementById("reducerPercentValue");
+  if (reducerSlider) {
+    reducerSlider.addEventListener("input", function() {
+      if (reducerSliderLabel) reducerSliderLabel.textContent = reducerSlider.value;
+      calc();
+    });
+  }
   val.addEventListener("input", calc);
   lengthInput.addEventListener("input", calc);
   widthInput.addEventListener("input", calc);
