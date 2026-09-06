@@ -1,0 +1,3101 @@
+/* Design-system fonts (Inter + IBM Plex Mono) -- used by the sitewide dark
+   header/footer chrome and floating-action cluster (see the "SITEWIDE
+   HEADER/FOOTER" token block near the bottom of this file). @import must
+   stay the very first rule in the file per the CSS spec. Source: Magic
+   Patterns MEKP Calculator artifact, index.css
+   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/* Base Styles */
+body {
+    background-color: #1c1c1e;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 1em;
+}
+a, a:visited, a:hover, a:active {
+    margin-top: 0.5em;
+    font-style: normal;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #89CFF0;
+}
+h1 {
+    font-size: 1.5em;
+}
+
+/* Container & Layout */
+.container {
+    background-color: #2c2c2e;
+    padding: 1em;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin: 50px auto 1em;
+    max-width: 1200px;
+}
+.container p {
+    text-align: left !important;
+}
+.container li {
+    text-align: left !important;
+}
+
+/* Header & Nav */
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 2em;
+}
+.header .site-title {
+    font-size: 2em;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+}
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1em;
+}
+.nav a {
+    margin: 0 0.75em;
+    text-decoration: none;
+    color: #89CFF0;
+}
+.nav a:hover {
+    text-decoration: underline;
+}
+/* ── Global auth indicator (injected by global-auth.js) ── */
+.nav-auth-indicator {
+  margin-left: 1.2em;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+}
+.nav-auth-name {
+  color: #89CFF0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.nav-auth-login {
+  color: #89CFF0;
+  text-decoration: none;
+  border: 1px solid #89CFF0;
+  border-radius: 12px;
+  padding: 2px 10px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-auth-login:hover {
+  background: #89CFF0;
+  color: #1c1c1e;
+  text-decoration: none;
+}
+.powered-by-header img {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+    text-align: center;
+    margin-bottom: 1em;
+}
+.filter-btn {
+    background-color: #2c2c2e;
+    color: #89CFF0;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 0.25em;
+    cursor: pointer;
+    font-size: 1.1em;
+    border-radius: 4px;
+}
+.filter-btn:hover,
+.filter-btn.active {
+    background-color: #48484a;
+}
+
+/* Cards */
+.card {
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+/* Donate Button */
+.fixed-donate-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    background-color: #89CFF0;
+    color: #1c1c1e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+.fixed-donate-btn:hover {
+    background-color: #70b8d0;
+}
+
+/* Collapsible Sections */
+.collapsible {
+    background-color: #2c2c2e;
+    color: #89CFF0;
+    cursor: pointer;
+    padding: 0.75em;
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-size: 1.25em;
+    position: relative;
+    margin-top: 1em;
+    border-radius: 6px;
+}
+.collapsible::after {
+    content: "v";
+    position: absolute;
+    right: 1em;
+}
+.collapsible:not(.active)::after {
+    content: ">";
+}
+.content {
+    padding: 0 1em;
+    padding-bottom: 1em;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #333;
+    border-radius: 6px;
+    margin-bottom: 1em;
+    max-height: none;
+}
+
+/* Favorites Star */
+.star-toggle {
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-right: 0.5em;
+    user-select: none;
+}
+.star-toggle.my-favorite {
+    color: gold;
+}
+
+/* Filter Animations */
+.content ul li {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+}
+
+/* Search Input */
+#search-input {
+    padding: 0.5em;
+    width: 80%;
+    max-width: 400px;
+    font-size: 1em;
+    border: 1px solid #48484a;
+    border-radius: 4px;
+    background-color: #2c2c2e;
+    color: #fff;
+}
+#search-input::placeholder {
+    color: #bbb;
+}
+
+/* Mobile Menu */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #89CFF0;
+    font-size: 2em;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* 3.2 Animated menu toggle */
+}
+@media (max-width: 767px) {
+    .nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+    .nav.active {
+        display: flex;
+    }
+    .menu-toggle {
+        display: block;
+    }
+    .nav.active + .menu-toggle { transform: rotate(90deg); } /* 3.2 */
+}
+
+/* Responsive Queries */
+@media (max-width: 575.98px) {
+    body {
+        margin: 0;
+    }
+    .container {
+        margin-top: 0;
+    }
+    a {
+        font-size: 1.25em;
+    }
+    /* 2.2 Full-width form controls on small screens */
+    .form-control { width: 100% !important; }
+}
+
+/* Quick Wins Touch-spacing */
+.filter-btn { margin-bottom: 1rem; } /* 2.3 */
+.content ul li { margin-bottom: 0.75rem; } /* 2.3 */
+
+/* Custom Kit Options */
+#custom-kit-options {
+    background-color: #2c2c2e;
+    border: 1px solid #48484a;
+    padding: 1em;
+    border-radius: 6px;
+    margin: 1em auto;
+    max-width: 1200px;
+}
+#custom-kit-options h2 {
+    font-size: 1.75em;
+    margin-bottom: 0.5em;
+}
+#custom-kit-options p {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+#custom-kit-options ol {
+    margin-left: 1.5em;
+}
+#custom-kit-options li {
+    margin-bottom: 1em;
+}
+
+/* Logos */
+.powered-by img,
+.powered-by-header img {
+    height: 1.5em;
+    width: auto;
+    vertical-align: middle;
+}
+
+/* FOOTER - Centered and Matching Site Styles */
+.footer.text-center {
+    background-color: #2c2c2e;
+    padding: 1em;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin: 50px auto 1em;
+    max-width: 1200px;
+    text-align: center;
+}
+.footer.text-center .legal-links {
+    margin-bottom: 0.5em;
+}
+.footer.text-center .legal-links a {
+    margin: 0 0.5em;
+    color: #89CFF0;
+    font-size: 1em;
+}
+.footer.text-center p {
+    margin: 0.5em 0;
+    font-size: 1em;
+}
+.footer.text-center .powered-by {
+    margin-top: 0.5em;
+}
+
+/* === Calculator & Shared Styles === */
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.badge-info {
+    background-color: #17a2b8;
+}
+.recommended-method {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 4px solid #28a745;
+    padding: 10px;
+}
+.result-label {
+    font-weight: bold;
+    color: #495057; /* Consider adjusting for dark theme if needed */
+}
+.result-explanation {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Weight Result Emphasis (ClothCalc) */
+.weight-result {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Ratio Highlight (ClothCalc) */
+.ratio-highlight {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-left: 4px solid #007bff;
+    padding: 10px;
+    margin-top: 15px;
+}
+.ratio-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #007bff;
+}
+
+/* Batch Calculator Styles (ClothCalc) */
+.layer-card {
+    border-left: 4px solid #6c757d;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(108, 117, 125, 0.05);
+}
+.layer-card.active {
+    border-left-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
+}
+.layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.layer-title {
+    font-weight: 600;
+    margin: 0;
+}
+.layer-actions {
+    display: flex;
+    gap: 5px;
+}
+.batch-totals {
+    background-color: rgba(52, 58, 64, 0.1);
+    border-left: 4px solid #343a40;
+    padding: 15px;
+    margin-top: 20px;
+}
+.calculator-mode-toggle {
+    margin-bottom: 20px;
+}
+.calculator-mode-toggle .btn {
+    width: 50%;
+}
+.calculator-mode-toggle .btn.active {
+    font-weight: bold;
+}
+.batch-layer-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Affiliate Links Section (Shared) */
+#affiliateLinksContainer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #48484a;
+}
+#affiliateLinksContainer h6 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+#affiliateLinksContainer ul {
+    list-style: none;
+    padding-left: 0;
+}
+#affiliateLinksContainer li {
+    margin-bottom: 0.25rem;
+}
+.affiliate-disclosure-inline {
+    font-size: 0.8em;
+    color: #adb5bd;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+/* Donation Modal Customizations */
+.modal-content-custom {
+    background-color: #2c2c2e;
+    color: #ffffff;
+    border: none;
+}
+.modal-header-custom {
+    border-bottom: 1px solid #48484a;
+}
+.modal-footer-custom {
+    border-top: 1px solid #48484a;
+}
+
+/* ============================================================
+   Print Styles -- MOVED to print_style_fix_v4.css
+   ------------------------------------------------------------
+   The generic print block that used to live here (.no-print,
+   .d-print-block, body margin reset, h1/h2/p/li sizing,
+   .weight-result/.ratio-value) has been consolidated into
+   print_style_fix_v4.css's "-- sitewide print base --" section,
+   alongside the calculator-page print-hide convention it used to
+   compete with. print_style_fix_v4.css is now the single
+   canonical file for print-media CSS (Leo's review, Aug 2026).
+
+   This file (style.css) loads on every page, but
+   print_style_fix_v4.css is currently linked with
+   media="print" only on the 4 calculator pages (mekpcalc,
+   clothcalc, awlgrip, epifanespoly) -- unchanged by this
+   cleanup. Extending it to the rest of the site was evaluated
+   and intentionally NOT done here: print_style_fix_v4.css also
+   hides the site footer, donate button, and mobile menu toggle,
+   which the ~16 non-calculator pages currently print as-is.
+   Linking it there would change their output, not just
+   restructure the CSS, and none of the moved rules are ones
+   those pages currently rely on for anything other than a minor
+   print-only heading/paragraph size reset. Flagged for Leo/Helm
+   to decide whether those pages should also adopt the calculator
+   print convention; not decided unilaterally here.
+   ============================================================ */
+
+/* ============================================================
+   ESTIMATE TOOL ADDITIONS - append to bottom of style.css
+   ============================================================ */
+
+/* -- Page layout -- */
+.est-container { max-width: 1200px; padding-bottom: 3rem; }
+.est-page-header { text-align: center; margin-bottom: 1.5rem; padding-top: 0.5rem; }
+.est-page-header h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+.est-subtitle { color: #aaa; font-size: 1rem; margin: 0; }
+
+/* -- Tier banner -- */
+.tier-banner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.5rem;
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 8px;
+  padding: 0.6rem 1rem; margin-bottom: 1rem; font-size: 0.95rem;
+}
+.tier-label { color: #aaa; font-weight: 600; }
+.tier-label.pro { color: #89CFF0; }
+.tier-actions { display: flex; gap: 0.5rem; }
+.btn-tier {
+  background: transparent; border: 1px solid #89CFF0; color: #89CFF0;
+  border-radius: 5px; padding: 0.3rem 0.85rem; font-size: 0.88rem;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-tier:hover { background: rgba(137,207,240,0.12); }
+.btn-tier-upgrade { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
+.btn-tier-upgrade:hover { background: #70b8d0; color: #1c1c1e; }
+
+/* -- Beta Crew badge -- */
+.beta-crew-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 2px 8px 2px 5px;
+  background: linear-gradient(135deg, #1a6b5a 0%, #0f4a3e 100%);
+  border: 1px solid #2a9b80;
+  border-radius: 20px;
+  color: #7fffd4;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+  text-transform: uppercase;
+  box-shadow: 0 0 6px rgba(42,155,128,0.35);
+  cursor: default;
+}
+.beta-crew-badge .kite-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* -- Toolbar -- */
+.est-toolbar {
+  display: flex; align-items: center; flex-wrap: nowrap; gap: 0.75rem;
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 8px;
+  padding: 0.75rem 1rem; margin-bottom: 1.25rem; overflow-x: auto;
+}
+.toolbar-group { display: flex; align-items: center; gap: 0.5rem; }
+.est-select {
+  background: #1c1c1e; border: 1px solid #48484a; border-radius: 6px;
+  color: #fff; padding: 0.35rem 0.6rem; font-size: 0.9rem; cursor: pointer;
+}
+.est-select:focus { outline: none; border-color: #89CFF0; }
+.est-select-compact { max-width: 160px; }
+
+/* View toggle */
+.view-toggle-wrap { display: flex; border: 1px solid #48484a; border-radius: 6px; overflow: hidden; }
+.btn-view-toggle {
+  background: #1c1c1e; border: none; color: #aaa;
+  padding: 0.35rem 0.9rem; font-size: 0.88rem; cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.btn-view-toggle.active { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
+.btn-view-toggle:hover:not(.active) { background: #2c2c2e; color: #fff; }
+
+/* Report broken link button (next to Buy Here) */
+.btn-report-link {
+  display: inline;
+  background: none;
+  border: none;
+  color: #f5a623;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0 4px;
+  opacity: 0.6;
+}
+.btn-report-link:hover { opacity: 1; }
+
+/* Drag-and-drop handles */
+.col-drag { width: 24px; text-align: center; vertical-align: middle; }
+.drag-handle {
+  cursor: grab;
+  color: #666;
+  font-size: 1rem;
+  user-select: none;
+}
+.drag-handle:active { cursor: grabbing; }
+.drag-handle-card {
+  cursor: grab;
+  color: #666;
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  user-select: none;
+}
+.drag-handle-card:active { cursor: grabbing; }
+.sortable-ghost { opacity: 0.4; background: #2c2c2e; }
+
+/* Pro-feature elements: always visible, grayed/locked for free users */
+.pro-feature.pro-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+.pro-feature.pro-locked:hover { opacity: 0.55; }
+
+/* -- Cards -- */
+.est-card {
+  background: rgba(0,0,0,0.75); border-radius: 10px;
+  padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.est-card-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.1rem; font-weight: 700; color: #89CFF0;
+  border-bottom: 1px solid #333; padding-bottom: 0.6rem; margin-bottom: 1rem;
+}
+.pro-only-card { border-left: 3px solid #89CFF0; }
+.pro-feature-card { border-left: 3px solid #89CFF0; }
+.pro-feature-card.pro-locked-card {
+  opacity: 0.55;
+  pointer-events: none;
+  filter: grayscale(0.3);
+  position: relative;
+}
+.pro-feature-card.pro-locked-card::after {
+  content: '\1F512 Pro feature - upgrade to edit';
+  display: block;
+  font-size: 0.75rem;
+  color: #89CFF0;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+.pro-badge {
+  background: #89CFF0; color: #1c1c1e; font-size: 0.7rem; font-weight: 800;
+  padding: 0.15rem 0.5rem; border-radius: 4px; letter-spacing: 0.05em;
+}
+.scope-hint { font-size: 0.78rem; color: #666; margin-top: 0.4rem; margin-bottom: 0; }
+
+/* -- Expiry warning -- */
+.expiry-warning {
+  background: rgba(224,82,82,0.15); border: 1px solid #e05252;
+  color: #e05252; border-radius: 6px; padding: 0.5rem 0.8rem;
+  margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600;
+}
+
+/* -- Form inputs -- */
+.est-label { display: block; font-size: 0.88rem; color: #ccc; margin-bottom: 0.3rem; font-weight: 500; }
+.req-star { color: #e05252; }
+.est-input {
+  width: 100%; background: #2c2c2e; border: 1px solid #48484a;
+  border-radius: 6px; color: #fff; padding: 0.45rem 0.7rem;
+  font-size: 0.95rem; transition: border-color 0.2s;
+}
+.est-input:focus { outline: none; border-color: #89CFF0; background: #333; }
+.est-input[readonly] { color: #888; cursor: default; }
+.est-textarea {
+  width: 100%; background: #2c2c2e; border: 1px solid #48484a;
+  border-radius: 6px; color: #fff; padding: 0.6rem 0.8rem;
+  font-size: 0.95rem; resize: vertical;
+}
+.est-textarea:focus { outline: none; border-color: #89CFF0; }
+
+/* -- Markup control -- */
+.markup-control { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.markup-input { width: 70px !important; text-align: center; padding: 0.3rem 0.4rem; font-size: 0.9rem; }
+.markup-hint { font-size: 0.78rem; color: #888; white-space: nowrap; }
+
+/* -- Help icons and popovers -- */
+.help-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  background: #2c2c2e; border: 1px solid #48484a;
+  color: #89CFF0; font-size: 0.7rem; font-weight: 700;
+  cursor: pointer; flex-shrink: 0; user-select: none;
+  transition: background 0.2s, border-color 0.2s;
+  line-height: 1;
+}
+.help-icon:hover { background: #3a3a3c; border-color: #89CFF0; }
+.help-popover {
+  display: none;
+  position: fixed; z-index: 9999;
+  width: 280px; max-width: 90vw;
+  background: #1c1c1e; border: 1px solid #48484a; border-radius: 8px;
+  padding: 0.85rem 1rem; font-size: 0.82rem; color: #ccc; line-height: 1.5;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+.help-popover--open { display: block; }
+.help-popover strong { color: #89CFF0; }
+@media (max-width: 600px) {
+  .help-popover { right: -0.5rem; width: 260px; }
+}
+
+/* -- Tables -- */
+.est-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #eee; }
+.est-table thead th {
+  background: #1c1c1e; color: #89CFF0; padding: 0.55rem 0.6rem;
+  text-align: left; font-weight: 600; white-space: normal; line-height: 1.25;
+  border-bottom: 2px solid #333; vertical-align: bottom;
+}
+.est-table tbody tr { border-bottom: 1px solid #2c2c2e; transition: background 0.15s; }
+.est-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.est-table tbody td { padding: 0.4rem 0.5rem; vertical-align: middle; }
+.est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid #333; }
+/* Fixed columns — minimum useful widths so Item column gets all remaining space */
+.col-cost   { width: 72px; }
+.col-markup { width: 58px; }
+.col-retail { width: 68px; }
+.col-qty    { width: 46px; }
+.col-total  { width: 68px; }
+.col-link   { width: 76px; text-align: center; white-space: nowrap; }
+.col-del    { width: 26px; text-align: center; }
+/* Actions header — stacked label, centered, fits 3 narrow icon buttons */
+.col-actions { width: 130px; text-align: center; white-space: normal; line-height: 1.2; }
+/* Actions cell — stack buy link on top, then icon buttons side by side */
+td.col-actions { display: table-cell; }
+td.col-actions .buy-link,
+td.col-actions .buy-link-none { display: inline-block; margin-right: 2px; text-align: center; }
+td.col-actions .btn-report-link { display: inline-block; padding: 0 3px; font-size: 0.95rem; vertical-align: middle; }
+td.col-actions .btn-save-lib,
+td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 0.95rem; }
+/* Item column — no fixed width, takes all remaining space */
+.col-item   { width: auto; }
+.est-table input[type="text"],
+.est-table input[type="number"] {
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
+  color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 40px;
+}
+.est-table input:focus { outline: none; border-color: #89CFF0; }
+/* Item name input fills its column fully */
+.est-table .item-name-input { width: 100%; min-width: 0; }
+.retail-display { color: #89CFF0; font-weight: 600; white-space: nowrap; }
+.line-total-display { font-weight: 600; white-space: nowrap; }
+.subtotal-row td { background: #1c1c1e; }
+.subtotal-label { text-align: right; font-weight: 700; color: #ccc; font-size: 0.9rem; }
+.subtotal-val { font-weight: 700; color: #89CFF0; white-space: nowrap; }
+
+/* -- Buy Here links -- override global a rule -- */
+.buy-link {
+  display: inline-block !important; background: #2c2c2e; color: #89CFF0 !important;
+  border: 1px solid #89CFF0; border-radius: 4px; padding: 0.2rem 0.45rem;
+  font-size: 0.78rem !important; text-decoration: none !important; white-space: nowrap;
+  margin-top: 0 !important; vertical-align: middle;
+  font-weight: normal !important;
+  transition: background 0.15s, color 0.15s; transform: none !important;
+}
+.buy-link:hover,
+.buy-link:active,
+.buy-link:visited {
+  background: rgba(137,207,240,0.25) !important; color: #fff !important;
+  transform: none !important; font-size: 0.78rem !important; margin-top: 0 !important;
+  font-weight: normal !important;
+}
+.buy-link-none { color: #555; font-size: 0.78rem; }
+
+.btn-del-row {
+  background: none; border: none; color: #e05252; font-size: 1.1rem;
+  cursor: pointer; padding: 0.1rem 0.3rem; line-height: 1; transition: color 0.15s;
+}
+.btn-del-row:hover { color: #ff6b6b; }
+.btn-add-row {
+  background: transparent; border: 1px dashed #48484a; color: #89CFF0;
+  border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.88rem;
+  cursor: pointer; margin-top: 0.5rem; transition: border-color 0.2s, background 0.2s;
+}
+.btn-add-row:hover { border-color: #89CFF0; background: rgba(137,207,240,0.07); }
+
+/* -- Repair task cards -- */
+.repair-card {
+  background: rgba(0,0,0,0.75); border-radius: 10px;
+  padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); border-left: 3px solid #89CFF0;
+}
+.repair-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
+.repair-card-actions { display: flex; gap: 0.4rem; align-items: center; }
+.repair-name-input {
+  background: transparent; border: none; border-bottom: 1px solid #48484a;
+  color: #89CFF0; font-size: 1.05rem; font-weight: 700; width: 280px; padding: 0.1rem 0.2rem;
+}
+.repair-name-input:focus { outline: none; border-bottom-color: #89CFF0; }
+.btn-del-task { background: none; border: none; color: #e05252; font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.4rem; }
+.btn-del-task:hover { color: #ff6b6b; }
+.btn-dup-task {
+  background: none; border: 1px solid #48484a; color: #89CFF0;
+  font-size: 0.8rem; border-radius: 4px; cursor: pointer; padding: 0.2rem 0.5rem;
+  transition: background 0.15s;
+}
+.btn-dup-task:hover { background: rgba(137,207,240,0.1); }
+.repair-scope-wrap { margin-top: 0.75rem; }
+.repair-scope-toggle {
+  background: none; border: none; color: #888; font-size: 0.82rem;
+  cursor: pointer; padding: 0; text-decoration: underline;
+}
+.repair-scope-toggle:hover { color: #aaa; }
+.repair-scope-textarea {
+  width: 100%; background: #1c1c1e; border: 1px solid #48484a; border-radius: 5px;
+  color: #ccc; padding: 0.5rem 0.7rem; font-size: 0.88rem; resize: vertical;
+  margin-top: 0.4rem; display: none;
+}
+.repair-scope-textarea:focus { outline: none; border-color: #89CFF0; }
+.repair-task-table { font-size: 0.88rem; width: 100%; border-collapse: collapse; color: #eee; }
+.repair-task-table thead th {
+  background: #1c1c1e; color: #89CFF0; padding: 0.45rem 0.5rem;
+  border-bottom: 2px solid #333; white-space: nowrap; text-align: left;
+}
+.repair-task-table tbody tr { border-bottom: 1px solid #2c2c2e; }
+.repair-task-table tbody td { padding: 0.35rem 0.45rem; vertical-align: middle; }
+.repair-task-table tfoot td { padding: 0.45rem 0.5rem; border-top: 2px solid #333; }
+.repair-task-table input[type="number"],
+.repair-task-table input[type="text"] {
+  background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
+  color: #fff; padding: 0.28rem 0.4rem; font-size: 0.85rem;
+}
+.repair-task-table input[type="number"] { width: 80px; }
+.repair-task-table input[type="text"] { width: 100%; min-width: 140px; }
+.repair-task-table input:focus { outline: none; border-color: #89CFF0; }
+.task-price-display { color: #89CFF0; font-weight: 600; }
+.repair-subtotal-row td { background: #1c1c1e; }
+.repair-subtotal-label { text-align: right; font-weight: 700; color: #ccc; }
+.repair-subtotal-val { font-weight: 700; color: #89CFF0; }
+.btn-add-task-row {
+  background: transparent; border: 1px dashed #48484a; color: #89CFF0;
+  border-radius: 5px; padding: 0.3rem 0.8rem; font-size: 0.85rem;
+  cursor: pointer; margin-top: 0.4rem; transition: border-color 0.2s, background 0.2s;
+}
+.btn-add-task-row:hover { border-color: #89CFF0; background: rgba(137,207,240,0.07); }
+.btn-add-task {
+  background: #89CFF0; color: #1c1c1e; border: none; border-radius: 8px;
+  padding: 0.65rem 1.6rem; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s; margin-bottom: 0.5rem;
+}
+.btn-add-task:hover { background: #70b8d0; }
+
+/* -- Summary -- */
+.est-summary-card { border-left: 3px solid #89CFF0; }
+.summary-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 1rem; color: #ddd; padding: 0.2rem 0;
+}
+.summary-row span:last-child { font-weight: 600; color: #89CFF0; }
+.summary-divider { border-top: 1px solid #333; margin: 0.4rem 0; }
+.summary-grand { font-size: 1.25rem; font-weight: 700; color: #fff !important; padding-top: 0.4rem; }
+.summary-grand span:last-child { color: #fff !important; font-size: 1.3rem; }
+.internal-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #48484a; }
+.internal-label { font-size: 0.82rem; color: #e05252; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
+
+/* -- Legal -- */
+.est-legal-card { border-left: 3px solid #555; }
+.legal-text { font-size: 0.82rem; color: #aaa; line-height: 1.6; margin-bottom: 1.25rem; }
+.sig-block-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
+.sig-block { flex: 1; min-width: 160px; }
+.sig-block-short { flex: 0 0 140px; }
+.sig-line { border-bottom: 1px solid #555; height: 2rem; margin-bottom: 0.3rem; }
+.sig-caption { font-size: 0.78rem; color: #888; }
+
+/* -- Action buttons -- */
+.est-actions {
+  display: flex; flex-wrap: wrap; gap: 0.75rem;
+  justify-content: center; margin: 1.5rem 0 2rem;
+}
+.btn-action {
+  border: none; border-radius: 8px; padding: 0.65rem 1.4rem;
+  font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-action:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-print { background: #2c2c2e; color: #89CFF0; border: 1px solid #89CFF0; }
+.btn-pdf   { background: #89CFF0; color: #1c1c1e; }
+.btn-share { background: #2c2c2e; color: #89CFF0; border: 1px solid #89CFF0; }
+.btn-log   { background: #48484a; color: #fff; border: 1px solid #89CFF0; }
+.btn-new   { background: #48484a; color: #fff; }
+
+/* -- Modals -- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; overflow-y: auto;
+}
+.modal-box {
+  background: #2c2c2e; border-radius: 12px; padding: 2rem;
+  width: 100%; max-width: 700px; position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  margin: auto;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: none;           /* Firefox */
+  -ms-overflow-style: none;        /* IE/Edge */
+}
+.modal-box::-webkit-scrollbar { display: none; } /* Chrome/Safari/Edge */
+.modal-wide { max-width: 1100px; width: 96vw; }
+.modal-close {
+  position: sticky; float: right;
+  top: 0;
+  background: none; border: none; color: #aaa; font-size: 1.4rem;
+  cursor: pointer; line-height: 1; padding: 0 0 0.5rem 0.5rem; z-index: 10;
+}
+.modal-close:hover { color: #fff; }
+.modal-title { color: #fff; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; }
+.modal-sub { color: #aaa; font-size: 0.9rem; margin-bottom: 1rem; }
+.btn-modal-primary {
+  width: 100%; background: #89CFF0; color: #1c1c1e; border: none;
+  border-radius: 7px; padding: 0.6rem; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-modal-primary:hover { background: #70b8d0; }
+.modal-footer-link { text-align: center; margin-top: 0.9rem; font-size: 0.88rem; color: #aaa; }
+.modal-footer-link a { color: #89CFF0; font-size: 0.88rem !important; margin-top: 0 !important; font-weight: normal !important; }
+.log-preview {
+  background: #1c1c1e; border-radius: 6px; padding: 0.75rem 1rem;
+  font-size: 0.88rem; color: #ccc; line-height: 1.7; margin-bottom: 0.5rem;
+}
+.log-preview strong { color: #89CFF0; }
+.saved-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
+.saved-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #1c1c1e; border-radius: 6px; padding: 0.6rem 0.9rem;
+  font-size: 0.9rem; color: #ddd; cursor: pointer; transition: background 0.15s;
+}
+.saved-item:hover { background: #333; }
+.saved-item-meta { font-size: 0.78rem; color: #888; }
+.saved-item-del { background: none; border: none; color: #e05252; font-size: 0.9rem; cursor: pointer; padding: 0.1rem 0.3rem; }
+
+/* -- Plan cards -- */
+.plan-row { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 1rem; }
+
+/* ============================================================
+   TASK STARTER MODAL
+   ============================================================ */
+.task-starter-modal { max-width: 860px; }
+
+/* Tabs */
+.ts-tabs {
+  display: flex; gap: 0.5rem; margin-bottom: 1.25rem;
+  border-bottom: 1px solid #3a3a3c; padding-bottom: 0.75rem;
+}
+.ts-tab {
+  background: none; border: 1px solid #3a3a3c; color: #aaa;
+  border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.9rem;
+  cursor: pointer; transition: all 0.15s;
+}
+.ts-tab:hover { border-color: #89CFF0; color: #89CFF0; }
+.ts-tab.active { background: #89CFF0; color: #1c1c1e; border-color: #89CFF0; font-weight: 700; }
+
+/* Category label */
+.ts-category-label {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #888; margin: 1rem 0 0.5rem;
+}
+.ts-category-label:first-child { margin-top: 0; }
+
+/* Card grid row */
+.ts-row {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.25rem;
+}
+
+/* Preset card */
+.ts-card {
+  background: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 8px;
+  padding: 0.75rem 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  width: calc(25% - 0.57rem); min-width: 140px; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.ts-card:hover { border-color: #89CFF0; background: #252527; }
+.ts-card-icon { font-size: 1.4rem; line-height: 1; }
+.ts-card-name { font-size: 0.9rem; font-weight: 700; color: #fff; }
+.ts-card-desc { font-size: 0.75rem; color: #888; line-height: 1.3; }
+
+/* My Templates card */
+.ts-card-mine { border-color: #4a4a2e; }
+.ts-card-mine:hover { border-color: #e8c84a; background: #252522; }
+.ts-card-actions {
+  display: flex; gap: 0.4rem; margin-top: 0.5rem;
+}
+.ts-use-btn {
+  flex: 1; background: #89CFF0; color: #1c1c1e; border: none;
+  border-radius: 5px; padding: 0.25rem 0.5rem; font-size: 0.78rem;
+  font-weight: 700; cursor: pointer;
+}
+.ts-use-btn:hover { background: #70b8d0; }
+.ts-del-btn {
+  background: none; border: 1px solid #555; color: #e05252;
+  border-radius: 5px; padding: 0.25rem 0.45rem; font-size: 0.78rem;
+  cursor: pointer;
+}
+.ts-del-btn:hover { background: #3a1a1a; border-color: #e05252; }
+
+/* Empty state */
+.ts-empty { color: #888; font-size: 0.88rem; text-align: center; padding: 1.5rem 0; }
+
+/* Footer blank task button */
+.ts-footer {
+  margin-top: 1.25rem; padding-top: 1rem;
+  border-top: 1px solid #3a3a3c; text-align: right;
+}
+.btn-ts-blank {
+  background: none; border: 1px solid #555; color: #aaa;
+  border-radius: 7px; padding: 0.45rem 1.1rem; font-size: 0.9rem;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-ts-blank:hover { border-color: #89CFF0; color: #89CFF0; }
+
+/* Save as Template button on repair card */
+.btn-save-template {
+  background: none; border: 1px solid #4a4a2e; color: #c8a800;
+  border-radius: 5px; padding: 0.2rem 0.6rem; font-size: 0.78rem;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.btn-save-template:hover { background: #2a2a10; border-color: #e8c84a; color: #e8c84a; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .ts-card { width: calc(50% - 0.38rem); }
+}
+.plan-card {
+  flex: 1; min-width: 200px; background: #1c1c1e;
+  border-radius: 10px; padding: 1.25rem; border: 1px solid #333; position: relative;
+}
+.plan-featured { border-color: #89CFF0; }
+.plan-badge {
+  position: absolute; top: -0.7rem; left: 50%; transform: translateX(-50%);
+  background: #89CFF0; color: #1c1c1e; font-size: 0.72rem; font-weight: 700;
+  padding: 0.2rem 0.7rem; border-radius: 20px; white-space: nowrap;
+}
+.plan-name { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+.plan-price { font-size: 2rem; font-weight: 800; color: #89CFF0; }
+.plan-price span { font-size: 1rem; color: #aaa; font-weight: 400; }
+.plan-features { list-style: none; padding: 0; margin: 0 0 1rem; font-size: 0.88rem; }
+.plan-features li { padding: 0.25rem 0; color: #ccc; }
+.feat-yes { color: #7ed47e; }
+.feat-no  { color: #666; }
+.btn-plan {
+  width: 100%; background: #48484a; color: #ccc; border: none;
+  border-radius: 6px; padding: 0.55rem; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;
+}
+.btn-plan:hover { background: #555; }
+.btn-plan-pro { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
+.btn-plan-pro:hover { background: #70b8d0; }
+
+/* -- Footer -- */
+.est-footer { text-align: center; margin-top: 2rem; padding: 1rem; color: #aaa; font-size: 0.85rem; }
+.est-footer a { color: #89CFF0; font-size: 0.85rem !important; margin-top: 0 !important; font-weight: normal !important; }
+
+/* -- Customer view: hide itemized sections -- */
+body.customer-view .customer-hide { display: none !important; }
+body.customer-view .repair-task-table tbody { display: none !important; }
+body.customer-view .repair-task-table thead { display: none !important; }
+body.customer-view .btn-add-task-row { display: none !important; }
+body.customer-view #internalSummaryFull { display: none !important; }
+body.customer-view #customerSummary { display: flex !important; }
+/* Hide materials/paint cards and all cost/markup/retail columns in customer view */
+body.customer-view #materialsCard { display: none !important; }
+body.customer-view #paintCard { display: none !important; }
+body.customer-view .pro-feature-card { display: none !important; }
+body.customer-view .col-cost { display: none !important; }
+body.customer-view .col-markup { display: none !important; }
+body.customer-view .col-retail { display: none !important; }
+body.customer-view .markup-control { display: none !important; }
+
+/* -- Itemized screen view: restore materials/paint cards and task rows (overrides customer-view) -- */
+body.customer-view.fmt-itemized #materialsCard { display: block !important; }
+body.customer-view.fmt-itemized #paintCard { display: block !important; }
+body.customer-view.fmt-itemized .pro-feature-card { display: block !important; }
+body.customer-view.fmt-itemized .repair-task-table tbody { display: table-row-group !important; }
+body.customer-view.fmt-itemized .repair-task-table thead { display: table-row-group !important; }
+body.customer-view.fmt-itemized .customer-hide { display: table-cell !important; }
+body.customer-view.fmt-itemized .btn-add-task-row { display: inline-block !important; }
+body.customer-view.fmt-itemized .col-cost { display: none !important; }
+body.customer-view.fmt-itemized .col-markup { display: none !important; }
+body.customer-view.fmt-itemized .markup-control { display: none !important; }
+body.customer-view.fmt-itemized #internalSummaryFull { display: flex !important; flex-direction: column !important; }
+body.customer-view.fmt-itemized #customerSummary { display: none !important; }
+
+/* -- Print header -- */
+.print-header-block { display: none; }
+
+/* ============================================================
+   ESTIMATE PRINT STYLES - Professional single-page layout
+   ============================================================ */
+@media print {
+
+  /* ============================================================
+     SECTION 1 - SHARED BASE (applies to ALL print modes)
+     Do not add mode-specific rules here.
+  ============================================================ */
+
+  @page { margin: 0.45in .5in; size: letter portrait; }
+
+  *, *::before, *::after { box-sizing: border-box !important; }
+
+  body {
+    background: #fff !important; color: #111 !important;
+    margin: 0 !important; padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+    font-size: 9.5pt !important; line-height: 1.35 !important;
+  }
+
+  /* Override live-site global link styles */
+  a, a:visited, a:hover, a:active {
+    color: #111 !important; font-size: inherit !important;
+    font-weight: inherit !important; margin-top: 0 !important;
+    text-decoration: none !important;
+  }
+
+  /* Override live-site global heading sizes */
+  h1, h2, h3, h4 { font-size: inherit !important; margin: 0 !important; }
+  p, li { font-size: inherit !important; }
+
+  /* -- Hide all screen-only chrome -- */
+  .header, .tier-banner, .est-toolbar, .est-actions, .btn-add-row, .btn-add-task,
+  .btn-del-row, .btn-del-task, .btn-dup-task, .btn-add-task-row, .est-footer,
+  .modal-overlay, nav, .menu-toggle, .d-print-none, .repair-scope-toggle,
+  .est-page-header, .expiry-warning, .pro-badge, .scope-hint,
+  .markup-control, .markup-hint, .buy-link, .buy-link-none,
+  .internal-summary, #internalSummary,
+  .help-icon, .help-popover { display: none !important; }
+
+  /* -- Container -- */
+  .est-container { max-width: 100% !important; padding: 0 4pt !important; margin: 0 !important; }
+
+  /* -- PRINT HEADER -- */
+  .print-header-block {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 5pt;
+    margin-bottom: 5pt;
+    border-bottom: 2.5pt solid #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  .print-header-left {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3pt;
+  }
+  .print-logo-img {
+    max-height: 48pt !important;
+    max-width: 140pt !important;
+    width: auto !important;
+    object-fit: contain;
+  }
+  .print-chemcalc-brand {
+    display: flex !important;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .print-brand-name {
+    font-size: 16pt !important;
+    font-weight: 800 !important;
+    color: #111 !important;
+    letter-spacing: -0.02em;
+  }
+  .print-brand-sub {
+    font-size: 8pt !important;
+    color: #555 !important;
+    font-weight: 400 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .print-header-center {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .print-doc-title {
+    font-size: 18pt !important;
+    font-weight: 900 !important;
+    color: #111 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* Estimate name — shown below REPAIR ESTIMATE title when filled in */
+  .print-est-name {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    margin-top: 2pt !important;
+    text-align: center;
+    font-style: italic;
+  }
+  .print-doc-meta {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 1pt;
+    font-size: 8pt !important;
+    color: #444 !important;
+    margin-top: 3pt;
+  }
+  .print-doc-meta span { display: block !important; }
+
+  .print-header-right {
+    display: flex !important;
+    justify-content: flex-end;
+  }
+  .print-company-block {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    font-size: 8.5pt !important;
+    line-height: 1.5;
+    color: #222 !important;
+  }
+  .print-company-block strong {
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    display: block !important;
+  }
+  .print-company-block span { display: block !important; color: #444 !important; }
+  .print-chemcalc-url {
+    font-size: 9pt !important;
+    color: #555 !important;
+    font-style: italic;
+    text-align: right;
+  }
+
+  /* FREE: hide logo, show ChemCalc brand */
+  body.free-user .print-logo-img { display: none !important; }
+  body.free-user .free-only-print { display: flex !important; }
+  body.free-user .pro-only-print  { display: none !important; }
+  body.free-user .print-chemcalc-url { display: block !important; }
+
+  /* PRO: show logo, hide ChemCalc brand */
+  body.pro-user .print-logo-img { display: block !important; }
+  body.pro-user .free-only-print { display: none !important; }
+  body.pro-user .pro-only-print  { display: flex !important; }
+  body.pro-user .print-chemcalc-url { display: none !important; }
+
+  /* -- Cards: clean white, no shadows -- */
+  .est-card, .repair-card {
+    background: #fff !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-top: 1pt solid #ddd !important;
+    border-radius: 0 !important;
+    margin-bottom: 2pt !important;
+    padding: 2pt 0 !important;
+    page-break-inside: avoid;
+  }
+  /* Info cards: never insert a page break after them - let content flow */
+  #estimateInfoCard, #clientInfoCard, #vesselInfoCard {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+  /* Summary and legal cards: keep together, never break inside */
+  .est-summary-card, .est-legal-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  /* Repair cards: keep together */
+  .repair-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  .est-card-title {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    color: #555 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: none !important;
+    padding-bottom: 1pt !important;
+    margin-bottom: 2pt !important;
+  }
+
+  /* -- Form inputs: transparent, value-only -- */
+  .est-label { font-size: 7pt !important; color: #888 !important; margin-bottom: 1pt !important; }
+  .est-input, .est-textarea {
+    color: #111 !important; background: transparent !important;
+    border: none !important; padding: 0 !important;
+    font-size: 9pt !important; font-weight: 500 !important;
+  }
+  .repair-name-input {
+    color: #111 !important; background: transparent !important;
+    border: none !important; font-size: 10pt !important; font-weight: 700 !important;
+  }
+
+  /* -- Estimate / Client / Vessel: all fields horizontal in one row -- */
+  .est-card .row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0 10pt !important;
+    align-items: flex-start !important;
+  }
+  .est-card .col-md-3,
+  .est-card .col-md-4,
+  .est-card .col-md-6 {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 0 0 0 4pt !important;
+  }
+
+  .est-card .est-label {
+    display: block !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .est-card .est-input {
+    display: block !important;
+    width: 100% !important;
+    white-space: nowrap;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+  }
+  #estimateNumber { font-size: 7.5pt !important; }
+
+
+  /* -- Remove scrollbars from table wrappers -- */
+  .table-responsive {
+    overflow: visible !important;
+    overflow-x: visible !important;
+  }
+
+  /* -- Repair task tables -- */
+  .est-table, .repair-task-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8.5pt !important;
+    color: #111 !important;
+  }
+  .est-table thead th, .repair-task-table thead th {
+    background: #f4f4f4 !important;
+    color: #333 !important;
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    padding: 2pt 5pt !important;
+    border-bottom: 1pt solid #ccc !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .est-table tbody td, .repair-task-table tbody td {
+    padding: 2pt 5pt !important;
+    border-bottom: 0.5pt solid #ddd !important;
+    vertical-align: middle !important;
+  }
+  /* Remove border from hidden cells so they don't render black lines */
+  .est-table td.d-print-none, .repair-task-table td.d-print-none,
+  .est-table th.d-print-none, .repair-task-table th.d-print-none {
+    border: none !important;
+    padding: 0 !important;
+    width: 0 !important;
+  }
+  body.print-itemized .est-table tbody tr,
+  body.print-summary .est-table tbody tr { border-bottom: none !important; }
+  .est-table tfoot td, .repair-task-table tfoot td {
+    padding: 3pt 5pt !important;
+    border-top: 1pt solid #ccc !important;
+    font-weight: 700 !important;
+  }
+  .est-table input, .repair-task-table input {
+    border: none !important; background: transparent !important;
+    color: #111 !important; padding: 0 !important;
+    font-size: 8.5pt !important; width: auto !important;
+  }
+  .retail-display, .line-total-display, .task-price-display,
+  .subtotal-val, .repair-subtotal-val {
+    color: #111 !important; font-weight: 700 !important;
+  }
+  .subtotal-label, .repair-subtotal-label { color: #333 !important; }
+
+  /* -- Summary card -- */
+  .est-summary-card {
+    border-top: 1.5pt solid #111 !important;
+    border-left: none !important;
+  }
+  .summary-grid { gap: 1pt !important; }
+  .summary-row {
+    font-size: 9pt !important;
+    padding: 1pt 0 !important;
+  }
+  .summary-row span:last-child { color: #111 !important; font-weight: 600 !important; }
+  .summary-divider { border-top: 1pt solid #bbb !important; margin: 3pt 0 !important; }
+  .summary-grand {
+    font-size: 12pt !important;
+    font-weight: 800 !important;
+    padding-top: 3pt !important;
+  }
+  .summary-grand span:last-child { color: #111 !important; font-size: 13pt !important; }
+
+  /* -- Scope of work (pro) -- */
+  .pro-only-card {
+    border: none !important;
+    border-top: 1pt solid #ddd !important;
+    border-left: none !important;
+    display: block !important;
+  }
+  .repair-scope-textarea {
+    display: block !important;
+    border: none !important; background: transparent !important;
+    color: #333 !important; padding: 0 !important;
+    font-size: 8.5pt !important; line-height: 1.45 !important;
+    font-style: italic;
+    resize: none !important;
+    overflow: hidden !important;
+  }
+  /* Hide scope block entirely when textarea is empty (placeholder only) */
+  .repair-scope-textarea:placeholder-shown,
+  .est-textarea:placeholder-shown {
+    display: none !important;
+  }
+  .repair-scope-textarea:placeholder-shown + *,
+  .est-textarea:placeholder-shown + * {
+    display: none !important;
+  }
+  /* Hide the whole scope card if its textarea is placeholder-only */
+  #scopeCard:has(.est-textarea:placeholder-shown) {
+    display: none !important;
+  }
+  /* Hide input fields that show only their placeholder (no user value entered) */
+  /* Exception: readonly fields (estimate #, date, valid until) always show */
+  .est-card .est-input:not([readonly]):placeholder-shown {
+    visibility: hidden !important;
+  }
+
+  /* -- Legal & signature -- */
+  .est-legal-card { border-top: 1pt solid #ddd !important; border-left: none !important; }
+  .legal-text {
+    font-size: 7pt !important;
+    color: #666 !important;
+    line-height: 1.3 !important;
+    margin-bottom: 3pt !important;
+  }
+  .sig-block-row {
+    display: flex !important;
+    gap: 20pt !important;
+    margin-top: 3pt !important;
+  }
+  .sig-block { flex: 1 !important; }
+  .sig-block-short { flex: 0 0 100pt !important; }
+  .sig-line {
+    border-bottom: 1pt solid #333 !important;
+    height: 10pt !important;
+    margin-bottom: 2pt !important;
+  }
+  .sig-caption { font-size: 7pt !important; color: #666 !important; }
+
+  /* ============================================================
+     SECTION 2 - INTERNAL COPY (body.print-internal)
+     Shows all columns: Cost, Markup, Retail, Qty, Line Total.
+     DO NOT MODIFY without confirming internal copy PDF still works.
+  ============================================================ */
+  /* Show all internal-only blocks */
+  body.print-internal #materialsCard  { display: block !important; }
+  body.print-internal #scopeCard      { display: block !important; }
+  body.print-internal #scopeCard .scope-snippet-row { display: none !important; }
+  body.print-internal #internalSummaryFull { display: flex !important; flex-direction: column !important; }
+  body.print-internal #customerSummary { display: none !important; }
+  /* Show all columns in internal copy - never hide cost/markup/retail */
+  body.print-internal .col-cost   { display: table-cell !important; }
+  body.print-internal .col-markup { display: table-cell !important; }
+  body.print-internal .col-retail { display: table-cell !important; }
+  body.print-internal .col-qty    { display: table-cell !important; }
+  body.print-internal .col-total  { display: table-cell !important; }
+  /* Subtotal row: hide empty spacer cells, right-align label to fill all visible columns */
+  body.print-internal .subtotal-row .col-cost,
+  body.print-internal .subtotal-row .col-markup,
+  body.print-internal .subtotal-row .col-retail,
+  body.print-internal .subtotal-row .col-qty { display: none !important; }
+  body.print-internal .subtotal-row .subtotal-label {
+    text-align: right !important;
+    font-weight: 700 !important;
+    padding-right: 8pt !important;
+  }
+  body.print-internal .subtotal-row .col-total {
+    text-align: right !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+
+  /* ============================================================
+     SECTION 3 - PRINT SUMMARY (body.print-summary)
+     Client-facing. Hides materials/paint tables and task rows.
+     Shows: task names + subtotals + grand total only.
+  ============================================================ */
+  body.print-summary #materialsCard { display: none !important; }
+  body.print-summary .pro-only-card { display: none !important; }
+  body.print-summary .pro-feature-card { display: none !important; }
+  body.print-summary .customer-hide { display: none !important; }
+  body.print-summary .repair-task-table { display: none !important; }
+  body.print-summary #internalSummaryFull { display: none !important; }
+  body.print-summary #customerSummary { display: flex !important; flex-direction: column !important; }
+  body.print-summary .repair-card { padding: 4pt 0 !important; }
+  body.print-summary .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
+  body.print-summary #scopeCard { display: block !important; }
+  body.print-summary #scopeCard .scope-snippet-row { display: none !important; }
+  body.print-summary .est-legal-card::after {
+    content: 'Estimate generated with ChemCalc Marine Repair Estimator - chemcalc.co';
+    display: block !important; font-size: 7pt !important; color: #aaa !important;
+    text-align: center; margin-top: 6pt; border-top: 0.5pt solid #eee; padding-top: 4pt;
+  }
+
+  /* ============================================================
+     SECTION 4 - PRINT ITEMIZED (body.print-itemized)
+     Client-facing. Shows materials/paint tables with Qty + Line Total only.
+     Hides: Cost, Markup %, Retail Price columns.
+  ============================================================ */
+  body.print-itemized #materialsCard { display: block !important; }
+  body.print-itemized .customer-hide { display: table-cell !important; }
+  body.print-itemized #internalSummaryFull { display: flex !important; flex-direction: column !important; }
+  body.print-itemized #customerSummary { display: none !important; }
+  body.print-itemized .markup-control { display: none !important; }
+  body.print-itemized #scopeCard { display: block !important; }
+  body.print-itemized #scopeCard .scope-snippet-row { display: none !important; }
+  /* Hide contractor-only columns - Qty and Line Total remain visible */
+  body.print-itemized .col-cost   { display: none !important; }
+  body.print-itemized .col-markup { display: none !important; }
+  body.print-itemized .col-retail { display: none !important; }
+  /* Subtotal row: label right-aligns to fill visible space, value aligns with Line Total header */
+  body.print-itemized .subtotal-row .subtotal-label {
+    text-align: right !important;
+    font-weight: 700 !important;
+    padding-right: 8pt !important;
+  }
+  body.print-itemized .subtotal-row .col-qty { display: none !important; }
+  body.print-itemized .subtotal-row .col-total {
+    text-align: right !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+
+  /* ============================================================
+     SECTION 5 - FREE USER
+     Same as Summary but with ChemCalc branding footer.
+  ============================================================ */
+  body.free-user #materialsCard { display: none !important; }
+  body.free-user .pro-only-card { display: none !important; }
+  body.free-user .pro-feature-card { display: none !important; }
+  body.free-user .customer-hide { display: none !important; }
+  body.free-user .repair-task-table { display: none !important; }
+  body.free-user #internalSummaryFull { display: none !important; }
+  body.free-user #customerSummary { display: flex !important; flex-direction: column !important; }
+  body.free-user .repair-card { padding: 4pt 0 !important; }
+  body.free-user .repair-name-input { font-size: 9.5pt !important; font-weight: 700 !important; }
+  body.free-user .est-legal-card::after {
+    content: 'Estimate generated with ChemCalc Marine Repair Estimator - chemcalc.co';
+    display: block !important; font-size: 7pt !important; color: #aaa !important;
+    text-align: center; margin-top: 6pt; border-top: 0.5pt solid #eee; padding-top: 4pt;
+  }
+
+  /* ============================================================
+     SECTION 6 - SHARED SCOPE + TEXTAREA (all modes)
+  ============================================================ */
+  #scopeCard .est-textarea {
+    border: none !important; background: transparent !important;
+    resize: none !important; color: #000 !important;
+    font-size: 9pt !important; line-height: 1.5 !important;
+    padding: 0 !important; height: auto !important;
+    overflow: visible !important; white-space: pre-wrap !important;
+  }
+  #scopeCard .est-card-title { color: #000 !important; font-size: 10pt !important; }
+  #scopeCard .pro-badge { display: none !important; }
+  #scopeCard.pro-locked-card { opacity: 1 !important; pointer-events: auto !important; filter: none !important; }
+  #scopeCard.pro-locked-card::after { display: none !important; }
+}
+
+/* -- Responsive -- */
+@media (max-width: 767px) {
+  .sig-block-row { flex-direction: column; gap: 1rem; }
+  .plan-row { flex-direction: column; }
+  .est-actions { flex-direction: column; align-items: stretch; }
+  .btn-action { text-align: center; }
+  .markup-control { justify-content: flex-start; }
+  .est-toolbar { flex-direction: column; align-items: flex-start; }
+}
+
+/* -- Auth modal tabs -- */
+.auth-tabs { display: flex; gap: 0; margin-bottom: 1.25rem; border-bottom: 2px solid #333; }
+.auth-tab {
+  flex: 1; padding: 0.5rem 1rem; background: transparent;
+  border: none; color: #aaa; font-weight: 600; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.auth-tab.active { color: #e63946; border-bottom-color: #e63946; }
+.auth-tab:hover:not(.active) { color: #fff; }
+
+/* -- Google sign-in button -- */
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%; padding: 0.6rem 1rem; margin-top: 0.75rem;
+  background: #fff; color: #333; border: 1px solid #ccc; border-radius: 4px;
+  font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-google:hover { background: #f5f5f5; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* -- Auth divider -- */
+.auth-divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 1rem 0; color: #666; font-size: 0.8rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: #333;
+}
+
+/* -- pro-user body class: show internal columns on screen -- */
+body.pro-user .internal-col { display: table-cell !important; }
+
+/* -- Auth error -- */
+.auth-error { color: #e05252; font-size: 0.85rem; min-height: 1.2em; margin: 0.3rem 0 0; }
+
+/* -- Trello Integration -- */
+.trello-divider {
+  border-color: #3a3a3c; margin: 1.5rem 0 1rem;
+}
+.trello-section-title {
+  color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;
+}
+.pro-badge-inline {
+  background: #89CFF0; color: #1c1c1e; font-size: 0.7rem;
+  font-weight: 700; border-radius: 4px; padding: 1px 6px;
+  vertical-align: middle; margin-left: 0.4rem; text-transform: uppercase;
+}
+.trello-key-row {
+  display: flex; gap: 0.5rem; align-items: center;
+}
+.trello-key-row .est-input { flex: 1; }
+.btn-trello-auth {
+  background: #0079BF; color: #fff; border: none;
+  border-radius: 6px; padding: 0.45rem 0.85rem;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  white-space: nowrap; transition: background 0.2s;
+}
+.btn-trello-auth:hover { background: #026AA7; }
+.trello-picker-row {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+}
+.trello-picker-row .est-input { flex: 1; min-width: 140px; }
+.btn-trello-load {
+  background: none; border: 1px solid #555; color: #aaa;
+  border-radius: 6px; padding: 0.3rem 0.75rem;
+  font-size: 0.82rem; cursor: pointer; margin-top: 0.4rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-trello-load:hover { border-color: #89CFF0; color: #89CFF0; }
+.trello-status { font-size: 0.85rem; margin: 0.25rem 0 0; min-height: 1.2em; }
+.trello-status.trello-ok    { color: #7ed47e; }
+.trello-status.trello-error { color: #e05252; }
+
+/* Add to Trello action button */
+.btn-trello {
+  background: #0079BF; color: #fff; border: 1px solid #0079BF;
+}
+.btn-trello:hover { background: #026AA7; border-color: #026AA7; }
+.btn-trello.pro-locked {
+  background: #48484a; border-color: #555; color: #888;
+  opacity: 0.55; cursor: not-allowed;
+}
+
+/* -- Custom Estimator Callout (estimate.html) --------------- */
+.custom-est-callout {
+  background: linear-gradient(90deg, #1a3a5c 0%, #2c2c2e 100%);
+  border: 1px solid #2a5a8c;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.custom-est-callout a {
+  color: #89CFF0;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.custom-est-callout a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   Materials Library
+   ============================================================ */
+
+/* Save-to-library star button on material rows */
+.btn-save-lib {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.2s;
+}
+.btn-save-lib:hover { color: #f5c518; }
+
+/* Typeahead dropdown */
+.lib-typeahead-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #1e2530;
+  border: 1px solid #3a4556;
+  border-radius: 6px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  max-height: 240px;
+  overflow-y: auto;
+}
+.lib-typeahead-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #2a3444;
+  transition: background 0.15s;
+}
+.lib-typeahead-item:last-child { border-bottom: none; }
+.lib-typeahead-item:hover,
+.lib-typeahead-item.active { background: #2a3f5f; }
+.lib-ta-name { font-size: 0.9rem; color: #e8edf3; font-weight: 500; }
+.lib-ta-meta { font-size: 0.75rem; color: #7a8fa6; margin-top: 2px; }
+
+/* Library manager inside bizInfoModal */
+.lib-add-form { margin-bottom: 0.5rem; }
+.lib-table-wrap {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #2a3444;
+  border-radius: 6px;
+}
+.lib-table { margin-bottom: 0; font-size: 0.85rem; width: 100%; table-layout: fixed; }
+.lib-table td:last-child, .lib-table th:last-child { text-align: center; padding: 0; }
+.lib-actions-cell { text-align: center; padding: 0 !important; width: 1%; white-space: nowrap; }
+.lib-table td, .lib-table th { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-table .lib-edit { width: 100% !important; min-width: 0; box-sizing: border-box; }
+.lib-table-wrap { overflow-x: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; max-height: 320px; }
+.lib-table { width: calc(100% - 0px); }
+.lib-table thead th {
+  background: #1a2233;
+  color: #7a8fa6;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.lib-table .lib-edit {
+  padding: 4px 6px;
+  font-size: 0.82rem;
+  height: auto;
+}
+.btn-lib-save {
+  background: none;
+  border: none;
+  color: #7ed47e;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+.btn-lib-save:hover { color: #a8f0a8; }
+.btn-lib-del {
+  background: none;
+  border: none;
+  color: #e05c5c;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+.btn-lib-del:hover { color: #ff8888; }
+.lib-status {
+  font-size: 0.82rem;
+  min-height: 1.2rem;
+  margin: 4px 0 8px;
+}
+.lib-ok    { color: #7ed47e; }
+.lib-error { color: #e05c5c; }
+
+/* btn-modal-secondary */
+.btn-modal-secondary {
+  background: #2a3f5f;
+  color: #c8d8f0;
+  border: 1px solid #3a5070;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-modal-secondary:hover { background: #3a5070; }
+
+
+/* ============================================================
+   ESTIMATE HISTORY - merged from history.css
+   ============================================================ */
+/* ============================================================
+   ESTIMATE HISTORY - history.css
+   chemcalc.co | Think & Engage LLC
+   ============================================================ */
+
+/* -- Page layout ------------------------------------------- */
+.hist-container {
+  max-width: 1100px;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.hist-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.hist-page-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #89CFF0;
+  margin: 0 0 0.2rem;
+}
+
+.hist-subtitle {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.hist-new-btn {
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* -- Auth / Pro gates -------------------------------------- */
+.hist-gate {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.hist-gate a {
+  color: #89CFF0;
+}
+
+/* -- Stats bar --------------------------------------------- */
+.hist-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.hist-stat {
+  background: #2c2c2e;
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+  flex: 1;
+}
+
+.hist-stat-val {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #89CFF0;
+  line-height: 1.2;
+}
+
+.hist-stat-lbl {
+  font-size: 0.72rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+/* -- Toolbar ----------------------------------------------- */
+.hist-toolbar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.hist-search {
+  flex: 1;
+  min-width: 200px;
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.hist-search::placeholder { color: #666; }
+.hist-search:focus { outline: none; border-color: #89CFF0; }
+
+.hist-filter {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.hist-filter:focus { outline: none; border-color: #89CFF0; }
+
+/* -- Table ------------------------------------------------- */
+.hist-table-wrap {
+  background: #2c2c2e;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.hist-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.hist-table thead tr {
+  background: #1c1c1e;
+  border-bottom: 2px solid #444;
+}
+
+.hist-table thead th {
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  white-space: nowrap;
+}
+
+.hist-table tbody tr {
+  border-bottom: 1px solid #3a3a3c;
+  transition: background 0.15s;
+}
+
+.hist-table tbody tr:last-child { border-bottom: none; }
+.hist-table tbody tr:hover { background: #333; }
+
+.hist-table td {
+  padding: 0.7rem 0.85rem;
+  vertical-align: middle;
+
+  color: #e0e0e0;
+}
+
+/* Column widths */
+.col-est-num  { min-width: 130px; }
+.col-client   { min-width: 130px; }
+.col-vessel   { min-width: 130px; }
+.col-total    { min-width: 90px; text-align: right; }
+.col-date     { min-width: 90px; white-space: nowrap; }
+.col-status   { min-width: 130px; }
+.col-actions  { min-width: 60px; white-space: nowrap; }
+
+/* Estimate # link */
+.hist-est-link {
+  color: #89CFF0;
+  font-weight: 600;
+  text-decoration: none;
+}
+.hist-est-link:hover { text-decoration: underline; }
+
+/* -- Status select ----------------------------------------- */
+.hist-status-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  max-width: 130px;
+  text-align: center;
+}
+
+.hist-status-select:focus { outline: none; }
+
+.status-draft       { background: #3a3a3c; color: #aaa; }
+.status-sent        { background: #1a3a5c; color: #89CFF0; }
+.status-approved    { background: #1a3d2b; color: #4ade80; }
+.status-inprogress  { background: #3d2e0a; color: #fbbf24; }
+.status-completed   { background: #1a3d2b; color: #86efac; }
+.status-invoiced    { background: #2d1a5c; color: #c084fc; }
+.status-declined    { background: #3d1a1a; color: #f87171; }
+
+/* -- Action buttons ---------------------------------------- */
+.hist-action-btn {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 0.3rem;
+  transition: opacity 0.15s;
+}
+
+.hist-action-btn:hover { opacity: 0.8; }
+
+.hist-open { background: #89CFF0; color: #1c1c1e; }
+.hist-dup  { background: #48484a; color: #fff; }
+.hist-del  { background: #3d1a1a; color: #f87171; }
+
+/* -- Empty / loading states -------------------------------- */
+.hist-empty,
+.hist-loading {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* -- Delete modal ------------------------------------------ */
+.modal-sm { max-width: 420px; }
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.btn-danger {
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-danger:hover { background: #e74c3c; }
+
+/* -- Responsive -------------------------------------------- */
+@media (max-width: 640px) {
+  .hist-page-header { flex-direction: column; }
+  .hist-stats { gap: 0.5rem; }
+  .hist-stat { min-width: 80px; padding: 0.6rem 0.75rem; }
+  .hist-stat-val { font-size: 1.1rem; }
+  .col-vessel, .col-date { display: none; }
+  .hist-action-btn { padding: 0.25rem 0.5rem; font-size: 0.72rem; }
+}
+
+/* ============================================================
+   DEPOSIT CALCULATOR
+   ============================================================ */
+.deposit-calc-block {
+  padding: 0.5rem 0 0;
+}
+
+.deposit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+.deposit-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+}
+
+.deposit-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #89CFF0;
+}
+
+.deposit-select {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.deposit-select:focus { outline: none; border-color: #89CFF0; }
+
+.deposit-custom-input {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  width: 70px;
+}
+
+.deposit-custom-input:focus { outline: none; border-color: #89CFF0; }
+
+.deposit-line span:first-child,
+.deposit-balance-line span:first-child {
+  color: #89CFF0;
+  font-weight: 600;
+}
+
+.deposit-balance-line span:last-child {
+  color: #7ed47e;
+  font-weight: 700;
+}
+
+/* ============================================================
+   SCOPE OF WORK SNIPPETS
+   ============================================================ */
+
+.scope-snippet-row {
+  margin-bottom: 0.5rem;
+}
+
+.scope-snippet-select {
+  background: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #89CFF0;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+}
+
+.scope-snippet-select:focus { outline: none; border-color: #89CFF0; }
+
+/* ============================================================
+   FEEDBACK BUTTON
+   ============================================================ */
+.feedback-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+}
+
+.feedback-link {
+  display: inline-flex;
+  align-items: center;
+  background: #89CFF0;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 20px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  transition: background 0.2s, padding 0.25s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.feedback-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.feedback-label {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.25s ease, opacity 0.2s ease;
+  font-size: 0.85rem;
+}
+.feedback-link:hover {
+  background: #6bb8e0;
+  color: #000;
+  padding: 0.5rem 1rem;
+}
+.feedback-link:hover .feedback-label {
+  max-width: 80px;
+  opacity: 1;
+}
+
+/* ============================================================
+   BETA PLAN PRICING
+   ============================================================ */
+.plan-price-strike {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 1.2rem;
+  margin-right: 0.3rem;
+}
+
+.plan-price-free {
+  color: #7ed47e;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.plan-beta-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin: 1rem 0 0;
+  padding: 0 1rem;
+}
+
+/* ============================================================
+   LIBRARY TABLE - MOBILE
+   ============================================================ */
+@media (max-width: 600px) {
+  .lib-table col.col-name    { width: 28%; }
+  .lib-table col.col-type    { width: 0; }
+  .lib-table col.col-cost    { width: 18%; }
+  .lib-table col.col-markup  { width: 0; }
+  .lib-table col.col-url     { width: 40%; }
+  .lib-table col.col-actions { width: 14%; }
+
+  /* Hide Type and Markup columns on small screens */
+  .lib-table th:nth-child(2),
+  .lib-table td:nth-child(2),
+  .lib-table th:nth-child(4),
+  .lib-table td:nth-child(4) { display: none; }
+
+  .lib-add-form .row > .col-md-3,
+  .lib-add-form .row > .col-md-2,
+  .lib-add-form .row > .col-md-4 { margin-bottom: 0.4rem; }
+
+  .modal-wide { max-width: 98vw !important; margin: 0.5rem auto; }
+  .modal-box  { padding: 1rem; }
+}
+
+/* -- Floating Save Draft button -- */
+.float-save-btn {
+  position: fixed;
+  bottom: 5rem; /* above feedback button */
+  right: 1.25rem;
+  z-index: 999;
+  background: #89CFF0;
+  color: #1c1c1e;
+  border: none;
+  border-radius: 24px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+  transition: background 0.2s, transform 0.15s;
+}
+.float-save-btn:hover { background: #70b8d0; transform: translateY(-2px); }
+
+/* ============================================================
+   FLOATING ACTION PANEL (FAP)
+   Desktop: fixed right-side vertical strip
+   Mobile:  fixed bottom bar
+   ============================================================ */
+
+/* -- Emoji font fix - ensure emoji render everywhere -- */
+body,
+.fap-btn, .fap-icon, .ts-card-icon,
+.feedback-icon, .btn-action, .btn-tier,
+.btn-view-toggle, .est-label, .modal-title,
+.tier-label, .repair-card-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial,
+               "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+               sans-serif;
+}
+
+/* -- Desktop: right-side vertical strip -- */
+.fap {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+}
+
+/* Button base */
+.fap-btn {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(28, 28, 30, 0.92);
+  border: 1px solid #48484a;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  color: #ccc;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.18s, color 0.18s, padding 0.22s ease, gap 0.22s ease, border-color 0.18s;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.45);
+  max-width: 2.6rem; /* icon-only width at rest */
+}
+
+.fap-btn:hover {
+  background: rgba(44, 44, 46, 0.98);
+  color: #fff;
+  border-color: #89CFF0;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem 0.55rem 0.7rem;
+  max-width: 10rem;
+}
+
+.fap-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.fap-label {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-size: 0.82rem;
+  transition: max-width 0.22s ease, opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.fap-btn:hover .fap-label {
+  max-width: 7rem;
+  opacity: 1;
+}
+
+/* Active format button */
+.fap-btn.fap-fmt-active {
+  background: rgba(137, 207, 240, 0.15);
+  border-color: #89CFF0;
+  color: #89CFF0;
+}
+.fap-btn.fap-fmt-active .fap-icon { color: #89CFF0; }
+
+/* Danger (New Estimate) */
+.fap-btn.fap-danger { border-color: #5a3a3a; color: #e07070; }
+.fap-btn.fap-danger:hover { border-color: #e05252; color: #ff8080; background: rgba(80,20,20,0.85); }
+
+/* Format group - tighter spacing */
+.fap-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+/* Divider between groups */
+.fap-divider {
+  width: 1.6rem;
+  height: 1px;
+  background: #48484a;
+  margin: 0.2rem 0.5rem 0.2rem 0;
+  align-self: flex-end;
+}
+
+/* -- Mobile: bottom bar -- */
+@media (max-width: 767px) {
+  .fap {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    transform: none;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-around;
+    padding: 0;
+    background: rgba(28, 28, 30, 0.97);
+    border-top: 1px solid #48484a;
+    border-radius: 0;
+    gap: 0;
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.5);
+  }
+
+  /* Flatten the format group inline */
+  .fap-group {
+    flex-direction: row;
+    gap: 0;
+  }
+
+  .fap-divider { display: none; }
+
+  .fap-btn {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-right: 1px solid #3a3a3c;
+    border-radius: 0;
+    max-width: none;
+    padding: 0.5rem 0.25rem 0.45rem;
+    gap: 0.2rem;
+    background: transparent;
+    box-shadow: none;
+    font-size: 0.7rem;
+    color: #aaa;
+  }
+
+  .fap-btn:last-child { border-right: none; }
+
+  .fap-btn:hover,
+  .fap-btn:active {
+    background: rgba(137, 207, 240, 0.1);
+    color: #89CFF0;
+    border-color: #3a3a3c;
+    padding: 0.5rem 0.25rem 0.45rem;
+    gap: 0.2rem;
+    max-width: none;
+  }
+
+  .fap-icon { font-size: 1.2rem; }
+
+  .fap-label {
+    max-width: none;
+    opacity: 1;
+    font-size: 0.65rem;
+    overflow: visible;
+  }
+
+  .fap-btn:hover .fap-label { max-width: none; opacity: 1; }
+
+  .fap-btn.fap-fmt-active {
+    color: #89CFF0;
+    background: rgba(137, 207, 240, 0.12);
+  }
+
+  /* Push page content above bottom bar */
+  .est-container { padding-bottom: 5rem !important; }
+
+  /* Move feedback button above bottom bar */
+  .feedback-btn { bottom: 4.5rem; }
+}
+
+/* Hide FAP from print */
+@media print {
+  .fap { display: none !important; }
+}
+
+/* ============================================================
+   FLOATING HELP BUTTON & HELP MODAL
+   Used on estimate.html and kits.html
+   ============================================================ */
+.help-float-btn {
+  /* Bottom-right floating-action cluster: Help sits closest to the screen
+     edge, with the BoatMD chat toggle (chatbot_styles.css) and Donate
+     button (Library/Footer.lbi's .fab-donate) stacked above it. See the
+     shared --chrome-fab-right token in the "SITEWIDE HEADER/FOOTER" block
+     below. Recolored to the same tokens (Leo/MP redesign, Phase 0). */
+  position: fixed;
+  bottom: 1.25rem;
+  right: var(--chrome-fab-right, 1.25rem);
+  z-index: 9998;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--chrome-ink-900, #082029);
+  border: none;
+  color: var(--chrome-signal-400, #F2A63C);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--chrome-font-sans, inherit);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
+  transition: transform 150ms var(--chrome-ease-smooth, ease), background 150ms var(--chrome-ease-smooth, ease);
+  line-height: 1;
+}
+.help-float-btn:hover {
+  background: var(--chrome-ink-800, #0E2E3A);
+  transform: translateY(-2px);
+}
+@media (min-width: 992px) {
+  .help-float-btn { bottom: 1.75rem; }
+}
+
+/* Help modal content sections */
+.help-modal-section { display: none; }
+.help-modal-section.active { display: block; }
+.help-modal-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 1rem;
+  counter-reset: step-counter;
+}
+.help-modal-steps li {
+  position: relative;
+  padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+  margin-bottom: 0.5rem;
+  background: #1c1c1e;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  counter-increment: step-counter;
+}
+.help-modal-steps li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: #89CFF0;
+  color: #1c1c1e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.help-modal-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 1rem;
+}
+.help-modal-bullets li {
+  padding: 0.45rem 0.5rem 0.45rem 1.5rem;
+  margin-bottom: 0.4rem;
+  background: #1c1c1e;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  position: relative;
+}
+.help-modal-bullets li::before {
+  content: "\25B8";
+  position: absolute;
+  left: 0.5rem;
+  color: #89CFF0;
+}
+.help-modal-pitch {
+  color: #aaa;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.help-modal-cta-box {
+  background: #1c1c1e;
+  border: 1px solid #48484a;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+.help-modal-cta-box p {
+  color: #aaa;
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+@media print {
+  .help-float-btn { display: none !important; }
+}
+
+/* ===== UPGRADE MODAL — PLAN TOGGLE ===== */
+.plan-toggle-row {
+  display: flex; gap: 0.4rem; margin: 0.6rem 0 0.5rem;
+}
+.plan-toggle-btn {
+  flex: 1; padding: 0.4rem 0.5rem; border-radius: 6px; border: 1px solid #555;
+  background: #2c2c2e; color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+}
+.plan-toggle-btn.active {
+  background: #89CFF0; color: #1c1c1e; border-color: #89CFF0; font-weight: 700;
+}
+.plan-toggle-save {
+  font-size: 0.72rem; background: #7ed47e; color: #1c1c1e;
+  padding: 0.1rem 0.35rem; border-radius: 4px; margin-left: 0.3rem; font-weight: 700;
+}
+
+/* ═══ Global Account Modal Tabs ═══════════════════════════════════════════ */
+.acct-tabs-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid #333;
+  overflow: hidden;
+}
+.acct-tab {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+.acct-tab.active { color: #5bb8d4; border-bottom-color: #5bb8d4; }
+.acct-tab:hover:not(.active) { color: #fff; }
+.acct-panels { padding: 0.5rem 0; }
+.acct-tab-panel { animation: fadeIn 0.2s ease; }
+.acct-section-title { color: #fff; font-size: 1.1rem; margin-bottom: 0.75rem; }
+.acct-subsection-title { color: #ccc; font-size: 0.95rem; margin-bottom: 0.5rem; }
+.sub-tier-display { color: #ccc; font-size: 1rem; margin-bottom: 1rem; }
+.sub-tier-display strong { color: #5bb8d4; }
+.plan-toggle-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+.btn-plan-toggle {
+  background: #1e2a3a;
+  border: 1px solid #3a5070;
+  color: #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-plan-toggle.active { background: #2a4060; border-color: #5bb8d4; color: #fff; }
+.btn-plan-toggle:hover:not(.active) { background: #253550; }
+.btn-logout-sm {
+  background: none;
+  border: 1px solid #e05252;
+  color: #e05252;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+.btn-logout-sm:hover { background: rgba(224, 82, 82, 0.15); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ============================================================
+   SITEWIDE DESIGN TOKENS + HEADER/FOOTER DARK CHROME REDESIGN
+   ------------------------------------------------------------
+   Phase 0 of the approved full-site translation
+   (claude/ChemCalc_FullSite_Blueprint.md): a CSS custom-property
+   token system translated from the Magic Patterns "MEKP
+   Calculator" artifact's tailwind.config.js, plus the sitewide
+   header/footer/floating-action-cluster visual language from
+   components/layout/SiteHeader.tsx, SiteFooter.tsx and
+   FloatingActions.tsx
+   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw).
+   The :root block below is the token system every page should
+   reference going forward (paper/ink/signal/sea colors, shadows,
+   timing, fonts) rather than adding new hardcoded hex.
+
+   The header/footer styles here apply to the markup in
+   Library/nav.lbi and Library/Footer.lbi, which render on every
+   page via Dreamweaver library includes -- editing this section
+   changes the header/footer everywhere. The floating-action
+   cluster (Donate/BoatMD chat/Help) is styled here plus in
+   chatbot_styles.css; see .fab-donate and .help-float-btn.
+
+   Everything header/footer-specific below is scoped under the
+   .site-header-dark / .site-footer-dark compound classes (same
+   "new class alongside the old one" pattern as
+   .help-float-btn.mekp-help-btn further up this file), so it only
+   touches the header/footer and never collides with unrelated
+   .header/.nav/.footer usage. The base .header/.nav/.menu-toggle/
+   .footer.text-center rules earlier in this file are left in
+   place, unedited, for minimal diff -- Library/nav.lbi and
+   Library/Footer.lbi no longer emit the class combinations those
+   old rules key off (.header alone still applies -- see print
+   note below -- but .footer.text-center no longer matches), so
+   those old declarations are superseded here rather than removed.
+   Fonts (Inter, IBM Plex Mono) are loaded via the @import at the
+   very top of this file and used only by the header/footer/
+   floating-action-cluster components -- this does not change
+   body-copy typography elsewhere on the site.
+
+   PRINT: hiding the header/nav/footer on print is NOT handled
+   here. It already works two ways that this redesign deliberately
+   keeps intact rather than duplicating:
+     1. Sitewide (all pages, via this file's own pre-existing print
+        block above): bare `.header` and `nav` element selectors --
+        satisfied because the new header keeps the "header" class
+        and the "nav"/"mainNav" element/id.
+     2. Calculator pages only (print_style_fix_v4.css, linked on
+        mekpcalc/clothcalc/awlgrip/epifanespoly): `body > header`,
+        `body > footer`, `.menu-toggle`, `.d-print-none` -- all
+        satisfied structurally (header/footer stay direct children
+        of body) and by class (`d-print-none` kept on <header>,
+        `menu-toggle` kept on the toggle button).
+   No new print class was introduced; print stays governed by
+   print_style_fix_v4.css as-is.
+   ============================================================ */
+
+:root {
+  /* Ink (dark) scale */
+  --chrome-ink-950: #04141A;
+  --chrome-ink-900: #082029;
+  --chrome-ink-800: #0E2E3A;
+  --chrome-ink-700: #17414F;
+  --chrome-ink-600: #295C6A;
+  --chrome-ink-500: #4A7C88;
+
+  /* Paper (light) scale */
+  --chrome-paper: #EFF2F1;
+  --chrome-paper-card: #FFFFFF;
+  --chrome-paper-line: #DCE3E2;
+  --chrome-paper-muted: #F6F8F7;
+
+  /* Signal (orange accent) scale */
+  --chrome-signal-50: #FDF3E4;
+  --chrome-signal-200: #F6D9A8;
+  --chrome-signal-400: #F2A63C;
+  --chrome-signal-500: #E1861C;
+  --chrome-signal-600: #B96813;
+
+  /* Sea (teal accent) scale */
+  --chrome-sea-400: #2E9AA5;
+  --chrome-sea-500: #0F7A85;
+  --chrome-sea-600: #0A5D66;
+
+  /* Shadows */
+  --chrome-shadow-panel: 0 1px 2px rgba(4, 20, 26, 0.04), 0 12px 32px -18px rgba(4, 20, 26, 0.22);
+  --chrome-shadow-lift: 0 18px 44px -20px rgba(4, 20, 26, 0.45);
+
+  /* Timing */
+  --chrome-ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Fonts */
+  --chrome-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --chrome-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Shared right-edge offset for the bottom-right floating-action cluster
+     (Donate / BoatMD chat toggle / Help) -- see .fab-donate below,
+     chatbot_styles.css's #chemcalc-chatbot/.chatbot-window, and
+     .help-float-btn above. */
+  --chrome-fab-right: 1.25rem;
+}
+@media (min-width: 992px) {
+  :root { --chrome-fab-right: 1.75rem; }
+}
+
+/* ---------- Header ---------- */
+.header.site-header-dark {
+  display: block;
+  background: var(--chrome-ink-950);
+  color: #ffffff;
+  font-family: var(--chrome-font-sans);
+  padding: 0;
+  margin: 0 -1em 2em;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: none;
+}
+.site-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.85rem 1.5rem;
+  position: relative;
+}
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none !important;
+  margin: 0 !important;
+  font-size: 1em !important;
+  font-weight: normal !important;
+}
+.site-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  border-radius: 8px;
+  background: var(--chrome-signal-400);
+  color: var(--chrome-ink-950);
+}
+.site-brand-badge svg { width: 1.15rem; height: 1.15rem; display: block; }
+.site-brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.site-brand-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+.site-brand-tagline {
+  margin-top: 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--chrome-ink-500);
+  white-space: nowrap;
+}
+.site-brand:hover .site-brand-name { color: var(--chrome-signal-400); }
+.site-brand:focus-visible {
+  outline: 2px solid var(--chrome-signal-400);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.site-header-dark .nav {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.15rem;
+  margin: 0;
+}
+.site-header-dark .nav a {
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.site-header-dark .nav a:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  text-decoration: none !important;
+}
+.site-header-dark .nav a:focus-visible {
+  outline: 2px solid var(--chrome-signal-400);
+  outline-offset: 2px;
+}
+.site-header-dark .nav-auth-indicator {
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-family: var(--chrome-font-sans);
+}
+.site-header-dark .nav-auth-login {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.site-header-dark .nav-auth-login:hover {
+  border-color: var(--chrome-signal-400);
+  color: var(--chrome-signal-400);
+  background: transparent;
+}
+.site-header-dark .nav-auth-name {
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.45rem 0.6rem;
+  white-space: nowrap;
+}
+
+.site-header-dark .menu-toggle {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #ffffff;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  position: static;
+  top: auto;
+  right: auto;
+  font-size: 1.5em;
+}
+.site-header-dark .menu-toggle:hover {
+  border-color: var(--chrome-signal-400);
+  color: var(--chrome-signal-400);
+}
+/* Menu/X icon swap -- self-contained on the button itself (its own inline
+   onclick toggles .is-open), independent of Library/global-scripts.lbi's
+   click handler (which toggles #mainNav's own "active" class to show/hide
+   the mobile menu). Both listeners fire off the same click; neither is
+   touched by the other. */
+.site-header-dark .menu-toggle svg { width: 1.15rem; height: 1.15rem; display: block; }
+.site-header-dark .menu-toggle .icon-close { display: none; }
+.site-header-dark .menu-toggle.is-open .icon-menu { display: none; }
+.site-header-dark .menu-toggle.is-open .icon-close { display: block; }
+
+@media (max-width: 991.98px) {
+  .site-header-dark .menu-toggle { display: inline-flex; }
+  .site-header-dark .nav {
+    display: none;
+    flex: 1 1 100%;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--chrome-ink-900);
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  .site-header-dark .nav.active { display: flex; }
+  .site-header-dark .nav a { display: block; width: 100%; text-align: left; }
+  .site-header-dark .nav-auth-indicator { margin: 0.4rem 0 0; width: 100%; }
+  .site-header-dark .nav-auth-login,
+  .site-header-dark .nav-auth-name { width: 100%; justify-content: center; }
+}
+/* Body's own left/right margin (1em by default, 0 at <=575.98px -- see
+   body{} near the top of this file) would otherwise leave a gap down
+   each side of the full-bleed bar; cancelled here rather than editing
+   the shared body{} rule. */
+@media (max-width: 575.98px) {
+  .header.site-header-dark { margin-left: 0; margin-right: 0; }
+}
+
+/* ---------- Footer ---------- */
+.footer.site-footer-dark {
+  display: block;
+  background: var(--chrome-ink-950);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--chrome-font-sans);
+  padding: 0;
+  margin: 3em -1em 1em;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: none;
+  text-align: center;
+}
+@media (max-width: 575.98px) {
+  .footer.site-footer-dark { margin-left: 0; margin-right: 0; }
+}
+.site-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+@media (min-width: 992px) {
+  .site-footer-inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+.site-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.site-footer-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  font-family: var(--chrome-font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--chrome-signal-400);
+}
+.site-footer-brand-text {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-align: left;
+}
+.site-footer-brand-name {
+  display: block;
+  font-weight: 600;
+  color: #ffffff;
+}
+.site-footer-dark .legal-links {
+  margin: 0;
+}
+.site-footer-dark .legal-links a {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  margin: 0 0.4em;
+}
+.site-footer-dark .legal-links a:hover {
+  color: var(--chrome-signal-400);
+}
+.site-footer-dark p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Floating-action cluster: Donate ----------
+   Bottom-right stack, matching FloatingActions.tsx: Help (closest to the
+   edge, above) sits at bottom ~1.25/1.75rem, the BoatMD chat toggle
+   (chatbot_styles.css) sits above that, Donate sits at the top of the
+   stack. .fixed-donate-btn (old blue pill, further up this file) is no
+   longer emitted by Library/Footer.lbi and is left in place unused, same
+   minimal-diff pattern as the rest of this section. */
+.fab-donate {
+  position: fixed;
+  right: var(--chrome-fab-right, 1.25rem);
+  bottom: 9.5rem;
+  z-index: 1050;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--chrome-ink-900);
+  color: #ffffff;
+  padding: 0.6rem 1.15rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--chrome-font-sans);
+  box-shadow: var(--chrome-shadow-lift);
+  cursor: pointer;
+  transition: border-color 150ms var(--chrome-ease-smooth), color 150ms var(--chrome-ease-smooth);
+}
+.fab-donate:hover {
+  border-color: var(--chrome-signal-400);
+  color: var(--chrome-signal-400);
+}
+.fab-donate svg { width: 1rem; height: 1rem; flex: none; }
+@media (min-width: 992px) {
+  .fab-donate { bottom: 10.25rem; }
+}
+@media print {
+  .fab-donate { display: none !important; }
+}
+
+/* Donation modal -- recolored to tokens (was inline hex on each element in
+   Footer.lbi). Content/fields/PayPal form are unchanged. */
+.fab-donate-modal {
+  background-color: var(--chrome-ink-900);
+  color: #ffffff;
+  border: none;
+}
+.fab-donate-modal .modal-header,
+.fab-donate-modal .modal-footer {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.fab-donate-modal .close {
+  color: #ffffff;
+}
+
+/* Help modal panel: open-only fade + scale/translate transition (~220ms,
+   matching MP's FloatingActions.tsx AnimatePresence values), scoped to
+   #helpModal only -- no other .modal-overlay instance (task starter,
+   upgrade, login, etc.) is touched. openHelpModal()/openModal()/
+   closeModal() are unchanged -- they still just flip the element's inline
+   display style; @starting-style is what lets that plain toggle animate on
+   the way in. The close direction can't be animated this way without a
+   JS/class-based hook (out of scope -- chatbot.js/estimate.js/
+   global-account-modal.js are not touched), so closing stays instant, and
+   browsers without @starting-style support keep the instant show/hide
+   behavior in both directions. */
+#helpModal.modal-overlay {
+  opacity: 1;
+  transition: opacity 220ms var(--chrome-ease-smooth), display 220ms allow-discrete;
+}
+#helpModal .modal-box {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity 220ms var(--chrome-ease-smooth), transform 220ms var(--chrome-ease-smooth);
+}
+@starting-style {
+  #helpModal.modal-overlay { opacity: 0; }
+  #helpModal .modal-box { opacity: 0; transform: scale(0.96) translateY(12px); }
+}

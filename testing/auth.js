@@ -1,0 +1,238 @@
+/* ============================================================
+   auth.js — ChemCalc Estimator Authentication
+   Supabase email + Google OAuth, session management, profile
+   ============================================================ */
+
+// Supabase client _sb is now initialized globally in supabase-client.js
+// Ensure supabase-client.js is loaded before auth.js
+
+// Current session state
+let currentUser    = null;
+let currentProfile = null;
+
+/* ── Initialise on page load ─────────────────────────────── */
+let authInitDone = false;
+async function authInit() {
+  if (authInitDone) return;
+  authInitDone = true;
+  const { data: { session } } = await _sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    await loadProfile();
+  }
+  applyAuthUI();
+
+  // Listen for auth state changes (login / logout / token refresh)
+  _sb.auth.onAuthStateChange(async (event, session) => {
+    if (session) {
+      currentUser = session.user;
+      await loadProfile();
+    } else {
+      currentUser    = null;
+      currentProfile = null;
+    }
+    applyAuthUI();
+  });
+}
+
+/* ── Load profile from Supabase ──────────────────────────── */
+async function loadProfile() {
+  if (!currentUser) return;
+  const { data, error } = await _sb
+    .from('profiles')
+    .select('*')
+    .eq('id', currentUser.id)
+    .single();
+  if (!error && data) currentProfile = data;
+}
+
+/* ── Apply UI based on auth state ────────────────────────── */
+function applyAuthUI() {
+  const tierLabel    = document.getElementById('tierLabel');
+  const loginBtn     = document.getElementById('loginBtn');
+  const logoutBtn    = document.getElementById('logoutBtn');
+  const upgradeBtn   = document.querySelector('.btn-tier-upgrade');
+  const manageSubBtn = document.getElementById('manageSubBtn');
+  const tier         = currentProfile ? currentProfile.tier : 'free';
+  const proActive    = isPro();
+
+  if (currentUser) {
+    const name = currentProfile?.full_name || currentUser.email;
+    const betaTester = currentProfile?.beta_tester === true;
+    if (tierLabel) {
+      const lockIcon = proActive ? '\uD83D\uDD13' : '\uD83D\uDD10';
+      const tierText = proActive ? 'Pro' : 'Free';
+      const badgeHTML = betaTester
+        ? ' <span class="beta-crew-badge" title="Beta Crew Member"><img src="kite_icon_32.png" alt="kite" class="kite-icon"> Beta Crew</span>'
+        : '';
+      tierLabel.innerHTML = lockIcon + ' ' + tierText + ' \u2014 ' + name + badgeHTML;
+      tierLabel.className = 'tier-label' + (proActive ? ' pro' : '');
+    }
+    if (loginBtn)  loginBtn.style.display  = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    // Show Manage Subscription for Pro, Upgrade button for Free
+    if (upgradeBtn)   upgradeBtn.style.display   = proActive ? 'none'         : 'inline-block';
+    if (manageSubBtn) manageSubBtn.style.display = proActive ? 'inline-block' : 'none';
+  } else {
+    if (tierLabel) {
+      tierLabel.textContent = '\uD83D\uDD10 Free Plan';
+      tierLabel.className   = 'tier-label';
+    }
+    if (loginBtn)     loginBtn.style.display     = 'inline-block';
+    if (logoutBtn)    logoutBtn.style.display    = 'none';
+    if (upgradeBtn)   upgradeBtn.style.display   = 'inline-block';
+    if (manageSubBtn) manageSubBtn.style.display = 'none';
+  }
+
+  // Tell estimate.js what tier we're on
+  if (typeof setUserTier === 'function') setUserTier(proActive ? 'pro' : tier);
+}
+
+/* ── Email / Password login ──────────────────────────────── */
+async function doLogin() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl    = document.getElementById('loginError');
+  if (errEl) errEl.textContent = '';
+
+  if (!email || !password) {
+    if (errEl) errEl.textContent = 'Please enter your email and password.';
+    return;
+  }
+
+  const { error } = await _sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    if (errEl) errEl.textContent = error.message;
+  } else {
+    closeModal('loginModal');
+  }
+}
+
+/* ── Google OAuth login ──────────────────────────────────── */
+async function doGoogleLogin() {
+  const { error } = await _sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.href,
+      queryParams: {
+        prompt: 'select_account'
+      }
+    }
+  });
+  if (error) alert('Google sign-in failed: ' + error.message);
+}
+
+/* ── Email sign-up ───────────────────────────────────────── */
+async function doSignup() {
+  const email    = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const name     = document.getElementById('signupName').value.trim();
+  const errEl    = document.getElementById('signupError');
+  if (errEl) errEl.textContent = '';
+
+  if (!email || !password || !name) {
+    if (errEl) errEl.textContent = 'All fields are required.';
+    return;
+  }
+  if (password.length < 8) {
+    if (errEl) errEl.textContent = 'Password must be at least 8 characters.';
+    return;
+  }
+
+  const { error } = await _sb.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: name } }
+  });
+
+  if (error) {
+    if (errEl) errEl.textContent = error.message;
+  } else {
+    closeModal('loginModal');
+    alert('Account created! Check your email to confirm your address, then log in.');
+  }
+}
+
+/* ── Logout ──────────────────────────────────────────────── */
+async function doLogout() {
+  await _sb.auth.signOut();
+}
+
+/* ── Save estimate to Supabase ───────────────────────────── */
+async function saveEstimateToSupabase(payload) {
+  if (!currentUser) return { error: { message: 'Not logged in.' } };
+
+  var matTotal  = (payload.materials || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
+  var paintTotal = (payload.paint || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
+
+  const row = {
+    user_id:         currentUser.id,
+    company_name:    currentProfile?.company_name || 'ChemCalc',
+    estimate_number: payload.estimateNumber,
+    estimate_name:   payload.estimateName || '',
+    valid_until:     payload.estimateValidUntil || null,
+    customer_first:  payload.clientFirst  || '',
+    customer_last:   payload.clientLast   || '',
+    customer_phone:  payload.clientPhone  || '',
+    customer_email:  payload.clientEmail  || '',
+    boat_name:       payload.boatName     || '',
+    boat_make:       payload.boatMake     || '',
+    boat_model:      payload.boatModel    || '',
+    hin:             payload.boatHIN      || '',
+    materials_total: matTotal,
+    paint_total:     paintTotal,
+    labor_total:     parseFloat(payload.grandTotal) || 0,
+    grand_total:     parseFloat(payload.grandTotal) || 0,
+    hourly_rate:     parseFloat(payload.hourlyRate) || 0,
+    estimate_data:   payload,
+    status:          'draft',
+    notes:           payload.scopeNotes || ''
+  };
+
+  return await _sb.from('estimates').insert(row).select().single();
+}
+
+/* ── Load saved estimates from Supabase ──────────────────── */
+async function loadEstimatesFromSupabase() {
+  if (!currentUser) return [];
+  const { data, error } = await _sb
+    .from('estimates')
+    .select('id, estimate_number, estimate_name, customer_first, customer_last, boat_make, boat_model, grand_total, created_at, updated_at, status')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+  if (error) return [];
+  return data || [];
+}
+
+/* ── Load a single estimate by ID ────────────────────────── */
+async function loadEstimateById(id) {
+  if (!currentUser) return null;
+  const { data, error } = await _sb
+    .from('estimates')
+    .select('estimate_data')
+    .eq('id', id)
+    .eq('user_id', currentUser.id)
+    .single();
+  if (error || !data) return null;
+  return data.estimate_data;
+}
+
+/* ── Delete a saved estimate ─────────────────────────────── */
+async function deleteEstimateById(id) {
+  if (!currentUser) return;
+  await _sb.from('estimates').delete().eq('id', id).eq('user_id', currentUser.id);
+}
+
+/* ── Get current profile (for estimate.js to read) ──────── */
+function getProfile()    { return currentProfile; }
+function getUser()       { return currentUser; }
+function isLoggedIn()    { return !!currentUser; }
+function isPro()         { return currentProfile?.tier === 'pro' || currentProfile?.subscription_status === 'active'; }
+function isBetaTester()  { return currentProfile?.beta_tester === true; }
+
+/* ── Auto-init: run authInit on every page that loads auth.js ── */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', authInit);
+} else {
+  authInit();
+}

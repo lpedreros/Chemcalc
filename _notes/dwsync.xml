@@ -3,10 +3,10 @@
 <file name="clothcalc.js" server="Z:/Documents/Work/Think & Engage. LLC/Website/Chemcalc/" local="133912013823509531" remote="133912013820000000" Dst="2" />
 <file name="chatbot_standalone.js" server="Z:/Documents/Work/Think & Engage. LLC/Website/Chemcalc/" local="134056932020000000" remote="134056932020000000" Dst="2" />
 <file name="chatbot_styles.css" server="Z:/Documents/Work/Think & Engage. LLC/Website/Chemcalc/" local="134056932160000000" remote="134056932160000000" Dst="2" />
-<file name="chatbot.js" server="157.173.209.17" local="134300797039991064" remote="134300796600000000" Dst="2" />
+<file name="chatbot.js" server="157.173.209.17" local="134300797039991064" remote="134331959400000000" Dst="2" />
 <file name="index.html" server="157.173.209.17" local="134306818611645361" remote="134306820000000000" Dst="2" />
 <file name="estimate.html" server="157.173.209.17" local="134306818363779423" remote="134306820000000000" Dst="2" />
-<file name="style.css" server="157.173.209.17" local="134304468595780671" remote="134304473400000000" Dst="2" />
+<file name="style.css" server="157.173.209.17" local="134304468595780671" remote="134331959400000000" Dst="2" />
 <file name="affiliate_links.js" server="157.173.209.17" local="134300871492966812" remote="134303614800000000" Dst="2" />
 <file name="estimate.js" server="157.173.209.17" local="134303586000000000" remote="134303601000000000" Dst="2" />
 <file name="auth.js" server="157.173.209.17" local="134300797094605455" remote="134300796600000000" Dst="2" />
@@ -19,7 +19,7 @@
 <file name="awlgripscript.js" server="157.173.209.17" local="134316155956696634" remote="134316156000000000" Dst="2" />
 <file name="calculators.html" server="157.173.209.17" local="134304468295005100" remote="134304473400000000" Dst="2" />
 <file name="chatbot_api.py" server="157.173.209.17" local="134258640942084689" remote="134272519200000000" Dst="2" />
-<file name="chatbot_styles.css" server="157.173.209.17" local="134258640942084689" remote="134272519200000000" Dst="2" />
+<file name="chatbot_styles.css" server="157.173.209.17" local="134258640942084689" remote="134331959400000000" Dst="2" />
 <file name="clothcalc.html" server="157.173.209.17" local="134315249938560717" remote="134315251800000000" Dst="2" />
 <file name="clothcalc.js" server="157.173.209.17" local="134304600758000572" remote="134304600600000000" Dst="2" />
 <file name="CNAME" server="157.173.209.17" local="134258640942064735" remote="134272519200000000" Dst="2" />
@@ -33,7 +33,7 @@
 <file name="legal.html" server="157.173.209.17" local="134306818739558233" remote="134306820000000000" Dst="2" />
 <file name="LICENSE" server="157.173.209.17" local="134258640942064735" remote="134272519200000000" Dst="2" />
 <file name="main.js" server="157.173.209.17" local="134295641975975624" remote="134295642600000000" Dst="2" />
-<file name="manifest.json" server="157.173.209.17" local="134258640942169688" remote="134272519200000000" Dst="2" />
+<file name="manifest.json" server="157.173.209.17" local="134258640942169688" remote="134331959400000000" Dst="2" />
 <file name="mekp-init.js" server="157.173.209.17" local="134258640942169688" remote="134272519200000000" Dst="2" />
 <file name="mekp-safety.html" server="157.173.209.17" local="134306818829128483" remote="134306820000000000" Dst="2" />
 <file name="mekpcalc.html" server="157.173.209.17" local="134315250275525990" remote="134315251800000000" Dst="2" />
@@ -50,21 +50,21 @@
 <file name="default.php" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="requirements.txt" server="157.173.209.17" local="134056512000000000" remote="134056512000000000" Dst="2" />
 <file name="trello.js" server="157.173.209.17" local="134272652834198516" remote="134272653000000000" Dst="2" />
-<file name="materials_library.js" server="157.173.209.17" local="134295886810000000" remote="134295886800000000" Dst="2" />
+<file name="materials_library.js" server="157.173.209.17" local="134295886810000000" remote="134331959400000000" Dst="2" />
 <file name="history.html" server="157.173.209.17" local="134306818503094473" remote="134306820000000000" Dst="2" />
 <file name="history.js" server="157.173.209.17" local="134272720805859739" remote="134272720800000000" Dst="2" />
 <file name=".htaccess" server="157.173.209.17" local="134272589400000000" remote="134272589400000000" Dst="2" />
 <file name="task_presets.js" server="157.173.209.17" local="134300871448113697" remote="134300873400000000" Dst="2" />
 <file name="trello-setup.html" server="157.173.209.17" local="134306823096242604" remote="134315251800000000" Dst="2" />
-<file name="supabase-client.js" server="157.173.209.17" local="134295640653068722" remote="134295641400000000" Dst="2" />
+<file name="supabase-client.js" server="157.173.209.17" local="134295640653068722" remote="134331959400000000" Dst="2" />
 <file name="supabase_schema.sql" server="157.173.209.17" local="134272519200000000" remote="134272519200000000" Dst="2" />
-<file name="stripe-checkout.js" server="157.173.209.17" local="134305346790718799" remote="134305347000000000" Dst="2" />
+<file name="stripe-checkout.js" server="157.173.209.17" local="134305346790718799" remote="134331959400000000" Dst="2" />
 <file name="chatbot_standalone.js" server="157.173.209.17" local="134296732200000000" remote="134296732200000000" Dst="2" />
 <file name="calc-tracker.js" server="157.173.209.17" local="134300846088025623" remote="134300845800000000" Dst="2" />
 <file name="email-results.js" server="157.173.209.17" local="134300735314969167" remote="134300735400000000" Dst="2" />
-<file name="global-auth.js" server="157.173.209.17" local="134300816894973604" remote="134300817000000000" Dst="2" />
+<file name="global-auth.js" server="157.173.209.17" local="134300816894973604" remote="134331959400000000" Dst="2" />
 <file name="index.ts" server="157.173.209.17" local="134300735315127642" remote="134300735400000000" Dst="2" />
-<file name="global-account-modal.js" server="157.173.209.17" local="134305346756048571" remote="134305347000000000" Dst="2" />
-<file name="meta-pixel.js" server="157.173.209.17" local="134306716779280539" remote="134306819400000000" Dst="2" />
+<file name="global-account-modal.js" server="157.173.209.17" local="134305346756048571" remote="134331959400000000" Dst="2" />
+<file name="meta-pixel.js" server="157.173.209.17" local="134306716779280539" remote="134331959400000000" Dst="2" />
 <file name="affiliate-click-tracker.js" server="157.173.209.17" local="134315267779098200" remote="134315268600000000" Dst="2" />
 </dwsync>

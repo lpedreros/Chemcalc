@@ -1,0 +1,42 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- ============================================================
+     Common head resources — loaded on every page.
+     To update sitewide: edit this library item only.
+     DO NOT put page-specific meta (title, description, OG,
+     canonical, JSON-LD schema) here — those stay per-page.
+     ============================================================ -->
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="/images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+<!-- Google Fonts: Inter + IBM Plex Mono -- used by the sitewide dark
+     header/footer chrome (Library/nav.lbi, Library/Footer.lbi; see the
+     "SITEWIDE HEADER/FOOTER" section at the bottom of style.css) and
+     already used page-scoped by mekpcalc-redesign.css on the MEKP
+     calculator. Approved design: Magic Patterns
+     (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<!-- Site stylesheet -->
+<link rel="stylesheet" href="/style.css">
+
+<!-- Chatbot styles -->
+<link rel="stylesheet" href="/chatbot_styles.css">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag( ){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DTECSH4N52');
+</script>
+
+<!-- Meta Pixel -->
+<script src="/meta-pixel.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>

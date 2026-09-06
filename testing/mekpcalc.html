@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta & SEO -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="/manifest.json">
+  <title>MEKP Calculator for Polyester Resin &amp; Gelcoat | ChemCalc</title>
+  <meta name="description" content="Calculate the precise amount of MEKP catalyst needed for polyester resin or gelcoat based on volume and temperature. Ensure proper curing with ChemCalc's free MEKP calculator. Features Duratec override and custom percentage options.">
+  <meta name="keywords" content="MEKP calculator, catalyst calculator, polyester resin, gelcoat, marine repair, chemical calculator, MEKp percentage, Duratec, ChemCalc">
+  <link rel="canonical" href="https://chemcalc.co/mekpcalc.html" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="MEKP Calculator for Polyester Resin &amp; Gelcoat | ChemCalc" />
+  <meta property="og:description" content="Calculate precise MEKP amounts based on resin/gelcoat volume and temperature. Includes Duratec override." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://chemcalc.co/mekpcalc.html" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  <meta property="og:image:alt" content="ChemCalc MEKP Calculator interface">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MEKP Calculator for Polyester Resin & Gelcoat | ChemCalc" />
+  <meta name="twitter:description" content="Calculate precise MEKP amounts based on resin/gelcoat volume and temperature. Includes Duratec override." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- JSON-LD (Updated Schema) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebPage", "WebApplication"],
+    "name": "MEKP Calculator for Polyester Resin & Gelcoat | ChemCalc",
+    "description": "Calculate the precise amount of MEKP catalyst needed for polyester resin or gelcoat based on volume and temperature. Ensure proper curing with ChemCalc's free MEKP calculator. Features Duratec override and custom percentage options.",
+    "url": "https://chemcalc.co/mekpcalc.html",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    },
+    "mainEntity": {
+      "@type": "HowTo",
+      "name": "How to Use the MEKP Calculator",
+      "description": "Calculate the correct MEKP catalyst amount for polyester resin or gelcoat.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Select Measurement System",
+          "text": "Choose between Imperial (oz, qt, gal, °F) or Metric (mL, L, °C) units.",
+          "url": "https://chemcalc.co/mekpcalc.html#unitSystem"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Enter Resin/Gelcoat Volume",
+          "text": "Input the total volume of resin or gelcoat you are mixing and select the corresponding unit (e.g., oz, qt, gal, mL, L).",
+          "url": "https://chemcalc.co/mekpcalc.html#resinVolume"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Enter Ambient Temperature",
+          "text": "Input the current ambient temperature and select Fahrenheit or Celsius. This helps determine the recommended MEKP percentage.",
+          "url": "https://chemcalc.co/mekpcalc.html#ambientTemp"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Adjust MEKP Percentage (Optional)",
+          "text": "Optionally, check the box if using Duratec 904-001 (locks MEKP at 2%) or use the slider to set a custom percentage between 1% and 3%. Otherwise, the calculator uses a percentage based on temperature.",
+          "url": "https://chemcalc.co/mekpcalc.html#customPercentage"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "View Results",
+          "text": "The calculator automatically displays the recommended MEKP percentage, the percentage used for calculation, and the required MEKP amount in CCs and drops.",
+          "url": "https://chemcalc.co/mekpcalc.html#mekpRecommended"
+        }
+      ]
+    }
+  }
+  </script>
+
+  <!-- Favicon & CSS -->
+  <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="style.css" rel="stylesheet">
+  <!-- MEKP Calculator redesign — page-scoped, does not affect other calculators -->
+  <link href="mekpcalc-redesign.css" rel="stylesheet">
+	<link rel="stylesheet" href="print_style_fix_v4.css" media="print">
+
+	<!-- Meta Pixel -->
+	<script src="/meta-pixel.js"></script>
+
+<!-- Adsense
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1179454606770448"
+     crossorigin="anonymous"></script>
+  <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+</script>  -->
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+	<link rel="stylesheet" href="/chatbot_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="/supabase-client.js"></script>
+	<script src="affiliate-click-tracker.js"></script>
+	<script src="/global-auth.js"></script>
+<script src="/global-account-modal.js?v=1"></script>
+</head>
+<body>
+<!-- AdSense AMP
+	<amp-auto-ads type="adsense"
+        data-ad-client="ca-pub-1179454606770448">
+</amp-auto-ads> -->
+	<!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
+     Shared icon sprite (Phase 0 design system, ChemCalc_FullSite_Blueprint.md)
+     Inline SVG symbols, no icon-library dependency. Translated from the
+     lucide-react icons used by the Magic Patterns MEKP Calculator artifact
+     (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). Built once,
+     included sitewide so future phases can reuse it without redefining.
+
+     Usage: <svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-NAME"/></svg>
+
+     Currently wired up: icon-flask (Library/nav.lbi brand badge),
+     icon-menu / icon-x (Library/nav.lbi mobile toggle), icon-heart-handshake
+     (Library/Footer.lbi Donate button). The rest (user, printer,
+     thermometer, beaker, percent, ruler, star, search, chevron-down,
+     message-circle) are pre-built here for later phases (calculator pages,
+     estimator, account UI) -- not yet referenced anywhere.
+     ============================================================ -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" focusable="false">
+  <symbol id="icon-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+  </symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+  </symbol>
+  <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+  </symbol>
+  <symbol id="icon-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+  </symbol>
+  <symbol id="icon-beaker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/>
+  </symbol>
+  <symbol id="icon-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+  </symbol>
+  <symbol id="icon-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 17 17 3l4 4L7 21Z"/><path d="m14.5 5.5 2 2"/><path d="m11.5 8.5 2 2"/><path d="m8.5 11.5 2 2"/><path d="m5.5 14.5 2 2"/>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </symbol>
+  <symbol id="icon-message-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </symbol>
+  <symbol id="icon-heart-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/><path d="m12 5-3 3 3 3-2 2"/>
+  </symbol>
+</svg>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="header site-header-dark d-print-none">
+  <div class="site-header-inner">
+    <a href="/index.html" class="site-brand">
+      <span class="site-brand-badge" aria-hidden="true"><svg width="20" height="20"><use href="#icon-flask"/></svg></span>
+      <span class="site-brand-text">
+        <span class="site-brand-name">ChemCalc</span>
+        <span class="site-brand-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" onclick="this.classList.toggle('is-open')">
+      <svg class="icon-menu" width="20" height="20" aria-hidden="true"><use href="#icon-menu"/></svg>
+      <svg class="icon-close" width="20" height="20" aria-hidden="true"><use href="#icon-x"/></svg>
+    </button>
+    <nav id="mainNav" class="nav" aria-label="Primary">
+      <a href="/index.html">Home</a>
+	<a href="/calculators.html">Calculators</a>
+      <a href="/estimate.html">Estimator</a>
+      <a href="/services.html">Services</a>
+      <a href="/kits.html">Kits</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
+      <span id="navAuthIndicator" class="nav-auth-indicator"></span>
+    </nav>
+  </div>
+</header>
+<!-- #EndLibraryItem --><main class="container mekp-app d-print-none">
+
+  <!-- Title band -->
+  <div class="mekp-hero">
+    <h1 class="mekp-hero-title">MEKP Calculator</h1>
+    <p class="mekp-hero-tagline">For Polyester Resins &amp; Gelcoats</p>
+    <p class="mekp-hero-copy">Enter your batch volume and shop temperature to get an exact catalyst measurement in ccs and drops — the numbers pros and first-time repairers can both work from.</p>
+  </div>
+
+  <div class="mekp-grid">
+    <div class="mekp-form-col">
+      <div class="mekp-fields">
+
+        <!-- Measurement System -->
+        <section class="mekp-field-card" id="unitSystemCard">
+          <div class="mekp-field-head">
+            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
+            <div>
+              <h2 class="mekp-field-title">Measurement System</h2>
+              <p class="mekp-field-hint">Sets the units used throughout.</p>
+            </div>
+          </div>
+          <!-- Visible control: a two-button toggle — site owner's explicit
+               instruction, same safe pattern as the Ambient Temperature
+               toggle below (the approved mockup itself still uses a
+               <select> here — see CalculatorForm.tsx). The hidden select
+               keeps id="unitSystem" with a plain .value of
+               "imperial"/"metric" in sync with it, so mekscript.js's
+               calculateMEKP()/updateVolumeUnits() — which read this exact
+               element by that exact id/value contract — run completely
+               unmodified. See mekpcalc-enhance.js for the sync logic. -->
+          <div class="mekp-unit-toggle" role="group" aria-label="Measurement system">
+            <button type="button" class="mekp-unit-btn" data-system="imperial" aria-pressed="true">Imperial</button>
+            <button type="button" class="mekp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
+          </div>
+          <select id="unitSystem" hidden><option value="imperial" selected>Imperial (oz / qt / gal, °F)</option><option value="metric">Metric (mL / L, °C)</option></select>
+        </section>
+
+        <!-- Ambient Temperature -->
+        <section class="mekp-field-card" id="ambientTempCard">
+          <div class="mekp-field-head">
+            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M12 15v-5"/></svg></span>
+            <div>
+              <h2 class="mekp-field-title">Ambient Temperature</h2>
+              <p class="mekp-field-hint">Shop or on-water temperature at time of mixing.</p>
+            </div>
+          </div>
+          <div class="mekp-input-row">
+            <label class="sr-only" for="ambientTemp">Ambient temperature</label>
+            <input type="number" id="ambientTemp" class="mekp-input" placeholder="Enter temperature">
+            <!-- Visible control: a two-button toggle (mockup pattern). The
+                 hidden input below keeps id="tempUnit" with a plain
+                 .value of "fahrenheit"/"celsius" in sync with it, so
+                 mekscript.js's calculateMEKP() — which reads this exact
+                 element by that exact id/value contract — runs completely
+                 unmodified. See mekpcalc-enhance.js for the sync logic. -->
+            <div class="mekp-unit-toggle" role="group" aria-label="Temperature unit">
+              <button type="button" class="mekp-unit-btn" data-unit="fahrenheit" aria-pressed="true">&deg;F</button>
+              <button type="button" class="mekp-unit-btn" data-unit="celsius" aria-pressed="false">&deg;C</button>
+            </div>
+            <input type="hidden" id="tempUnit" value="fahrenheit">
+          </div>
+          <!-- Placement matches the approved mockup's CalculatorForm.tsx:
+               the temperature note sits directly under this card's
+               input/toggle row, not in the results panel. Single
+               location — the approved ResultsPanel.tsx has no temp text
+               at all. -->
+          <p id="tempAdvice" class="mekp-result-advisory"></p>
+        </section>
+
+        <!-- Resin Volume -->
+        <section class="mekp-field-card mekp-field-card-wide" id="resinVolumeCard">
+          <div class="mekp-field-head">
+            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/></svg></span>
+            <div>
+              <h2 class="mekp-field-title">Resin / Gelcoat Volume</h2>
+              <p class="mekp-field-hint">How much material you are catalyzing in this batch.</p>
+            </div>
+          </div>
+          <div class="mekp-input-row">
+            <div class="mekp-input-with-unit">
+              <label class="sr-only" for="resinVolume">Resin or gelcoat volume</label>
+              <input type="number" id="resinVolume" class="mekp-input" placeholder="Enter volume">
+              <small id="resinVolumeUnit" class="mekp-input-suffix">oz</small>
+            </div>
+            <label class="sr-only" for="volumeUnit">Volume unit</label>
+            <select id="volumeUnit" class="mekp-select"></select>
+          </div>
+        </section>
+
+        <!-- MEKP Percentage & Duratec -->
+        <section class="mekp-field-card mekp-field-card-wide" id="mekpPercentageCard">
+          <div class="mekp-field-head">
+            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>
+            <div>
+              <h2 class="mekp-field-title">MEKP Percentage</h2>
+              <p class="mekp-field-hint">Lock to the Duratec ratio, or dial in your own.</p>
+            </div>
+          </div>
+
+          <label class="mekp-duratec-toggle" for="usingDuratec">
+            <input type="checkbox" id="usingDuratec" class="mekp-checkbox">
+            <span>
+              <span class="mekp-duratec-title">Using Duratec 904&#8209;001 Additive? <span class="mekp-badge">Auto 2%</span></span>
+              <span class="mekp-duratec-hint">Check if using Duratec Hi-Gloss Additive to lock MEKP at 2%</span>
+            </span>
+          </label>
+          <!-- Shown only while the checkbox above is checked (see
+               mekpcalc-enhance.js) — hidden otherwise, replacing the old
+               always-visible static line. -->
+          <small id="duratecHelp" class="mekp-duratec-locked-msg" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span>Locked at 2% for Duratec 904&#8209;001 &mdash; the custom percentage slider is disabled while this is active.</span>
+          </small>
+
+          <div class="mekp-slider-label-row">
+            <label for="customPercentage">Custom Percentage (optional)</label>
+            <span id="customPercentageValue">1.8%</span>
+          </div>
+          <input type="range" id="customPercentage" class="mekp-slider" min="1" max="3" step="0.05" value="1.8">
+          <div class="mekp-slider-scale"><span>1%</span><span>2%</span><span>3%</span></div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="mekp-results-col">
+      <section class="mekp-results-panel" id="resultsCard" aria-label="Calculated results">
+        <div class="mekp-results-head">
+          <h2>Mix Result</h2>
+          <!-- Inline next to the title, matching ResultsPanel.tsx exactly —
+               not a separate full-width bar. Presentation only, parsed by
+               mekpcalc-enhance.js from the real strings calculateMEKP()
+               writes into the four sr-only elements below (same
+               extraction approach as mekpcalc-print.js). No calculation
+               logic lives here. -->
+          <div class="mekp-result-status" id="mekpStatusPill" aria-live="polite">On recommendation</div>
+        </div>
+        <div class="mekp-results-body">
+          <div class="mekp-result-primary">
+            <p class="mekp-result-primary-label">Add this much MEKP catalyst</p>
+            <p class="mekp-result-hero"><span id="mekpHeroValue">&mdash;</span><span class="mekp-result-hero-unit">cc</span></p>
+            <p class="mekp-result-sub">&asymp; <span id="mekpHeroDrops">&mdash;</span> drops</p>
+          </div>
+
+          <div class="mekp-result-compare">
+            <div class="mekp-compare-box">
+              <span class="mekp-compare-label">Recommended %</span>
+              <span class="mekp-compare-value" id="mekpCompareRecommended">&mdash;</span>
+            </div>
+            <div class="mekp-compare-box">
+              <span class="mekp-compare-label">Percentage used</span>
+              <span class="mekp-compare-value" id="mekpCompareUsed">&mdash;</span>
+            </div>
+          </div>
+
+          <!-- Real calculateMEKP() output — left in the DOM verbatim so
+               mekscript.js's getElementById targets (and the print
+               letterhead's own parsing of these same strings) keep
+               working completely unmodified. Visually hidden but still
+               announced to assistive tech in full-sentence form. -->
+          <p id="mekpRecommended" class="sr-only">Recommended MEKP % (based on temperature):</p>
+          <p id="mekpPercentage" class="sr-only">Using <span id="pctSource">slider</span> value:</p>
+          <p id="mekpCcs" class="sr-only">MEKP CCs:</p>
+          <p id="mekpDrops" class="sr-only">MEKP Drops:</p>
+
+          <div id="mekpEmailCapture" class="mekp-email-capture"></div>
+
+          <div class="mekp-affiliate-block" id="affiliateLinksContainer">
+            <h3>Related Products</h3>
+            <ul id="affiliateLinksList" class="mekp-affiliate-list"></ul>
+            <span class="mekp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+          </div>
+
+          <div class="mekp-print-cta">
+            <button id="printButton" class="mekp-print-btn">Print Results</button>
+          </div>
+          <!-- #printQrCode intentionally lives in the print letterhead
+               footer now (see #mekpPrintLetterhead below) so it survives
+               the on-screen results card being hidden entirely for print.
+               mekscript.js still generates it exactly as before — this is
+               the same real QR call, just a new home in the DOM. -->
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Tips & Safety / Other Calculators -->
+  <!-- Per-link description + arrow icon match ResourceCard.tsx / data/resources.ts
+       exactly (detail copy quoted verbatim from data/resources.ts); labels and
+       hrefs stay the site's real, working ones. -->
+  <div class="mekp-resources-grid">
+    <section class="mekp-resource-card">
+      <h2>Tips &amp; Safety</h2>
+      <p class="mekp-resource-desc">MEKP is an organic peroxide. Read these before you open the bottle.</p>
+      <ul class="mekp-resource-links">
+        <li>
+          <a href="mekp-safety.html" class="mekp-resource-link">
+            <span class="mekp-resource-link-text">
+              <span class="mekp-resource-link-title">MEKP Safety Guidelines</span>
+              <span class="mekp-resource-link-detail">Handling, PPE, storage and spill response</span>
+            </span>
+            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.bottompaintstore.com/image/catalog/products/Duratec/DS%20904-001.pdf" target="_blank" rel="noopener noreferrer" class="mekp-resource-link">
+            <span class="mekp-resource-link-text">
+              <span class="mekp-resource-link-title">Duratec 904&#8209;001 Hi&#8209;Gloss Additive Spec Sheet</span>
+              <span class="mekp-resource-link-detail">Hi-Gloss additive technical data</span>
+            </span>
+            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="legal.html" class="mekp-resource-link">
+            <span class="mekp-resource-link-text">
+              <span class="mekp-resource-link-title">Legal Disclaimer</span>
+              <span class="mekp-resource-link-detail">Results are guidance &mdash; always verify against the TDS</span>
+            </span>
+            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <section class="mekp-resource-card">
+      <h2>Other Calculators</h2>
+      <p class="mekp-resource-desc">More mixing tools for hull, deck and topside work.</p>
+      <ul class="mekp-resource-links">
+        <li>
+          <a href="clothcalc.html" class="mekp-resource-link">
+            <span class="mekp-resource-link-text">
+              <span class="mekp-resource-link-title">Fiberglass Resin Calculator</span>
+              <span class="mekp-resource-link-detail">Resin and cloth quantities by laminate schedule</span>
+            </span>
+            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="awlgrip.html" class="mekp-resource-link">
+            <span class="mekp-resource-link-text">
+              <span class="mekp-resource-link-title">Awlgrip Paint Mix Calculator</span>
+              <span class="mekp-resource-link-detail">Base, converter and reducer ratios</span>
+            </span>
+            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="epifanespoly.html" class="mekp-resource-link">
+            <span class="mekp-resource-link-text">
+              <span class="mekp-resource-link-title">Epifanes Polyurethane Mix Calculator</span>
+              <span class="mekp-resource-link-detail">Two-part mixing for brush or spray</span>
+            </span>
+            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Feedback Button Section -->
+  <div class="mekp-report-banner">
+    <div>
+      <h2>Spot something off, or need another ratio?</h2>
+      <p>Tell us what to fix or add — every report is read by the team behind ChemCalc.</p>
+    </div>
+    <button id="feedbackBtn" class="mekp-report-btn">Report an Issue / Suggest a Feature</button>
+  </div>
+  <!-- End Feedback Button Section -->
+
+</main>
+
+<!-- ============================================================
+     Print-only letterhead summary. Hidden on screen via Bootstrap's
+     d-none, shown only inside @media print via d-print-block — the
+     same convention already used by #printQrCode on this page (see
+     print_style_fix_v4.css). Populated by mekpcalc-print.js from the
+     calculator's real inputs and calculateMEKP()'s already-computed
+     output; calculateMEKP() itself is never called from here.
+     ============================================================ -->
+<section id="mekpPrintLetterhead" class="d-none d-print-block">
+  <div class="mekp-lh-head">
+    <div class="mekp-lh-brand">
+      <span class="mekp-lh-mark"><img src="images/Think-and-Engage-Logo1c-Black-Seal.png" alt=""></span>
+      <span>
+        <span class="mekp-lh-name">ChemCalc</span>
+        <span class="mekp-lh-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </div>
+    <div class="mekp-lh-doc">
+      <p class="mekp-lh-doc-title">MEKP Calculator — Mix Results</p>
+      <p class="mekp-lh-doc-meta">Generated <span id="printGeneratedOn"></span> &middot; chemcalc.co/mekpcalc</p>
+    </div>
+  </div>
+
+  <dl class="mekp-lh-recap">
+    <div>
+      <dt>Batch Volume</dt>
+      <dd id="printRecapVolume">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Ambient Temperature</dt>
+      <dd id="printRecapTemp">&mdash;</dd>
+    </div>
+    <div>
+      <dt>MEKP Method</dt>
+      <dd id="printRecapMethod">&mdash;</dd>
+    </div>
+  </dl>
+
+  <div class="mekp-lh-primary">
+    <p class="mekp-lh-primary-label">Add this much MEKP catalyst</p>
+    <p class="mekp-lh-primary-value"><span id="printRecapCcs">&mdash;</span><span class="unit">cc</span></p>
+    <p class="mekp-lh-primary-sub" id="printRecapDrops">&mdash;</p>
+  </div>
+
+  <dl class="mekp-lh-compare">
+    <div>
+      <dt>Recommended (by temp)</dt>
+      <dd id="printRecapRecommended">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Percentage used</dt>
+      <dd id="printRecapUsed">&mdash;</dd>
+    </div>
+  </dl>
+
+  <p class="mekp-lh-advisory" id="printRecapAdvisory"></p>
+
+  <div class="mekp-lh-footer">
+    <p class="mekp-lh-disclaimer">Reference only &mdash; always confirm cure characteristics against your resin manufacturer&rsquo;s technical data sheet. Recalculate before every batch; temperature and catalyst percentage both change gel time.</p>
+    <div class="mekp-lh-qr">
+      <div id="printQrCode"></div>
+      <span>Scan to reopen</span>
+    </div>
+  </div>
+</section>
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button â€” bottom of the bottom-right floating-action
+     cluster (closest to the screen edge; see --chrome-fab-right and
+     .help-float-btn in style.css). Restyled trigger only â€”
+     onclick="openHelpModal()" and each page's #helpModal / helpContent
+     tiers are unchanged. -->
+<!-- Each page must have its own help modal with a matching data-target ID -->
+<!-- Pattern: data-target="#pageNameHelpModal" â€” see estimate.html for reference -->
+<!-- mekp-help-btn: page-scoped re-skin only, to the mockup's palette.
+     Shape/position/z-index/hover mechanics all still come from the
+     shared .help-float-btn rule in style.css (untouched, used by other
+     pages too) â€” this just recolors it. The 3-tier modal below and its
+     onclick="openHelpModal()" wiring are unchanged. -->
+<button class="help-float-btn mekp-help-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">
+  <span aria-hidden="true">?</span>
+</button><!-- #EndLibraryItem --><!-- ===== MEKP CALCULATOR HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
+      <h3 class="modal-title">How to Use the MEKP Calculator</h3>
+      <p class="help-modal-pitch">MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+        <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+        <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+        <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to save your estimates, email results, and access the full Repair Estimator.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the MEKP Calculator</h3>
+      <p class="help-modal-pitch">MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+        <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+        <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+        <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to save your estimates, email results, and access the full Repair Estimator.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">MEKP Calculator &mdash; Pro Quick Reference</h3>
+      <ul class="help-modal-bullets">
+        <li><strong>Standard ratio:</strong> 1.5% MEKP by volume of resin.</li>
+        <li><strong>Hot weather (&gt;85&deg;F):</strong> Drop to 1% to extend pot life.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Increase to 2% for full cure.</li>
+        <li><strong>Duratec 904-001:</strong> Use 2% for a tack-free finish coat.</li>
+        <li><strong>Never exceed 3%</strong> &mdash; excess catalyst weakens the laminate.</li>
+        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
+      </ul>
+    </div>
+  </div>
+</div><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Donate — top of the bottom-right floating-action cluster (with the
+     BoatMD chat toggle from chatbot_styles.css and the page Help button
+     from Library/HelpButton.lbi below it; see --chrome-fab-right and
+     .fab-donate in style.css). Trigger + modal chrome restyled to tokens
+     only — the PayPal form fields below are unchanged. -->
+<button id="donateButton" class="fab-donate d-print-none" data-toggle="modal" data-target="#donationModal">
+  <svg width="16" height="16" aria-hidden="true"><use href="#icon-heart-handshake"/></svg>
+  Donate
+</button>
+
+<!-- Donation Modal (PayPal snippet unchanged) -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content fab-donate-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+        <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+        <hr>
+        <div class="donation-options">
+          <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+            <input type="hidden" name="no_recurring" value="0" />
+            <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Section -->
+<footer class="footer site-footer-dark">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">
+      <span class="site-footer-badge" aria-hidden="true">T&amp;E</span>
+      <span class="site-footer-brand-text">
+        <span class="site-footer-brand-name">Think &amp; Engage</span>
+        Parent brand of ChemCalc
+      </span>
+    </div>
+    <div class="legal-links mb-2">
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/cookie.html">Cookie Policy</a>
+    </div>
+    <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
+  </div>
+</footer>
+<!-- #EndLibraryItem --><!-- JS: correct order ensures init runs after main script -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(reg => console.log("ServiceWorker registered:", reg))
+    .catch(err => console.error("SW registration failed:", err));
+}
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Load affiliate links data first -->
+<script src="affiliate_links.js"></script>
+<script src="calc-tracker.js"></script>
+<script src="email-results.js"></script>
+<script src="mekscript.js"></script>
+<!-- MEKP redesign: print letterhead sync (see file header comment) — loads
+     after mekscript.js so its listeners always run after calculateMEKP() -->
+<script src="mekpcalc-print.js"></script>
+<!-- MEKP redesign audit pass 2: unit toggle shim, temp advisory, results
+     panel restructure, slider gradient, Duratec locked message, default
+     pre-fill — see file header comment. Loads after mekscript.js so its
+     DOMContentLoaded handler always fires after calculateMEKP() has run. -->
+<script src="mekpcalc-enhance.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Inject email capture into the results card
+    injectEmailCaptureUI('mekpEmailCapture', 'MEKP Catalyst', ['mekpRecommended', 'mekpPercentage', 'mekpCcs', 'mekpDrops', 'tempAdvice']);
+  });
+</script>
+<script src="main.js"></script>
+<script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+
+<!-- BoatMD Chatbot (global — loads on every page) -->
+<script src="/chatbot.js"></script>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 1. Hide current page link from nav
+    // Build the current page path to match root-relative hrefs (e.g. /index.html)
+    var currentPath = window.location.pathname;
+    // Normalise bare domain root to /index.html
+    if (currentPath === "/" || currentPath === "") currentPath = "/index.html";
+    var navLinks = document.querySelectorAll("#mainNav a");
+    navLinks.forEach(function(link) {
+        if (link.getAttribute("href") === currentPath) {
+            link.style.display = "none";
+        }
+    });
+
+    // 2. Mobile menu toggle
+    // data-bound prevents double-binding if a page already has its own toggle handler
+    var menuToggle = document.getElementById("menuToggle");
+    var mainNav = document.getElementById("mainNav");
+    if (menuToggle && mainNav && !menuToggle.hasAttribute("data-bound")) {
+        menuToggle.setAttribute("data-bound", "true");
+        menuToggle.addEventListener("click", function() {
+            mainNav.classList.toggle("active");
+        });
+    }
+
+});
+</script>
+<!-- #EndLibraryItem --></body>
+</html>

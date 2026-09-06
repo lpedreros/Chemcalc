@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- BASIC META -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- SEO: Title optimized -->
+  <title>Awlgrip &amp; Awlcraft 2000 Paint Mix Calculator | ChemCalc</title>
+
+  <!-- SEO: Description optimized -->
+  <meta name="description" content="Calculate precise mix ratios for Awlgrip Topcoat, Awlcraft 2000, and 545 Epoxy Primer. Ensure perfect results for spray or brush/roll application with ChemCalc's free calculator. Supports imperial/metric units and provides coverage estimates.">
+  <!-- SEO: Keywords optimized -->
+  <meta name="keywords" content="Awlgrip calculator, Awlcraft 2000 calculator, 545 Primer calculator, paint mix ratio, marine paint, boat painting, spray application, brush application, ChemCalc">
+  <link rel="canonical" href="https://chemcalc.co/awlgrip.html" />
+
+  <!-- SOCIAL -->
+  <meta property="og:title" content="Awlgrip &amp; Awlcraft 2000 Paint Mix Calculator | ChemCalc" />
+  <meta property="og:description" content="Get accurate mix ratios for Awlgrip, Awlcraft 2000, and 545 Primer, including paint, catalyst, and reducer volumes. Supports spray/brush, imperial/metric." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://chemcalc.co/awlgrip.html" />
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+  <meta property="og:image:alt" content="ChemCalc Awlgrip Paint Calculator Interface">
+  <meta property="og:site_name" content="ChemCalc">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Awlgrip &amp; Awlcraft 2000 Paint Mix Calculator | ChemCalc" />
+  <meta name="twitter:description" content="Calculate precise mix ratios for Awlgrip, Awlcraft 2000, and 545 Primer. Supports spray/brush, imperial/metric." />
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
+
+  <!-- STRUCTURED DATA (Updated Schema) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebPage", "WebApplication"],
+    "name": "Awlgrip & Awlcraft 2000 Paint Mix Calculator | ChemCalc",
+    "description": "Calculate precise mix ratios for Awlgrip Topcoat, Awlcraft 2000, and 545 Epoxy Primer. Ensure perfect results for spray or brush/roll application with ChemCalc's free calculator. Supports imperial/metric units and provides coverage estimates.",
+    "url": "https://chemcalc.co/awlgrip.html",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript. Tested on modern browsers.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    },
+    "creator": {
+        "@type": "Organization",
+        "name": "ChemCalc"
+    },
+    "mainEntity": {
+      "@type": "HowTo",
+      "name": "How to Use the Awlgrip Mix Calculator",
+      "description": "Calculate the correct mix ratios for Awlgrip Topcoat, Awlcraft 2000, or 545 Epoxy Primer.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Select Measurement System",
+          "text": "Choose between Imperial (ft², oz, qt, gal) or Metric (m², mL, L) units.",
+          "url": "https://chemcalc.co/awlgrip.html#unitSystemCard"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Specify Coating Amount",
+          "text": "Select whether you want to input the surface area/paint volume directly or calculate the area from length and width. Enter the required values and select the units.",
+          "url": "https://chemcalc.co/awlgrip.html#inputMethodCard"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Select Application Method",
+          "text": "Choose between Spray or Roll/Brush application. This affects the reducer percentage.",
+          "url": "https://chemcalc.co/awlgrip.html#methodTypeCard"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Select Product Type",
+          "text": "Choose the specific product: Awlcraft 2000 Topcoat, Awlgrip Topcoat, or 545 Epoxy Primer. This determines the base mix ratios.",
+          "url": "https://chemcalc.co/awlgrip.html#paintTypeCard"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "View Results",
+          "text": "The calculator automatically displays the required amounts of Paint Base, Converter/Catalyst, and Reducer based on your inputs. It also provides an estimated coverage area if you entered a paint volume.",
+          "url": "https://chemcalc.co/awlgrip.html#resultsCard"
+        }
+      ]
+    }
+  }
+  </script>
+
+  	<!-- ASSETS -->
+  	<link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png">
+  	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="print_style_fix_v4.css" media="print">
+
+<!-- Adsense 
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1179454606770448"
+     crossorigin="anonymous"></script>
+  <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+</script> -->
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+	<!-- Favicon -->
+<link rel="icon" type="image/png" href="/images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+<!-- Site stylesheet -->
+<link rel="stylesheet" href="/style.css">
+
+<!-- Chatbot styles -->
+<link rel="stylesheet" href="/chatbot_styles.css">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag( ){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DTECSH4N52');
+</script>
+
+<!-- Meta Pixel -->
+<script src="/meta-pixel.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+
+<!-- AI Chatbot -->
+	<link rel="stylesheet" href="/chatbot_styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="affiliate-click-tracker.js"></script>
+	<script src="/global-auth.js"></script>
+<script src="/global-account-modal.js?v=1"></script>
+	</head>
+<body>
+
+<!-- AdSense AMP 
+	<amp-auto-ads type="adsense"
+        data-ad-client="ca-pub-1179454606770448">
+</amp-auto-ads> -->
+	<!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
+     Shared icon sprite (Phase 0 design system, ChemCalc_FullSite_Blueprint.md)
+     Inline SVG symbols, no icon-library dependency. Translated from the
+     lucide-react icons used by the Magic Patterns MEKP Calculator artifact
+     (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). Built once,
+     included sitewide so future phases can reuse it without redefining.
+
+     Usage: <svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-NAME"/></svg>
+
+     Currently wired up: icon-flask (Library/nav.lbi brand badge),
+     icon-menu / icon-x (Library/nav.lbi mobile toggle), icon-heart-handshake
+     (Library/Footer.lbi Donate button). The rest (user, printer,
+     thermometer, beaker, percent, ruler, star, search, chevron-down,
+     message-circle) are pre-built here for later phases (calculator pages,
+     estimator, account UI) -- not yet referenced anywhere.
+     ============================================================ -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" focusable="false">
+  <symbol id="icon-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+  </symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+  </symbol>
+  <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+  </symbol>
+  <symbol id="icon-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+  </symbol>
+  <symbol id="icon-beaker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/>
+  </symbol>
+  <symbol id="icon-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+  </symbol>
+  <symbol id="icon-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 17 17 3l4 4L7 21Z"/><path d="m14.5 5.5 2 2"/><path d="m11.5 8.5 2 2"/><path d="m8.5 11.5 2 2"/><path d="m5.5 14.5 2 2"/>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </symbol>
+  <symbol id="icon-message-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </symbol>
+  <symbol id="icon-heart-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/><path d="m12 5-3 3 3 3-2 2"/>
+  </symbol>
+</svg>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="header site-header-dark d-print-none">
+  <div class="site-header-inner">
+    <a href="/index.html" class="site-brand">
+      <span class="site-brand-badge" aria-hidden="true"><svg width="20" height="20"><use href="#icon-flask"/></svg></span>
+      <span class="site-brand-text">
+        <span class="site-brand-name">ChemCalc</span>
+        <span class="site-brand-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" onclick="this.classList.toggle('is-open')">
+      <svg class="icon-menu" width="20" height="20" aria-hidden="true"><use href="#icon-menu"/></svg>
+      <svg class="icon-close" width="20" height="20" aria-hidden="true"><use href="#icon-x"/></svg>
+    </button>
+    <nav id="mainNav" class="nav" aria-label="Primary">
+      <a href="/index.html">Home</a>
+	<a href="/calculators.html">Calculators</a>
+      <a href="/estimate.html">Estimator</a>
+      <a href="/services.html">Services</a>
+      <a href="/kits.html">Kits</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
+      <span id="navAuthIndicator" class="nav-auth-indicator"></span>
+    </nav>
+  </div>
+</header>
+<!-- #EndLibraryItem --><main class="container">
+  <h1 class="text-center mb-4">Awlgrip Mix Calculator</h1>
+  <p class="text-center text-muted mb-4">For Awlgrip Topcoat, Awlcraft 2000, 545 Primer, Awlcraft SE, Awlcraft 3000 &amp; Awlgrip HDT Clear</p>
+
+  <!-- Placeholder for supporting content (Step 005) -->
+  <!-- <section class="mb-4">
+    <p>Introductory paragraph explaining Awlgrip products, mix ratios, importance of accuracy, and how this calculator helps...</p>
+  </section> -->
+
+  <!-- Measurement system -->
+  <div class="card" id="unitSystemCard"><div class="card-body">
+    <h2 class="card-title">Measurement System</h2>
+    <select id="unitSystem" class="form-control">
+      <option value="imperial" selected>Imperial (ft², oz, qt, gal)</option>
+      <option value="metric">Metric (m², mL, L)</option>
+    </select>
+  </div></div>
+
+  <!-- Area / Volume / Dimensions -->
+  <div class="card" id="inputMethodCard"><div class="card-body">
+    <h2 class="card-title">How much are you coating or mixing?</h2>
+
+    <!-- Input Method Selection -->
+    <div class="mb-3">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inputMethod" id="inputMethodAreaVolume" value="areaVolume" checked>
+            <label class="form-check-label" for="inputMethodAreaVolume">Enter Area / Volume Directly</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inputMethod" id="inputMethodLengthWidth" value="lengthWidth">
+            <label class="form-check-label" for="inputMethodLengthWidth">Calculate Area from Length &amp; Width</label>
+        </div>
+    </div>
+
+    <!-- Direct Area/Volume Inputs -->
+    <div id="areaVolumeInputs">
+        <p class="small text-muted mb-2">Enter surface area <em>or</em> the paint volume you plan to mix.</p>
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <label for="inputValue">Value</label>
+            <input type="number" id="inputValue" class="form-control" min="0" step="any" placeholder="e.g., 100 or 1">
+          </div>
+          <div class="col-md-6 mb-2">
+            <label for="unitType">Input Units</label>
+            <select id="unitType" class="form-control"></select>
+          </div>
+        </div>
+    </div>
+
+    <!-- Length/Width Inputs (Initially Hidden) -->
+    <div id="lengthWidthInputs" style="display: none;">
+        <p class="small text-muted mb-2">Enter the dimensions of the surface area.</p>
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <label for="length">Length</label>
+                <input type="number" id="length" class="form-control" min="0" step="any" placeholder="e.g., 10">
+            </div>
+            <div class="col-md-4 mb-2">
+                <label for="width">Width</label>
+                <input type="number" id="width" class="form-control" min="0" step="any" placeholder="e.g., 10">
+            </div>
+            <div class="col-md-4 mb-2">
+                <label for="dimensionUnit">Dimension Units</label>
+                <select id="dimensionUnit" class="form-control">
+                    <!-- Options will be added by JS based on system -->
+                </select>
+            </div>
+        </div>
+        <p class="mt-2 small text-muted">Calculated Area: <span id="calculatedAreaDisplay">—</span></p>
+    </div>
+
+    <!-- Result unit selector (shown only when area chosen) -->
+    <div id="resultUnitRow" class="row mt-3 d-none">
+      <div class="col-md-6">
+        <label for="resultUnit">Result Units</label>
+        <select id="resultUnit" class="form-control"></select>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- Application Method -->
+  <div class="card" id="methodTypeCard"><div class="card-body">
+    <h2 class="card-title">Application Method</h2>
+    <select id="methodType" class="form-control">
+      <option value="spray" selected>Spray</option>
+      <option value="roll">Roll / Brush</option>
+    </select>
+  </div></div>
+
+  <!-- Product Type -->
+  <div class="card" id="paintTypeCard"><div class="card-body">
+    <h2 class="card-title">Product Type</h2>
+    <select id="paintType" class="form-control">
+      <option value="awlcraft2000">Awlcraft 2000 Topcoat</option>
+      <option value="awlgrip">Awlgrip Topcoat</option>
+      <option value="545primer">545 Epoxy Primer</option>
+      <option value="awlcraftse">Awlcraft SE Basecoat</option>
+      <option value="awlcraft3000">Awlcraft 3000 Topcoat</option>
+      <option value="awlgriphdtclear">Awlgrip HDT Clear</option>
+    </select>
+
+    <!-- Awlcraft 3000 Reducer Percentage (shown only when awlcraft3000 selected) -->
+    <div id="reducerPercentRow" class="mt-3" style="display:none;">
+      <label for="reducerPercent">Reducer Percentage: <span id="reducerPercentValue">25</span>%</label>
+      <input type="range" id="reducerPercent" class="form-control-range" min="15" max="33" value="25" step="1">
+      <p class="small text-muted mt-1"><strong>Guide:</strong> Start around 25%. Use less (15–20%) in cooler temps or small jobs. Use more (25–33%) in hot/dry conditions or large panels. Target: 11–15 sec DIN 4 viscosity.</p>
+    </div>
+
+    <!-- Product-specific notes (shown conditionally) -->
+    <div id="productNoteAwlcraftSE" class="alert alert-info mt-3" style="display:none;">
+      <strong>Note:</strong> Awlcraft SE is a basecoat. A compatible clearcoat (Awlgrip HDT Clear or Awlcraft 2000 Clear) must be applied after this product.
+    </div>
+    <div id="productNoteHDTClear" class="alert alert-info mt-3" style="display:none;">
+      <strong>Induction Time:</strong> After mixing, allow <strong>15 minutes</strong> before spraying.<br>
+      <strong>Activator Guide:</strong> 59–73°F → Fast (OA0020) &nbsp;|&nbsp; 68–86°F → Medium (OA0015 or 50:50 blend) &nbsp;|&nbsp; &gt;86°F → Slow (OA0010)
+    </div>
+  </div></div>
+
+  <!-- Results -->
+  <div class="card mt-4 printable-section" id="resultsCard"><div class="card-body">
+    <h2 class="card-title">Your Mix Results</h2>
+    <p id="resultPaint">Paint Base: —</p>
+    <p id="resultConverter">Converter / Catalyst: —</p>
+    <p id="resultReducer">Reducer: —</p>
+    <p id="resultAccelerator" style="display: none;">Accelerator (Pro-Cure X-98): —</p>
+    <hr>
+    <p id="resultCoverage" class="small text-muted"></p>
+    <div id="awlgripEmailCapture"></div>
+
+    <!-- Affiliate Links Placeholder (Step 006) -->
+    <div id="affiliateLinksContainer">
+      <h3>Related Products:</h3>
+      <ul id="affiliateLinksList"></ul>
+      <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+    </div>
+
+    <!-- Print Button and QR Code Placeholder -->
+    <div class="mt-3 d-print-none">
+        <button id="printButton" class="btn btn-secondary">Print Results</button>
+    </div>
+    <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
+
+  </div></div>
+</main>
+  <!-- Tips & Safety / Other Calcs -->
+<div class="row mt-4">
+  <div class="col-md-6 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Tips &amp; Safety</h2>
+        <p><a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a></p>
+        <p><a href="legal.html">Legal Disclaimer</a></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Other Calculators</h2>
+        <p><a href="clothcalc.html">Fiberglass Cloth Saturation Calculator</a></p>
+        <p><a href="mekpcalc.html">MEKP Mix Calculator</a></p>
+        <p><a href="epifanespoly.html">Epifanes Polyurethane Mix Calculator</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+	<!-- Feedback Button Section -->
+<div class="container mt-4 mb-5 text-center">
+    <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
+</div>
+<!-- End Feedback Button Section --><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+     cluster (closest to the screen edge; see --chrome-fab-right and
+     .help-float-btn in style.css). Restyled trigger only —
+     onclick="openHelpModal()" and each page's #helpModal / helpContent
+     tiers are unchanged. -->
+<!-- Each page must have its own help modal with a matching data-target ID -->
+<!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">
+  <span aria-hidden="true">?</span>
+</button>
+<!-- #EndLibraryItem --><!-- ===== AWLGRIP CALCULATOR HELP MODAL ===== -->
+<div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
+    <!-- GUEST (NOT LOGGED IN) CONTENT -->
+    <div class="help-modal-section" id="helpContentGuest">
+      <h3 class="modal-title">How to Use the Awlgrip Paint Mix Calculator</h3>
+      <p class="help-modal-pitch">Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Select measurement system</strong> &mdash; Choose Imperial (oz, qt, gal, ft&sup2;) or Metric (mL, L, m&sup2;).</li>
+        <li><strong>Enter area or volume</strong> &mdash; Input the surface area you&rsquo;re coating, or enter a paint volume directly.</li>
+        <li><strong>Select application method</strong> &mdash; Spray or Roll/Brush. Reducer ratio changes by method.</li>
+        <li><strong>Select product type</strong> &mdash; Awlcraft 2000, Awlgrip Topcoat, or 545 Epoxy Primer.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of base, converter, and reducer. Results update automatically.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Spray:</strong> Typically requires more reducer for proper atomization.</li>
+        <li><strong>Brush/roll:</strong> Use less reducer to maintain film build.</li>
+        <li><strong>Pot life:</strong> 4&ndash;8 hours after mixing &mdash; mix only what you can use in one session.</li>
+        <li><strong>Hot weather:</strong> Use Awlgrip T0006 slow reducer to extend pot life.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Sign Up / Log In</button>
+      </div>
+    </div>
+    <!-- FREE USER CONTENT -->
+    <div class="help-modal-section" id="helpContentFree">
+      <h3 class="modal-title">How to Use the Awlgrip Paint Mix Calculator</h3>
+      <p class="help-modal-pitch">Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
+      <ol class="help-modal-steps">
+        <li><strong>Select measurement system</strong> &mdash; Choose Imperial (oz, qt, gal, ft&sup2;) or Metric (mL, L, m&sup2;).</li>
+        <li><strong>Enter area or volume</strong> &mdash; Input the surface area you&rsquo;re coating, or enter a paint volume directly.</li>
+        <li><strong>Select application method</strong> &mdash; Spray or Roll/Brush. Reducer ratio changes by method.</li>
+        <li><strong>Select product type</strong> &mdash; Awlcraft 2000, Awlgrip Topcoat, or 545 Epoxy Primer.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of base, converter, and reducer. Results update automatically.</li>
+      </ol>
+      <ul class="help-modal-bullets">
+        <li><strong>Spray:</strong> Typically requires more reducer for proper atomization.</li>
+        <li><strong>Brush/roll:</strong> Use less reducer to maintain film build.</li>
+        <li><strong>Pot life:</strong> 4&ndash;8 hours after mixing &mdash; mix only what you can use in one session.</li>
+        <li><strong>Hot weather:</strong> Use Awlgrip T0006 slow reducer to extend pot life.</li>
+      </ul>
+      <div class="help-modal-cta-box">
+        <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
+        <button class="btn-plan btn-plan-pro" onclick="closeModal('helpModal'); openModal('loginModal')">Upgrade to Pro</button>
+      </div>
+    </div>
+    <!-- PRO USER CONTENT -->
+    <div class="help-modal-section" id="helpContentPro">
+      <h3 class="modal-title">Awlgrip Calculator &mdash; Pro Quick Reference</h3>
+      <ul class="help-modal-bullets">
+        <li><strong>Standard topcoat ratio:</strong> 1 part base : 1 part converter, then add reducer to viscosity.</li>
+        <li><strong>Spray:</strong> Add 10&ndash;15% T0006 (slow) or T0007 (fast) reducer by volume.</li>
+        <li><strong>Brush/roll:</strong> Add 5&ndash;10% reducer. Use 73 Brushing Reducer for best leveling.</li>
+        <li><strong>Pot life:</strong> 4&ndash;8 hours at 77&deg;F. Mix only what you can use in one session.</li>
+        <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
+      </ul>
+    </div>
+  </div>
+</div><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Donate — top of the bottom-right floating-action cluster (with the
+     BoatMD chat toggle from chatbot_styles.css and the page Help button
+     from Library/HelpButton.lbi below it; see --chrome-fab-right and
+     .fab-donate in style.css). Trigger + modal chrome restyled to tokens
+     only — the PayPal form fields below are unchanged. -->
+<button id="donateButton" class="fab-donate d-print-none" data-toggle="modal" data-target="#donationModal">
+  <svg width="16" height="16" aria-hidden="true"><use href="#icon-heart-handshake"/></svg>
+  Donate
+</button>
+
+<!-- Donation Modal (PayPal snippet unchanged) -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content fab-donate-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+        <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+        <hr>
+        <div class="donation-options">
+          <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+            <input type="hidden" name="no_recurring" value="0" />
+            <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Section -->
+<footer class="footer site-footer-dark">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">
+      <span class="site-footer-badge" aria-hidden="true">T&amp;E</span>
+      <span class="site-footer-brand-text">
+        <span class="site-footer-brand-name">Think &amp; Engage</span>
+        Parent brand of ChemCalc
+      </span>
+    </div>
+    <div class="legal-links mb-2">
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/cookie.html">Cookie Policy</a>
+    </div>
+    <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
+  </div>
+</footer>
+<!-- #EndLibraryItem --><script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(reg => console.log("ServiceWorker registered:", reg))
+    .catch(err => console.error("SW registration failed:", err));
+}
+// Simple year update for footer
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+<!-- Load affiliate links data first -->
+<script src="affiliate_links.js"></script>
+<script src="calc-tracker.js"></script>
+<script src="email-results.js"></script>
+<script src="awlgripscript.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['resultPaint', 'resultConverter', 'resultReducer', 'resultAccelerator', 'resultCoverage']);
+  });
+</script>
+<!-- Bootstrap JS (ensure Popper.js is loaded if needed by Bootstrap v4) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="main.js"></script>
+<script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+
+<!-- BoatMD Chatbot (global — loads on every page) -->
+<script src="/chatbot.js"></script>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 1. Hide current page link from nav
+    // Build the current page path to match root-relative hrefs (e.g. /index.html)
+    var currentPath = window.location.pathname;
+    // Normalise bare domain root to /index.html
+    if (currentPath === "/" || currentPath === "") currentPath = "/index.html";
+    var navLinks = document.querySelectorAll("#mainNav a");
+    navLinks.forEach(function(link) {
+        if (link.getAttribute("href") === currentPath) {
+            link.style.display = "none";
+        }
+    });
+
+    // 2. Mobile menu toggle
+    // data-bound prevents double-binding if a page already has its own toggle handler
+    var menuToggle = document.getElementById("menuToggle");
+    var mainNav = document.getElementById("mainNav");
+    if (menuToggle && mainNav && !menuToggle.hasAttribute("data-bound")) {
+        menuToggle.setAttribute("data-bound", "true");
+        menuToggle.addEventListener("click", function() {
+            mainNav.classList.toggle("active");
+        });
+    }
+
+});
+</script>
+<!-- #EndLibraryItem --></body>
+</html>
