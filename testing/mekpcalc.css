@@ -1,0 +1,358 @@
+/* ============================================================
+   mekpcalc.css
+   Page-scoped visual layer for the MEKP Calculator only (Phase 1,
+   ChemCalc_FullSite_Blueprint.md — the MEKP pilot for the calculator
+   pages). Everything here is namespaced under .mekp-app (on-screen) or
+   #mekpPrintLetterhead (print — see print_style_fix_v4.css for that
+   half) so nothing here can leak into other calculator pages that
+   share style.css / print_style_fix_v4.css.
+
+   Replaces mekpcalc-redesign.css (orphaned — flagged for deletion).
+   That file defined its own page-scoped --mekp-* token duplicate and
+   its own Google Fonts @import; both are gone here. Colors, fonts,
+   shadows and timing below all reference the real sitewide tokens
+   Phase 0 put in style.css's ":root" block (--chrome-*), and the
+   fonts they need are already loaded by style.css's own @import — no
+   local :root block or @import needed in this file at all.
+
+   Approved design: Magic Patterns — MEKP Calculator
+   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw)
+   ============================================================ */
+
+.mekp-app{
+  font-family:var(--chrome-font-sans);
+  color:var(--chrome-ink-900);
+  background:var(--chrome-paper);
+}
+.mekp-app h1,.mekp-app h2,.mekp-app h3{font-family:var(--chrome-font-sans);}
+
+/* ---------- Hero / title band ---------- */
+.mekp-hero{
+  background:var(--chrome-ink-950);
+  margin:-1em -1em 2rem;
+  padding:2rem 1.5rem 3rem;
+  border-radius:12px 12px 0 0;
+}
+.mekp-hero-title{
+  font-size:2rem;
+  font-weight:800;
+  letter-spacing:-0.02em;
+  line-height:1.1;
+  color:#ffffff;
+  margin:0 0 .5rem;
+}
+.mekp-hero-tagline{
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--chrome-signal-400);
+  margin:0 0 .85rem;
+}
+.mekp-hero-copy{
+  font-size:.92rem;
+  line-height:1.55;
+  color:rgba(255,255,255,.65);
+  max-width:640px;
+  margin:0;
+}
+
+/* ---------- Two-column grid: form + results ---------- */
+.mekp-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1.5rem;
+  margin-top:-1.75rem;
+  align-items:start;
+}
+@media (min-width:992px){
+  .mekp-grid{grid-template-columns:7fr 5fr;}
+}
+
+/* ---------- Field cards ---------- */
+.mekp-fields{display:grid;gap:1rem;}
+@media (min-width:576px){
+  .mekp-fields{grid-template-columns:1fr 1fr;}
+}
+.mekp-field-card{
+  background:var(--chrome-paper-card);
+  border:1px solid var(--chrome-paper-line);
+  border-radius:12px;
+  padding:1.25rem;
+  box-shadow:var(--chrome-shadow-panel);
+}
+.mekp-field-card-wide{grid-column:1 / -1;}
+.mekp-field-head{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:1rem;}
+.mekp-field-icon{
+  flex:none;width:2rem;height:2rem;border-radius:8px;
+  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;font-weight:700;line-height:1;
+}
+/* Inline SVG field icons (Lucide-style, hand-written — no icon library) */
+.mekp-field-icon svg{width:1.05rem;height:1.05rem;display:block;}
+.mekp-field-title{font-size:.95rem;font-weight:600;margin:0;color:var(--chrome-ink-900);}
+.mekp-field-hint{font-size:.8rem;color:var(--chrome-ink-600);margin:.2rem 0 0;}
+
+/* ---------- Inputs ---------- */
+.mekp-select,.mekp-input{
+  width:100%;border:1px solid var(--chrome-paper-line);
+  background:var(--chrome-paper-muted);border-radius:8px;
+  padding:.6rem .8rem;font-size:.95rem;font-weight:500;
+  color:var(--chrome-ink-900);font-family:var(--chrome-font-sans);
+  transition:border-color .15s var(--chrome-ease-smooth);
+}
+.mekp-input{font-family:var(--chrome-font-mono);}
+.mekp-select:hover,.mekp-input:hover{border-color:var(--chrome-ink-500);}
+.mekp-select:focus,.mekp-input:focus{
+  outline:2px solid rgba(242,166,60,.45);outline-offset:1px;border-color:var(--chrome-ink-800);
+}
+.mekp-input-row{display:flex;gap:.5rem;flex-wrap:wrap;}
+.mekp-input-row .mekp-input{flex:1 1 140px;min-width:0;}
+.mekp-select-compact{flex:0 0 auto;width:auto;min-width:5.5rem;}
+
+/* ---------- Ambient temperature / measurement-system unit toggles ---------- */
+.mekp-unit-toggle{
+  display:flex;flex:none;gap:.15rem;padding:.2rem;
+  background:var(--chrome-paper-muted);border:1px solid var(--chrome-paper-line);
+  border-radius:999px;
+}
+.mekp-unit-btn{
+  border:none;background:transparent;color:var(--chrome-ink-600);
+  font-family:var(--chrome-font-mono);font-size:.82rem;font-weight:600;
+  padding:.45rem .9rem;border-radius:999px;cursor:pointer;
+  transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
+}
+.mekp-unit-btn[aria-pressed="true"]{background:var(--chrome-ink-900);color:#fff;}
+.mekp-unit-btn:hover:not([aria-pressed="true"]){color:var(--chrome-ink-900);}
+.mekp-unit-btn:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
+.mekp-input-with-unit{position:relative;flex:1 1 200px;min-width:0;}
+.mekp-input-with-unit .mekp-input{padding-right:2.6rem;}
+.mekp-input-suffix{
+  position:absolute;right:.8rem;top:50%;transform:translateY(-50%);
+  color:var(--chrome-ink-500);font-size:.78rem;font-family:var(--chrome-font-mono);
+  pointer-events:none;
+}
+
+/* ---------- Duratec toggle (custom, pure-CSS checkbox) ---------- */
+.mekp-duratec-toggle{
+  display:flex;gap:.75rem;align-items:flex-start;
+  border:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);
+  border-radius:10px;padding:.9rem 1rem;cursor:pointer;margin-bottom:.5rem;
+  transition:border-color .15s var(--chrome-ease-smooth),background-color .15s var(--chrome-ease-smooth);
+}
+.mekp-duratec-toggle:has(.mekp-checkbox:checked){
+  border-color:var(--chrome-signal-400);background:var(--chrome-signal-50);
+}
+.mekp-checkbox{
+  appearance:none;-webkit-appearance:none;
+  width:1.25rem;height:1.25rem;flex:none;margin-top:.15rem;
+  border:2px solid var(--chrome-ink-500);border-radius:4px;background:#fff;
+  position:relative;cursor:pointer;
+}
+.mekp-checkbox:checked{background:var(--chrome-ink-900);border-color:var(--chrome-ink-900);}
+.mekp-checkbox:checked::after{
+  content:"";position:absolute;left:3px;top:-1px;width:6px;height:11px;
+  border:solid var(--chrome-signal-400);border-width:0 2px 2px 0;transform:rotate(40deg);
+}
+.mekp-checkbox:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
+.mekp-duratec-title{font-size:.9rem;font-weight:600;color:var(--chrome-ink-900);}
+.mekp-badge{
+  display:inline-block;margin-left:.35rem;background:var(--chrome-ink-900);
+  color:var(--chrome-signal-400);font-family:var(--chrome-font-mono);
+  font-size:.68rem;font-weight:600;padding:.1rem .4rem;border-radius:5px;vertical-align:middle;
+}
+.mekp-duratec-hint{display:block;font-size:.78rem;color:var(--chrome-ink-600);margin-top:.2rem;}
+
+/* Locked-state message — shown only while the Duratec checkbox is
+   checked (see mekpcalc-ui.js); replaces the old always-visible
+   .mekp-duratec-status line. */
+.mekp-duratec-locked-msg{
+  display:none;align-items:flex-start;gap:.5rem;
+  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
+  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
+  font-size:.8rem;font-weight:600;line-height:1.4;margin:0 0 1rem;
+}
+.mekp-duratec-locked-msg svg{flex:none;width:1rem;height:1rem;margin-top:.1rem;color:var(--chrome-signal-500);}
+
+/* ---------- Custom percentage slider ---------- */
+.mekp-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
+.mekp-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
+#customPercentageValue{
+  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
+}
+.mekp-slider{
+  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
+  height:6px;border-radius:999px;
+  /* Live two-tone fill gradient — --slider-fill is a percentage set from
+     the slider's own value/min/max by mekpcalc-ui.js on every input; the
+     fixed fallback (50%) covers first paint before JS runs. */
+  background:linear-gradient(
+    to right,
+    var(--chrome-sea-500) 0%,
+    var(--chrome-signal-400) var(--slider-fill,50%),
+    var(--chrome-paper-line) var(--slider-fill,50%),
+    var(--chrome-paper-line) 100%
+  );
+}
+.mekp-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;border:2px solid var(--chrome-ink-800);
+  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
+}
+.mekp-slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  border:2px solid var(--chrome-ink-800);cursor:pointer;
+}
+.mekp-slider:disabled{opacity:.5;cursor:not-allowed;}
+.mekp-slider-scale{
+  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
+  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
+}
+
+/* ---------- Results panel ---------- */
+.mekp-results-panel{
+  background:var(--chrome-ink-950);color:#fff;border-radius:12px;overflow:hidden;
+  box-shadow:var(--chrome-shadow-lift);
+}
+@media (min-width:992px){
+  .mekp-results-panel{position:sticky;top:1.5rem;}
+}
+.mekp-results-head{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.mekp-results-head h2{margin:0;font-size:.95rem;font-weight:600;color:#fff;}
+.mekp-results-body{padding:1.25rem 1.5rem 1.5rem;}
+/* .mekp-result-line is no longer used on-screen (its two paragraphs are
+   now sr-only) but is left defined for any incidental reuse. */
+.mekp-result-line{font-size:.88rem;color:rgba(255,255,255,.82);margin:0 0 .5rem;line-height:1.4;}
+
+/* ---------- Status pill ---------- */
+.mekp-result-status{
+  display:inline-flex;align-items:center;gap:.4rem;flex:none;
+  font-size:.7rem;font-weight:700;
+  padding:.35rem .7rem;border-radius:999px;
+}
+.mekp-result-status.is-on{background:rgba(46,187,120,.18);color:#5EE0A6;}
+.mekp-result-status.is-off{background:rgba(242,166,60,.18);color:var(--chrome-signal-400);}
+.mekp-result-status.is-locked{background:rgba(255,255,255,.14);color:#fff;}
+
+/* ---------- Hero cc value + drops sub-line ---------- */
+.mekp-result-primary{margin-bottom:1.1rem;}
+.mekp-result-primary-label{
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:rgba(255,255,255,.55);margin:0 0 .3rem;
+}
+.mekp-result-hero{
+  font-family:var(--chrome-font-mono);font-size:2.75rem;font-weight:700;
+  color:var(--chrome-signal-400);margin:0;line-height:1.05;
+}
+.mekp-result-hero-unit{font-size:1.05rem;font-weight:600;margin-left:.4rem;color:rgba(255,255,255,.7);}
+.mekp-result-sub{font-family:var(--chrome-font-mono);font-size:.95rem;color:rgba(255,255,255,.75);margin:.35rem 0 0;}
+
+/* ---------- Recommended % / Percentage used comparison grid ---------- */
+.mekp-result-compare{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1.1rem 0;}
+.mekp-compare-box{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:.6rem .75rem;
+}
+.mekp-compare-label{
+  display:block;font-size:.66rem;font-weight:700;
+  color:rgba(255,255,255,.5);margin-bottom:.25rem;
+}
+.mekp-compare-value{display:block;font-family:var(--chrome-font-mono);font-size:1.05rem;font-weight:700;color:#fff;}
+
+/* ---------- Ambient-temperature advisory: lives in the Ambient Temperature
+   field card (light background), color follows band. ---------- */
+.mekp-result-advisory{
+  display:none;font-size:.82rem;font-weight:600;color:var(--chrome-ink-700);
+  margin:.85rem 0 0;padding:.55rem .75rem;border-radius:8px;
+  background:var(--chrome-paper-muted);
+}
+.mekp-result-advisory[data-band="cold"],
+.mekp-result-advisory[data-band="hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
+.mekp-result-advisory[data-band="warm"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
+.mekp-result-advisory[data-band="cool"],
+.mekp-result-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
+
+.mekp-print-cta{margin-top:1rem;}
+.mekp-print-btn{
+  width:100%;background:var(--chrome-signal-400);color:var(--chrome-ink-950);
+  border:none;border-radius:8px;padding:.85rem 1rem;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:background-color .15s var(--chrome-ease-smooth);
+}
+.mekp-print-btn:hover{background:var(--chrome-signal-200);}
+.mekp-print-btn:focus-visible{outline:3px solid rgba(242,166,60,.5);outline-offset:2px;}
+
+.mekp-affiliate-block{margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1);}
+.mekp-affiliate-block h3{
+  font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:rgba(255,255,255,.55);margin:0 0 .6rem;
+}
+.mekp-affiliate-list{list-style:none;margin:0 0 .6rem;padding:0;}
+.mekp-affiliate-list li{margin-bottom:.4rem;}
+.mekp-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
+.mekp-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
+
+.mekp-email-capture{margin-top:1rem;}
+/* email-results.js injects its own inline-styled light box into this
+   container — left unstyled here on purpose so we don't fight its
+   inline styles; this wrapper only provides spacing. */
+
+/* ---------- Resource cards ---------- */
+.mekp-resources-grid{display:grid;gap:1.25rem;margin-top:2rem;}
+@media (min-width:900px){
+  .mekp-resources-grid{grid-template-columns:1fr 1fr;}
+}
+.mekp-resource-card{
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;padding:1.5rem;
+}
+.mekp-resource-card h2{font-size:1.1rem;font-weight:700;color:var(--chrome-ink-900);margin:0 0 .5rem;}
+.mekp-resource-desc{font-size:.85rem;color:var(--chrome-ink-600);margin:0 0 1rem;line-height:1.5;}
+.mekp-resource-links{list-style:none;margin:0;padding:0;border-top:1px solid var(--chrome-paper-line);}
+.mekp-resource-links li + li{border-top:1px solid var(--chrome-paper-line);}
+/* Per-link description + trailing icon, matching ResourceCard.tsx's <li> exactly. */
+.mekp-resource-link{
+  display:flex;align-items:flex-start;gap:.75rem;
+  padding:.85rem 0;text-decoration:none;
+}
+.mekp-resource-link-text{min-width:0;flex:1 1 auto;}
+.mekp-resource-link-title{
+  display:block;font-size:.92rem;font-weight:600;
+  color:var(--chrome-ink-900) !important;transition:color .15s var(--chrome-ease-smooth);
+}
+.mekp-resource-link-detail{
+  display:block;margin-top:.15rem;font-size:.8rem;line-height:1.4;
+  color:var(--chrome-ink-500) !important;
+}
+.mekp-resource-link-icon{
+  flex:none;width:1rem;height:1rem;margin-top:.15rem;
+  color:var(--chrome-ink-500);transition:color .15s var(--chrome-ease-smooth);
+}
+.mekp-resource-link:hover .mekp-resource-link-title,
+.mekp-resource-link:hover .mekp-resource-link-icon{color:var(--chrome-sea-600) !important;}
+
+/* ---------- Report-issue banner ---------- */
+.mekp-report-banner{
+  margin-top:1.5rem;border:1px dashed var(--chrome-ink-500);background:var(--chrome-paper-muted);
+  border-radius:12px;padding:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;
+  align-items:center;justify-content:space-between;
+}
+.mekp-report-banner h2{font-size:1rem;font-weight:600;color:var(--chrome-ink-900);margin:0 0 .25rem;}
+.mekp-report-banner p{font-size:.85rem;color:var(--chrome-ink-600);margin:0;}
+.mekp-report-btn{
+  background:transparent;border:1.5px solid var(--chrome-ink-900);color:var(--chrome-ink-900);
+  font-weight:600;font-size:.9rem;padding:.65rem 1.1rem;border-radius:8px;
+  cursor:pointer;white-space:nowrap;transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
+}
+.mekp-report-btn:hover{background:var(--chrome-ink-900);color:#fff;}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+@media (max-width:575.98px){
+  .mekp-hero{padding:1.5rem 1.25rem 2.25rem;}
+  .mekp-hero-title{font-size:1.6rem;}
+}

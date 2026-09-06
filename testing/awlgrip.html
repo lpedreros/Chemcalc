@@ -528,11 +528,6 @@
   </div>
 </footer>
 <!-- #EndLibraryItem --><script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js")
-    .then(reg => console.log("ServiceWorker registered:", reg))
-    .catch(err => console.error("SW registration failed:", err));
-}
 // Simple year update for footer
 document.getElementById("year").textContent = new Date().getFullYear();
 </script>

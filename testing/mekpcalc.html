@@ -81,8 +81,9 @@
   <link rel="icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png" type="image/png">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="style.css" rel="stylesheet">
-  <!-- MEKP Calculator redesign — page-scoped, does not affect other calculators -->
-  <link href="mekpcalc-redesign.css" rel="stylesheet">
+  <!-- MEKP Calculator — page-scoped, built on Phase 0's sitewide --chrome-*
+       tokens; does not affect other calculators -->
+  <link href="mekpcalc.css" rel="stylesheet">
 	<link rel="stylesheet" href="print_style_fix_v4.css" media="print">
 
 	<!-- Meta Pixel -->
@@ -223,7 +224,7 @@
                "imperial"/"metric" in sync with it, so mekscript.js's
                calculateMEKP()/updateVolumeUnits() — which read this exact
                element by that exact id/value contract — run completely
-               unmodified. See mekpcalc-enhance.js for the sync logic. -->
+               unmodified. See mekpcalc-ui.js for the sync logic. -->
           <div class="mekp-unit-toggle" role="group" aria-label="Measurement system">
             <button type="button" class="mekp-unit-btn" data-system="imperial" aria-pressed="true">Imperial</button>
             <button type="button" class="mekp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
@@ -248,7 +249,7 @@
                  .value of "fahrenheit"/"celsius" in sync with it, so
                  mekscript.js's calculateMEKP() — which reads this exact
                  element by that exact id/value contract — runs completely
-                 unmodified. See mekpcalc-enhance.js for the sync logic. -->
+                 unmodified. See mekpcalc-ui.js for the sync logic. -->
             <div class="mekp-unit-toggle" role="group" aria-label="Temperature unit">
               <button type="button" class="mekp-unit-btn" data-unit="fahrenheit" aria-pressed="true">&deg;F</button>
               <button type="button" class="mekp-unit-btn" data-unit="celsius" aria-pressed="false">&deg;C</button>
@@ -301,7 +302,7 @@
             </span>
           </label>
           <!-- Shown only while the checkbox above is checked (see
-               mekpcalc-enhance.js) — hidden otherwise, replacing the old
+               mekpcalc-ui.js) — hidden otherwise, replacing the old
                always-visible static line. -->
           <small id="duratecHelp" class="mekp-duratec-locked-msg" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
@@ -325,10 +326,10 @@
           <h2>Mix Result</h2>
           <!-- Inline next to the title, matching ResultsPanel.tsx exactly —
                not a separate full-width bar. Presentation only, parsed by
-               mekpcalc-enhance.js from the real strings calculateMEKP()
+               mekpcalc-ui.js from the real strings calculateMEKP()
                writes into the four sr-only elements below (same
-               extraction approach as mekpcalc-print.js). No calculation
-               logic lives here. -->
+               extraction approach as mekpcalc-print-summary.js). No
+               calculation logic lives here. -->
           <div class="mekp-result-status" id="mekpStatusPill" aria-live="polite">On recommendation</div>
         </div>
         <div class="mekp-results-body">
@@ -469,8 +470,8 @@
      Print-only letterhead summary. Hidden on screen via Bootstrap's
      d-none, shown only inside @media print via d-print-block — the
      same convention already used by #printQrCode on this page (see
-     print_style_fix_v4.css). Populated by mekpcalc-print.js from the
-     calculator's real inputs and calculateMEKP()'s already-computed
+     print_style_fix_v4.css). Populated by mekpcalc-print-summary.js from
+     the calculator's real inputs and calculateMEKP()'s already-computed
      output; calculateMEKP() itself is never called from here.
      ============================================================ -->
 <section id="mekpPrintLetterhead" class="d-none d-print-block">
@@ -537,12 +538,7 @@
      tiers are unchanged. -->
 <!-- Each page must have its own help modal with a matching data-target ID -->
 <!-- Pattern: data-target="#pageNameHelpModal" â€” see estimate.html for reference -->
-<!-- mekp-help-btn: page-scoped re-skin only, to the mockup's palette.
-     Shape/position/z-index/hover mechanics all still come from the
-     shared .help-float-btn rule in style.css (untouched, used by other
-     pages too) â€” this just recolors it. The 3-tier modal below and its
-     onclick="openHelpModal()" wiring are unchanged. -->
-<button class="help-float-btn mekp-help-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">
+<button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">
   <span aria-hidden="true">?</span>
 </button><!-- #EndLibraryItem --><!-- ===== MEKP CALCULATOR HELP MODAL ===== -->
 <div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
@@ -663,13 +659,6 @@
   </div>
 </footer>
 <!-- #EndLibraryItem --><!-- JS: correct order ensures init runs after main script -->
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js")
-    .then(reg => console.log("ServiceWorker registered:", reg))
-    .catch(err => console.error("SW registration failed:", err));
-}
-</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -678,14 +667,14 @@ if ("serviceWorker" in navigator) {
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
 <script src="mekscript.js"></script>
-<!-- MEKP redesign: print letterhead sync (see file header comment) — loads
-     after mekscript.js so its listeners always run after calculateMEKP() -->
-<script src="mekpcalc-print.js"></script>
-<!-- MEKP redesign audit pass 2: unit toggle shim, temp advisory, results
-     panel restructure, slider gradient, Duratec locked message, default
-     pre-fill — see file header comment. Loads after mekscript.js so its
-     DOMContentLoaded handler always fires after calculateMEKP() has run. -->
-<script src="mekpcalc-enhance.js"></script>
+<!-- Print letterhead sync (see file header comment) — loads after
+     mekscript.js so its listeners always run after calculateMEKP() -->
+<script src="mekpcalc-print-summary.js"></script>
+<!-- Unit toggle shim, temp advisory, results panel restructure, slider
+     gradient, Duratec locked message, default pre-fill — see file header
+     comment. Loads after mekscript.js so its DOMContentLoaded handler
+     always fires after calculateMEKP() has run. -->
+<script src="mekpcalc-ui.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     // Inject email capture into the results card
