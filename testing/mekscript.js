@@ -44,16 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
         { value: "gallon", text: "Gallons (gal)" },
       ];
       defaultUnit = "oz";
-      const resinVolumeUnitSpan = document.getElementById("resinVolumeUnit");
-      if (resinVolumeUnitSpan) resinVolumeUnitSpan.textContent = "oz"; 
     } else { // metric
       options = [
         { value: "ml", text: "Milliliters (mL/cc)" },
         { value: "liter", text: "Liters (L)" },
       ];
       defaultUnit = "ml";
-      const resinVolumeUnitSpan = document.getElementById("resinVolumeUnit");
-      if (resinVolumeUnitSpan) resinVolumeUnitSpan.textContent = "mL"; 
     }
     
     let unitFound = false;

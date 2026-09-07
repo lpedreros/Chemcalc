@@ -136,13 +136,7 @@
 .mekp-unit-btn[aria-pressed="true"]{background:var(--chrome-ink-900);color:#fff;}
 .mekp-unit-btn:hover:not([aria-pressed="true"]){color:var(--chrome-ink-900);}
 .mekp-unit-btn:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
-.mekp-input-with-unit{position:relative;flex:0 1 140px;min-width:0;}
-.mekp-input-with-unit .mekp-input{padding-right:2.6rem;}
-.mekp-input-suffix{
-  position:absolute;right:.8rem;top:50%;transform:translateY(-50%);
-  color:var(--chrome-ink-500);font-size:.78rem;font-family:var(--chrome-font-mono);
-  pointer-events:none;
-}
+.mekp-input-with-unit{flex:0 1 140px;min-width:0;}
 
 /* ---------- Duratec toggle (custom, pure-CSS checkbox) ---------- */
 .mekp-duratec-toggle{

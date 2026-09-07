@@ -53,15 +53,20 @@
 
   function syncPrintLetterhead() {
     var volumeInput = document.getElementById('resinVolume');
-    var volumeUnitLabel = document.getElementById('resinVolumeUnit');
+    var volumeUnitSelect = document.getElementById('volumeUnit');
     var tempInput = document.getElementById('ambientTemp');
     var tempUnitSelect = document.getElementById('tempUnit');
     var duratecChk = document.getElementById('usingDuratec');
 
+    // Short unit labels keyed off #volumeUnit's real value -- replaces the
+    // old #resinVolumeUnit suffix span, which only ever showed a hardcoded
+    // "oz"/"mL" regardless of which specific unit was actually selected.
+    var VOLUME_UNIT_LABELS = { oz: 'oz', quart: 'qt', gallon: 'gal', ml: 'mL', liter: 'L' };
+
     // --- Inputs recap: direct reads of the real controls, no parsing ---
     if (volumeInput) {
       var vol = (volumeInput.value || '').trim();
-      var unitLabel = volumeUnitLabel ? volumeUnitLabel.textContent.trim() : '';
+      var unitLabel = volumeUnitSelect ? (VOLUME_UNIT_LABELS[volumeUnitSelect.value] || volumeUnitSelect.value) : '';
       setText('printRecapVolume', vol ? (unitLabel ? vol + ' ' + unitLabel : vol) : '—');
     }
     if (tempInput) {

@@ -343,7 +343,6 @@
             <div class="mekp-input-with-unit">
               <label class="sr-only" for="resinVolume">Resin or gelcoat volume</label>
               <input type="number" id="resinVolume" class="mekp-input" placeholder="Enter volume">
-              <small id="resinVolumeUnit" class="mekp-input-suffix">oz</small>
             </div>
             <label class="sr-only" for="volumeUnit">Volume unit</label>
             <select id="volumeUnit" class="mekp-select"></select>
@@ -767,20 +766,25 @@
 <script>
   // Batch-input recap for the "Email me results" button (email-results.js's
   // sendResultsEmail()) — mirrors mekpcalc-print-summary.js's own recap
-  // reads (resinVolume, resinVolumeUnit, ambientTemp, tempUnit,
+  // reads (resinVolume, volumeUnit, ambientTemp, tempUnit,
   // usingDuratec), but this one is called AT SEND TIME, not baked in when
   // the page loads, so it always reflects whatever's in the form the
   // moment "Email Me" is actually clicked. calculateMEKP() is not
   // involved -- these are direct reads of the real input elements.
   function mekpEmailRecap() {
     var volumeInput = document.getElementById('resinVolume');
-    var volumeUnitLabel = document.getElementById('resinVolumeUnit');
+    var volumeUnitSelect = document.getElementById('volumeUnit');
     var tempInput = document.getElementById('ambientTemp');
     var tempUnitSelect = document.getElementById('tempUnit');
     var duratecChk = document.getElementById('usingDuratec');
 
+    // Short unit labels keyed off #volumeUnit's real value (populated by
+    // mekscript.js's updateVolumeUnits()) -- this replaces the old
+    // #resinVolumeUnit suffix span, which only ever showed a hardcoded
+    // "oz"/"mL" regardless of which specific unit was actually selected.
+    var VOLUME_UNIT_LABELS = { oz: 'oz', quart: 'qt', gallon: 'gal', ml: 'mL', liter: 'L' };
     var vol = volumeInput ? (volumeInput.value || '').trim() : '';
-    var unitLabel = volumeUnitLabel ? volumeUnitLabel.textContent.trim() : '';
+    var unitLabel = volumeUnitSelect ? (VOLUME_UNIT_LABELS[volumeUnitSelect.value] || volumeUnitSelect.value) : '';
     var volumeText = vol ? (unitLabel ? vol + ' ' + unitLabel : vol) : '—';
 
     var deg = tempUnitSelect && tempUnitSelect.value === 'celsius' ? 'C' : 'F';
