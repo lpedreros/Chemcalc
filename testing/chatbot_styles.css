@@ -397,6 +397,17 @@
     background: var(--chrome-ink-500, #4A7C88);
 }
 
+/* Mobile/tablet icon-only collapse -- same 767px breakpoint as the sitewide
+   mobile nav and .fab-donate's own collapse (style.css). The toggle's
+   accessible name comes from its own aria-label="Toggle chatbot"
+   (chatbot.js), not from this ::after content, so display:none here loses
+   nothing for assistive tech -- unlike Donate's bare text node, this
+   generated content was never part of the accessible name to begin with. */
+@media (max-width: 767px) {
+    .chatbot-toggle::after { display: none; }
+    .chatbot-toggle { padding: 0.75rem; border-radius: 50%; min-height: 0; }
+}
+
 /* Mobile Responsive */
 @media (max-width: 480px) {
     #chemcalc-chatbot {
@@ -410,9 +421,6 @@
         bottom: 4.75rem;
         right: 10px;
     }
-
-    .chatbot-toggle::after { display: none; }
-    .chatbot-toggle { padding: 0.75rem; border-radius: 50%; min-height: 0; }
 
     .chatbot-video-item img {
         width: 100px;

@@ -101,15 +101,19 @@
   function wrapLogCalculation(calculatorName) {
     var originalLogCalculation = window.logCalculation;
 
-    window.logCalculation = function (calculator, inputs, results) {
-      // 1. Call the original function — never interfere with its behavior
-      originalLogCalculation.call(this, calculator, inputs, results);
+    window.logCalculation = function () {
+      var args = arguments;
+
+      // 1. Call the original function — never interfere with its behavior.
+      // Forward ALL arguments untouched — do not name/limit them here, or a
+      // future argument added to logCalculation() silently gets dropped again.
+      originalLogCalculation.apply(this, args);
 
       // 2. Fire Meta Pixel custom event
       try {
         fbq('trackCustom', 'CalculatorUsed', {
           calculator_name: calculatorName,
-          calculator_id: calculator
+          calculator_id: args[0]
         });
       } catch (e) {
         // Never let pixel errors affect the user experience

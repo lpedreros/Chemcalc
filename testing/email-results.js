@@ -121,7 +121,7 @@ function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray
     const html = `
         <div class="email-capture-box mt-4 p-3" style="background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
             <h6 style="margin-bottom: 10px; color: #2c3e50;">Save Your Results</h6>
-            <p style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 10px;">Enter your email to get a copy of these results and helpful marine repair tips.</p>
+            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">Enter your email to get a copy of these results and helpful marine repair tips.</p>
             <div class="input-group mb-2">
                 <input type="email" id="captureEmailInput" class="form-control" placeholder="your@email.com">
                 <div class="input-group-append">
