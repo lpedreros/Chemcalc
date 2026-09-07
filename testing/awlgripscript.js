@@ -430,20 +430,25 @@ document.addEventListener("DOMContentLoaded", function() {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: only log when user has entered a real input value
     if (typeof logCalculation === 'function' && inVal > 0) {
-      logCalculation('awlgrip', {
+      const _ccInputs = {
         paintType:   paintType,
         methodType:  methodType,
         inputMethod: selectedInputMethod,
         inputValue:  inVal,
         inputUnit:   inUnit,
         unitSystem:  sysType
-      }, {
+      };
+      const _ccResults = {
         paintBase:   outP.textContent,
         converter:   outC.textContent,
         reducer:     outR.textContent,
         accelerator: (paintType === 'awlcraft2000') ? outA.textContent : null,
         coverage:    outCov.textContent
-      });
+      };
+      logCalculation('awlgrip', _ccInputs, _ccResults);
+      // Cached for Print/Email Me to log this settled answer immediately
+      // (see calc-tracker.js's logCalculation immediate=true path).
+      window._ccLastCalc = { calculator: 'awlgrip', inputs: _ccInputs, results: _ccResults };
     }
   }
 
@@ -491,6 +496,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", function() {
+      if (window._ccLastCalc && typeof logCalculation === 'function') {
+        logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+      }
       var pageUrl = window.location.href;
       qrCodeContainer.innerHTML = ""; 
       new QRCode(qrCodeContainer, {

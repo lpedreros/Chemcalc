@@ -232,9 +232,22 @@
   font-size:.7rem;font-weight:700;
   padding:.35rem .7rem;border-radius:999px;
 }
-.mekp-result-status.is-on{background:rgba(46,187,120,.18);color:#5EE0A6;}
+.mekp-result-status.is-on{background:rgba(46,187,120,.18);color:var(--chrome-on-500);}
 .mekp-result-status.is-off{background:rgba(242,166,60,.18);color:var(--chrome-signal-400);}
 .mekp-result-status.is-locked{background:rgba(255,255,255,.14);color:#fff;}
+
+/* Catalyst numbers themselves, color-coded with the exact same
+   on/off-recommendation comparison that drives the status pill above
+   (see mekpcalc-ui.js's updateResultsPanel() -- one comparison, not
+   duplicated). Duratec-locked state adds neither class, so these stay
+   their normal (signal-400 / white) color then -- its own neutral
+   treatment, not on/off coloring. */
+#mekpHeroValue.is-on,
+#mekpHeroDrops.is-on,
+#mekpCompareUsed.is-on{color:var(--chrome-on-500);}
+#mekpHeroValue.is-off,
+#mekpHeroDrops.is-off,
+#mekpCompareUsed.is-off{color:var(--chrome-signal-500);}
 
 /* ---------- Hero cc value + drops sub-line ---------- */
 .mekp-result-primary{margin-bottom:1.1rem;}

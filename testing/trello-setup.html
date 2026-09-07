@@ -37,33 +37,87 @@
   }
   </script>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag("js", new Date());
-    gtag("config", "G-DTECSH4N52");
-  </script>
-		
-	<!-- Meta Pixel -->
-	<script src="/meta-pixel.js"></script>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png" />
-
-  <!-- Bootstrap CSS -->
+<!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css" />
+<!-- HEAD-COMMON:START -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- ============================================================
+     Common head resources -- loaded on every real page. Kept in sync
+     by sync_head.py (run from \testing\): it reads this file and
+     replaces everything between the HEAD-COMMON:START/END markers on
+     each listed page. To update sitewide: edit ONLY this file, then
+     re-run `python sync_head.py`. Never hand-edit the marked block on
+     an individual page -- the next sync will overwrite it.
 
-  <!-- AI Chatbot -->
-  <link rel="stylesheet" href="/chatbot_styles.css" />
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-	<script src="/supabase-client.js"></script>
-	<script src="/global-auth.js"></script>
-  </head>
+     DO NOT put page-specific meta (title, description, OG/Twitter,
+     canonical, JSON-LD schema, robots) or page-only assets (calculator
+     CSS/JS, print_style_fix_v4.css, qrcode.min.js,
+     affiliate-click-tracker.js, the Estimator's own scripts) here --
+     those stay outside the markers, per page.
+
+     DELIBERATELY NOT included here, even though every other page
+     shares them, because they are not actually safe to force onto
+     every page uniformly:
+       - Bootstrap CSS: 18 of 19 pages use 4.5.2 (stackpath CDN), but
+         estimate.html runs on Bootstrap 5.3.0 (jsdelivr) with no
+         jQuery/Popper -- a real, load-bearing difference, not drift.
+         Stays page-specific everywhere.
+       - global-account-modal.js: loaded on every page, but not always
+         from <head> -- estimate.html loads it near the end of <body>
+         instead (its own loginModal/bizInfoModal markup was already
+         removed in favor of the ones it injects -- a completed
+         migration, not a gap). Left where it is rather than moved into
+         head, to avoid touching that page's script order. Stays
+         page-specific everywhere; cookie.html/privacy.html/terms.html/
+         trello-setup.html were genuinely missing it anywhere on the
+         page (a real "Log In" dead link) and got it added directly,
+         once, outside their markers.
+     ============================================================ -->
+
+<!-- Web app manifest ("Add to Home Screen") -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="/images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+<!-- Google Fonts: Inter + IBM Plex Mono -- used by the sitewide dark
+     header/footer/floating-action chrome and by mekpcalc.css. Approved
+     design: Magic Patterns (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw).
+     style.css no longer @imports these itself now that this link is
+     finally live on every real page (see style.css's top-of-file
+     comment) -- loading both would double-fetch the same stylesheet. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<!-- Site stylesheet -->
+<link rel="stylesheet" href="/style.css">
+
+<!-- Chatbot styles -- chatbot.js/Library/Chatbot.lbi loads on every
+     page, so its stylesheet needs to as well (it was missing on 7
+     pages before this). -->
+<link rel="stylesheet" href="/chatbot_styles.css">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DTECSH4N52');
+</script>
+
+<!-- Meta Pixel -->
+<script src="/meta-pixel.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/global-auth.js"></script>
+<!-- HEAD-COMMON:END -->
+<script src="/global-account-modal.js?v=1"></script> <!-- page-specific: fixes a dead Log In link, see head-common.lbi's own note -->
+</head>
 <body>
 
 <!-- Header --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">

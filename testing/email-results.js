@@ -1,7 +1,7 @@
 // email-results.js
 // Handles the "Email me these results" functionality across all calculators
 
-async function sendResultsEmail(calculatorName, resultElementIds) {
+async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderName) {
     const emailInput = document.getElementById('captureEmailInput');
     const btn = document.getElementById('btnEmailResults');
     const msg = document.getElementById('emailResultsMsg');
@@ -14,6 +14,28 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
         msg.style.color = "#e74c3c";
         msg.style.display = "block";
         return;
+    }
+
+    // Optional batch-input recap, prepended ahead of the computed results
+    // below. recapBuilderName is a global function name (not a function
+    // reference -- this call is assembled into an inline onclick string
+    // by injectEmailCaptureUI, so it has to stay JSON-serializable) that
+    // the calling page supplies. It's looked up and called HERE, at send
+    // time, so it reads whatever the real inputs say right now -- not
+    // whatever they said back when injectEmailCaptureUI ran at page load.
+    // Pages that don't pass a third argument keep the exact old behavior.
+    let recapHtml = '';
+    if (recapBuilderName && typeof window[recapBuilderName] === 'function') {
+        try {
+            const recapPairs = window[recapBuilderName]() || [];
+            recapPairs.forEach(pair => {
+                if (pair && pair.label && pair.value) {
+                    recapHtml += `<p style="margin-bottom: 6px; font-size: 14px; color: #555555;"><strong>${pair.label}:</strong> ${pair.value}</p>`;
+                }
+            });
+        } catch (err) {
+            console.error('Recap builder (' + recapBuilderName + ') failed:', err);
+        }
     }
 
     // Gather results HTML
@@ -47,7 +69,7 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
             body: {
                 email: email,
                 calculatorName: calculatorName,
-                resultsHtml: resultsHtml,
+                resultsHtml: recapHtml + resultsHtml,
                 sourceUrl: window.location.href
             }
         });
@@ -64,6 +86,16 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
           markEmailCaptured();
         }
 
+        // Log this settled answer immediately (skips the debounce).
+        // NOTE: window._ccLastCalc.calculator is the tracker's own
+        // identifier (e.g. 'mekp') set by the calculator script alongside
+        // its logCalculation() call -- NOT this function's own
+        // calculatorName parameter above, which is just the display
+        // string used for the email subject (e.g. "MEKP Catalyst").
+        if (window._ccLastCalc && typeof logCalculation === 'function') {
+          logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+        }
+
     } catch (err) {
         console.error("Error sending email:", err);
         msg.textContent = "Failed to send. Please try again.";
@@ -75,10 +107,16 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
     }
 }
 
-// Helper to inject the UI into a container
-function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray) {
+// Helper to inject the UI into a container. recapBuilderName is optional:
+// the name of a global function (defined on the calling page) that
+// returns an array of {label, value} pairs assembled from that page's
+// own real inputs -- see sendResultsEmail() above for how/when it's
+// called. Omit it and behavior is unchanged from before this existed.
+function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray, recapBuilderName) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    const recapArg = recapBuilderName ? `, '${recapBuilderName}'` : '';
 
     const html = `
         <div class="email-capture-box mt-4 p-3" style="background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
@@ -87,7 +125,7 @@ function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray
             <div class="input-group mb-2">
                 <input type="email" id="captureEmailInput" class="form-control" placeholder="your@email.com">
                 <div class="input-group-append">
-                    <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")})">Email Me</button>
+                    <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")}${recapArg})">Email Me</button>
                 </div>
             </div>
             <div id="emailResultsMsg" style="display:none; font-size: 0.85rem; margin-top: 5px;"></div>

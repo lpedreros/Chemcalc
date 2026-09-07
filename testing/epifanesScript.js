@@ -127,13 +127,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: function already returns early for <= 0, but be explicit
     if (typeof logCalculation === 'function' && totalVolumeValue > 0) {
-      logCalculation('epifanes', {
+      const _ccInputs = {
         totalVolume: totalVolumeValue,
         unit:        unit
-      }, {
+      };
+      const _ccResults = {
         base:     resultBaseDisplay.innerHTML,
         hardener: resultHardenerDisplay.innerHTML
-      });
+      };
+      logCalculation('epifanes', _ccInputs, _ccResults);
+      // Cached for Print/Email Me to log this settled answer immediately
+      // (see calc-tracker.js's logCalculation immediate=true path).
+      window._ccLastCalc = { calculator: 'epifanes', inputs: _ccInputs, results: _ccResults };
     }
   }
 
@@ -145,8 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (printButton && qrCodeContainer) {
     if (typeof QRCode !== "undefined") {
-        printButton.addEventListener("click", (event) => { 
-            event.preventDefault(); 
+        printButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (window._ccLastCalc && typeof logCalculation === 'function') {
+              logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+            }
             const pageUrl = window.location.href;
             qrCodeContainer.innerHTML = ""; 
             new QRCode(qrCodeContainer, {

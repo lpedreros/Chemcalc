@@ -6,9 +6,16 @@
   Header set Expires "0"
 </FilesMatch>
 
-# JS and CSS: cache for 1 year (use ?v=N in HTML to bust when updated)
+# JS and CSS: browser caches the file, but must revalidate with the
+# server on every load before using it -- a cheap 304 if unchanged,
+# a fresh copy the instant a deploy actually changes the file. No
+# manual cache-busting (?v=N) ever needed. (Changed 2026-09-06 from
+# "public, max-age=31536000, immutable" -- that was serving returning
+# visitors a stale copy of every JS/CSS file for up to a year with no
+# way to force a refresh short of a hard reload/cleared cache. This is
+# what was silently masking the hamburger-menu fix on 2026-09-06.)
 <FilesMatch "\.(js|css)$">
-  Header set Cache-Control "public, max-age=31536000, immutable"
+  Header set Cache-Control "no-cache, must-revalidate"
 </FilesMatch>
 
 # Images: cache for 30 days

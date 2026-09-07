@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // ── Analytics: log this calculation (fire-and-forget) ──
         // Guard: only log when user has entered a real resin amount AND a temperature
         if (typeof logCalculation === 'function' && resinAmount > 0 && !isNaN(tempC)) {
-          logCalculation('mekp', {
+          const _ccInputs = {
             resinAmount:      resinAmount,
             volumeUnit:       selectedVolumeUnit,
             temperature:      temp,
@@ -156,11 +156,16 @@ document.addEventListener("DOMContentLoaded", () => {
             usingDuratec:     useDuratec,
             mekpPercentage:   mekpPercentage,
             percentageSource: percentageSource
-          }, {
+          };
+          const _ccResults = {
             mekpVolume: mekpCcsP.textContent,
             mekpDrops:  mekpDropsP.textContent,
             recommended: mekpRecommendedP.textContent
-          });
+          };
+          logCalculation('mekp', _ccInputs, _ccResults);
+          // Cached for Print/Email Me to log this settled answer immediately
+          // (see calc-tracker.js's logCalculation immediate=true path).
+          window._ccLastCalc = { calculator: 'mekp', inputs: _ccInputs, results: _ccResults };
         }
     } else {
         mekpRecommendedP.textContent = "Recommended MEKP % (based on temperature): —";
@@ -231,6 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", (event) => {
       event.preventDefault();
+      if (window._ccLastCalc && typeof logCalculation === 'function') {
+        logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+      }
       const pageUrl = window.location.href;
       qrCodeContainer.innerHTML = "";
       new QRCode(qrCodeContainer, {

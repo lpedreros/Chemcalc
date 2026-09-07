@@ -679,7 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: only log when user has entered real dimensions (function already returns early for <= 0)
     if (typeof logCalculation === 'function' && length > 0 && width > 0) {
-      logCalculation('clothcalc', {
+      const _ccInputs = {
         length:       length,
         width:        width,
         units:        units,
@@ -690,14 +690,19 @@ document.addEventListener("DOMContentLoaded", () => {
         layers:       Array.from(layers).map(l => l.querySelector('.material-type').value),
         resultSystem: selectedSystem,
         resultUnit:   resultUnit
-      }, {
+      };
+      const _ccResults = {
         resinVolume:   resinVolumeEl.textContent,
         resinWeight:   resinWeightEl.textContent,
         hardener:      (resinType === 'epoxy') ? hardenerAmountEl.textContent : null,
         mekpVolume:    (resinType !== 'epoxy') ? mekpCcsEl.textContent : null,
         workingTime:   workingTimeEl.textContent,
         estimatedCost: estimatedCostEl.textContent
-      });
+      };
+      logCalculation('clothcalc', _ccInputs, _ccResults);
+      // Cached for Print/Email Me to log this settled answer immediately
+      // (see calc-tracker.js's logCalculation immediate=true path).
+      window._ccLastCalc = { calculator: 'clothcalc', inputs: _ccInputs, results: _ccResults };
     }
   }
 
@@ -743,6 +748,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", (event) => {
       event.preventDefault();
+      if (window._ccLastCalc && typeof logCalculation === 'function') {
+        logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+      }
       if (!lastCalculatedResults) {
           alert("Please perform a calculation first.");
           return;

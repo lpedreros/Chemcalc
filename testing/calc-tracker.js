@@ -2,8 +2,8 @@
 // Shared analytics module for all ChemCalc calculator pages.
 //
 // WHAT IT DOES:
-//   - Logs one row to the `calculator_events` Supabase table every time
-//     a calculation fires on any calculator page.
+//   - Logs one row to the `calculator_events` Supabase table once an
+//     answer settles (13s debounced), or right away for Print/Email Me.
 //   - Attaches user_id if the visitor is logged in.
 //   - Attaches a session_id (random, per browser session, no login needed).
 //   - Attaches approximate country + city via IP geolocation (one call per session).
@@ -11,6 +11,9 @@
 //
 // HOW TO USE (in each calculator's script):
 //   logCalculation('awlgrip', { product: 'awlgrip', method: 'spray', ... }, { paint: '12 oz', ... });
+//   // ...and cache the same values on window._ccLastCalc right alongside
+//   // that call, so a later Print/Email Me action can log immediately:
+//   logCalculation('awlgrip', inputs, results, true);
 //
 // DEPENDENCIES:
 //   - Requires _sb (supabase-client.js) to already be loaded in <head>.
@@ -53,23 +56,35 @@ async function getLocation() {
 
 // ── Debounce timer ──────────────────────────────────────────
 // Prevents logging on every keystroke. Only logs after user stops
-// typing/changing inputs for 2 seconds.
+// typing/changing inputs for 13 seconds — long enough that someone
+// exploring live (dragging a slider, comparing two temperatures)
+// settles on one row per finished answer instead of several per session.
 let _logTimer = null;
 
 // ── Main log function ────────────────────────────────────────
 // Called by each calculator script after every calculation.
-// DEBOUNCED: waits 2 seconds of inactivity before actually inserting.
+// DEBOUNCED by default: waits 13 seconds of inactivity before actually
+// inserting. Pass immediate=true (Print/Email Me call sites) to skip the
+// wait and log the current state right away instead — used for actions
+// that mean the user is done, not mid-exploration.
 //
-// @param {string} calculator  - Identifier: 'awlgrip' | 'mekp' | 'clothcalc' | 'epifanes'
-// @param {object} inputs      - Plain object of all input values at time of calculation
-// @param {object} results     - Plain object of all output values shown to the user
+// @param {string} calculator   - Identifier: 'awlgrip' | 'mekp' | 'clothcalc' | 'epifanes'
+// @param {object} inputs       - Plain object of all input values at time of calculation
+// @param {object} results      - Plain object of all output values shown to the user
+// @param {boolean} [immediate] - Skip the debounce and insert right away (default false)
 //
 // This is fire-and-forget: a failure here never breaks the calculator.
-function logCalculation(calculator, inputs, results) {
-  // Cancel any pending log — only the final value gets recorded
+function logCalculation(calculator, inputs, results, immediate = false) {
+  // Cancel any pending log either way — immediate mode inserts this call's
+  // state right now, so a stale queued write for an earlier state must not
+  // also fire later and duplicate the row; debounced mode just restarts
+  // the wait as before.
   if (_logTimer) clearTimeout(_logTimer);
 
-  _logTimer = setTimeout(async function () {
+  // Same insert logic either path takes — extracted so immediate=true can
+  // call it directly instead of through setTimeout, without duplicating
+  // the payload/error-handling code below.
+  async function doInsert() {
     try {
       if (typeof _sb === 'undefined' || !_sb) {
         console.warn('[calc-tracker] Supabase client (_sb) not available. Skipping log.');
@@ -107,7 +122,15 @@ function logCalculation(calculator, inputs, results) {
       // Never let a tracking error surface to the user
       console.warn('[calc-tracker] Unexpected error:', err.message);
     }
-  }, 2000); // 2-second debounce
+  }
+
+  if (immediate) {
+    _logTimer = null;
+    doInsert();
+    return;
+  }
+
+  _logTimer = setTimeout(doInsert, 13000); // 13-second debounce
 }
 
 // ── Mark email captured ──────────────────────────────────────

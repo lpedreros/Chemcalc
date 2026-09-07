@@ -24,15 +24,19 @@
 //   2. Ambient-temperature advisory — reads the temp field + unit,
 //      renders one of five fixed messages. Presentation only.
 //   3. Results panel — hero cc value, drops sub-line, comparison grid,
-//      status pill — all parsed from the real #mekpRecommended /
-//      #mekpPercentage / #mekpCcs / #mekpDrops strings calculateMEKP()
-//      already writes (same extraction approach as
-//      mekpcalc-print-summary.js).
+//      status pill, and on/off-recommendation color coding on the
+//      catalyst numbers themselves — all parsed from the real
+//      #mekpRecommended / #mekpPercentage / #mekpCcs / #mekpDrops
+//      strings calculateMEKP() already writes (same extraction approach
+//      as mekpcalc-print-summary.js).
 //   4. Slider fill gradient — a CSS custom property set from the
 //      slider's own value/min/max.
 //   5. Duratec-locked message — shown only while the checkbox is
 //      checked.
-//   6. Default pre-fill — 32oz / 72°F on load, fed through the exact
+//   6. Slider auto-sync — snaps #customPercentage to the recommended %
+//      whenever ambientTemp/tempUnit changes (skipped while Duratec is
+//      checked), overriding any value the user had set manually.
+//   7. Default pre-fill — 32oz / 72°F on load, fed through the exact
 //      same input/change events a real user typing would fire, so
 //      calculateMEKP() is never called directly from here.
 //
@@ -159,6 +163,11 @@
   }
 
   // ---------- 3. Results panel ----------
+  // On/off-recommendation coloring targets: the status pill (text +
+  // class) plus the numeric values themselves (class only). Both read
+  // off ONE comparison below -- not duplicated per target.
+  var COLOR_CODED_IDS = ['mekpHeroValue', 'mekpHeroDrops', 'mekpCompareUsed'];
+
   function updateResultsPanel() {
     var ccsText = textOf('mekpCcs');
     var dropsText = textOf('mekpDrops');
@@ -178,18 +187,29 @@
 
     var pill = document.getElementById('mekpStatusPill');
     var duratecChk = document.getElementById('usingDuratec');
-    if (!pill) return;
-
-    pill.classList.remove('is-on', 'is-off', 'is-locked');
-
-    if (duratecChk && duratecChk.checked) {
-      pill.textContent = 'Duratec locked';
-      pill.classList.add('is-locked');
-      return;
-    }
 
     var recommendedNum = parseFloat(recommendedTail);
-    if (!isNaN(recommendedNum) && usedPct !== null && Math.abs(recommendedNum - usedPct) < 0.05) {
+    var isDuratec = !!(duratecChk && duratecChk.checked);
+    var isOn = !isDuratec && !isNaN(recommendedNum) && usedPct !== null && Math.abs(recommendedNum - usedPct) < 0.05;
+    var isOff = !isDuratec && !isOn;
+
+    // Duratec-locked keeps its own neutral/locked treatment on these
+    // values -- neither class gets added in that state.
+    COLOR_CODED_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('is-on', 'is-off');
+      if (isOn) el.classList.add('is-on');
+      else if (isOff) el.classList.add('is-off');
+    });
+
+    if (!pill) return;
+    pill.classList.remove('is-on', 'is-off', 'is-locked');
+
+    if (isDuratec) {
+      pill.textContent = 'Duratec locked';
+      pill.classList.add('is-locked');
+    } else if (isOn) {
       pill.textContent = 'On recommendation';
       pill.classList.add('is-on');
     } else {
@@ -225,7 +245,37 @@
     updateDuratecLockedMessage();
   }
 
-  // ---------- 6. Default pre-fill on load ----------
+  // ---------- 6. Slider auto-sync to recommended % ----------
+  // On every ambientTemp/tempUnit change, snap the custom-percentage
+  // slider to the freshly-computed recommended value -- reusing the same
+  // #mekpRecommended parsing updateResultsPanel() already does for the
+  // status pill (afterLastColon + parseFloat), so there's one source of
+  // truth for "what did calculateMEKP() recommend." Skipped while
+  // Duratec is checked (that already locks/disables the slider).
+  // Confirmed with Leo: this always overrides a value the user set
+  // manually on the slider -- simplest behavior. The user can still
+  // nudge the slider again afterward; it just won't fight them unless
+  // temperature changes again.
+  function syncSliderToRecommended() {
+    var duratecChk = document.getElementById('usingDuratec');
+    if (duratecChk && duratecChk.checked) return;
+
+    var slider = document.getElementById('customPercentage');
+    if (!slider) return;
+
+    var recommendedTail = afterLastColon(textOf('mekpRecommended'), null);
+    var recommendedNum = recommendedTail ? parseFloat(recommendedTail) : NaN;
+    if (isNaN(recommendedNum)) return;
+
+    slider.value = recommendedNum;
+    // Same events applyDefaults() already uses -- this is what runs
+    // calculateMEKP() (via mekscript.js's own listener on this element);
+    // it is never called directly from here.
+    slider.dispatchEvent(new Event('input', { bubbles: true }));
+    slider.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // ---------- 7. Default pre-fill on load ----------
   function applyDefaults() {
     var resinVolumeInput = document.getElementById('resinVolume');
     var ambientTempInput = document.getElementById('ambientTemp');
@@ -270,6 +320,16 @@
       if (!el) return;
       el.addEventListener('input', renderAll);
       el.addEventListener('change', renderAll);
+    });
+
+    // Slider auto-sync: only on temperature-driving inputs, never on
+    // customPercentage/resinVolume/etc. -- otherwise dragging the slider
+    // would immediately get overridden back to the recommended value.
+    ['ambientTemp', 'tempUnit'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', syncSliderToRecommended);
+      el.addEventListener('change', syncSliderToRecommended);
     });
 
     applyDefaults();
