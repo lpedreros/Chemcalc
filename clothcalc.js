@@ -52,29 +52,29 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastCalculatedResults = null;
 
   const materialData = {
-    "csm_0.75": { ratio: 2.0, density: 1.5, system: 'imperial', name: 'CSM (0.75 oz/sq ft)', weight: 0.75, unit: 'oz/sq ft', type: 'fiberglass' },
-    "csm_1.5": { ratio: 2.0, density: 1.5, system: 'imperial', name: 'CSM (1.5 oz/sq ft)', weight: 1.5, unit: 'oz/sq ft', type: 'fiberglass' },
-    "csm_2.0": { ratio: 2.0, density: 1.5, system: 'imperial', name: 'CSM (2.0 oz/sq ft)', weight: 2.0, unit: 'oz/sq ft', type: 'fiberglass' },
-    wr_18: { ratio: 1.0, density: 1.8, system: 'imperial', name: 'Woven Roving (18 oz/sq yd)', weight: 18, unit: 'oz/sq yd', type: 'fiberglass' },
-    wr_24: { ratio: 1.0, density: 1.8, system: 'imperial', name: 'Woven Roving (24 oz/sq yd)', weight: 24, unit: 'oz/sq yd', type: 'fiberglass' },
-    combo_1708: { ratio: 1.2, density: 1.6, system: 'imperial', name: 'Combination Mat (1708)', weight: 24, unit: 'oz/sq yd', type: 'fiberglass' },
-    combo_1808: { ratio: 1.2, density: 1.6, system: 'imperial', name: 'Combination Mat (1808)', weight: 25, unit: 'oz/sq yd', type: 'fiberglass' },
-    cloth_4: { ratio: 1.0, density: 1.9, system: 'imperial', name: 'Cloth (4 oz/sq yd)', weight: 4, unit: 'oz/sq yd', type: 'fiberglass' },
-    cloth_6: { ratio: 1.0, density: 1.9, system: 'imperial', name: 'Cloth (6 oz/sq yd)', weight: 6, unit: 'oz/sq yd', type: 'fiberglass' },
-    cloth_10: { ratio: 1.0, density: 1.9, system: 'imperial', name: 'Cloth (10 oz/sq yd)', weight: 10, unit: 'oz/sq yd', type: 'fiberglass' },
+    "csm_0.75": { ratio: 3.0, density: 1.5, system: 'imperial', name: 'CSM (0.75 oz/sq ft)', weight: 0.75, unit: 'oz/sq ft', type: 'fiberglass' },
+    "csm_1.5": { ratio: 3.0, density: 1.5, system: 'imperial', name: 'CSM (1.5 oz/sq ft)', weight: 1.5, unit: 'oz/sq ft', type: 'fiberglass' },
+    "csm_2.0": { ratio: 3.0, density: 1.5, system: 'imperial', name: 'CSM (2.0 oz/sq ft)', weight: 2.0, unit: 'oz/sq ft', type: 'fiberglass' },
+    wr_18: { ratio: 2.5, density: 1.8, system: 'imperial', name: 'Woven Roving (18 oz/sq yd)', weight: 18, unit: 'oz/sq yd', type: 'fiberglass' },
+    wr_24: { ratio: 2.5, density: 1.8, system: 'imperial', name: 'Woven Roving (24 oz/sq yd)', weight: 24, unit: 'oz/sq yd', type: 'fiberglass' },
+    combo_1708: { ratio: 1.8, density: 1.6, system: 'imperial', name: 'Combination Mat (1708)', weight: 24, unit: 'oz/sq yd', type: 'fiberglass' },
+    combo_1808: { ratio: 1.8, density: 1.6, system: 'imperial', name: 'Combination Mat (1808)', weight: 25, unit: 'oz/sq yd', type: 'fiberglass' },
+    cloth_4: { ratio: 1.4, density: 1.9, system: 'imperial', name: 'Cloth (4 oz/sq yd)', weight: 4, unit: 'oz/sq yd', type: 'fiberglass' },
+    cloth_6: { ratio: 1.4, density: 1.9, system: 'imperial', name: 'Cloth (6 oz/sq yd)', weight: 6, unit: 'oz/sq yd', type: 'fiberglass' },
+    cloth_10: { ratio: 1.4, density: 1.9, system: 'imperial', name: 'Cloth (10 oz/sq yd)', weight: 10, unit: 'oz/sq yd', type: 'fiberglass' },
     "carbon_5.7": { ratio: 1.5, density: 1.7, system: 'imperial', name: 'Carbon Fiber (5.7 oz)', weight: 5.7, unit: 'oz/sq yd', type: 'carbon' },
     "carbon_11": { ratio: 1.5, density: 1.7, system: 'imperial', name: 'Carbon Fiber (11 oz)', weight: 11, unit: 'oz/sq yd', type: 'carbon' },
     "kevlar_5": { ratio: 1.5, density: 1.44, system: 'imperial', name: 'Kevlar (5 oz)', weight: 5, unit: 'oz/sq yd', type: 'kevlar' },
-    "csm_225gsm": { ratio: 2.0, density: 1.5, system: 'metric', name: 'CSM (225 gsm)', weight: 225, unit: 'gsm', type: 'fiberglass' },
-    "csm_450gsm": { ratio: 2.0, density: 1.5, system: 'metric', name: 'CSM (450 gsm)', weight: 450, unit: 'gsm', type: 'fiberglass' },
-    "csm_600gsm": { ratio: 2.0, density: 1.5, system: 'metric', name: 'CSM (600 gsm)', weight: 600, unit: 'gsm', type: 'fiberglass' },
-    "wr_600gsm": { ratio: 1.0, density: 1.8, system: 'metric', name: 'Woven Roving (600 gsm)', weight: 600, unit: 'gsm', type: 'fiberglass' },
-    "wr_800gsm": { ratio: 1.0, density: 1.8, system: 'metric', name: 'Woven Roving (800 gsm)', weight: 800, unit: 'gsm', type: 'fiberglass' },
-    "combo_800gsm": { ratio: 1.2, density: 1.6, system: 'metric', name: 'Combination Mat (800 gsm)', weight: 800, unit: 'gsm', type: 'fiberglass' },
-    "combo_850gsm": { ratio: 1.2, density: 1.6, system: 'metric', name: 'Combination Mat (850 gsm)', weight: 850, unit: 'gsm', type: 'fiberglass' },
-    "cloth_135gsm": { ratio: 1.0, density: 1.9, system: 'metric', name: 'Cloth (135 gsm)', weight: 135, unit: 'gsm', type: 'fiberglass' },
-    "cloth_200gsm": { ratio: 1.0, density: 1.9, system: 'metric', name: 'Cloth (200 gsm)', weight: 200, unit: 'gsm', type: 'fiberglass' },
-    "cloth_340gsm": { ratio: 1.0, density: 1.9, system: 'metric', name: 'Cloth (340 gsm)', weight: 340, unit: 'gsm', type: 'fiberglass' },
+    "csm_225gsm": { ratio: 3.0, density: 1.5, system: 'metric', name: 'CSM (225 gsm)', weight: 225, unit: 'gsm', type: 'fiberglass' },
+    "csm_450gsm": { ratio: 3.0, density: 1.5, system: 'metric', name: 'CSM (450 gsm)', weight: 450, unit: 'gsm', type: 'fiberglass' },
+    "csm_600gsm": { ratio: 3.0, density: 1.5, system: 'metric', name: 'CSM (600 gsm)', weight: 600, unit: 'gsm', type: 'fiberglass' },
+    "wr_600gsm": { ratio: 2.5, density: 1.8, system: 'metric', name: 'Woven Roving (600 gsm)', weight: 600, unit: 'gsm', type: 'fiberglass' },
+    "wr_800gsm": { ratio: 2.5, density: 1.8, system: 'metric', name: 'Woven Roving (800 gsm)', weight: 800, unit: 'gsm', type: 'fiberglass' },
+    "combo_800gsm": { ratio: 1.8, density: 1.6, system: 'metric', name: 'Combination Mat (800 gsm)', weight: 800, unit: 'gsm', type: 'fiberglass' },
+    "combo_850gsm": { ratio: 1.8, density: 1.6, system: 'metric', name: 'Combination Mat (850 gsm)', weight: 850, unit: 'gsm', type: 'fiberglass' },
+    "cloth_135gsm": { ratio: 1.4, density: 1.9, system: 'metric', name: 'Cloth (135 gsm)', weight: 135, unit: 'gsm', type: 'fiberglass' },
+    "cloth_200gsm": { ratio: 1.4, density: 1.9, system: 'metric', name: 'Cloth (200 gsm)', weight: 200, unit: 'gsm', type: 'fiberglass' },
+    "cloth_340gsm": { ratio: 1.4, density: 1.9, system: 'metric', name: 'Cloth (340 gsm)', weight: 340, unit: 'gsm', type: 'fiberglass' },
     "carbon_200gsm": { ratio: 1.5, density: 1.7, system: 'metric', name: 'Carbon Fiber (200 gsm)', weight: 200, unit: 'gsm', type: 'carbon' },
     "carbon_370gsm": { ratio: 1.5, density: 1.7, system: 'metric', name: 'Carbon Fiber (370 gsm)', weight: 370, unit: 'gsm', type: 'carbon' },
     "kevlar_170gsm": { ratio: 1.5, density: 1.44, system: 'metric', name: 'Kevlar (170 gsm)', weight: 170, unit: 'gsm', type: 'kevlar' }
@@ -622,10 +622,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let estimatedCost = 0;
     if (resinCost > 0) {
       let costPerLiter = 0;
-      if (resinCostUnit === "gal") costPerLiter = resinCost / literToGallon;
+      if (resinCostUnit === "gal") costPerLiter = resinCost * literToGallon;
       else if (resinCostUnit === "liter") costPerLiter = resinCost;
-      else if (resinCostUnit === "kg") costPerLiter = resinCost / resinInfo.density;
-      else if (resinCostUnit === "lb") costPerLiter = (resinCost / kgToLb) / resinInfo.density;
+      else if (resinCostUnit === "kg") costPerLiter = resinCost * resinInfo.density;
+      else if (resinCostUnit === "lb") costPerLiter = (resinCost * kgToLb) * resinInfo.density;
       estimatedCost = (resinVolumeLiters + hardenerVolumeLiters) * costPerLiter;
     }
 
@@ -707,6 +707,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (layersContainer) layersContainer.addEventListener("click", (event) => {
       if (event.target.classList.contains("remove-layer-btn")) {
         handleRemoveLayer(event);
+      }
+    });
+    if (layersContainer) layersContainer.addEventListener("change", (event) => {
+      if (event.target.classList.contains("material-type")) {
+        calculateResin();
       }
     });
 

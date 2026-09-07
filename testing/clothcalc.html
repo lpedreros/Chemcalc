@@ -12,6 +12,10 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Fiberglass Cloth Calculator — page-scoped, built on Phase 0's sitewide
+         --chrome-* tokens (same pattern as mekpcalc.css); does not affect
+         other calculators -->
+    <link href="clothcalc.css" rel="stylesheet">
     <!-- Print Styles -->
     <link rel="stylesheet" href="print_style_fix_v4.css" media="print">
     <link rel="apple-touch-icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png"> <!-- Assuming same image for apple touch icon -->
@@ -232,255 +236,332 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><main class="container">
-  <h1 class="text-center my-4">Fiberglass Cloth Saturation Calculator</h1> <!-- Updated Title -->
-        <p class="text-center text-muted mb-4">For Fiberglass, Carbon Fiber &amp; Kevlar Laminates</p>
+<!-- #EndLibraryItem --><main class="container cloth-app">
 
-        <form id="resin-calculator-form">
+  <!-- Title band -->
+  <div class="cloth-hero">
+    <h1 class="cloth-hero-title">Fiberglass Cloth Saturation Calculator</h1>
+    <p class="cloth-hero-tagline">For Fiberglass, Carbon Fiber &amp; Kevlar Laminates</p>
+    <p class="cloth-hero-copy">Size the resin batch for your laminate — cloth type, area, resin system, and temperature, with the total resin volume, weight, and catalyst amount carried through.</p>
+  </div>
 
-            <!-- Measurement System Selection (Moved to Top) -->
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h2 class="card-title">Measurement System</h2>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label for="result-system" class="form-label">Choose System</label>
-                            <select id="result-system" class="form-control">
-                                <option value="metric">Metric (kg, L, m², cm, °C)</option>
-                                <option value="imperial">Imperial (lbs, gal, ft², in, °F)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- End Measurement System Card -->
+  <div class="cloth-grid">
+    <div class="cloth-form-col d-print-none">
+      <form id="resin-calculator-form">
+        <div class="cloth-fields">
 
-            <!-- Project Dimensions Card -->
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h2 class="card-title">Project Dimensions</h2>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="length" class="form-label">Length</label>
-                            <input type="number" class="form-control" id="length" required min="0" step="any" placeholder="e.g., 48">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="width" class="form-label">Width</label>
-                            <input type="number" class="form-control" id="width" required min="0" step="any" placeholder="e.g., 24">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="units" class="form-label">Units</label>
-                            <select id="units" class="form-control">
-                                <option value="in">Inches</option>
-                                <option value="ft">Feet</option>
-                                <option value="cm">Centimeters</option>
-                                <option value="m">Meters</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- End Project Dimensions Card -->
-
-            <!-- Resin & Temperature Card -->
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h2 class="card-title">Resin &amp; Temperature</h2>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="resin-type" class="form-label">Resin Type</label>
-                            <select id="resin-type" class="form-control">
-                                <option value="polyester">Polyester</option>
-                                <option value="vinylester">Vinylester</option>
-                                <option value="epoxy">Epoxy</option>
-                            </select>
-                        </div>
-                        <!-- Epoxy Mix Ratio (Hidden by default) -->
-                        <div class="col-md-6" id="epoxy-ratio-container" style="display: none;">
-                            <label for="epoxy-mix-ratio" class="form-label">Epoxy Mix Ratio (Resin:Hardener)</label>
-                            <select id="epoxy-mix-ratio" class="form-control">
-                                <option value="5:1v">West System 5:1 by Volume</option> <!-- Added West System -->
-                                <option value="3:1v">West System 3:1 by Volume</option> <!-- Added West System -->
-                                <option value="2:1v">Generic 2:1 by Volume</option>
-                                <option value="4:1v">Generic 4:1 by Volume</option>
-                                <option value="100:45w">Generic 100:45 by Weight</option>
-                                <option value="100:30w">Generic 100:30 by Weight</option>
-                                <!-- Add other common ratios if needed -->
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="temperature" class="form-label">Ambient Temperature (<span id="temp-unit-label">°C</span>)</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="temperature" value="20" step="any">
-                                <div class="input-group-text">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="temp-unit-toggle">
-                                        <label class="form-check-label" for="temp-unit-toggle">°F</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- End Resin & Temperature Card -->
-
-            <!-- Material Layers Card -->
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h2 class="card-title">Material Layers</h2>
-                    <div id="layers-container">
-                        <!-- Layer 1 (default) -->
-                        <div class="layer mb-3 border p-3 rounded">
-                            <h3 class="layer-title">Layer 1</h3> <!-- Sub-heading within card -->
-                            <div class="row g-3">
-                                <div class="col-md-12">
-                                    <label for="material-type-1" class="form-label">Material Type</label>
-                                    <select id="material-type-1" class="form-control material-type">
-                                        <!-- Imperial Options -->
-                                        <option value="csm_0.75">CSM (0.75 oz/sq ft)</option>
-                                        <option value="csm_1.5" selected>CSM (1.5 oz/sq ft)</option>
-                                        <option value="csm_2.0">CSM (2.0 oz/sq ft)</option>
-                                        <option value="wr_18">Woven Roving (18 oz/sq yd)</option>
-                                        <option value="wr_24">Woven Roving (24 oz/sq yd)</option>
-                                        <option value="combo_1708">Combination Mat (1708)</option>
-                                        <option value="combo_1808">Combination Mat (1808)</option>
-                                        <option value="cloth_4">Cloth (4 oz/sq yd)</option>
-                                        <option value="cloth_6">Cloth (6 oz/sq yd)</option>
-                                        <option value="cloth_10">Cloth (10 oz/sq yd)</option>
-                                        <option value="carbon_5.7">Carbon Fiber (5.7 oz)</option>
-                                        <option value="carbon_11">Carbon Fiber (11 oz)</option>
-                                        <option value="kevlar_5">Kevlar (5 oz)</option>
-                                        <!-- Metric Options -->
-                                        <option value="csm_225gsm">CSM (225 gsm)</option>
-                                        <option value="csm_450gsm">CSM (450 gsm)</option>
-                                        <option value="csm_600gsm">CSM (600 gsm)</option>
-                                        <option value="wr_600gsm">Woven Roving (600 gsm)</option>
-                                        <option value="wr_800gsm">Woven Roving (800 gsm)</option>
-                                        <option value="combo_800gsm">Combination Mat (800 gsm)</option>
-                                        <option value="combo_850gsm">Combination Mat (850 gsm)</option>
-                                        <option value="cloth_135gsm">Cloth (135 gsm)</option>
-                                        <option value="cloth_200gsm">Cloth (200 gsm)</option>
-                                        <option value="cloth_340gsm">Cloth (340 gsm)</option>
-                                        <option value="carbon_200gsm">Carbon Fiber (200 gsm)</option>
-                                        <option value="carbon_370gsm">Carbon Fiber (370 gsm)</option>
-                                        <option value="kevlar_170gsm">Kevlar (170 gsm)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-danger btn-sm mt-2 remove-layer-btn" style="display: none;">Remove Layer</button>
-                        </div>
-                    </div>
-                    <button type="button" id="add-layer-btn" class="btn btn-success">+ Add Layer</button>
-                </div>
-            </div> <!-- End Material Layers Card -->
-
-            <!-- Cost Estimation Card -->
-             <div class="card mb-3">
-                <div class="card-body">
-                    <h2 class="card-title">Cost Estimation (Optional)</h2>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="resin-cost" class="form-label">Resin Cost per Unit</label>
-                            <input type="number" class="form-control" id="resin-cost" min="0" step="any" placeholder="e.g., 45.50">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="resin-cost-unit" class="form-label">Cost Unit</label>
-                            <select id="resin-cost-unit" class="form-control">
-                                <option value="gal">per Gallon</option>
-                                <option value="liter">per Liter</option>
-                                <option value="lb">per Pound</option>
-                                <option value="kg">per Kilogram</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- End Cost Estimation Card -->
-
-        </form> <!-- End Form -->
-
-        <!-- Results Card -->
-        <div id="results" class="card mt-4 printable-section" style="display: none;">
-            <div class="card-body">
-                <!-- Result Volume Unit Selection (Moved Below Title) -->
-                <h2 class="card-title">Results</h2>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="result-volume-unit" class="form-label">Volume Unit</label>
-                        <select id="result-volume-unit" class="form-control">
-                            <!-- Options populated by JS -->
-                        </select>
-                    </div>
-                </div>
-                <div id="results-content">
-                    <p>Total Area: <span id="total-area"></span></p>
-                    <p>Cloth:Resin Ratio (by weight): <span id="cloth-resin-ratio"></span></p>
-                    <p><strong>Total Resin (Volume): <span id="resin-volume" class="fw-bold"></span></strong></p>
-                    <p><strong>Total Resin (Weight): <span id="resin-weight" class="fw-bold fs-5"></span></strong></p>
-                    <p>Hardener/Catalyst: <span id="hardener-amount"></span></p>
-                    <p>Estimated Working Time: <span id="working-time"></span></p>
-                    <p>Estimated Cost: <span id="estimated-cost"></span></p>
-                    <div id="clothEmailCapture" class="mt-3"></div>
-                    <!-- MEKP Results Section (Hidden by default) -->
-                    <div id="mekp-results-container" style="display: none;" class="mt-3 border-top pt-3">
-                        <h3>MEKP Catalyst Details (for Polyester/Vinylester):</h3>
-                        <p>Recommended MEKP %: <span id="mekp-percentage"></span></p>
-                        <p>MEKP Volume: <span id="mekp-ccs"></span></p>
-                        <p>MEKP Drops: <span id="mekp-drops"></span></p>
-                    </div>
-                </div>
-                <!-- Affiliate Links Placeholder -->
-                <div id="affiliateLinksContainer" style="display: none;" class="mt-3 border-top pt-3">
-                  <h3>Related Products:</h3>
-                  <ul id="affiliateLinksList"></ul>
-                  <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
-                </div>
-                <!-- Print Button and QR Code Placeholder -->
-                <div class="mt-3 d-print-none">
-                    <button id="printButton" class="btn btn-secondary">Print Results</button>
-                </div>
-                <!-- QR Code for Print -->
-                <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
-            </div>
-        </div> <!-- End Results Card -->
-
-        <!-- Tips & Safety / Other Calcs -->
-        <div class="row mt-4">
-          <div class="col-md-6 mb-3">
-            <div class="card">
-              <div class="card-body">
-                <h2 class="card-title">Tips &amp; Safety</h2>
-                <p>Always work in a well-ventilated area and wear appropriate personal protective equipment (PPE) such as gloves, eye protection, and a respirator when working with resins and solvents.</p>
-                <p>Refer to the specific Technical Data Sheet (TDS) and Safety Data Sheet (SDS) for the materials you are using for detailed handling instructions and safety precautions.</p>
-                <p>Mix resin and hardener/catalyst thoroughly according to manufacturer's instructions. Improper mixing can lead to poor curing.</p>
-                <p>Apply resin evenly to saturate the material. Avoid pooling or dry spots.</p>
-                <p>Working time is affected by temperature and batch size. Larger batches and higher temperatures will reduce working time.</p>
+          <!-- Measurement System -->
+          <section class="cloth-field-card" id="measurementSystemCard">
+            <div class="cloth-field-head">
+              <span class="cloth-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg></span>
+              <div>
+                <h2 class="cloth-field-title">Measurement System</h2>
+                <p class="cloth-field-hint">Sets the units used throughout.</p>
               </div>
             </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <div class="card">
-              <div class="card-body">
-                <h2 class="card-title">Other Calculators</h2>
-                <ul class="list-unstyled">
-                  <li><a href="mekpcalc.html">MEKP Catalyst Calculator</a></li>
-                  <li><a href="epifanespoly.html">Epifanes Polyurethane Calculator</a></li>
-                  <li><a href="awlgrip.html">Awlgrip Topcoat Calculator</a></li>
-                  <!-- Add links to other calculators -->
-                </ul>
+            <label class="sr-only" for="result-system">Choose system</label>
+            <select id="result-system" class="cloth-select">
+              <option value="metric">Metric (kg, L, m², cm, °C)</option>
+              <option value="imperial">Imperial (lbs, gal, ft², in, °F)</option>
+            </select>
+          </section>
+
+          <!-- Project Dimensions -->
+          <section class="cloth-field-card" id="dimensionsCard">
+            <div class="cloth-field-head">
+              <span class="cloth-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
+              <div>
+                <h2 class="cloth-field-title">Project Dimensions</h2>
+                <p class="cloth-field-hint">Measure the largest area you're laminating.</p>
               </div>
             </div>
-             <div class="card mt-3">
-              <div class="card-body">
-                <h2 class="card-title">Share this Calculator</h2>
-                <div id="qrcode" class="text-center"></div>
+            <div class="cloth-input-row">
+              <div class="cloth-input-group">
+                <label class="cloth-input-label" for="length">Length</label>
+                <input type="number" class="cloth-input" id="length" required min="0" step="any" placeholder="e.g., 48">
+              </div>
+              <div class="cloth-input-group">
+                <label class="cloth-input-label" for="width">Width</label>
+                <input type="number" class="cloth-input" id="width" required min="0" step="any" placeholder="e.g., 24">
+              </div>
+              <div class="cloth-input-group cloth-input-group-compact">
+                <label class="cloth-input-label" for="units">Units</label>
+                <select id="units" class="cloth-select cloth-select-compact">
+                  <option value="in">Inches</option>
+                  <option value="ft">Feet</option>
+                  <option value="cm">Centimeters</option>
+                  <option value="m">Meters</option>
+                </select>
               </div>
             </div>
-          </div>
+          </section>
+
+          <!-- Resin & Temperature -->
+          <section class="cloth-field-card" id="resinTempCard">
+            <div class="cloth-field-head">
+              <span class="cloth-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M12 15v-5"/></svg></span>
+              <div>
+                <h2 class="cloth-field-title">Resin &amp; Temperature</h2>
+                <p class="cloth-field-hint">Resin type and mix ratio drive cure chemistry; temperature drives cure speed.</p>
+              </div>
+            </div>
+            <div class="cloth-input-row">
+              <div class="cloth-input-group">
+                <label class="cloth-input-label" for="resin-type">Resin Type</label>
+                <select id="resin-type" class="cloth-select">
+                  <option value="polyester">Polyester</option>
+                  <option value="vinylester">Vinylester</option>
+                  <option value="epoxy">Epoxy</option>
+                </select>
+              </div>
+              <!-- Epoxy Mix Ratio (Hidden by default) -->
+              <div class="cloth-input-group" id="epoxy-ratio-container" style="display: none;">
+                <label class="cloth-input-label" for="epoxy-mix-ratio">Epoxy Mix Ratio (Resin:Hardener)</label>
+                <select id="epoxy-mix-ratio" class="cloth-select">
+                  <option value="5:1v">West System 5:1 by Volume</option>
+                  <option value="3:1v">West System 3:1 by Volume</option>
+                  <option value="2:1v">Generic 2:1 by Volume</option>
+                  <option value="4:1v">Generic 4:1 by Volume</option>
+                  <option value="100:45w">Generic 100:45 by Weight</option>
+                  <option value="100:30w">Generic 100:30 by Weight</option>
+                </select>
+              </div>
+              <div class="cloth-input-group">
+                <label class="cloth-input-label" for="temperature">Ambient Temperature (<span id="temp-unit-label">°C</span>)</label>
+                <input type="number" class="cloth-input" id="temperature" value="20" step="any">
+                <div class="cloth-temp-toggle form-check form-switch">
+                  <input type="checkbox" role="switch" id="temp-unit-toggle">
+                  <label for="temp-unit-toggle">°F</label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Material Layers -->
+          <section class="cloth-field-card" id="layersCard">
+            <div class="cloth-field-head">
+              <span class="cloth-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></span>
+              <div>
+                <h2 class="cloth-field-title">Material Layers</h2>
+                <p class="cloth-field-hint">Add one entry per ply in your laminate schedule.</p>
+              </div>
+            </div>
+            <div id="layers-container">
+              <!-- Layer 1 (default) -->
+              <div class="layer cloth-layer">
+                <div class="cloth-layer-head">
+                  <h3 class="layer-title cloth-layer-title">Layer 1</h3>
+                  <button type="button" class="remove-layer-btn cloth-remove-btn" style="display: none;">Remove Layer</button>
+                </div>
+                <label class="sr-only" for="material-type-1">Material type</label>
+                <select id="material-type-1" class="cloth-select material-type">
+                  <!-- Imperial Options -->
+                  <option value="csm_0.75">CSM (0.75 oz/sq ft)</option>
+                  <option value="csm_1.5" selected>CSM (1.5 oz/sq ft)</option>
+                  <option value="csm_2.0">CSM (2.0 oz/sq ft)</option>
+                  <option value="wr_18">Woven Roving (18 oz/sq yd)</option>
+                  <option value="wr_24">Woven Roving (24 oz/sq yd)</option>
+                  <option value="combo_1708">Combination Mat (1708)</option>
+                  <option value="combo_1808">Combination Mat (1808)</option>
+                  <option value="cloth_4">Cloth (4 oz/sq yd)</option>
+                  <option value="cloth_6">Cloth (6 oz/sq yd)</option>
+                  <option value="cloth_10">Cloth (10 oz/sq yd)</option>
+                  <option value="carbon_5.7">Carbon Fiber (5.7 oz)</option>
+                  <option value="carbon_11">Carbon Fiber (11 oz)</option>
+                  <option value="kevlar_5">Kevlar (5 oz)</option>
+                  <!-- Metric Options -->
+                  <option value="csm_225gsm">CSM (225 gsm)</option>
+                  <option value="csm_450gsm">CSM (450 gsm)</option>
+                  <option value="csm_600gsm">CSM (600 gsm)</option>
+                  <option value="wr_600gsm">Woven Roving (600 gsm)</option>
+                  <option value="wr_800gsm">Woven Roving (800 gsm)</option>
+                  <option value="combo_800gsm">Combination Mat (800 gsm)</option>
+                  <option value="combo_850gsm">Combination Mat (850 gsm)</option>
+                  <option value="cloth_135gsm">Cloth (135 gsm)</option>
+                  <option value="cloth_200gsm">Cloth (200 gsm)</option>
+                  <option value="cloth_340gsm">Cloth (340 gsm)</option>
+                  <option value="carbon_200gsm">Carbon Fiber (200 gsm)</option>
+                  <option value="carbon_370gsm">Carbon Fiber (370 gsm)</option>
+                  <option value="kevlar_170gsm">Kevlar (170 gsm)</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" id="add-layer-btn" class="cloth-add-btn">+ Add Layer</button>
+          </section>
+
+          <!-- Cost Estimation -->
+          <section class="cloth-field-card" id="costCard">
+            <div class="cloth-field-head">
+              <span class="cloth-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+              <div>
+                <h2 class="cloth-field-title">Cost Estimation (Optional)</h2>
+                <p class="cloth-field-hint">Enter a price to get a material cost estimate.</p>
+              </div>
+            </div>
+            <div class="cloth-input-row">
+              <div class="cloth-input-group">
+                <label class="cloth-input-label" for="resin-cost">Resin Cost per Unit</label>
+                <input type="number" class="cloth-input" id="resin-cost" min="0" step="any" placeholder="e.g., 45.50">
+              </div>
+              <div class="cloth-input-group cloth-input-group-compact">
+                <label class="cloth-input-label" for="resin-cost-unit">Cost Unit</label>
+                <select id="resin-cost-unit" class="cloth-select cloth-select-compact">
+                  <option value="gal">per Gallon</option>
+                  <option value="liter">per Liter</option>
+                  <option value="lb">per Pound</option>
+                  <option value="kg">per Kilogram</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
         </div>
-<!-- Feedback Button Section -->
-<div class="container mt-4 mb-5 text-center">
-    <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
-</div>
-<!-- End Feedback Button Section -->
-    </main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+      </form>
+    </div>
+
+    <div class="cloth-results-col">
+      <section class="cloth-results-panel printable-section" id="results" style="display: none;" aria-label="Calculated results">
+        <div class="cloth-results-head">
+          <h2>Resin Results</h2>
+        </div>
+        <div class="cloth-results-body card-body">
+          <div class="cloth-result-unit-row d-print-none">
+            <label class="sr-only" for="result-volume-unit">Volume unit</label>
+            <select id="result-volume-unit" class="cloth-select cloth-select-compact">
+              <!-- Options populated by JS -->
+            </select>
+          </div>
+
+          <div id="results-content">
+            <p class="cloth-result-primary-label">Total resin needed</p>
+            <p class="cloth-result-hero"><span id="resin-volume">&mdash;</span></p>
+            <p class="cloth-result-sub"><span id="cloth-resin-ratio"></span></p>
+
+            <div class="cloth-result-compare">
+              <div class="cloth-compare-box"><span class="cloth-compare-label">Total Area</span><span class="cloth-compare-value" id="total-area"></span></div>
+              <div class="cloth-compare-box"><span class="cloth-compare-label">Resin Weight</span><span class="cloth-compare-value" id="resin-weight"></span></div>
+              <div class="cloth-compare-box"><span class="cloth-compare-label">Hardener / Catalyst</span><span class="cloth-compare-value" id="hardener-amount"></span></div>
+              <div class="cloth-compare-box"><span class="cloth-compare-label">Working Time</span><span class="cloth-compare-value" id="working-time"></span></div>
+              <div class="cloth-compare-box cloth-compare-box-wide"><span class="cloth-compare-label">Estimated Cost</span><span class="cloth-compare-value" id="estimated-cost"></span></div>
+            </div>
+
+            <!-- MEKP Results Section (Hidden by default) -->
+            <div id="mekp-results-container" style="display: none;" class="cloth-mekp-block">
+              <h3>MEKP Catalyst Details (for Polyester/Vinylester):</h3>
+              <div class="cloth-result-compare">
+                <div class="cloth-compare-box"><span class="cloth-compare-label">Recommended MEKP %</span><span class="cloth-compare-value" id="mekp-percentage"></span></div>
+                <div class="cloth-compare-box"><span class="cloth-compare-label">MEKP Volume</span><span class="cloth-compare-value" id="mekp-ccs"></span></div>
+                <div class="cloth-compare-box"><span class="cloth-compare-label">MEKP Drops</span><span class="cloth-compare-value" id="mekp-drops"></span></div>
+              </div>
+            </div>
+
+            <div id="clothEmailCapture" class="cloth-email-capture"></div>
+          </div>
+
+          <!-- Affiliate Links Placeholder -->
+          <div id="affiliateLinksContainer" style="display: none;" class="cloth-affiliate-block">
+            <h3>Related Products</h3>
+            <ul id="affiliateLinksList" class="cloth-affiliate-list"></ul>
+            <span class="cloth-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+          </div>
+
+          <!-- Print Button -->
+          <div class="cloth-print-cta d-print-none">
+            <button id="printButton" class="cloth-print-btn">Print Results</button>
+          </div>
+
+          <!-- Print-only recap (screen-hidden, print-shown — same d-none
+               d-print-block convention already used below for #printQrCode
+               on this page). Populated by clothcalc.js's existing print
+               button handler; no JS changes needed. -->
+          <div class="mt-3 d-none d-print-block">
+            <p>Generated: <span id="print-timestamp"></span></p>
+            <p>System: <span id="print-system"></span></p>
+            <p>Dimensions: <span id="print-dimensions"></span></p>
+            <p>Resin: <span id="print-resin"></span></p>
+            <p>Temperature: <span id="print-temp"></span></p>
+            <p>Layers:</p>
+            <ul id="print-layers"></ul>
+          </div>
+          <!-- QR Code for Print -->
+          <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Tips & Safety / Other Calculators -->
+  <div class="cloth-resources-grid d-print-none">
+    <section class="cloth-resource-card">
+      <h2>Tips &amp; Safety</h2>
+      <p class="cloth-resource-desc">Resin work is a ventilation and timing problem before it is a materials problem.</p>
+      <ul class="cloth-resource-links">
+        <li>
+          <p style="margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);">Always work in a well-ventilated area and wear appropriate personal protective equipment (PPE) such as gloves, eye protection, and a respirator when working with resins and solvents.</p>
+        </li>
+        <li>
+          <p style="margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);">Refer to the specific Technical Data Sheet (TDS) and Safety Data Sheet (SDS) for the materials you are using for detailed handling instructions and safety precautions.</p>
+        </li>
+        <li>
+          <p style="margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);">Mix resin and hardener/catalyst thoroughly according to manufacturer's instructions. Improper mixing can lead to poor curing.</p>
+        </li>
+        <li>
+          <p style="margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);">Apply resin evenly to saturate the material. Avoid pooling or dry spots.</p>
+        </li>
+        <li>
+          <p style="margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);">Working time is affected by temperature and batch size. Larger batches and higher temperatures will reduce working time.</p>
+        </li>
+      </ul>
+    </section>
+    <section class="cloth-resource-card">
+      <h2>Other Calculators</h2>
+      <p class="cloth-resource-desc">More mixing tools for hull, deck and topside work.</p>
+      <ul class="cloth-resource-links">
+        <li>
+          <a href="mekpcalc.html" class="cloth-resource-link">
+            <span class="cloth-resource-link-text">
+              <span class="cloth-resource-link-title">MEKP Catalyst Calculator</span>
+            </span>
+            <svg class="cloth-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="epifanespoly.html" class="cloth-resource-link">
+            <span class="cloth-resource-link-text">
+              <span class="cloth-resource-link-title">Epifanes Polyurethane Calculator</span>
+            </span>
+            <svg class="cloth-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="awlgrip.html" class="cloth-resource-link">
+            <span class="cloth-resource-link-text">
+              <span class="cloth-resource-link-title">Awlgrip Topcoat Calculator</span>
+            </span>
+            <svg class="cloth-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Share this Calculator -->
+  <div class="cloth-share-card d-print-none">
+    <h2>Share this Calculator</h2>
+    <div id="qrcode"></div>
+  </div>
+
+  <!-- Feedback Button Section -->
+  <div class="cloth-report-banner d-print-none">
+    <div>
+      <h2>Spot something off, or need another ratio?</h2>
+      <p>Tell us what to fix or add — every report is read by the team behind ChemCalc.</p>
+    </div>
+    <button id="feedbackBtn" class="cloth-report-btn">Report an Issue / Suggest a Feature</button>
+  </div>
+  <!-- End Feedback Button Section -->
+
+</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
      onclick="openHelpModal()" and each page's #helpModal / helpContent
