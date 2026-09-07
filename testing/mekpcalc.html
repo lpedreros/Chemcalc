@@ -663,7 +663,30 @@
       </ul>
     </div>
   </div>
-</div><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</div>
+<!-- ===== MEKP CALCULATOR FEEDBACK MODAL ===== -->
+<div class="modal-overlay" id="feedbackModal" style="display:none;" onclick="overlayClose(event,'feedbackModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('feedbackModal')">&#10005;</button>
+    <h3 class="modal-title">Report an Issue / Suggest a Feature</h3>
+    <p class="help-modal-pitch">Every report is read by the team behind ChemCalc.</p>
+    <form id="feedbackForm">
+      <label for="feedbackType" class="est-label">Type</label>
+      <select id="feedbackType" class="mekp-select">
+        <option value="Bug Report">Bug Report</option>
+        <option value="Feature Request">Feature Request</option>
+        <option value="Other">Other</option>
+      </select>
+      <label for="feedbackDescription" class="est-label mt-3">Description</label>
+      <textarea id="feedbackDescription" class="mekp-input" rows="5" placeholder="What happened, or what would you like to see?" required></textarea>
+      <label for="feedbackReplyEmail" class="est-label mt-3">Your email (optional, if you'd like a reply)</label>
+      <input type="email" id="feedbackReplyEmail" class="mekp-input" placeholder="you@example.com">
+      <p id="feedbackMsg" style="display:none;font-size:0.85rem;margin-top:8px;"></p>
+      <button type="submit" class="mekp-print-btn" id="feedbackSubmitBtn" style="margin-top:12px;">Send Feedback</button>
+    </form>
+  </div>
+</div>
+<!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Donate — top of the bottom-right floating-action cluster (with the
      BoatMD chat toggle from chatbot_styles.css and the page Help button
      from Library/HelpButton.lbi below it; see --chrome-fab-right and

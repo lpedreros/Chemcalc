@@ -106,7 +106,11 @@
   outline:2px solid rgba(242,166,60,.45);outline-offset:1px;border-color:var(--chrome-ink-800);
 }
 .mekp-input-row{display:flex;gap:.5rem;flex-wrap:wrap;}
-.mekp-input-row .mekp-input{flex:1 1 140px;min-width:0;}
+.mekp-input-row .mekp-input{flex:1 1 90px;min-width:0;}
+/* #volumeUnit (Resin/Gelcoat Volume row) -- otherwise inherits width:100%
+   from the shared .mekp-select,.mekp-input rule above as its flex-basis,
+   forcing the row to wrap. */
+.mekp-input-row .mekp-select{flex:1 0 auto;width:auto;min-width:9rem;}
 .mekp-select-compact{flex:0 0 auto;width:auto;min-width:5.5rem;}
 
 /* ---------- Ambient temperature / measurement-system unit toggles ---------- */
@@ -114,6 +118,14 @@
   display:flex;flex:none;gap:.15rem;padding:.2rem;
   background:var(--chrome-paper-muted);border:1px solid var(--chrome-paper-line);
   border-radius:999px;
+}
+/* Measurement System's toggle is the only one that's a plain block child
+   rather than a flex-row item (Ambient Temperature's is already sized
+   correctly via flex:none inside .mekp-input-row -- left alone), so
+   without this it stretches to the card's full width. */
+#unitSystemCard .mekp-unit-toggle{
+  width:fit-content;
+  margin:0 auto;
 }
 .mekp-unit-btn{
   border:none;background:transparent;color:var(--chrome-ink-600);
@@ -124,7 +136,7 @@
 .mekp-unit-btn[aria-pressed="true"]{background:var(--chrome-ink-900);color:#fff;}
 .mekp-unit-btn:hover:not([aria-pressed="true"]){color:var(--chrome-ink-900);}
 .mekp-unit-btn:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
-.mekp-input-with-unit{position:relative;flex:1 1 200px;min-width:0;}
+.mekp-input-with-unit{position:relative;flex:0 1 140px;min-width:0;}
 .mekp-input-with-unit .mekp-input{padding-right:2.6rem;}
 .mekp-input-suffix{
   position:absolute;right:.8rem;top:50%;transform:translateY(-50%);
@@ -359,6 +371,14 @@
   cursor:pointer;white-space:nowrap;transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
 }
 .mekp-report-btn:hover{background:var(--chrome-ink-900);color:#fff;}
+
+/* ---------- Feedback modal ----------
+   .modal-overlay/.modal-box/.modal-title (style.css) are already light and
+   need no override here. .help-modal-pitch's base rule (style.css) is still
+   dark-styled (color:#aaa) pending its own conversion -- #helpModal gets a
+   scoped light override there; #feedbackModal needs the same treatment,
+   added here since this file is this page's own scoped layer. */
+#feedbackModal .help-modal-pitch{color:var(--chrome-ink-600);}
 
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
