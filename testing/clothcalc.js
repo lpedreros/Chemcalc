@@ -602,11 +602,13 @@ document.addEventListener("DOMContentLoaded", () => {
       hardenerAmountEl.style.display = "block";
     } else { // Polyester or Vinylester
       const tempC = isFahrenheit ? fahrenheitToCelsius(temp) : temp;
-      if (tempC >= 15 && tempC <= 18) mekpPercentage = 2.0;
-      else if (tempC > 18 && tempC <= 22) mekpPercentage = 1.8;
-      else if (tempC > 22 && tempC <= 25) mekpPercentage = 1.5;
-      else if (tempC > 25 && tempC <= 30) mekpPercentage = 1.0;
-      else mekpPercentage = tempC < 15 ? 2.5 : 0.8; // Simplified for out of range
+      // MEKP-% now shares the standalone MEKP calculator's curve (mekp-
+      // curve.js) instead of a separately-authored one -- single source
+      // of truth. NaN falls back to the coldest/most-cautious tier
+      // (3.0%) rather than the old code's undocumented fallthrough to
+      // 0.8% -- deliberate.
+      const recommendedNum = getRecommendedMekpPercent(tempC);
+      mekpPercentage = recommendedNum === null ? 3.0 : recommendedNum;
 
       mekpCcs = (resinVolumeLiters * 1000 * (mekpPercentage / 100) * resinInfo.density) / mekpDensity;
       mekpDrops = mekpCcs / mlPerDrop;
@@ -748,11 +750,41 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resultSystemSelect) resultSystemSelect.addEventListener("change", handleResultSystemChange);
   }
 
+  // Wires the visible °F/°C segmented-pill toggle (.mp-unit-btn) to the
+  // real hidden <input id="temp-unit-toggle"> that setupEventListeners()
+  // already listens on -- mirrors mekpcalc-ui.js's initTempUnitToggle()
+  // pattern exactly. No calculation logic here; handleTempUnitToggle()
+  // (unchanged) does all the real work once the "change" event fires.
+  function initTempUnitToggle() {
+    const hidden = document.getElementById('temp-unit-toggle');
+    const buttons = Array.from(document.querySelectorAll('.mp-unit-btn[data-tempunit]'));
+    if (!hidden || !buttons.length) return;
+
+    function setTempUnit(unit) {
+      hidden.checked = (unit === 'fahrenheit');
+      buttons.forEach((btn) => {
+        const active = btn.getAttribute('data-tempunit') === unit;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      // clothcalc.js's own "change" listener on #temp-unit-toggle
+      // (registered in setupEventListeners()) re-runs handleTempUnitToggle().
+      hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.getAttribute('aria-pressed') === 'true') return;
+        setTempUnit(btn.getAttribute('data-tempunit'));
+      });
+    });
+  }
+
   function initializeCalculator() {
     setupInitialUnitsAndInputs();
     toggleEpoxyRatioVisibility();
     updateRemoveButtonVisibility();
     setupEventListeners();
+    initTempUnitToggle();
     calculateResin();
   }
 

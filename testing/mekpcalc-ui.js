@@ -71,7 +71,7 @@
   function initTempUnitToggle() {
     var hidden = document.getElementById('tempUnit');
     var buttons = Array.prototype.slice.call(
-      document.querySelectorAll('.mekp-unit-btn[data-unit]')
+      document.querySelectorAll('.mp-unit-btn[data-unit]')
     );
     if (!hidden || !buttons.length) return;
 
@@ -104,7 +104,7 @@
   function initUnitSystemToggle() {
     var hidden = document.getElementById('unitSystem');
     var buttons = Array.prototype.slice.call(
-      document.querySelectorAll('.mekp-unit-btn[data-system]')
+      document.querySelectorAll('.mp-unit-btn[data-system]')
     );
     if (!hidden || !buttons.length) return;
 
@@ -136,7 +136,7 @@
     if (rawTemp === '' || rawTemp === null || isNaN(rawTemp)) return null;
     var f = unit === 'celsius' ? (rawTemp * 9) / 5 + 32 : rawTemp;
     if (f < 60) return { band: 'cold', text: 'Cold shop — expect a slow, extended cure.' };
-    if (f < 65.6) return { band: 'cool', text: 'Cool conditions — comfortable working time.' };
+    if (f < 65) return { band: 'cool', text: 'Cool conditions — comfortable working time.' };
     if (f < 75) return { band: 'ideal', text: 'Ideal range — standard gel time.' };
     if (f < 85) return { band: 'warm', text: 'Warm shop — gel time shortens noticeably.' };
     return { band: 'hot', text: 'Hot conditions — mix small batches, work fast.' };

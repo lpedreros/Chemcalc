@@ -263,23 +263,23 @@
 <!-- #EndLibraryItem --><main class="container mekp-app d-print-none">
 
   <!-- Title band -->
-  <div class="mekp-hero">
-    <h1 class="mekp-hero-title">MEKP Calculator</h1>
-    <p class="mekp-hero-tagline">For Polyester Resins &amp; Gelcoats</p>
-    <p class="mekp-hero-copy">Enter your batch volume and shop temperature to get an exact catalyst measurement in ccs and drops — the numbers pros and first-time repairers can both work from.</p>
+  <div class="mp-hero">
+    <h1 class="mp-hero-title">MEKP Calculator</h1>
+    <p class="mp-hero-tagline">For Polyester Resins &amp; Gelcoats</p>
+    <p class="mp-hero-copy">Enter your batch volume and shop temperature to get an exact catalyst measurement in ccs and drops — the numbers pros and first-time repairers can both work from.</p>
   </div>
 
-  <div class="mekp-grid">
+  <div class="mp-grid">
     <div class="mekp-form-col">
       <div class="mekp-fields">
 
         <!-- Measurement System -->
-        <section class="mekp-field-card" id="unitSystemCard">
-          <div class="mekp-field-head">
-            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
+        <section class="mp-field-card" id="unitSystemCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
             <div>
-              <h2 class="mekp-field-title">Measurement System</h2>
-              <p class="mekp-field-hint">Sets the units used throughout.</p>
+              <h2 class="mp-field-title">Measurement System</h2>
+              <p class="mp-field-hint">Sets the units used throughout.</p>
             </div>
           </div>
           <!-- Visible control: a two-button toggle — site owner's explicit
@@ -291,34 +291,34 @@
                calculateMEKP()/updateVolumeUnits() — which read this exact
                element by that exact id/value contract — run completely
                unmodified. See mekpcalc-ui.js for the sync logic. -->
-          <div class="mekp-unit-toggle" role="group" aria-label="Measurement system">
-            <button type="button" class="mekp-unit-btn" data-system="imperial" aria-pressed="true">Imperial</button>
-            <button type="button" class="mekp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
+          <div class="mp-unit-toggle" role="group" aria-label="Measurement system">
+            <button type="button" class="mp-unit-btn" data-system="imperial" aria-pressed="true">Imperial</button>
+            <button type="button" class="mp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
           </div>
           <select id="unitSystem" hidden><option value="imperial" selected>Imperial (oz / qt / gal, °F)</option><option value="metric">Metric (mL / L, °C)</option></select>
         </section>
 
         <!-- Ambient Temperature -->
-        <section class="mekp-field-card" id="ambientTempCard">
-          <div class="mekp-field-head">
-            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M12 15v-5"/></svg></span>
+        <section class="mp-field-card" id="ambientTempCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M12 15v-5"/></svg></span>
             <div>
-              <h2 class="mekp-field-title">Ambient Temperature</h2>
-              <p class="mekp-field-hint">Shop or on-water temperature at time of mixing.</p>
+              <h2 class="mp-field-title">Ambient Temperature</h2>
+              <p class="mp-field-hint">Shop or on-water temperature at time of mixing.</p>
             </div>
           </div>
           <div class="mekp-input-row">
             <label class="sr-only" for="ambientTemp">Ambient temperature</label>
-            <input type="number" id="ambientTemp" class="mekp-input" placeholder="Enter temperature">
+            <input type="number" id="ambientTemp" class="mp-input" placeholder="Enter temperature">
             <!-- Visible control: a two-button toggle (mockup pattern). The
                  hidden input below keeps id="tempUnit" with a plain
                  .value of "fahrenheit"/"celsius" in sync with it, so
                  mekscript.js's calculateMEKP() — which reads this exact
                  element by that exact id/value contract — runs completely
                  unmodified. See mekpcalc-ui.js for the sync logic. -->
-            <div class="mekp-unit-toggle" role="group" aria-label="Temperature unit">
-              <button type="button" class="mekp-unit-btn" data-unit="fahrenheit" aria-pressed="true">&deg;F</button>
-              <button type="button" class="mekp-unit-btn" data-unit="celsius" aria-pressed="false">&deg;C</button>
+            <div class="mp-unit-toggle" role="group" aria-label="Temperature unit">
+              <button type="button" class="mp-unit-btn" data-unit="fahrenheit" aria-pressed="true">&deg;F</button>
+              <button type="button" class="mp-unit-btn" data-unit="celsius" aria-pressed="false">&deg;C</button>
             </div>
             <input type="hidden" id="tempUnit" value="fahrenheit">
           </div>
@@ -331,31 +331,31 @@
         </section>
 
         <!-- Resin Volume -->
-        <section class="mekp-field-card mekp-field-card-wide" id="resinVolumeCard">
-          <div class="mekp-field-head">
-            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/></svg></span>
+        <section class="mp-field-card mekp-field-card-wide" id="resinVolumeCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/></svg></span>
             <div>
-              <h2 class="mekp-field-title">Resin / Gelcoat Volume</h2>
-              <p class="mekp-field-hint">How much material you are catalyzing in this batch.</p>
+              <h2 class="mp-field-title">Resin / Gelcoat Volume</h2>
+              <p class="mp-field-hint">How much material you are catalyzing in this batch.</p>
             </div>
           </div>
           <div class="mekp-input-row">
             <div class="mekp-input-with-unit">
               <label class="sr-only" for="resinVolume">Resin or gelcoat volume</label>
-              <input type="number" id="resinVolume" class="mekp-input" placeholder="Enter volume">
+              <input type="number" id="resinVolume" class="mp-input" placeholder="Enter volume">
             </div>
             <label class="sr-only" for="volumeUnit">Volume unit</label>
-            <select id="volumeUnit" class="mekp-select"></select>
+            <select id="volumeUnit" class="mp-select"></select>
           </div>
         </section>
 
         <!-- MEKP Percentage & Duratec -->
-        <section class="mekp-field-card mekp-field-card-wide" id="mekpPercentageCard">
-          <div class="mekp-field-head">
-            <span class="mekp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>
+        <section class="mp-field-card mekp-field-card-wide" id="mekpPercentageCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>
             <div>
-              <h2 class="mekp-field-title">MEKP Percentage</h2>
-              <p class="mekp-field-hint">Lock to the Duratec ratio, or dial in your own.</p>
+              <h2 class="mp-field-title">MEKP Percentage</h2>
+              <p class="mp-field-hint">Lock to the Duratec ratio, or dial in your own.</p>
             </div>
           </div>
 
@@ -386,8 +386,8 @@
     </div>
 
     <div class="mekp-results-col">
-      <section class="mekp-results-panel" id="resultsCard" aria-label="Calculated results">
-        <div class="mekp-results-head">
+      <section class="mp-results-panel" id="resultsCard" aria-label="Calculated results">
+        <div class="mp-results-head">
           <h2>Mix Result</h2>
           <!-- Inline next to the title, matching ResultsPanel.tsx exactly —
                not a separate full-width bar. Presentation only, parsed by
@@ -397,21 +397,21 @@
                calculation logic lives here. -->
           <div class="mekp-result-status" id="mekpStatusPill" aria-live="polite">On recommendation</div>
         </div>
-        <div class="mekp-results-body">
+        <div class="mp-results-body">
           <div class="mekp-result-primary">
             <p class="mekp-result-primary-label">Add this much MEKP catalyst</p>
             <p class="mekp-result-hero"><span id="mekpHeroValue">&mdash;</span><span class="mekp-result-hero-unit">cc</span></p>
             <p class="mekp-result-sub">&asymp; <span id="mekpHeroDrops">&mdash;</span> drops</p>
           </div>
 
-          <div class="mekp-result-compare">
-            <div class="mekp-compare-box">
-              <span class="mekp-compare-label">Recommended %</span>
-              <span class="mekp-compare-value" id="mekpCompareRecommended">&mdash;</span>
+          <div class="mp-result-compare">
+            <div class="mp-compare-box">
+              <span class="mp-compare-label">Recommended %</span>
+              <span class="mp-compare-value" id="mekpCompareRecommended">&mdash;</span>
             </div>
-            <div class="mekp-compare-box">
-              <span class="mekp-compare-label">Percentage used</span>
-              <span class="mekp-compare-value" id="mekpCompareUsed">&mdash;</span>
+            <div class="mp-compare-box">
+              <span class="mp-compare-label">Percentage used</span>
+              <span class="mp-compare-value" id="mekpCompareUsed">&mdash;</span>
             </div>
           </div>
 
@@ -427,14 +427,14 @@
 
           <div id="mekpEmailCapture" class="mekp-email-capture"></div>
 
-          <div class="mekp-affiliate-block" id="affiliateLinksContainer">
+          <div class="mp-affiliate-block" id="affiliateLinksContainer">
             <h3>Related Products</h3>
-            <ul id="affiliateLinksList" class="mekp-affiliate-list"></ul>
-            <span class="mekp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+            <ul id="affiliateLinksList" class="mp-affiliate-list"></ul>
+            <span class="mp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
           </div>
 
           <div class="mekp-print-cta">
-            <button id="printButton" class="mekp-print-btn">Print Results</button>
+            <button id="printButton" class="mp-print-btn">Print Results</button>
           </div>
           <!-- #printQrCode intentionally lives in the print letterhead
                footer now (see #mekpPrintLetterhead below) so it survives
@@ -450,69 +450,69 @@
   <!-- Per-link description + arrow icon match ResourceCard.tsx / data/resources.ts
        exactly (detail copy quoted verbatim from data/resources.ts); labels and
        hrefs stay the site's real, working ones. -->
-  <div class="mekp-resources-grid">
-    <section class="mekp-resource-card">
+  <div class="mp-resources-grid">
+    <section class="mp-resource-card">
       <h2>Tips &amp; Safety</h2>
-      <p class="mekp-resource-desc">MEKP is an organic peroxide. Read these before you open the bottle.</p>
-      <ul class="mekp-resource-links">
+      <p class="mp-resource-desc">MEKP is an organic peroxide. Read these before you open the bottle.</p>
+      <ul class="mp-resource-links">
         <li>
-          <a href="mekp-safety.html" class="mekp-resource-link">
-            <span class="mekp-resource-link-text">
-              <span class="mekp-resource-link-title">MEKP Safety Guidelines</span>
-              <span class="mekp-resource-link-detail">Handling, PPE, storage and spill response</span>
+          <a href="mekp-safety.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">MEKP Safety Guidelines</span>
+              <span class="mp-resource-link-detail">Handling, PPE, storage and spill response</span>
             </span>
-            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
           </a>
         </li>
         <li>
-          <a href="https://www.bottompaintstore.com/image/catalog/products/Duratec/DS%20904-001.pdf" target="_blank" rel="noopener noreferrer" class="mekp-resource-link">
-            <span class="mekp-resource-link-text">
-              <span class="mekp-resource-link-title">Duratec 904&#8209;001 Hi&#8209;Gloss Additive Spec Sheet</span>
-              <span class="mekp-resource-link-detail">Hi-Gloss additive technical data</span>
+          <a href="https://www.bottompaintstore.com/image/catalog/products/Duratec/DS%20904-001.pdf" target="_blank" rel="noopener noreferrer" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Duratec 904&#8209;001 Hi&#8209;Gloss Additive Spec Sheet</span>
+              <span class="mp-resource-link-detail">Hi-Gloss additive technical data</span>
             </span>
-            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
           </a>
         </li>
         <li>
-          <a href="legal.html" class="mekp-resource-link">
-            <span class="mekp-resource-link-text">
-              <span class="mekp-resource-link-title">Legal Disclaimer</span>
-              <span class="mekp-resource-link-detail">Results are guidance &mdash; always verify against the TDS</span>
+          <a href="legal.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Legal Disclaimer</span>
+              <span class="mp-resource-link-detail">Results are guidance &mdash; always verify against the TDS</span>
             </span>
-            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
           </a>
         </li>
       </ul>
     </section>
-    <section class="mekp-resource-card">
+    <section class="mp-resource-card">
       <h2>Other Calculators</h2>
-      <p class="mekp-resource-desc">More mixing tools for hull, deck and topside work.</p>
-      <ul class="mekp-resource-links">
+      <p class="mp-resource-desc">More mixing tools for hull, deck and topside work.</p>
+      <ul class="mp-resource-links">
         <li>
-          <a href="clothcalc.html" class="mekp-resource-link">
-            <span class="mekp-resource-link-text">
-              <span class="mekp-resource-link-title">Fiberglass Resin Calculator</span>
-              <span class="mekp-resource-link-detail">Resin and cloth quantities by laminate schedule</span>
+          <a href="clothcalc.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Fiberglass Resin Calculator</span>
+              <span class="mp-resource-link-detail">Resin and cloth quantities by laminate schedule</span>
             </span>
-            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
           </a>
         </li>
         <li>
-          <a href="awlgrip.html" class="mekp-resource-link">
-            <span class="mekp-resource-link-text">
-              <span class="mekp-resource-link-title">Awlgrip Paint Mix Calculator</span>
-              <span class="mekp-resource-link-detail">Base, converter and reducer ratios</span>
+          <a href="awlgrip.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Awlgrip Paint Mix Calculator</span>
+              <span class="mp-resource-link-detail">Base, converter and reducer ratios</span>
             </span>
-            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
           </a>
         </li>
         <li>
-          <a href="epifanespoly.html" class="mekp-resource-link">
-            <span class="mekp-resource-link-text">
-              <span class="mekp-resource-link-title">Epifanes Polyurethane Mix Calculator</span>
-              <span class="mekp-resource-link-detail">Two-part mixing for brush or spray</span>
+          <a href="epifanespoly.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Epifanes Polyurethane Mix Calculator</span>
+              <span class="mp-resource-link-detail">Two-part mixing for brush or spray</span>
             </span>
-            <svg class="mekp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
           </a>
         </li>
       </ul>
@@ -520,12 +520,12 @@
   </div>
 
   <!-- Feedback Button Section -->
-  <div class="mekp-report-banner">
+  <div class="mp-report-banner">
     <div>
       <h2>Spot something off, or need another ratio?</h2>
       <p>Tell us what to fix or add — every report is read by the team behind ChemCalc.</p>
     </div>
-    <button id="feedbackBtn" class="mekp-report-btn">Report an Issue / Suggest a Feature</button>
+    <button id="feedbackBtn" class="mp-report-btn">Report an Issue / Suggest a Feature</button>
   </div>
   <!-- End Feedback Button Section -->
 
@@ -671,17 +671,17 @@
     <p class="help-modal-pitch">Every report is read by the team behind ChemCalc.</p>
     <form id="feedbackForm">
       <label for="feedbackType" class="est-label">Type</label>
-      <select id="feedbackType" class="mekp-select">
+      <select id="feedbackType" class="mp-select">
         <option value="Bug Report">Bug Report</option>
         <option value="Feature Request">Feature Request</option>
         <option value="Other">Other</option>
       </select>
       <label for="feedbackDescription" class="est-label mt-3">Description</label>
-      <textarea id="feedbackDescription" class="mekp-input" rows="5" placeholder="What happened, or what would you like to see?" required></textarea>
+      <textarea id="feedbackDescription" class="mp-input" rows="5" placeholder="What happened, or what would you like to see?" required></textarea>
       <label for="feedbackReplyEmail" class="est-label mt-3">Your email (optional, if you'd like a reply)</label>
-      <input type="email" id="feedbackReplyEmail" class="mekp-input" placeholder="you@example.com">
+      <input type="email" id="feedbackReplyEmail" class="mp-input" placeholder="you@example.com">
       <p id="feedbackMsg" style="display:none;font-size:0.85rem;margin-top:8px;"></p>
-      <button type="submit" class="mekp-print-btn" id="feedbackSubmitBtn" style="margin-top:12px;">Send Feedback</button>
+      <button type="submit" class="mp-print-btn" id="feedbackSubmitBtn" style="margin-top:12px;">Send Feedback</button>
     </form>
   </div>
 </div>
@@ -754,6 +754,7 @@
 <script src="affiliate_links.js"></script>
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
+<script src="mekp-curve.js"></script>
 <script src="mekscript.js"></script>
 <!-- Print letterhead sync (see file header comment) — loads after
      mekscript.js so its listeners always run after calculateMEKP() -->

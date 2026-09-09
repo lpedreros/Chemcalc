@@ -625,6 +625,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (resinCostUnit === "gal") costPerLiter = resinCost * literToGallon;
       else if (resinCostUnit === "liter") costPerLiter = resinCost;
       else if (resinCostUnit === "kg") costPerLiter = resinCost * resinInfo.density;
+      // $/lb -> $/kg is also a MULTIPLY by kgToLb (kg is the heavier unit,
+      // so it costs more per unit): $10/lb * 2.20462 lb/kg = $22.05/kg,
+      // not $10/lb / 2.20462. The ticket's literal text for this branch
+      // still had it backwards even after the gal/kg fixes -- verified by
+      // cross-checking against equivalent gal/liter/kg prices, which only
+      // agree with * kgToLb, not / kgToLb.
       else if (resinCostUnit === "lb") costPerLiter = (resinCost * kgToLb) * resinInfo.density;
       estimatedCost = (resinVolumeLiters + hardenerVolumeLiters) * costPerLiter;
     }
@@ -709,6 +715,11 @@ document.addEventListener("DOMContentLoaded", () => {
         handleRemoveLayer(event);
       }
     });
+    // Delegated so it covers layers added later by handleAddLayer() too.
+    // Without this, picking a material for an existing layer never
+    // recalculates -- the results panel silently keeps showing whatever
+    // was last computed (e.g. that layer's just-cloned default material
+    // from handleAddLayer(), not the material actually selected).
     if (layersContainer) layersContainer.addEventListener("change", (event) => {
       if (event.target.classList.contains("material-type")) {
         calculateResin();

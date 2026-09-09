@@ -118,11 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resinMl > 0) {
         let recommendedPct = "N/A";
         if (!isNaN(tempC)) {
-            if (tempC >= 29.4) recommendedPct = "1.0%";
-            else if (tempC >= 23.9) recommendedPct = "1.5%";
-            else if (tempC >= 18.3) recommendedPct = "2.0%";
-            else if (tempC >= 15.6) recommendedPct = "2.5%";
-            else recommendedPct = "3.0% (Caution!)";
+            const recommendedNum = getRecommendedMekpPercent(tempC);
+            recommendedPct = (recommendedNum === 3.0) ? "3.0% (Caution!)" : `${recommendedNum.toFixed(1)}%`;
             mekpRecommendedP.textContent = `Recommended MEKP % (based on ${temp.toFixed(0)}°${selectedTempUnit === 'fahrenheit' ? 'F' : 'C'}): ${recommendedPct}`;
         } else {
             mekpRecommendedP.textContent = "Recommended MEKP % (based on temperature): Enter Temp";

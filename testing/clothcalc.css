@@ -4,10 +4,21 @@
    Calculator only (Phase 2, page 1 — ChemCalc_FullSite_Blueprint.md).
    Everything here is namespaced under .cloth-app so nothing here can
    leak into other calculator pages that share style.css /
-   print_style_fix_v4.css. Mirrors mekpcalc.css's structure and
-   class-naming pattern (.cloth-* instead of .mekp-*) — same fonts,
-   same --chrome-* sitewide tokens from style.css, same component
-   shapes, new stylesheet so this page's CSS stays self-contained.
+   print_style_fix_v4.css.
+
+   CSS consolidation pass (Leo's non-negotiable, ChemCalc_FullSite_
+   Blueprint.md §3): rules that were duplicated byte-for-byte between
+   this file (.cloth-*) and mekpcalc.css (.mekp-*) — hero, grid,
+   field-card shell, select/input, results-panel shell, compare grid,
+   affiliate block, print button, resource cards, report banner,
+   sr-only — now live once in style.css under .mp-* (see style.css's
+   "SHARED CALCULATOR COMPONENTS" block). The °F/°C toggle also moved
+   onto the shared .mp-unit-toggle/.mp-unit-btn segmented-pill pattern
+   (Leo, 2026-09-07) instead of its own checkbox-switch CSS — see
+   clothcalc.html/clothcalc.js for the markup and wiring. What's left
+   here is genuinely ClothCalc-specific: the multi-field input-row/
+   -group layout, the dynamic material-layer cards, and the
+   conditional MEKP catalyst sub-block.
 
    This is a visual-only translation: clothcalc.js's math, ids, and
    event wiring are unchanged (see docs/Clothcalc_Phase2_MP_Reference.md).
@@ -27,92 +38,45 @@ main.cloth-app{
   color:var(--chrome-ink-900);
   background:var(--chrome-paper);
 }
+@media (max-width:767.98px){
+  /* Bottom clearance from the fixed bottom-right floating-action cluster
+     (Donate/BoatMD chat/Help) -- same fix as mekpcalc.css's .mekp-app,
+     applied here too. Live measurement showed this page's report-issue
+     banner passes through the exact same fixed cluster band while
+     scrolling at 375px (transient overlap, clean only at the very bottom
+     of the scroll range) -- the same underlying single-column-page
+     mechanic as mekpcalc.html, not something specific to that page.
+     17.5rem clears the mobile worst case with a safety margin; verified
+     by live overlap-check after applying. */
+  main.cloth-app{padding-bottom:17.5rem;}
+}
+@media (min-width:768px) and (max-width:991.98px){
+  /* Same tablet-specific reduction as mekpcalc.css's parallel tier --
+     shared mechanic, live-measured identical clearance numbers on this
+     page too (768px and 991px, with a real calculation's results
+     populated): 5rem leaves ~170-190px of margin at rest, vs. the flat
+     17.5rem this tier used to share with mobile leaving ~370px+ of dead
+     space here (Sentinel screenshot, 2026-09-08) -- visibly excessive,
+     not needed for clearance. */
+  main.cloth-app{padding-bottom:5rem;}
+}
 .cloth-app h1,.cloth-app h2,.cloth-app h3{font-family:var(--chrome-font-sans);}
-
-/* ---------- Hero / title band ---------- */
-.cloth-hero{
-  background:var(--chrome-ink-950);
-  margin:-1em -1em 2rem;
-  padding:2rem 1.5rem 3rem;
-  border-radius:12px 12px 0 0;
-}
-.cloth-hero-title{
-  font-size:2rem;
-  font-weight:800;
-  letter-spacing:-0.02em;
-  line-height:1.1;
-  color:#ffffff;
-  margin:0 0 .5rem;
-}
-.cloth-hero-tagline{
-  font-size:1.05rem;
-  font-weight:600;
-  color:var(--chrome-signal-400);
-  margin:0 0 .85rem;
-}
-.cloth-hero-copy{
-  font-size:.92rem;
-  line-height:1.55;
-  color:rgba(255,255,255,.65);
-  max-width:640px;
-  margin:0;
-}
-
-/* ---------- Two-column grid: form + results ---------- */
-.cloth-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:1.5rem;
-  margin-top:-1.75rem;
-  align-items:start;
-}
-@media (min-width:992px){
-  .cloth-grid{grid-template-columns:7fr 5fr;}
-}
 
 /* ---------- Field cards ----------
    Single-column stack (unlike mekpcalc.css's 2-col + -wide split) —
    this page's 5 cards (vs. MEKP's cleanly-paired 4) mostly carry
    multi-item input rows that want the full column width, so a 2-col
    split would leave an awkward empty cell next to whichever card
-   doesn't get a same-width partner. Kept simple and safe instead. */
+   doesn't get a same-width partner. Kept simple and safe instead.
+   (.mp-field-card itself, and its icon/head/title/hint children, are
+   shared -- see style.css.) */
 .cloth-fields{display:grid;gap:1rem;}
-.cloth-field-card{
-  background:var(--chrome-paper-card);
-  border:1px solid var(--chrome-paper-line);
-  border-radius:12px;
-  padding:1.25rem;
-  box-shadow:var(--chrome-shadow-panel);
-}
-.cloth-field-head{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:1rem;}
-.cloth-field-icon{
-  flex:none;width:2rem;height:2rem;border-radius:8px;
-  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
-  display:flex;align-items:center;justify-content:center;
-  font-size:.95rem;font-weight:700;line-height:1;
-}
-.cloth-field-icon svg{width:1.05rem;height:1.05rem;display:block;}
-.cloth-field-title{font-size:.95rem;font-weight:600;margin:0;color:var(--chrome-ink-900);}
-.cloth-field-hint{font-size:.8rem;color:var(--chrome-ink-600);margin:.2rem 0 0;}
-
-/* ---------- Inputs ---------- */
-.cloth-select,.cloth-input{
-  width:100%;border:1px solid var(--chrome-paper-line);
-  background:var(--chrome-paper-muted);border-radius:8px;
-  padding:.6rem .8rem;font-size:.95rem;font-weight:500;
-  color:var(--chrome-ink-900);font-family:var(--chrome-font-sans);
-  transition:border-color .15s var(--chrome-ease-smooth);
-}
-.cloth-input{font-family:var(--chrome-font-mono);}
-.cloth-select:hover,.cloth-input:hover{border-color:var(--chrome-ink-500);}
-.cloth-select:focus,.cloth-input:focus{
-  outline:2px solid rgba(242,166,60,.45);outline-offset:1px;border-color:var(--chrome-ink-800);
-}
 
 /* Row of 2-3 fields (inputs and/or selects) that wraps on narrow
    cards — used for Project Dimensions (length/width/units), Resin &
    Temperature (resin type/epoxy ratio/temperature), and Cost
-   Estimation (cost/unit). */
+   Estimation (cost/unit). (.mp-select/.mp-input themselves are
+   shared -- see style.css.) */
 .cloth-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
 .cloth-input-group{flex:1 1 140px;min-width:0;}
 .cloth-input-group-compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
@@ -120,31 +84,6 @@ main.cloth-app{
   display:block;font-size:.72rem;font-weight:600;
   color:var(--chrome-ink-600);margin:0 0 .3rem;
 }
-.cloth-select-compact{flex:0 0 auto;width:auto;min-width:5.5rem;}
-
-/* ---------- Ambient temperature °F/°C toggle ----------
-   Restyles the real <input type="checkbox" id="temp-unit-toggle">
-   (Bootstrap 5 form-switch markup that Bootstrap 4.5.2 — this site's
-   loaded version — doesn't actually style) into a proper pill
-   switch. Same checkbox, same id, same .checked contract clothcalc.js
-   reads — CSS appearance only. */
-.cloth-temp-toggle{display:inline-flex;align-items:center;gap:.5rem;margin-top:.6rem;}
-.cloth-temp-toggle input[type="checkbox"]{
-  appearance:none;-webkit-appearance:none;margin:0;flex:none;
-  width:2.75rem;height:1.5rem;border-radius:999px;position:relative;cursor:pointer;
-  background:var(--chrome-paper-line);border:1px solid var(--chrome-paper-line);
-  transition:background-color .15s var(--chrome-ease-smooth),border-color .15s var(--chrome-ease-smooth);
-}
-.cloth-temp-toggle input[type="checkbox"]::before{
-  content:"";position:absolute;top:1px;left:1px;
-  width:1.2rem;height:1.2rem;border-radius:50%;background:#fff;
-  box-shadow:0 1px 3px rgba(5,22,28,.35);
-  transition:transform .15s var(--chrome-ease-smooth);
-}
-.cloth-temp-toggle input[type="checkbox"]:checked{background:var(--chrome-sea-500);border-color:var(--chrome-sea-500);}
-.cloth-temp-toggle input[type="checkbox"]:checked::before{transform:translateX(1.25rem);}
-.cloth-temp-toggle input[type="checkbox"]:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
-.cloth-temp-toggle label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-700);margin:0;cursor:pointer;}
 
 /* Resin & Temperature row -- Resin Type / (Epoxy Mix Ratio) / Ambient
    Temperature should sit on one line at tablet+ widths (MP reference,
@@ -161,16 +100,16 @@ main.cloth-app{
      toggle) in the markup -- turn it into its own 2-row flex: label
      alone on row 1, input + toggle inline together on row 2, instead of
      the toggle stacking under the input. */
-  #resinTempCard .cloth-input-group:has(.cloth-temp-toggle){
+  #resinTempCard .cloth-input-group:has(.mp-unit-toggle){
     display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;
   }
-  #resinTempCard .cloth-input-group:has(.cloth-temp-toggle) > .cloth-input-label{
+  #resinTempCard .cloth-input-group:has(.mp-unit-toggle) > .cloth-input-label{
     flex:1 0 100%;margin:0 0 .3rem;
   }
-  #resinTempCard .cloth-input-group:has(.cloth-temp-toggle) > .cloth-input{
+  #resinTempCard .cloth-input-group:has(.mp-unit-toggle) > .mp-input{
     flex:1 1 0;min-width:0;
   }
-  #resinTempCard .cloth-temp-toggle{flex:0 0 auto;margin-top:0;}
+  #resinTempCard .mp-unit-toggle{flex:0 0 auto;margin-top:0;}
 }
 
 /* ---------- Material Layers ---------- */
@@ -195,21 +134,6 @@ main.cloth-app{
 }
 .cloth-add-btn:hover{border-color:var(--chrome-sea-500);background:var(--chrome-paper-muted);}
 
-/* ---------- Results panel ---------- */
-.cloth-results-panel{
-  background:var(--chrome-ink-950);color:#fff;border-radius:12px;overflow:hidden;
-  box-shadow:var(--chrome-shadow-lift);
-}
-@media (min-width:992px){
-  .cloth-results-panel{position:sticky;top:1.5rem;}
-}
-.cloth-results-head{
-  display:flex;align-items:center;justify-content:space-between;gap:1rem;
-  padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.1);
-}
-.cloth-results-head h2{margin:0;font-size:.95rem;font-weight:600;color:#fff;}
-.cloth-results-body{padding:1.25rem 1.5rem 1.5rem;}
-
 /* Volume-unit selector at the top of the results panel — display
    only (which unit to show results in), not an input to the
    calculation itself. Hidden from print (an interactive control has
@@ -217,16 +141,16 @@ main.cloth-app{
    .printable-section rules still bold/enlarge the real result spans
    below it. */
 .cloth-result-unit-row{margin-bottom:1.1rem;}
-.cloth-result-unit-row .cloth-select{
+.cloth-result-unit-row .mp-select{
   background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#fff;
 }
-.cloth-result-unit-row .cloth-select:hover{border-color:rgba(255,255,255,.3);}
+.cloth-result-unit-row .mp-select:hover{border-color:rgba(255,255,255,.3);}
 /* The white text above is only for the CLOSED select reading white-on-dark
    against the results panel -- it otherwise inherits into the native
    <option> list, which renders on the browser's own light popup background
    (Chrome/Windows), making every option unreadable except the hovered one.
    Scope the option list back to normal light-background/dark-text. */
-.cloth-result-unit-row .cloth-select option{
+.cloth-result-unit-row .mp-select option{
   color:var(--chrome-ink-900);
   background:#fff;
 }
@@ -240,21 +164,6 @@ main.cloth-app{
   color:var(--chrome-signal-400);margin:0;line-height:1.1;
 }
 .cloth-result-sub{font-size:.85rem;color:rgba(255,255,255,.75);margin:.5rem 0 0;line-height:1.4;}
-
-/* ---------- Stat-grid (extended from mekpcalc.css's 2-row compare
-   pattern — this page has more real result fields, so more rows
-   rather than compressed ones, per the Phase 2 spec). ---------- */
-.cloth-result-compare{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1.1rem 0;}
-.cloth-compare-box{
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:8px;padding:.6rem .75rem;
-}
-.cloth-compare-box-wide{grid-column:1 / -1;}
-.cloth-compare-label{
-  display:block;font-size:.66rem;font-weight:700;
-  color:rgba(255,255,255,.5);margin-bottom:.25rem;
-}
-.cloth-compare-value{display:block;font-family:var(--chrome-font-mono);font-size:1.05rem;font-weight:700;color:#fff;}
 
 /* Conditional MEKP catalyst sub-block (Polyester/Vinylester only) —
    same "divider + uppercase label" treatment already used for the
@@ -270,57 +179,7 @@ main.cloth-app{
    container — left unstyled here on purpose so we don't fight its
    inline styles; this wrapper only provides spacing. */
 
-.cloth-affiliate-block{margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1);}
-.cloth-affiliate-block h3{
-  font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  color:rgba(255,255,255,.55);margin:0 0 .6rem;
-}
-.cloth-affiliate-list{list-style:none;margin:0 0 .6rem;padding:0;}
-.cloth-affiliate-list li{margin-bottom:.4rem;}
-.cloth-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
-.cloth-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
-
 .cloth-print-cta{margin-top:1.25rem;}
-.cloth-print-btn{
-  width:100%;background:var(--chrome-signal-400);color:var(--chrome-ink-950);
-  border:none;border-radius:8px;padding:.85rem 1rem;font-size:.95rem;font-weight:700;
-  cursor:pointer;transition:background-color .15s var(--chrome-ease-smooth);
-}
-.cloth-print-btn:hover{background:var(--chrome-signal-200);}
-.cloth-print-btn:focus-visible{outline:3px solid rgba(242,166,60,.5);outline-offset:2px;}
-
-/* ---------- Resource cards (Tips & Safety / Other Calculators) ---------- */
-.cloth-resources-grid{display:grid;gap:1.25rem;margin-top:2rem;}
-@media (min-width:900px){
-  .cloth-resources-grid{grid-template-columns:1fr 1fr;}
-}
-.cloth-resource-card{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;padding:1.5rem;
-}
-.cloth-resource-card h2{font-size:1.1rem;font-weight:700;color:var(--chrome-ink-900);margin:0 0 .5rem;}
-.cloth-resource-desc{font-size:.85rem;color:var(--chrome-ink-600);margin:0 0 1rem;line-height:1.5;}
-.cloth-resource-links{list-style:none;margin:0;padding:0;border-top:1px solid var(--chrome-paper-line);}
-.cloth-resource-links li + li{border-top:1px solid var(--chrome-paper-line);}
-.cloth-resource-link{
-  display:flex;align-items:flex-start;gap:.75rem;
-  padding:.85rem 0;text-decoration:none;
-}
-.cloth-resource-link-text{min-width:0;flex:1 1 auto;}
-.cloth-resource-link-title{
-  display:block;font-size:.92rem;font-weight:600;
-  color:var(--chrome-ink-900) !important;transition:color .15s var(--chrome-ease-smooth);
-}
-.cloth-resource-link-detail{
-  display:block;margin-top:.15rem;font-size:.8rem;line-height:1.4;
-  color:var(--chrome-ink-500) !important;
-}
-.cloth-resource-link-icon{
-  flex:none;width:1rem;height:1rem;margin-top:.15rem;
-  color:var(--chrome-ink-500);transition:color .15s var(--chrome-ease-smooth);
-}
-.cloth-resource-link:hover .cloth-resource-link-title,
-.cloth-resource-link:hover .cloth-resource-link-icon{color:var(--chrome-sea-600) !important;}
 
 /* ---------- Share this Calculator (small card, own QR — separate
    from the print QR code) ---------- */
@@ -331,21 +190,6 @@ main.cloth-app{
 .cloth-share-card h2{font-size:1rem;font-weight:700;color:var(--chrome-ink-900);margin:0 0 1rem;}
 .cloth-share-card #qrcode{display:flex;justify-content:center;}
 
-/* ---------- Report-issue banner ---------- */
-.cloth-report-banner{
-  margin-top:1.5rem;border:1px dashed var(--chrome-ink-500);background:var(--chrome-paper-muted);
-  border-radius:12px;padding:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;
-  align-items:center;justify-content:space-between;
-}
-.cloth-report-banner h2{font-size:1rem;font-weight:600;color:var(--chrome-ink-900);margin:0 0 .25rem;}
-.cloth-report-banner p{font-size:.85rem;color:var(--chrome-ink-600);margin:0;}
-.cloth-report-btn{
-  background:transparent;border:1.5px solid var(--chrome-ink-900);color:var(--chrome-ink-900);
-  font-weight:600;font-size:.9rem;padding:.65rem 1.1rem;border-radius:8px;
-  cursor:pointer;white-space:nowrap;transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
-}
-.cloth-report-btn:hover{background:var(--chrome-ink-900);color:#fff;}
-
 /* ---------- Feedback modal ----------
    .modal-overlay/.modal-box/.modal-title (style.css) are already light.
    .help-modal-pitch's base rule (style.css) is still dark-styled
@@ -353,13 +197,3 @@ main.cloth-app{
    light override there already; this page's #helpModal reuses the
    exact same global override (no per-page CSS needed here — this page
    has no #feedbackModal, unlike mekpcalc.html, so nothing to add). */
-
-.sr-only{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
-}
-
-@media (max-width:575.98px){
-  .cloth-hero{padding:1.5rem 1.25rem 2.25rem;}
-  .cloth-hero-title{font-size:1.6rem;}
-}
