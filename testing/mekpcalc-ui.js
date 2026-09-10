@@ -128,7 +128,7 @@
   }
 
   // ---------- 2. Ambient-temperature advisory ----------
-  // Breakpoints are the LIVE SITE's own (60 / 65.6 / 75 / 85°F), not MP's
+  // Breakpoints are the LIVE SITE's own (60 / 65 / 75 / 85°F), not MP's
   // fabricated ones (60/70/80/90 in useMekpCalculator.ts) — frozen math,
   // never ported. Input is converted to °F first when the toggle is set
   // to Celsius.
