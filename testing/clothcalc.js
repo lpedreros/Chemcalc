@@ -791,12 +791,69 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Wires the visible Metric/Imperial segmented-pill toggle (.mp-unit-btn)
+  // to the real hidden <select id="result-system"> that setupEventListeners()
+  // already listens on -- mirrors initTempUnitToggle() above exactly.
+  //
+  // Also keeps the temperature-unit toggle paired with the measurement
+  // system (metric<->celsius, imperial<->fahrenheit), same fix as
+  // mekpcalc-ui.js's setSystem(). If the temp toggle doesn't already
+  // match, convert #temperature's value with the existing
+  // celsiusToFahrenheit/fahrenheitToCelsius functions and update the temp
+  // toggle's hidden checkbox + button states + label directly, WITHOUT
+  // dispatching #temp-unit-toggle's own "change" event -- that would run
+  // calculateResin() a second time (once here, once via #result-system's
+  // own change below), including a second logCalculation() analytics
+  // call. handleResultSystemChange() (unchanged) does the real work once
+  // this function's single "change" event on #result-system fires.
+  function initResultSystemToggle() {
+    const hidden = document.getElementById('result-system');
+    const buttons = Array.from(document.querySelectorAll('.mp-unit-btn[data-system]'));
+    if (!hidden || !buttons.length) return;
+
+    function setSystem(system) {
+      const wantsFahrenheit = (system === 'imperial');
+      if (tempUnitToggle && tempUnitToggle.checked !== wantsFahrenheit) {
+        const currentTempValue = parseFloat(temperatureInput.value);
+        if (!isNaN(currentTempValue)) {
+          temperatureInput.value = wantsFahrenheit
+            ? celsiusToFahrenheit(currentTempValue).toFixed(1)
+            : fahrenheitToCelsius(currentTempValue).toFixed(1);
+        }
+        tempUnitToggle.checked = wantsFahrenheit;
+        if (tempUnitLabel) tempUnitLabel.textContent = wantsFahrenheit ? '°F' : '°C';
+        const tempButtons = document.querySelectorAll('.mp-unit-btn[data-tempunit]');
+        tempButtons.forEach((btn) => {
+          const active = btn.getAttribute('data-tempunit') === (wantsFahrenheit ? 'fahrenheit' : 'celsius');
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      }
+
+      hidden.value = system;
+      buttons.forEach((btn) => {
+        const active = btn.getAttribute('data-system') === system;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      // clothcalc.js's own "change" listener on #result-system
+      // (registered in setupEventListeners()) re-runs handleResultSystemChange().
+      hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.getAttribute('aria-pressed') === 'true') return;
+        setSystem(btn.getAttribute('data-system'));
+      });
+    });
+  }
+
   function initializeCalculator() {
     setupInitialUnitsAndInputs();
     toggleEpoxyRatioVisibility();
     updateRemoveButtonVisibility();
     setupEventListeners();
     initTempUnitToggle();
+    initResultSystemToggle();
     calculateResin();
   }
 

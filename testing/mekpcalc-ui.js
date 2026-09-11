@@ -67,6 +67,19 @@
     return m ? m[1] : fallback;
   }
 
+  // Mirrors clothcalc.js's celsiusToFahrenheit/fahrenheitToCelsius exactly
+  // (same formulas, same .toFixed(1) rounding) -- used below to keep
+  // #ambientTemp's number correct whenever either toggle changes which
+  // unit it's interpreted in. mekpcalc-ui.js has no other reason to share
+  // code with clothcalc.js, so this is a small parallel copy, not an
+  // import.
+  function celsiusToFahrenheit(celsius) {
+    return (celsius * 9 / 5) + 32;
+  }
+  function fahrenheitToCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5 / 9;
+  }
+
   // ---------- 1. Temperature-unit toggle ----------
   function initTempUnitToggle() {
     var hidden = document.getElementById('tempUnit');
@@ -76,6 +89,22 @@
     if (!hidden || !buttons.length) return;
 
     function setUnit(unit) {
+      // Fix: this toggle used to only relabel the unit, never convert the
+      // number already in #ambientTemp -- e.g. "20" typed as °C, then
+      // clicking °F left the field showing "20" (now misread as 20°F)
+      // instead of updating it to 68. Convert BEFORE the hidden value/
+      // change event fire, so calculateMEKP() sees the new unit and the
+      // already-converted number together in one pass.
+      if (unit !== hidden.value) {
+        var tempInput = document.getElementById('ambientTemp');
+        var currentTempValue = tempInput ? parseFloat(tempInput.value) : NaN;
+        if (tempInput && !isNaN(currentTempValue)) {
+          tempInput.value = (unit === 'fahrenheit')
+            ? celsiusToFahrenheit(currentTempValue).toFixed(1)
+            : fahrenheitToCelsius(currentTempValue).toFixed(1);
+        }
+      }
+
       hidden.value = unit;
       buttons.forEach(function (btn) {
         var active = btn.getAttribute('data-unit') === unit;
@@ -109,6 +138,33 @@
     if (!hidden || !buttons.length) return;
 
     function setSystem(system) {
+      // Keep the temperature-unit toggle paired with the measurement
+      // system (imperial<->fahrenheit, metric<->celsius), same fix as
+      // setUnit() above. Update the temp toggle's hidden value + button
+      // states directly, WITHOUT dispatching its own "change" event --
+      // that would run calculateMEKP() a second time (once here, once
+      // via unitSystem's own change below), including a second
+      // logCalculation() analytics call. One dispatch below, on
+      // unitSystem, reads the fully-updated, consistent state (new
+      // system + new temp unit + converted number) in a single pass.
+      var pairedUnit = (system === 'metric') ? 'celsius' : 'fahrenheit';
+      var tempUnitHidden = document.getElementById('tempUnit');
+      if (tempUnitHidden && tempUnitHidden.value !== pairedUnit) {
+        var tempInput = document.getElementById('ambientTemp');
+        var currentTempValue = tempInput ? parseFloat(tempInput.value) : NaN;
+        if (tempInput && !isNaN(currentTempValue)) {
+          tempInput.value = (pairedUnit === 'fahrenheit')
+            ? celsiusToFahrenheit(currentTempValue).toFixed(1)
+            : fahrenheitToCelsius(currentTempValue).toFixed(1);
+        }
+        tempUnitHidden.value = pairedUnit;
+        var tempButtons = document.querySelectorAll('.mp-unit-btn[data-unit]');
+        tempButtons.forEach(function (btn) {
+          var active = btn.getAttribute('data-unit') === pairedUnit;
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      }
+
       hidden.value = system;
       buttons.forEach(function (btn) {
         var active = btn.getAttribute('data-system') === system;

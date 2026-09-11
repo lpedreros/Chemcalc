@@ -259,9 +259,23 @@
                 <p class="mp-field-hint">Sets the units used throughout.</p>
               </div>
             </div>
+            <!-- Visible control: a two-button toggle, matching this page's
+                 own Temperature Unit toggle below (and mekpcalc.html's
+                 Measurement System toggle). The hidden select below keeps
+                 id="result-system" with a plain .value of
+                 "imperial"/"metric" in sync with it, so every existing
+                 function that reads resultSystemSelect.value
+                 (updateInputOptions, updateMaterialOptions,
+                 populateResultUnitOptions, print summary, etc.) keeps
+                 working unmodified. See clothcalc.js's
+                 initResultSystemToggle() for the sync logic. -->
+            <div class="mp-unit-toggle" role="group" aria-label="Measurement system">
+              <button type="button" class="mp-unit-btn" data-system="metric" aria-pressed="true">Metric</button>
+              <button type="button" class="mp-unit-btn" data-system="imperial" aria-pressed="false">Imperial</button>
+            </div>
             <label class="sr-only" for="result-system">Choose system</label>
-            <select id="result-system" class="mp-select">
-              <option value="metric">Metric (kg, L, m², cm, °C)</option>
+            <select id="result-system" class="mp-select" hidden aria-hidden="true">
+              <option value="metric" selected>Metric (kg, L, m², cm, °C)</option>
               <option value="imperial">Imperial (lbs, gal, ft², in, °F)</option>
             </select>
           </section>
