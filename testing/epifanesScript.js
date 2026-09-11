@@ -13,8 +13,18 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!totalVolumeInput || !volumeUnitSelect || !resultBaseDisplay || !resultHardenerDisplay || !affiliateLinksList || !affiliateLinksContainer) {
     console.error("One or more essential DOM elements for the Epifanes calculator are missing. Functionality may be impaired.");
     if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
-    return; 
+    return;
   }
+
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // DOMContentLoaded handler's own displayAffiliateLinks() call (below) has
+  // already run against a still-empty affiliateLinksData -- re-render once
+  // the fetch actually completes. displayAffiliateLinks() takes no args and
+  // is pure render (innerHTML rebuild only, no analytics), so it's safe to
+  // call directly here.
+  window.addEventListener('affiliateLinksReady', () => {
+    displayAffiliateLinks();
+  }, { once: true });
 
   const toCcs = {
     ccs: 1,

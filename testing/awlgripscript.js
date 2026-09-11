@@ -52,9 +52,21 @@ document.addEventListener("DOMContentLoaded", function() {
   var outR = document.getElementById("resultReducer");
   var outA = document.getElementById("resultAccelerator");
   var outCov = document.getElementById("resultCoverage");
-  var affiliateLinksList = document.getElementById("affiliateLinksList"); 
-  var affiliateLinksContainer = document.getElementById("affiliateLinksContainer"); 
-  var resultsCard = document.querySelector(".card.mt-4"); 
+  var affiliateLinksList = document.getElementById("affiliateLinksList");
+  var affiliateLinksContainer = document.getElementById("affiliateLinksContainer");
+  var resultsCard = document.querySelector(".card.mt-4");
+
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // page's own init has already called displayAffiliateLinks() against a
+  // still-empty affiliateLinksData -- re-render once the fetch actually
+  // completes. Call displayAffiliateLinks(paintType, methodType) directly
+  // (not the full calc()) -- calc() also fires a logCalculation() analytics
+  // call, which must not run a second time as a side effect of this
+  // listener. Derive paintType/methodType the same way calc() does
+  // (paint.value / method.value).
+  window.addEventListener('affiliateLinksReady', function() {
+    displayAffiliateLinks(paint.value, method.value);
+  }, { once: true });
 
   // Conversions
   var cv = {

@@ -15,6 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const widthInput = document.getElementById("width");
   const unitsSelect = document.getElementById("units");
   const resinTypeSelect = document.getElementById("resin-type");
+
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // page's own init has already called displayAffiliateLinks() against a
+  // still-empty affiliateLinksData -- re-render once the fetch actually
+  // completes. Call displayAffiliateLinks(resinType) directly (not the
+  // full calculateResin()) -- calculateResin() also fires a
+  // logCalculation() analytics call, which must not run a second time as
+  // a side effect of this listener. Derive resinType the same way
+  // calculateResin() does (resinTypeSelect.value).
+  window.addEventListener('affiliateLinksReady', () => {
+    displayAffiliateLinks(resinTypeSelect.value);
+  }, { once: true });
   const epoxyRatioContainer = document.getElementById("epoxy-ratio-container");
   const epoxyMixRatioSelect = document.getElementById("epoxy-mix-ratio");
   const temperatureInput = document.getElementById("temperature");

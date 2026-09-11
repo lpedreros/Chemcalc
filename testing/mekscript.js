@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Affiliate links
   const affiliateLinksList = document.getElementById("affiliateLinksList");
 
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // DOMContentLoaded handler's own displayAffiliateLinks() call has already
+  // run against a still-empty affiliateLinksData -- re-render once the
+  // fetch actually completes. displayAffiliateLinks() takes no args and is
+  // pure render (innerHTML rebuild only, no analytics), so it's safe to
+  // call directly here.
+  window.addEventListener('affiliateLinksReady', () => {
+    displayAffiliateLinks();
+  }, { once: true });
+
   // Constants
   const mlPerOz = 29.5735;
   const mlPerQuart = 946.353;

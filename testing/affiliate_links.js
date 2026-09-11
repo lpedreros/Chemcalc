@@ -31,6 +31,7 @@ var affiliateLinksData = {};
     });
 
     console.log("Affiliate links loaded from Supabase:", Object.keys(affiliateLinksData).length, "items");
+    window.dispatchEvent(new CustomEvent('affiliateLinksReady', { detail: { count: Object.keys(affiliateLinksData).length } }));
 
   } catch (err) {
     console.error("Failed to load affiliate links from Supabase:", err.message);
