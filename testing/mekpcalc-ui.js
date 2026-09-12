@@ -323,6 +323,14 @@
     var recommendedNum = recommendedTail ? parseFloat(recommendedTail) : NaN;
     if (isNaN(recommendedNum)) return;
 
+    // Skip the no-op case: a pure F<->C toggle (or any change that
+    // doesn't move the recommended %) leaves the slider already sitting
+    // on recommendedNum -- re-dispatching here would still re-run
+    // calculateMEKP() a second and third time (mekscript.js wires both
+    // "input" and "change" on this element) for zero actual change.
+    // Only move/re-dispatch when the value is genuinely different.
+    if (Math.abs(parseFloat(slider.value) - recommendedNum) < 0.01) return;
+
     slider.value = recommendedNum;
     // Same events applyDefaults() already uses -- this is what runs
     // calculateMEKP() (via mekscript.js's own listener on this element);
