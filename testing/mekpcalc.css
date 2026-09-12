@@ -223,9 +223,10 @@
   margin:.85rem 0 0;padding:.55rem .75rem;border-radius:8px;
   background:var(--chrome-paper-muted);
 }
-.mekp-result-advisory[data-band="cold"],
-.mekp-result-advisory[data-band="hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
-.mekp-result-advisory[data-band="warm"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
+.mekp-result-advisory[data-band="extreme-cold"],
+.mekp-result-advisory[data-band="extreme-hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
+.mekp-result-advisory[data-band="warm"],
+.mekp-result-advisory[data-band="hot"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
 .mekp-result-advisory[data-band="cool"],
 .mekp-result-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
 

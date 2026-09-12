@@ -191,11 +191,12 @@
   function computeAdvisory(rawTemp, unit) {
     if (rawTemp === '' || rawTemp === null || isNaN(rawTemp)) return null;
     var f = unit === 'celsius' ? (rawTemp * 9) / 5 + 32 : rawTemp;
-    if (f < 60) return { band: 'cold', text: 'Cold shop — expect a slow, extended cure.' };
-    if (f < 65) return { band: 'cool', text: 'Cool conditions — comfortable working time.' };
-    if (f < 75) return { band: 'ideal', text: 'Ideal range — standard gel time.' };
-    if (f < 85) return { band: 'warm', text: 'Warm shop — gel time shortens noticeably.' };
-    return { band: 'hot', text: 'Hot conditions — mix small batches, work fast.' };
+    if (f < 60) return { band: 'extreme-cold', text: "Below 60°F — the cure doesn't slow, it stops; warm the shop or walk away." };
+    if (f < 65) return { band: 'cool', text: "60–65°F — the resin's in no rush, and it shows; expect a longer, unhurried cure." };
+    if (f < 75) return { band: 'ideal', text: "65–75°F — the resin behaves exactly as promised, which is rarer than you'd think." };
+    if (f < 85) return { band: 'warm', text: "75–85°F — the clock speeds up here; mix only what you can use before it notices." };
+    if (f < 95) return { band: 'hot', text: "85–95°F — this resin is already halfway to setting before you've finished stirring; mix small, move fast." };
+    return { band: 'extreme-hot', text: "95°F and above — the catalyzed resin can kick in the can before you've used a drop; don't mix here." };
   }
 
   function updateTempAdvisory() {

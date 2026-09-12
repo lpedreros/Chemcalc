@@ -112,6 +112,23 @@ main.cloth-app{
   #resinTempCard .mp-unit-toggle{flex:0 0 auto;margin-top:0;}
 }
 
+/* ---------- Ambient-temperature advisory: lives in the Resin &
+   Temperature field card (light background), color follows band.
+   Resin-dependent (polyester/vinylester vs. epoxy) -- see clothcalc.js's
+   computeClothAdvisory(). Mirrors mekpcalc.css's .mekp-result-advisory
+   pattern exactly, reusing the same sitewide --chrome-* tokens. ---------- */
+.cloth-temp-advisory{
+  display:none;font-size:.82rem;font-weight:600;color:var(--chrome-ink-700);
+  margin:.85rem 0 0;padding:.55rem .75rem;border-radius:8px;
+  background:var(--chrome-paper-muted);
+}
+.cloth-temp-advisory[data-band="extreme-cold"],
+.cloth-temp-advisory[data-band="extreme-hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
+.cloth-temp-advisory[data-band="warm"],
+.cloth-temp-advisory[data-band="hot"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
+.cloth-temp-advisory[data-band="cool"],
+.cloth-temp-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
+
 /* ---------- Material Layers ---------- */
 .cloth-layer{
   border:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);

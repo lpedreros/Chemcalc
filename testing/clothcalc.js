@@ -525,11 +525,55 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else {
       affiliateLinksList.innerHTML = "<li>No specific products found. Check Kits page.</li>";
-      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block"; 
+      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
+    }
+  }
+
+  // Ambient-temperature advisory, resin-dependent. Polyester/vinylester shares MEKP's
+  // breakpoints/copy verbatim (mekpcalc-ui.js's computeAdvisory) — single source of
+  // truth in spec, duplicated here only because this is a separate vanilla file with
+  // no shared module system. Epoxy has its own breakpoints/copy. Copy is Editor-approved
+  // final text — do not edit wording.
+  function computeClothAdvisory(rawTemp, isFahrenheitFlag, resinType) {
+    if (rawTemp === '' || rawTemp === null || isNaN(rawTemp)) return null;
+    var f = isFahrenheitFlag ? rawTemp : celsiusToFahrenheit(rawTemp);
+
+    if (resinType === 'epoxy') {
+      if (f < 55) return { band: 'extreme-cold', text: "Below 55°F — this epoxy isn't curing, it's hibernating, and it won't wake without added heat, so warm the shop or don't start." };
+      if (f < 60) return { band: 'cool', text: "55–60°F — cure is possible, just reluctant; give it the time it's clearly asking for." };
+      if (f < 70) return { band: 'ideal', text: "60–70°F — everything behaves, the resin included; enjoy the calm while it lasts." };
+      if (f < 80) return { band: 'warm', text: "70–80°F — the reaction quickens, and so should you; pot life is shorter than it looks." };
+      if (f < 90) return { band: 'hot', text: "80–90°F — pot life is vanishing fast, and a rushed cure turns brittle; keep batches small." };
+      return { band: 'extreme-hot', text: "90°F and above — enough curing resin in one pot can run away with its own heat; don't mix a batch here." };
+    }
+
+    // Polyester / vinylester — identical to MEKP calculator's bands.
+    if (f < 60) return { band: 'extreme-cold', text: "Below 60°F — the cure doesn't slow, it stops; warm the shop or walk away." };
+    if (f < 65) return { band: 'cool', text: "60–65°F — the resin's in no rush, and it shows; expect a longer, unhurried cure." };
+    if (f < 75) return { band: 'ideal', text: "65–75°F — the resin behaves exactly as promised, which is rarer than you'd think." };
+    if (f < 85) return { band: 'warm', text: "75–85°F — the clock speeds up here; mix only what you can use before it notices." };
+    if (f < 95) return { band: 'hot', text: "85–95°F — this resin is already halfway to setting before you've finished stirring; mix small, move fast." };
+    return { band: 'extreme-hot', text: "95°F and above — the catalyzed resin can kick in the can before you've used a drop; don't mix here." };
+  }
+
+  function updateClothTempAdvisory() {
+    var adviceEl = document.getElementById('cloth-temp-advisory');
+    if (!adviceEl || !temperatureInput || !resinTypeSelect) return;
+    var raw = temperatureInput.value === '' ? NaN : parseFloat(temperatureInput.value);
+    var advisory = computeClothAdvisory(raw, isFahrenheit, resinTypeSelect.value);
+    if (advisory) {
+      adviceEl.textContent = advisory.text;
+      adviceEl.setAttribute('data-band', advisory.band);
+      adviceEl.style.display = 'block';
+    } else {
+      adviceEl.textContent = '';
+      adviceEl.removeAttribute('data-band');
+      adviceEl.style.display = 'none';
     }
   }
 
   function calculateResin() {
+    updateClothTempAdvisory();
     const lengthVal = lengthInput.value;
     const widthVal = widthInput.value;
     const length = parseFloat(lengthVal);
