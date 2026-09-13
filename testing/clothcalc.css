@@ -63,14 +63,21 @@ main.cloth-app{
 .cloth-app h1,.cloth-app h2,.cloth-app h3{font-family:var(--chrome-font-sans);}
 
 /* ---------- Field cards ----------
-   Single-column stack (unlike mekpcalc.css's 2-col + -wide split) —
-   this page's 5 cards (vs. MEKP's cleanly-paired 4) mostly carry
-   multi-item input rows that want the full column width, so a 2-col
+   Hybrid layout (unlike mekpcalc.css's clean 2-col + -wide split, where
+   all 4 cards pair up): most of this page's cards carry multi-item
+   input rows that want the full column width, so a straight 2-col
    split would leave an awkward empty cell next to whichever card
-   doesn't get a same-width partner. Kept simple and safe instead.
+   doesn't get a same-width partner. Only Measurement System (just a
+   2-button toggle -- too narrow for a full-width row on its own) pairs
+   up, with Resin & Temperature as its partner; Dimensions, Layers, and
+   Cost stay full-width via .cloth-field-card-wide (Leo, 2026-09-13).
    (.mp-field-card itself, and its icon/head/title/hint children, are
    shared -- see style.css.) */
 .cloth-fields{display:grid;gap:1rem;}
+@media (min-width:576px){
+  .cloth-fields{grid-template-columns:1fr 1fr;}
+}
+.cloth-field-card-wide{grid-column:1 / -1;}
 
 /* Row of 2-3 fields (inputs and/or selects) that wraps on narrow
    cards — used for Project Dimensions (length/width/units), Resin &
