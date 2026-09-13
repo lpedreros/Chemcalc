@@ -3597,6 +3597,15 @@ body,
   color:rgba(255,255,255,.5);margin-bottom:.25rem;
 }
 .mp-compare-value{display:block;font-family:var(--chrome-font-mono);font-size:1.05rem;font-weight:700;color:#fff;}
+/* Secondary line inside a .mp-compare-value (so far: ClothCalc's
+   Resin:Hardener box weight-split, under its primary volume-split
+   line) -- same relationship .cloth-result-sub has to .cloth-result-hero
+   (smaller, muted, under the primary number), scaled down to fit a
+   small compare-box instead of the big hero. */
+.mp-compare-value-sub{
+  display:block;font-family:var(--chrome-font-mono);font-size:.72rem;
+  font-weight:600;color:rgba(255,255,255,.55);margin-top:.15rem;
+}
 
 .mp-affiliate-block{margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1);}
 .mp-affiliate-block h3{

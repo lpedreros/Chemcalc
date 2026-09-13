@@ -41,7 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalAreaEl = document.getElementById("total-area");
   const resinVolumeEl = document.getElementById("resin-volume");
   const resinWeightEl = document.getElementById("resin-weight");
+  const resinWeightLabelEl = document.getElementById("resin-weight-label");
   const hardenerAmountEl = document.getElementById("hardener-amount");
+  const hardenerLabelEl = document.getElementById("hardener-label");
   const workingTimeEl = document.getElementById("working-time");
   const estimatedCostEl = document.getElementById("estimated-cost");
   const costHintEl = document.getElementById("cost-hint");
@@ -646,6 +648,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const resinVolumeLiters = totalResinKg / resinInfo.density;
     let hardenerVolumeLiters = 0;
+    let hardenerWeightKg = 0;
     let mekpPercentage = 0;
     let mekpCcs = 0;
     let mekpDrops = 0;
@@ -656,14 +659,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0) {
         if (isWeightRatio) {
           const resinWeightKgForRatio = resinVolumeLiters * resinInfo.density;
-          const hardenerWeightKg = resinWeightKgForRatio * (ratioParts[1] / ratioParts[0]);
+          hardenerWeightKg = resinWeightKgForRatio * (ratioParts[1] / ratioParts[0]);
           hardenerVolumeLiters = hardenerWeightKg / approxEpoxyHardenerDensity;
         } else {
           hardenerVolumeLiters = resinVolumeLiters * (ratioParts[1] / ratioParts[0]);
+          hardenerWeightKg = hardenerVolumeLiters * approxEpoxyHardenerDensity;
         }
       }
       mekpResultsContainer.style.display = "none";
-      hardenerAmountEl.style.display = "block";
     } else { // Polyester or Vinylester
       const tempC = isFahrenheit ? fahrenheitToCelsius(temp) : temp;
       // MEKP-% now shares the standalone MEKP calculator's curve (mekp-
@@ -677,7 +680,6 @@ document.addEventListener("DOMContentLoaded", () => {
       mekpCcs = (resinVolumeLiters * 1000 * (mekpPercentage / 100) * resinInfo.density) / mekpDensity;
       mekpDrops = mekpCcs / mlPerDrop;
       mekpResultsContainer.style.display = "block";
-      hardenerAmountEl.style.display = "block"; // shown for both resin types now -- see the text-content block below for the Resin:Catalyst split
     }
 
     let workingTime = resinInfo.baseWorkingTime;
@@ -709,32 +711,64 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedSystem = resultSystemSelect.value;
     // resultUnit is already defined as: const resultUnit = resultVolumeUnitSelect.value;
 
-    resinVolumeEl.textContent = formatDisplayVolume(resinVolumeLiters, resultUnit, selectedSystem);
-
-    // hardenerAmountEl is now shown for both resin types (visibility set
-    // above alongside mekpResultsContainer) -- a "Base (Resin:X) A : B"
-    // split, X and B depending on resin type. Epoxy's B is the same
-    // hardenerVolumeLiters used for the epoxy math elsewhere in this
-    // function; Polyester/Vinylester's B is the MEKP catalyst volume
-    // already computed into mekpCcs (mL) for the MEKP detail block below
-    // -- converted to Liters (/1000) since formatDisplayVolume expects
-    // Liters, same convention used everywhere else in this file.
-    const resinPartDisplay = formatDisplayVolume(resinVolumeLiters, resultUnit, selectedSystem);
-    if (resinType === "epoxy") {
-      const hardenerPartDisplay = formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem);
-      hardenerAmountEl.textContent = `Base (Resin:Hardener) ${resinPartDisplay} : ${hardenerPartDisplay}`;
-    } else {
-      const catalystPartDisplay = formatDisplayVolume(mekpCcs / 1000, resultUnit, selectedSystem);
-      hardenerAmountEl.textContent = `Base (Resin:Catalyst) ${resinPartDisplay} : ${catalystPartDisplay}`;
-    }
-
     let weightDisplayUnit;
     if (selectedSystem === "imperial") {
         weightDisplayUnit = (resultUnit === "gal" || resultUnit === "qt") ? "lbs" : "oz";
     } else { // metric
         weightDisplayUnit = (resultUnit === "l") ? "kg" : "g";
     }
-    resinWeightEl.textContent = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
+
+    // "Total Resin Needed" hero -- epoxy shows the COMBINED resin+hardener
+    // volume. Round 2 left this as base-resin-only for both types, which
+    // read as broken once the Hardener/Catalyst box below also showed
+    // that same base-resin number next to itself (Leo, 2026-09-1X) --
+    // the hero has to actually BE the sum the split box decomposes.
+    // Poly/Vinylester: unchanged, base resin only.
+    const heroVolumeLiters = (resinType === "epoxy") ? (resinVolumeLiters + hardenerVolumeLiters) : resinVolumeLiters;
+    resinVolumeEl.textContent = formatDisplayVolume(heroVolumeLiters, resultUnit, selectedSystem);
+
+    // Resin Weight box -- same combined-vs-base-only split as the hero,
+    // and the same label distinction ("Total Resin Weight" for epoxy vs.
+    // plain "Resin Weight" -- no "Base" qualifier needed for
+    // Poly/Vinylester since nothing sits next to it to disambiguate from,
+    // now that the Hardener/Catalyst box is hidden entirely for those types).
+    const totalResinWeightKg = (resinType === "epoxy") ? (totalResinKg + hardenerWeightKg) : totalResinKg;
+    if (resinWeightLabelEl) resinWeightLabelEl.textContent = (resinType === "epoxy") ? "Total Resin Weight" : "Resin Weight";
+    resinWeightEl.textContent = formatDisplayWeight(totalResinWeightKg, weightDisplayUnit, selectedSystem);
+
+    // Hardener/Catalyst box -- epoxy only. Poly/Vinylester's own MEKP-%
+    // detail block below already covers that case under MEKP's own
+    // "Catalyst" terminology; this box duplicated it under a generic
+    // label. Reverted to hidden entirely (not just its value blanked)
+    // for Poly/Vinylester -- matches this box's pre-Round-2 behavior,
+    // and sidesteps any stale-value-on-resin-type-switch failure mode
+    // regardless of root cause.
+    const hardenerBoxEl = hardenerAmountEl.closest('.mp-compare-box');
+    if (resinType === "epoxy") {
+      if (hardenerBoxEl) hardenerBoxEl.style.display = "";
+      // Same key already used to derive ratioParts above -- e.g.
+      // "3:1v" -> "3:1", "100:45w" -> "100:45".
+      const ratioLabel = epoxyMixRatio.replace(/[^0-9:]/g, '');
+      if (hardenerLabelEl) hardenerLabelEl.textContent = `Resin : Hardener (${ratioLabel})`;
+      const resinVolDisplay = formatDisplayVolume(resinVolumeLiters, resultUnit, selectedSystem);
+      const hardenerVolDisplay = formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem);
+      const resinWeightDisplay = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
+      const hardenerWeightDisplay = formatDisplayWeight(hardenerWeightKg, weightDisplayUnit, selectedSystem);
+      hardenerAmountEl.innerHTML = `${resinVolDisplay} : ${hardenerVolDisplay}<span class="mp-compare-value-sub">(${resinWeightDisplay} : ${hardenerWeightDisplay})</span>`;
+    } else {
+      if (hardenerBoxEl) hardenerBoxEl.style.display = "none";
+    }
+
+    // Estimated Cost normally spans both grid columns (.mp-compare-box-wide
+    // -- its value can run long), but when Hardener/Catalyst is hidden
+    // (Poly/Vinylester) that leaves Working Time alone on its own row
+    // with an empty gap next to it instead of the two sharing a row.
+    // Only stay wide when Hardener/Catalyst is genuinely occupying its
+    // usual grid cell.
+    const estimatedCostBoxEl = estimatedCostEl.closest('.mp-compare-box');
+    if (estimatedCostBoxEl) {
+      estimatedCostBoxEl.classList.toggle('mp-compare-box-wide', resinType === "epoxy");
+    }
 
     mekpPercentageEl.textContent = `${mekpPercentage.toFixed(1)}%`;
     mekpCcsEl.textContent = `${mekpCcs.toFixed(1)} mL`;
