@@ -67,7 +67,7 @@
 main.cloth-app{
   font-family:var(--chrome-font-sans);
   color:var(--chrome-ink-900);
-  background:var(--chrome-paper);
+  background:#2c2c2e;
 }
 @media (max-width:767.98px){
   /* Bottom clearance from the fixed bottom-right floating-action cluster
@@ -347,10 +347,20 @@ main.cloth-app{
    (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw)
    ============================================================ */
 
-.mekp-app{
+/* main.mekp-app (tag+class) rather than a bare .mekp-app -- style.css's
+   sitewide .container{background-color:#2c2c2e} (dark) has the same
+   single-class specificity and loads later in this file, so it would
+   otherwise win on cascade order alone -- confirmed live: the bare-class
+   version silently rendered .container's dark background instead of
+   this rule's own, on both mobile and desktop. Same root cause and same
+   fix as main.cloth-app above; deliberately made both pages share that
+   same dark #2c2c2e background (Leo, 2026-09-15) rather than pick a
+   winner, since MEKP's dark render was the accidental one and
+   ClothCalc's light one wasn't a deliberate design choice either. */
+main.mekp-app{
   font-family:var(--chrome-font-sans);
   color:var(--chrome-ink-900);
-  background:var(--chrome-paper);
+  background:#2c2c2e;
 }
 @media (max-width:767.98px){
   /* Bottom clearance from the fixed bottom-right floating-action cluster
