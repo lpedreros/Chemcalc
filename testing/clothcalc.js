@@ -702,7 +702,12 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (resinCostUnit === "lb") costPerLiter = (resinCost * kgToLb) * resinInfo.density;
       estimatedCost = (resinVolumeLiters + hardenerVolumeLiters) * costPerLiter;
     }
-    if (costHintEl) costHintEl.style.display = (resinCost > 0) ? "block" : "none";
+    if (costHintEl) {
+      costHintEl.textContent = (resinType === "epoxy")
+        ? "Estimated cost includes hardener, priced at your entered resin cost per unit."
+        : "Estimated cost covers resin only — MEKP catalyst isn't included.";
+      costHintEl.style.display = (resinCost > 0) ? "block" : "none";
+    }
 
     resultsSection.style.display = "block";
     totalAreaEl.textContent = `${areaSqMeters.toFixed(2)} m² / ${(areaSqMeters * sqMeterToSqFeet).toFixed(2)} ft²`;
