@@ -79,6 +79,34 @@ main.cloth-app{
 }
 .cloth-field-card-wide{grid-column:1 / -1;}
 
+/* Measurement System's toggle is the only content in that card, so left
+   as a block-level flex container it stretches to fill the card's full
+   width -- shrink it to its own content and center it instead. Scoped
+   to this card only: .mp-unit-toggle/.mp-unit-btn are shared sitewide
+   (Resin & Temperature's own °F/°C toggle on this page, both mekpcalc.html
+   toggles) and must not be touched here. */
+#measurementSystemCard .mp-unit-toggle{
+  width: fit-content;
+  margin: 0 auto;
+}
+
+/* Flavor line under the now-centered toggle -- based on .mp-field-hint's
+   muted-secondary-text pattern (style.css), differentiated as copy (not
+   a functional hint) via italic + centered under the toggle it's paired
+   with. #measurementSystemCard-scoped selector + !important: style.css's
+   sitewide .container p{text-align:left !important} (loads after this
+   file) otherwise wins outright -- confirmed live, plain .cloth-unit-quip
+   computed to text-align:left despite this rule, since .container p's
+   higher specificity (class+element vs. this rule's single class) beats
+   it regardless of !important on both sides. */
+#measurementSystemCard .cloth-unit-quip{
+  font-size:.8rem;
+  color:var(--chrome-ink-600);
+  font-style:italic;
+  text-align:center !important;
+  margin:.75rem 0 0;
+}
+
 /* Row of 2-3 fields (inputs and/or selects) that wraps on narrow
    cards — used for Project Dimensions (length/width/units), Resin &
    Temperature (resin type/epoxy ratio/temperature), and Cost
