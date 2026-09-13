@@ -650,9 +650,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let mekpDrops = 0;
 
     if (resinType === "epoxy") {
+      const isWeightRatio = /w$/i.test(epoxyMixRatio.trim());
       const ratioParts = epoxyMixRatio.replace(/[^0-9:]/g, '').split(":").map(Number);
       if (ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0) {
-        hardenerVolumeLiters = resinVolumeLiters * (ratioParts[1] / ratioParts[0]);
+        if (isWeightRatio) {
+          const resinWeightKgForRatio = resinVolumeLiters * resinInfo.density;
+          const hardenerWeightKg = resinWeightKgForRatio * (ratioParts[1] / ratioParts[0]);
+          hardenerVolumeLiters = hardenerWeightKg / approxEpoxyHardenerDensity;
+        } else {
+          hardenerVolumeLiters = resinVolumeLiters * (ratioParts[1] / ratioParts[0]);
+        }
       }
       mekpResultsContainer.style.display = "none";
       hardenerAmountEl.style.display = "block";
