@@ -12,10 +12,10 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Fiberglass Cloth Calculator — page-scoped, built on Phase 0's sitewide
-         --chrome-* tokens (same pattern as mekpcalc.css); does not affect
-         other calculators -->
-    <link href="clothcalc.css" rel="stylesheet">
+    <!-- Fiberglass Cloth Calculator's page-scoped rules moved into
+         /style.css's "CLOTHCALC PAGE-SPECIFIC STYLES" section
+         (2026-09-14 single-file consolidation) -- clothcalc.css.deprecated
+         is the pre-merge original, no longer linked. -->
     <!-- Print Styles -->
     <link rel="stylesheet" href="print_style_fix_v4.css" media="print">
     <link rel="apple-touch-icon" href="images/Think-and-Engage-Logo1c-Black-Seal.png"> <!-- Assuming same image for apple touch icon -->
@@ -269,7 +269,7 @@
                  populateResultUnitOptions, print summary, etc.) keeps
                  working unmodified. See clothcalc.js's
                  initResultSystemToggle() for the sync logic. -->
-            <div class="mp-unit-toggle" role="group" aria-label="Measurement system">
+            <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Measurement system">
               <button type="button" class="mp-unit-btn" data-system="metric" aria-pressed="true">Metric</button>
               <button type="button" class="mp-unit-btn" data-system="imperial" aria-pressed="false">Imperial</button>
             </div>
@@ -278,7 +278,7 @@
               <option value="metric" selected>Metric (kg, L, m², cm, °C)</option>
               <option value="imperial">Imperial (lbs, gal, ft², in, °F)</option>
             </select>
-            <p class="cloth-unit-quip">The resin doesn't care which system you use — only that you pick one.</p>
+            <p class="mp-unit-quip">The resin doesn't care which system you use — only that you pick one.</p>
           </section>
 
           <!-- Resin & Temperature -->

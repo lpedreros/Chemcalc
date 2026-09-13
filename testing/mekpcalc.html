@@ -78,9 +78,10 @@
 
   <!-- Favicon & CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- MEKP Calculator — page-scoped, built on Phase 0's sitewide --chrome-*
-       tokens; does not affect other calculators -->
-  <link href="mekpcalc.css" rel="stylesheet">
+  <!-- MEKP Calculator's page-scoped rules moved into /style.css's
+       "MEKPCALC PAGE-SPECIFIC STYLES" section (2026-09-14 single-file
+       consolidation) -- mekpcalc.css.deprecated is the pre-merge original,
+       no longer linked. -->
 	<link rel="stylesheet" href="print_style_fix_v4.css" media="print">
 
 <!-- Adsense
@@ -291,11 +292,12 @@
                calculateMEKP()/updateVolumeUnits() — which read this exact
                element by that exact id/value contract — run completely
                unmodified. See mekpcalc-ui.js for the sync logic. -->
-          <div class="mp-unit-toggle" role="group" aria-label="Measurement system">
+          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Measurement system">
             <button type="button" class="mp-unit-btn" data-system="imperial" aria-pressed="true">Imperial</button>
             <button type="button" class="mp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
           </div>
           <select id="unitSystem" hidden><option value="imperial" selected>Imperial (oz / qt / gal, °F)</option><option value="metric">Metric (mL / L, °C)</option></select>
+          <p class="mp-unit-quip">The resin doesn't care which system you use — only that you pick one.</p>
         </section>
 
         <!-- Ambient Temperature -->
