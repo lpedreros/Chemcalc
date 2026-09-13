@@ -865,6 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : fahrenheitToCelsius(currentTempValue).toFixed(1);
         }
         tempUnitToggle.checked = wantsFahrenheit;
+        isFahrenheit = wantsFahrenheit;
         if (tempUnitLabel) tempUnitLabel.textContent = wantsFahrenheit ? '°F' : '°C';
         const tempButtons = document.querySelectorAll('.mp-unit-btn[data-tempunit]');
         tempButtons.forEach((btn) => {
