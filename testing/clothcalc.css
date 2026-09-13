@@ -120,21 +120,57 @@ main.cloth-app{
   color:var(--chrome-ink-600);margin:0 0 .3rem;
 }
 
-/* Resin & Temperature row -- Resin Type / (Epoxy Mix Ratio) / Ambient
-   Temperature should sit on one line at tablet+ widths (MP reference,
-   confirmed against the live preview). Scoped to #resinTempCard only so
-   Project Dimensions and Cost Estimation keep the shared .cloth-input-row
-   wrap-when-tight behavior above unchanged. Below 576px this block
-   doesn't apply, so the shared 140px-basis .cloth-input-group still
-   wraps normally, same as before this fix. */
-@media (min-width:576px){
-  #resinTempCard .cloth-input-row{flex-wrap:nowrap;}
-  #resinTempCard .cloth-input-row .cloth-input-group{flex:1 1 0;min-width:0;}
+/* Project Dimensions row -- Length/Width/Units fit on one row even on
+   the narrowest common phone widths (~360-375px), instead of Units
+   wrapping below Length+Width. Scoped to #dimensionsCard only so the
+   shared .cloth-input-row wrap-when-tight behavior (and the other
+   cards' own .cloth-input-group-compact sizing) stays unchanged.
+   Placeholder truncation tradeoff (Leo, 2026-09-13): Length/Width's
+   "e.g., 48"/"e.g., 24" placeholders truncate to "e.g.," at this width
+   since the field is narrower than the full placeholder needs -- real
+   typed values (1-3 digits) are far shorter and always display fully,
+   so this only affects the placeholder hint, never real data. Verified
+   live there's no further CSS-only win available: Units is a native
+   <select>, and its rendered width is already governed by its own
+   intrinsic content size (widest option "Centimeters" + the browser's
+   native dropdown-arrow chrome), not by min-width or flex-shrink --
+   forcing min-width down further (tested to 3.5rem) and allowing
+   flex-shrink (tested 0 1 auto) changed its rendered width by 0px.
+   Genuinely freeing more room for the placeholder would require
+   shrinking Units below its own content's natural size, which starts
+   truncating "Centimeters" itself instead -- a functional regression
+   traded for a cosmetic one. Left as-is. */
+@media (max-width: 575.98px) {
+  #dimensionsCard .cloth-input-row{flex-wrap:nowrap;}
+  #dimensionsCard .cloth-input-row > .cloth-input-group:not(.cloth-input-group-compact){
+    flex:1 1 0;min-width:0;
+  }
+  #dimensionsCard .cloth-input-group-compact{
+    flex:0 0 auto;min-width:5.5rem;
+  }
+}
 
+/* Resin & Temperature row -- Resin Type / (Epoxy Mix Ratio) / Ambient
+   Temperature always stack as their own full-width rows now (Leo,
+   2026-09-13), NOT side-by-side at tablet+ widths as originally shipped.
+   That side-by-side version was fine when #resinTempCard had the full
+   row to itself, but once it started sharing a row with
+   #measurementSystemCard at this same 576px breakpoint (see
+   .cloth-fields' 2-col split), the card's width roughly halved right
+   where the old side-by-side rule kicked in -- squeezing Ambient
+   Temperature's input down to where its value could be cut off/
+   invisible. Scoped to #resinTempCard only so Project Dimensions and
+   Cost Estimation keep the shared .cloth-input-row wrap-when-tight
+   behavior unchanged. */
+#resinTempCard .cloth-input-row > .cloth-input-group{flex:1 1 100%;}
+
+@media (min-width:576px){
   /* Ambient Temperature's group has 3 stacked children (label, input,
      toggle) in the markup -- turn it into its own 2-row flex: label
      alone on row 1, input + toggle inline together on row 2, instead of
-     the toggle stacking under the input. */
+     the toggle stacking under the input. Still correct/needed post-fix:
+     this is about the group's OWN internal layout, not its width
+     relative to its siblings. */
   #resinTempCard .cloth-input-group:has(.mp-unit-toggle){
     display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;
   }
