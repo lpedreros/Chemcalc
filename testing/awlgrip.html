@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- SEO: Title optimized -->
-  <title>Awlgrip &amp; Awlcraft 2000 Paint Mix Calculator | ChemCalc</title>
+  <title>Awlgrip Coatings Calculator | ChemCalc</title>
 
   <!-- SEO: Description optimized -->
   <meta name="description" content="Calculate precise mix ratios for Awlgrip Topcoat, Awlcraft 2000, and 545 Epoxy Primer. Ensure perfect results for spray or brush/roll application with ChemCalc's free calculator. Supports imperial/metric units and provides coverage estimates.">
@@ -15,7 +15,7 @@
   <link rel="canonical" href="https://chemcalc.co/awlgrip.html" />
 
   <!-- SOCIAL -->
-  <meta property="og:title" content="Awlgrip &amp; Awlcraft 2000 Paint Mix Calculator | ChemCalc" />
+  <meta property="og:title" content="Awlgrip Coatings Calculator | ChemCalc" />
   <meta property="og:description" content="Get accurate mix ratios for Awlgrip, Awlcraft 2000, and 545 Primer, including paint, catalyst, and reducer volumes. Supports spray/brush, imperial/metric." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://chemcalc.co/awlgrip.html" />
@@ -25,7 +25,7 @@
 
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Awlgrip &amp; Awlcraft 2000 Paint Mix Calculator | ChemCalc" />
+  <meta name="twitter:title" content="Awlgrip Coatings Calculator | ChemCalc" />
   <meta name="twitter:description" content="Calculate precise mix ratios for Awlgrip, Awlcraft 2000, and 545 Primer. Supports spray/brush, imperial/metric." />
   <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
 
@@ -34,7 +34,7 @@
   {
     "@context": "https://schema.org",
     "@type": ["WebPage", "WebApplication"],
-    "name": "Awlgrip & Awlcraft 2000 Paint Mix Calculator | ChemCalc",
+    "name": "Awlgrip Coatings Calculator | ChemCalc",
     "description": "Calculate precise mix ratios for Awlgrip Topcoat, Awlcraft 2000, and 545 Epoxy Primer. Ensure perfect results for spray or brush/roll application with ChemCalc's free calculator. Supports imperial/metric units and provides coverage estimates.",
     "url": "https://chemcalc.co/awlgrip.html",
     "applicationCategory": "UtilitiesApplication",
@@ -271,177 +271,295 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><main class="container">
-  <h1 class="text-center mb-4">Awlgrip Mix Calculator</h1>
-  <p class="text-center text-muted mb-4">For Awlgrip Topcoat, Awlcraft 2000, 545 Primer, Awlcraft SE, Awlcraft 3000 &amp; Awlgrip HDT Clear</p>
+<!-- #EndLibraryItem --><main class="container awlgrip-app">
 
-  <!-- Placeholder for supporting content (Step 005) -->
-  <!-- <section class="mb-4">
-    <p>Introductory paragraph explaining Awlgrip products, mix ratios, importance of accuracy, and how this calculator helps...</p>
-  </section> -->
+  <!-- Title band -->
+  <div class="mp-hero">
+    <h1 class="mp-hero-title">Awlgrip Coatings Calculator</h1>
+    <p class="mp-hero-tagline">Awlgrip Topcoat &middot; Awlcraft 2000 &middot; 545 Epoxy Primer &middot; Awlcraft SE &middot; Awlcraft 3000 &middot; Awlgrip HDT Clear</p>
+    <p class="mp-hero-copy">Set your surface area or paint volume, pick spray or roll/brush application, and choose your product line — get exact base, converter, and reducer amounts, plus estimated coverage, before you crack a can.</p>
+  </div>
 
-  <!-- Measurement system -->
-  <div class="card" id="unitSystemCard"><div class="card-body">
-    <h2 class="card-title">Measurement System</h2>
-    <select id="unitSystem" class="form-control">
-      <option value="imperial" selected>Imperial (ft², oz, qt, gal)</option>
-      <option value="metric">Metric (m², mL, L)</option>
-    </select>
-  </div></div>
+  <div class="mp-grid">
+    <div class="awlgrip-form-col d-print-none">
+      <div class="awlgrip-fields">
 
-  <!-- Area / Volume / Dimensions -->
-  <div class="card" id="inputMethodCard"><div class="card-body">
-    <h2 class="card-title">How much are you coating or mixing?</h2>
-
-    <!-- Input Method Selection -->
-    <div class="mb-3">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inputMethod" id="inputMethodAreaVolume" value="areaVolume" checked>
-            <label class="form-check-label" for="inputMethodAreaVolume">Enter Area / Volume Directly</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inputMethod" id="inputMethodLengthWidth" value="lengthWidth">
-            <label class="form-check-label" for="inputMethodLengthWidth">Calculate Area from Length &amp; Width</label>
-        </div>
-    </div>
-
-    <!-- Direct Area/Volume Inputs -->
-    <div id="areaVolumeInputs">
-        <p class="small text-muted mb-2">Enter surface area <em>or</em> the paint volume you plan to mix.</p>
-        <div class="row">
-          <div class="col-md-6 mb-2">
-            <label for="inputValue">Value</label>
-            <input type="number" id="inputValue" class="form-control" min="0" step="any" placeholder="e.g., 100 or 1">
-          </div>
-          <div class="col-md-6 mb-2">
-            <label for="unitType">Input Units</label>
-            <select id="unitType" class="form-control"></select>
-          </div>
-        </div>
-    </div>
-
-    <!-- Length/Width Inputs (Initially Hidden) -->
-    <div id="lengthWidthInputs" style="display: none;">
-        <p class="small text-muted mb-2">Enter the dimensions of the surface area.</p>
-        <div class="row">
-            <div class="col-md-4 mb-2">
-                <label for="length">Length</label>
-                <input type="number" id="length" class="form-control" min="0" step="any" placeholder="e.g., 10">
+        <!-- Measurement System -->
+        <section class="mp-field-card" id="unitSystemCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Measurement System</h2>
+              <p class="mp-field-hint">Sets the units used throughout.</p>
             </div>
-            <div class="col-md-4 mb-2">
-                <label for="width">Width</label>
-                <input type="number" id="width" class="form-control" min="0" step="any" placeholder="e.g., 10">
+          </div>
+          <!-- Visible control: a two-button toggle, same safe pattern as
+               mekpcalc.html/clothcalc.html's Measurement System toggle.
+               The hidden select below keeps id="unitSystem" with a plain
+               .value of "imperial"/"metric" in sync with it, so
+               awlgripscript.js's sys.addEventListener("change", ...) runs
+               completely unmodified. See awlgripcalc-ui.js for the sync
+               logic. -->
+          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Measurement system">
+            <button type="button" class="mp-unit-btn" data-system="imperial" aria-pressed="true">Imperial</button>
+            <button type="button" class="mp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
+          </div>
+          <select id="unitSystem" hidden><option value="imperial" selected>Imperial (ft², oz, qt, gal)</option><option value="metric">Metric (m², mL, L)</option></select>
+        </section>
+
+        <!-- Coating Amount / Input Method -->
+        <section class="mp-field-card awlgrip-field-card-wide" id="inputMethodCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Coating Amount</h2>
+              <p class="mp-field-hint">Enter area or volume directly, or calculate area from dimensions.</p>
             </div>
-            <div class="col-md-4 mb-2">
-                <label for="dimensionUnit">Dimension Units</label>
-                <select id="dimensionUnit" class="form-control">
+          </div>
+          <!-- Visible control: a two-button toggle, same sync pattern as
+               the Measurement System toggle above but driving the
+               existing hidden input[name="inputMethod"] radio pair
+               instead of a select -- see awlgripcalc-ui.js. Radio ids/
+               values/name stay exactly as-is so
+               document.querySelector('input[name="inputMethod"]:checked').value
+               keeps working unmodified. -->
+          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Coating amount input method">
+            <button type="button" class="mp-unit-btn" data-input="areaVolume" aria-pressed="true">Area / Volume</button>
+            <button type="button" class="mp-unit-btn" data-input="lengthWidth" aria-pressed="false">Length &times; Width</button>
+          </div>
+          <input type="radio" name="inputMethod" id="inputMethodAreaVolume" value="areaVolume" checked hidden>
+          <input type="radio" name="inputMethod" id="inputMethodLengthWidth" value="lengthWidth" hidden>
+
+          <!-- Direct Area/Volume Inputs -->
+          <div id="areaVolumeInputs" class="mt-3">
+            <p class="mp-field-hint mb-2">Enter surface area <em>or</em> the paint volume you plan to mix.</p>
+            <div class="awlgrip-input-row">
+              <div class="awlgrip-input-group">
+                <label class="awlgrip-input-label" for="inputValue">Value</label>
+                <input type="number" id="inputValue" class="mp-input" min="0" step="any" placeholder="e.g., 100 or 1">
+              </div>
+              <div class="awlgrip-input-group">
+                <label class="awlgrip-input-label" for="unitType">Input Units</label>
+                <select id="unitType" class="mp-select"></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Length/Width Inputs (Initially Hidden) -->
+          <div id="lengthWidthInputs" class="mt-3" style="display: none;">
+            <p class="mp-field-hint mb-2">Enter the dimensions of the surface area.</p>
+            <div class="awlgrip-input-row">
+              <div class="awlgrip-input-group">
+                <label class="awlgrip-input-label" for="length">Length</label>
+                <input type="number" id="length" class="mp-input" min="0" step="any" placeholder="e.g., 10">
+              </div>
+              <div class="awlgrip-input-group">
+                <label class="awlgrip-input-label" for="width">Width</label>
+                <input type="number" id="width" class="mp-input" min="0" step="any" placeholder="e.g., 10">
+              </div>
+              <div class="awlgrip-input-group awlgrip-input-group-compact">
+                <label class="awlgrip-input-label" for="dimensionUnit">Dimension Units</label>
+                <select id="dimensionUnit" class="mp-select mp-select-compact">
                     <!-- Options will be added by JS based on system -->
                 </select>
+              </div>
             </div>
+            <p class="mp-field-hint mt-2">Calculated Area: <span id="calculatedAreaDisplay">&mdash;</span></p>
+          </div>
+
+          <!-- Result unit selector (shown only when area chosen) -->
+          <div id="resultUnitRow" class="mt-3 d-none">
+            <div class="awlgrip-input-group">
+              <label class="awlgrip-input-label" for="resultUnit">Result Units</label>
+              <select id="resultUnit" class="mp-select"></select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Application Method -->
+        <section class="mp-field-card" id="methodTypeCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Application Method</h2>
+              <p class="mp-field-hint">Spray or roll/brush &mdash; changes the reducer ratio.</p>
+            </div>
+          </div>
+          <!-- Visible control: a two-button toggle. The hidden select
+               below keeps id="methodType" with a plain .value of
+               "spray"/"roll" in sync with it, so awlgripscript.js's
+               method.addEventListener("change", calc) runs completely
+               unmodified. Roll is disabled here the same way
+               awlgripscript.js already disables the real <option> for
+               spray-only products -- see awlgripcalc-ui.js. -->
+          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Application method">
+            <button type="button" class="mp-unit-btn" data-appmethod="spray" aria-pressed="true">Spray</button>
+            <button type="button" class="mp-unit-btn" data-appmethod="roll" aria-pressed="false">Roll / Brush</button>
+          </div>
+          <select id="methodType" hidden><option value="spray" selected>Spray</option><option value="roll">Roll / Brush</option></select>
+        </section>
+
+        <!-- Product Type -->
+        <section class="mp-field-card awlgrip-field-card-wide" id="paintTypeCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Product Line</h2>
+              <p class="mp-field-hint">Sets the base mix ratios and coverage rate.</p>
+            </div>
+          </div>
+          <select id="paintType" class="mp-select">
+            <option value="awlcraft2000">Awlcraft 2000 Topcoat</option>
+            <option value="awlgrip">Awlgrip Topcoat</option>
+            <option value="545primer">545 Epoxy Primer</option>
+            <option value="awlcraftse">Awlcraft SE Basecoat</option>
+            <option value="awlcraft3000">Awlcraft 3000 Topcoat</option>
+            <option value="awlgriphdtclear">Awlgrip HDT Clear</option>
+          </select>
+
+          <!-- Awlcraft 3000 Reducer Percentage (shown only when awlcraft3000 selected) -->
+          <div id="reducerPercentRow" class="mt-3" style="display:none;">
+            <div class="awlgrip-slider-label-row">
+              <label for="reducerPercent">Reducer Percentage</label>
+              <span id="reducerPercentValue">25</span>
+            </div>
+            <input type="range" id="reducerPercent" class="awlgrip-slider" min="15" max="33" value="25" step="1">
+            <div class="awlgrip-slider-scale"><span>15%</span><span>24%</span><span>33%</span></div>
+            <p class="mp-field-hint mt-2"><strong>Guide:</strong> Start around 25%. Use less (15–20%) in cooler temps or small jobs. Use more (25–33%) in hot/dry conditions or large panels. Target: 11–15 sec DIN 4 viscosity.</p>
+          </div>
+
+          <!-- Product-specific notes (shown conditionally) -->
+          <div id="productNoteAwlcraftSE" class="awlgrip-note" style="display:none;">
+            <strong>Note:</strong> Awlcraft SE is a basecoat. A compatible clearcoat (Awlgrip HDT Clear or Awlcraft 2000 Clear) must be applied after this product.
+          </div>
+          <div id="productNoteHDTClear" class="awlgrip-note" style="display:none;">
+            <strong>Induction Time:</strong> After mixing, allow <strong>15 minutes</strong> before spraying.<br>
+            <strong>Activator Guide:</strong> 59–73°F → Fast (OA0020) &nbsp;|&nbsp; 68–86°F → Medium (OA0015 or 50:50 blend) &nbsp;|&nbsp; &gt;86°F → Slow (OA0010)
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="awlgrip-results-col">
+      <section class="mp-results-panel printable-section" id="resultsCard" aria-label="Calculated results">
+        <div class="mp-results-head">
+          <h2>Mix Result</h2>
         </div>
-        <p class="mt-2 small text-muted">Calculated Area: <span id="calculatedAreaDisplay">—</span></p>
-    </div>
+        <div class="mp-results-body">
+          <div class="mp-result-compare">
+            <div class="mp-compare-box">
+              <span class="mp-compare-label" id="resultPaintLabel">Paint Base</span>
+              <span class="mp-compare-value" id="resultPaint">&mdash;</span>
+            </div>
+            <div class="mp-compare-box">
+              <span class="mp-compare-label" id="resultConverterLabel">Converter / Catalyst</span>
+              <span class="mp-compare-value" id="resultConverter">&mdash;</span>
+            </div>
+            <div class="mp-compare-box">
+              <span class="mp-compare-label" id="resultReducerLabel">Reducer</span>
+              <span class="mp-compare-value" id="resultReducer">&mdash;</span>
+            </div>
+            <div class="mp-compare-box" id="resultAcceleratorBox" style="display:none">
+              <span class="mp-compare-label">Accelerator (Pro-Cure X-98)</span>
+              <span class="mp-compare-value" id="resultAccelerator">&mdash;</span>
+            </div>
+            <div class="mp-compare-box mp-compare-box-wide">
+              <span class="mp-compare-label">Coverage</span>
+              <span class="mp-compare-value" id="resultCoverage"></span>
+            </div>
+          </div>
 
-    <!-- Result unit selector (shown only when area chosen) -->
-    <div id="resultUnitRow" class="row mt-3 d-none">
-      <div class="col-md-6">
-        <label for="resultUnit">Result Units</label>
-        <select id="resultUnit" class="form-control"></select>
-      </div>
-    </div>
-  </div></div>
+          <div id="awlgripEmailCapture" class="awlgrip-email-capture"></div>
 
-  <!-- Application Method -->
-  <div class="card" id="methodTypeCard"><div class="card-body">
-    <h2 class="card-title">Application Method</h2>
-    <select id="methodType" class="form-control">
-      <option value="spray" selected>Spray</option>
-      <option value="roll">Roll / Brush</option>
-    </select>
-  </div></div>
+          <!-- Affiliate Links Placeholder -->
+          <div class="mp-affiliate-block" id="affiliateLinksContainer" style="display:none;">
+            <h3>Related Products</h3>
+            <ul id="affiliateLinksList" class="mp-affiliate-list"></ul>
+            <span class="mp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+          </div>
 
-  <!-- Product Type -->
-  <div class="card" id="paintTypeCard"><div class="card-body">
-    <h2 class="card-title">Product Type</h2>
-    <select id="paintType" class="form-control">
-      <option value="awlcraft2000">Awlcraft 2000 Topcoat</option>
-      <option value="awlgrip">Awlgrip Topcoat</option>
-      <option value="545primer">545 Epoxy Primer</option>
-      <option value="awlcraftse">Awlcraft SE Basecoat</option>
-      <option value="awlcraft3000">Awlcraft 3000 Topcoat</option>
-      <option value="awlgriphdtclear">Awlgrip HDT Clear</option>
-    </select>
-
-    <!-- Awlcraft 3000 Reducer Percentage (shown only when awlcraft3000 selected) -->
-    <div id="reducerPercentRow" class="mt-3" style="display:none;">
-      <label for="reducerPercent">Reducer Percentage: <span id="reducerPercentValue">25</span>%</label>
-      <input type="range" id="reducerPercent" class="form-control-range" min="15" max="33" value="25" step="1">
-      <p class="small text-muted mt-1"><strong>Guide:</strong> Start around 25%. Use less (15–20%) in cooler temps or small jobs. Use more (25–33%) in hot/dry conditions or large panels. Target: 11–15 sec DIN 4 viscosity.</p>
-    </div>
-
-    <!-- Product-specific notes (shown conditionally) -->
-    <div id="productNoteAwlcraftSE" class="alert alert-info mt-3" style="display:none;">
-      <strong>Note:</strong> Awlcraft SE is a basecoat. A compatible clearcoat (Awlgrip HDT Clear or Awlcraft 2000 Clear) must be applied after this product.
-    </div>
-    <div id="productNoteHDTClear" class="alert alert-info mt-3" style="display:none;">
-      <strong>Induction Time:</strong> After mixing, allow <strong>15 minutes</strong> before spraying.<br>
-      <strong>Activator Guide:</strong> 59–73°F → Fast (OA0020) &nbsp;|&nbsp; 68–86°F → Medium (OA0015 or 50:50 blend) &nbsp;|&nbsp; &gt;86°F → Slow (OA0010)
-    </div>
-  </div></div>
-
-  <!-- Results -->
-  <div class="card mt-4 printable-section" id="resultsCard"><div class="card-body">
-    <h2 class="card-title">Your Mix Results</h2>
-    <p id="resultPaint">Paint Base: —</p>
-    <p id="resultConverter">Converter / Catalyst: —</p>
-    <p id="resultReducer">Reducer: —</p>
-    <p id="resultAccelerator" style="display: none;">Accelerator (Pro-Cure X-98): —</p>
-    <hr>
-    <p id="resultCoverage" class="small text-muted"></p>
-    <div id="awlgripEmailCapture"></div>
-
-    <!-- Affiliate Links Placeholder (Step 006) -->
-    <div id="affiliateLinksContainer">
-      <h3>Related Products:</h3>
-      <ul id="affiliateLinksList"></ul>
-      <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
-    </div>
-
-    <!-- Print Button and QR Code Placeholder -->
-    <div class="mt-3 d-print-none">
-        <button id="printButton" class="btn btn-secondary">Print Results</button>
-    </div>
-    <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
-
-  </div></div>
-</main>
-  <!-- Tips & Safety / Other Calcs -->
-<div class="row mt-4">
-  <div class="col-md-6 mb-3">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">Tips &amp; Safety</h2>
-        <p><a href="awlgrip-safety.html">Awlgrip Safety Guidelines</a></p>
-        <p><a href="legal.html">Legal Disclaimer</a></p>
-      </div>
+          <!-- Print Button and QR Code -->
+          <div class="mp-print-cta d-print-none">
+            <button id="printButton" class="mp-print-btn">Print Results</button>
+          </div>
+          <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
+        </div>
+      </section>
     </div>
   </div>
-  <div class="col-md-6 mb-3">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">Other Calculators</h2>
-        <p><a href="clothcalc.html">Fiberglass Cloth Saturation Calculator</a></p>
-        <p><a href="mekpcalc.html">MEKP Calculator</a></p>
-        <p><a href="epifanespoly.html">Epifanes Polyurethane Mix Calculator</a></p>
-      </div>
-    </div>
+  <!-- Tips & Safety / Other Calculators -->
+  <div class="mp-resources-grid d-print-none">
+    <section class="mp-resource-card">
+      <h2>Tips &amp; Safety</h2>
+      <p class="mp-resource-desc">Two-part topcoats punish sloppy ratios &mdash; get the mix right before you spray.</p>
+      <ul class="mp-resource-links">
+        <li>
+          <a href="awlgrip-safety.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Awlgrip Safety Guidelines</span>
+              <span class="mp-resource-link-detail">Handling, PPE, ventilation and spray-booth precautions</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="legal.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Legal Disclaimer</span>
+              <span class="mp-resource-link-detail">Results are guidance &mdash; always verify against the TDS</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <section class="mp-resource-card">
+      <h2>Other Calculators</h2>
+      <p class="mp-resource-desc">More mixing tools for hull, deck and topside work.</p>
+      <ul class="mp-resource-links">
+        <li>
+          <a href="clothcalc.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Fiberglass Cloth Saturation Calculator</span>
+              <span class="mp-resource-link-detail">Resin and cloth quantities by laminate schedule</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="mekpcalc.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">MEKP Calculator</span>
+              <span class="mp-resource-link-detail">Catalyst percentage and drops by batch temperature</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="epifanespoly.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Epifanes Polyurethane Paint &amp; Varnish Calculator</span>
+              <span class="mp-resource-link-detail">Two-part mixing for brush or spray</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
   </div>
-</div>
-	<!-- Feedback Button Section -->
-<div class="container mt-4 mb-5 text-center">
-    <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
-</div>
-<!-- End Feedback Button Section --><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+
+  <!-- Feedback Button Section -->
+  <div class="mp-report-banner d-print-none">
+    <div>
+      <h2>Spot something off, or need another ratio?</h2>
+      <p>Tell us what to fix or add — every report is read by the team behind ChemCalc.</p>
+    </div>
+    <button id="feedbackBtn" class="mp-report-btn">Report an Issue / Suggest a Feature</button>
+  </div>
+  <!-- End Feedback Button Section -->
+
+</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
      onclick="openHelpModal()" and each page's #helpModal / helpContent
@@ -511,7 +629,30 @@
       </ul>
     </div>
   </div>
-</div><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</div>
+<!-- ===== AWLGRIP CALCULATOR FEEDBACK MODAL ===== -->
+<div class="modal-overlay" id="feedbackModal" style="display:none;" onclick="overlayClose(event,'feedbackModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('feedbackModal')">&#10005;</button>
+    <h3 class="modal-title">Report an Issue / Suggest a Feature</h3>
+    <p class="help-modal-pitch">Every report is read by the team behind ChemCalc.</p>
+    <form id="feedbackForm">
+      <label for="feedbackType" class="est-label">Type</label>
+      <select id="feedbackType" class="mp-select">
+        <option value="Bug Report">Bug Report</option>
+        <option value="Feature Request">Feature Request</option>
+        <option value="Other">Other</option>
+      </select>
+      <label for="feedbackDescription" class="est-label mt-3">Description</label>
+      <textarea id="feedbackDescription" class="mp-input" rows="5" placeholder="What happened, or what would you like to see?" required></textarea>
+      <label for="feedbackReplyEmail" class="est-label mt-3">Your email (optional, if you'd like a reply)</label>
+      <input type="email" id="feedbackReplyEmail" class="mp-input" placeholder="you@example.com">
+      <p id="feedbackMsg" style="display:none;font-size:0.85rem;margin-top:8px;"></p>
+      <button type="submit" class="mp-print-btn" id="feedbackSubmitBtn" style="margin-top:12px;">Send Feedback</button>
+    </form>
+  </div>
+</div>
+<!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Donate — top of the bottom-right floating-action cluster (with the
      BoatMD chat toggle from chatbot_styles.css and the page Help button
      from Library/HelpButton.lbi below it; see --chrome-fab-right and
@@ -581,6 +722,12 @@ document.getElementById("year").textContent = new Date().getFullYear();
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
 <script src="awlgripscript.js"></script>
+<!-- Unit-toggle shims (Measurement System / Coating Amount / Application
+     Method) -- see file header comment. Loads after awlgripscript.js so
+     its DOMContentLoaded handler always registers (and therefore always
+     fires) after awlgripscript.js's, and so its post-calc() re-sync
+     listeners see the already-updated DOM state. -->
+<script src="awlgripcalc-ui.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['resultPaint', 'resultConverter', 'resultReducer', 'resultAccelerator', 'resultCoverage']);

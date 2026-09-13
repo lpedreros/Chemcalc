@@ -570,6 +570,123 @@ main.mekp-app{
 #feedbackModal .help-modal-pitch{color:var(--chrome-ink-600);}
 
 /* ============================================================
+   AWLGRIPCALC PAGE-SPECIFIC STYLES
+   Added 2026-09-13 for the Awlgrip Coatings Calculator's visual/DOM
+   rebuild onto the shared .mp-* component vocabulary already
+   established by the CLOTHCALC/MEKPCALC sections above -- see those for
+   the full history of that system. Unlike those two, awlgrip.html had
+   no page-scoped stylesheet before this (plain Bootstrap .card
+   markup) -- this section is new, not a merge of a pre-existing file.
+   ============================================================ */
+
+/* main.awlgrip-app (tag+class) rather than a bare .awlgrip-app -- same
+   cascade-order fix as main.cloth-app/main.mekp-app above: style.css's
+   sitewide .container{background-color:#2c2c2e} has the same
+   single-class specificity and loads later in this file, so it would
+   otherwise win on cascade order alone. Uses the same #2c2c2e dark
+   background both other calculator pages deliberately share (see
+   main.mekp-app's comment above). */
+main.awlgrip-app{
+  font-family:var(--chrome-font-sans);
+  color:var(--chrome-ink-900);
+  background:#2c2c2e;
+}
+@media (max-width:767.98px){
+  /* Bottom clearance from the fixed bottom-right floating-action
+     cluster -- same mechanic as main.cloth-app/main.mekp-app above
+     (single-column page, cluster's fixed viewport band passes over the
+     report banner while scrolling). Same 17.5rem value carried over on
+     the strength of the other two calculator pages sharing the same
+     single-column layout and the same report-banner-at-bottom
+     structure; re-measure if this page's real content height ever
+     diverges enough to matter. */
+  main.awlgrip-app{padding-bottom:17.5rem;}
+}
+@media (min-width:768px) and (max-width:991.98px){
+  main.awlgrip-app{padding-bottom:5rem;}
+}
+.awlgrip-app h1,.awlgrip-app h2,.awlgrip-app h3{font-family:var(--chrome-font-sans);}
+
+/* ---------- Field cards ---------- */
+/* grid-auto-flow:dense lets the two compact toggle-only cards
+   (Measurement System, Application Method) backfill into the same row
+   instead of leaving an empty cell next to each -- Coating Amount and
+   Product Line (both marked -wide below) are visually heavier and stay
+   full-width. Source order (Measurement System, Coating Amount,
+   Application Method, Product Line -- unchanged from the dispatch/the
+   original page) still drives tab order and screen-reader order;
+   `dense` only repacks the visual grid. */
+.awlgrip-fields{display:grid;gap:1rem;grid-auto-flow:row dense;}
+@media (min-width:576px){
+  .awlgrip-fields{grid-template-columns:1fr 1fr;}
+}
+.awlgrip-field-card-wide{grid-column:1 / -1;}
+
+/* ---------- Input rows (Coating Amount's Value/Units and
+   Length/Width/Dimension-Units groups) -- same shared row-of-fields
+   pattern as clothcalc.css's .cloth-input-row/-group/-label. ---------- */
+.awlgrip-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
+.awlgrip-input-group{flex:1 1 140px;min-width:0;}
+.awlgrip-input-group-compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
+.awlgrip-input-label{
+  display:block;font-size:.72rem;font-weight:600;
+  color:var(--chrome-ink-600);margin:0 0 .3rem;
+}
+
+/* ---------- Awlcraft 3000 reducer-percentage slider (MEKP's slider
+   visual language, copied and renamed -- see .mekp-slider above)
+   ---------- */
+.awlgrip-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
+.awlgrip-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
+#reducerPercentValue{
+  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
+}
+.awlgrip-slider{
+  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
+  height:6px;border-radius:999px;
+  /* Live two-tone fill gradient -- --slider-fill is a percentage set
+     from the slider's own value/min/max by awlgripcalc-ui.js on every
+     input; the fixed fallback (50%) covers first paint before JS
+     runs. */
+  background:linear-gradient(
+    to right,
+    var(--chrome-sea-500) 0%,
+    var(--chrome-signal-400) var(--slider-fill,50%),
+    var(--chrome-paper-line) var(--slider-fill,50%),
+    var(--chrome-paper-line) 100%
+  );
+}
+.awlgrip-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;border:2px solid var(--chrome-ink-800);
+  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
+}
+.awlgrip-slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  border:2px solid var(--chrome-ink-800);cursor:pointer;
+}
+.awlgrip-slider-scale{
+  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
+  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
+}
+
+/* ---------- Product-specific note callouts (Awlcraft SE / HDT Clear)
+   -- same visual treatment as MEKP's Duratec-locked message
+   (.mekp-duratec-locked-msg above): a light, always-visible-while-shown
+   callout box, not a Bootstrap .alert. ---------- */
+.awlgrip-note{
+  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
+  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
+  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
+}
+
+.awlgrip-email-capture{margin-top:1rem;}
+/* email-results.js injects its own inline-styled light box into this
+   container -- left unstyled here on purpose so we don't fight its
+   inline styles; this wrapper only provides spacing (same convention as
+   .mekp-email-capture/.cloth-email-capture above). */
+
+/* ============================================================
    END PAGE-SPECIFIC STYLES -- everything below this point was
    already in style.css before the 2026-09-14 consolidation.
    ============================================================ */
@@ -3508,6 +3625,7 @@ body,
 .mp-unit-btn[aria-pressed="true"]{background:var(--chrome-ink-900);color:#fff;}
 .mp-unit-btn:hover:not([aria-pressed="true"]){color:var(--chrome-ink-900);}
 .mp-unit-btn:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
+.mp-unit-btn:disabled{opacity:.4;cursor:not-allowed;}
 
 /* Modifier for a toggle that's the ONLY content in its field card (so
    far: both pages' Measurement System card) -- as a plain block-level

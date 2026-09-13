@@ -48,13 +48,21 @@ document.addEventListener("DOMContentLoaded", function() {
   var method = document.getElementById("methodType");
   var paint = document.getElementById("paintType");
   var outP = document.getElementById("resultPaint");
+  var outPLabel = document.getElementById("resultPaintLabel");
   var outC = document.getElementById("resultConverter");
+  var outCLabel = document.getElementById("resultConverterLabel");
   var outR = document.getElementById("resultReducer");
+  var outRLabel = document.getElementById("resultReducerLabel");
   var outA = document.getElementById("resultAccelerator");
+  var outAccelBox = document.getElementById("resultAcceleratorBox");
   var outCov = document.getElementById("resultCoverage");
   var affiliateLinksList = document.getElementById("affiliateLinksList");
   var affiliateLinksContainer = document.getElementById("affiliateLinksContainer");
-  var resultsCard = document.querySelector(".card.mt-4");
+  // #resultsCard is a real, stable id on the results section -- the old
+  // querySelector(".card.mt-4") silently broke (null-check swallowed it)
+  // once the results section stopped carrying that literal Bootstrap
+  // class combo in the .mp-* visual rebuild.
+  var resultsCard = document.getElementById("resultsCard");
 
   // affiliate_links.js's Supabase fetch is async and can resolve after this
   // page's own init has already called displayAffiliateLinks() against a
@@ -411,17 +419,27 @@ document.addEventListener("DOMContentLoaded", function() {
       redLabel = "Activator";
     }
 
-    outP.textContent = baseLabel + ": " + pVol + " " + labels[outUnit];
-    outC.textContent = convLabel + ": " + cVol + " " + labels[outUnit];
-    outR.textContent = redLabel + ": " + rVol + " " + labels[outUnit];
+    // Label/value split (visual rebuild only -- see build report): these
+    // used to write one combined sentence ("Paint Base: 12.34 oz") into
+    // a single element. The results panel now has a separate
+    // .mp-compare-label element per row for the (genuinely per-product
+    // dynamic) label, so label and value are written separately here.
+    outPLabel.textContent = baseLabel;
+    outP.textContent = pVol + " " + labels[outUnit];
+    outCLabel.textContent = convLabel;
+    outC.textContent = cVol + " " + labels[outUnit];
+    outRLabel.textContent = redLabel;
+    outR.textContent = rVol + " " + labels[outUnit];
 
     // Show accelerator only for Awlcraft 2000, always in mL for easier measurement
     if (paintType === "awlcraft2000") {
       var aVolML = acceleratorCC ? acceleratorCC.toFixed(2) : "Err";
-      outA.textContent = "Accelerator (Pro-Cure X-98): " + aVolML + " mL";
+      outA.textContent = aVolML + " mL";
       outA.style.display = "block";
+      outAccelBox.style.display = "block";
     } else {
       outA.style.display = "none";
+      outAccelBox.style.display = "none";
     }
 
     if (cov[paintType] && cov[paintType][methodType]) {
@@ -466,10 +484,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function reset(msg) {
     if (!msg) msg = "—";
-    outP.textContent = "Paint Base: " + msg;
-    outC.textContent = "Converter / Catalyst: " + msg;
-    outR.textContent = "Reducer: " + msg;
+    outPLabel.textContent = "Paint Base";
+    outP.textContent = msg;
+    outCLabel.textContent = "Converter / Catalyst";
+    outC.textContent = msg;
+    outRLabel.textContent = "Reducer";
+    outR.textContent = msg;
     outA.style.display = "none";
+    outAccelBox.style.display = "none";
     outCov.textContent = "";
     if (affiliateLinksList) affiliateLinksList.innerHTML = ""; 
     if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none"; 
