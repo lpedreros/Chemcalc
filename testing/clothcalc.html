@@ -236,7 +236,7 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><main class="container cloth-app">
+<!-- #EndLibraryItem --><main class="container cloth-app d-print-none">
 
   <!-- Title band -->
   <div class="mp-hero">
@@ -474,6 +474,20 @@
               </div>
             </div>
 
+            <!-- Real calculateResin() output, full labeled sentences --
+                 left in the DOM for email-results.js's
+                 injectEmailCaptureUI to read (mirrors mekpcalc.html's
+                 #mekpRecommended/etc. sr-only pattern). The visible
+                 .mp-compare-value spans above hold bare values next to a
+                 separate .mp-compare-label, which injectEmailCaptureUI
+                 can't see -- these give the emailed "Email Me Results"
+                 copy the label back. Visually hidden but still
+                 announced to assistive tech in full-sentence form. -->
+            <p id="clothEmailVolume" class="sr-only">Total resin needed: &mdash;</p>
+            <p id="clothEmailWeight" class="sr-only">Resin Weight: &mdash;</p>
+            <p id="clothEmailHardener" class="sr-only" style="display:none;">Resin : Hardener: &mdash;</p>
+            <p id="clothEmailCost" class="sr-only">Estimated Cost: &mdash;</p>
+
             <div id="clothEmailCapture" class="cloth-email-capture"></div>
           </div>
 
@@ -489,21 +503,6 @@
             <button id="printButton" class="mp-print-btn">Print Results</button>
           </div>
 
-          <!-- Print-only recap (screen-hidden, print-shown — same d-none
-               d-print-block convention already used below for #printQrCode
-               on this page). Populated by clothcalc.js's existing print
-               button handler; no JS changes needed. -->
-          <div class="mt-3 d-none d-print-block">
-            <p>Generated: <span id="print-timestamp"></span></p>
-            <p>System: <span id="print-system"></span></p>
-            <p>Dimensions: <span id="print-dimensions"></span></p>
-            <p>Resin: <span id="print-resin"></span></p>
-            <p>Temperature: <span id="print-temp"></span></p>
-            <p>Layers:</p>
-            <ul id="print-layers"></ul>
-          </div>
-          <!-- QR Code for Print -->
-          <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
         </div>
       </section>
     </div>
@@ -583,7 +582,85 @@
   </div>
   <!-- End Feedback Button Section -->
 
-</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+</main>
+
+<!-- ============================================================
+     Print-only letterhead summary. Hidden on screen via Bootstrap's
+     d-none, shown only inside @media print via d-print-block -- same
+     convention as mekpcalc.html's #mekpPrintLetterhead (mirrored
+     structure/classes, .cloth-lh-* instead of .mekp-lh-*). Populated by
+     clothcalc-print-summary.js from the calculator's real inputs and
+     calculateResin()'s already-computed output; calculateResin() itself
+     is never called from here. Replaces the old inline print-only recap
+     (Generated/System/Dimensions/Resin/Temperature/Layers) that used to
+     live inside the on-screen results card -- now fully superseded
+     since <main> is d-print-none, so that recap could never actually
+     render for print in the first place under this new structure.
+     #printQrCode is the same real element clothcalc.js's existing print
+     button handler already generates into -- just relocated here, same
+     as MEKP's. -->
+<section id="clothcalcPrintLetterhead" class="d-none d-print-block">
+  <div class="cloth-lh-head">
+    <div class="cloth-lh-brand">
+      <span class="cloth-lh-mark"><img src="images/Think-and-Engage-Logo1c-Black-Seal.png" alt=""></span>
+      <span>
+        <span class="cloth-lh-name">ChemCalc</span>
+        <span class="cloth-lh-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </div>
+    <div class="cloth-lh-doc">
+      <p class="cloth-lh-doc-title">Fiberglass Cloth Saturation Calculator &mdash; Mix Results</p>
+      <p class="cloth-lh-doc-meta">Generated <span id="clothPrintGeneratedOn"></span> &middot; chemcalc.co/clothcalc</p>
+    </div>
+  </div>
+
+  <dl class="cloth-lh-recap">
+    <div>
+      <dt>Dimensions</dt>
+      <dd id="clothPrintRecapDimensions">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Resin Type</dt>
+      <dd id="clothPrintRecapResin">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Temperature</dt>
+      <dd id="clothPrintRecapTemp">&mdash;</dd>
+    </div>
+  </dl>
+
+  <div class="cloth-lh-primary">
+    <p class="cloth-lh-primary-label">Total resin needed</p>
+    <p class="cloth-lh-primary-value" id="clothPrintRecapVolume">&mdash;</p>
+    <p class="cloth-lh-primary-sub" id="clothPrintRecapRatio">&mdash;</p>
+  </div>
+
+  <dl class="cloth-lh-compare">
+    <div>
+      <dt id="clothPrintRecapWeightLabel">Resin Weight</dt>
+      <dd id="clothPrintRecapWeight">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Working Time</dt>
+      <dd id="clothPrintRecapWorkingTime">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Estimated Cost</dt>
+      <dd id="clothPrintRecapCost">&mdash;</dd>
+    </div>
+  </dl>
+
+  <p class="cloth-lh-advisory" id="clothPrintRecapCatalyst"></p>
+
+  <div class="cloth-lh-footer">
+    <p class="cloth-lh-disclaimer">Reference only &mdash; always confirm cure characteristics against your resin manufacturer&rsquo;s technical data sheet. Recalculate before every batch; temperature and layer schedule both change resin demand.</p>
+    <div class="cloth-lh-qr">
+      <div id="printQrCode"></div>
+      <span>Scan to reopen</span>
+    </div>
+  </div>
+</section>
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
      onclick="openHelpModal()" and each page's #helpModal / helpContent
@@ -713,9 +790,12 @@
     <script src="email-results.js"></script>
     <script src="mekp-curve.js"></script>
     <script src="clothcalc.js"></script>
+    <!-- Print letterhead sync (see file header comment) -- loads after
+         clothcalc.js so its listeners always run after calculateResin() -->
+    <script src="clothcalc-print-summary.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            injectEmailCaptureUI('clothEmailCapture', 'Fiberglass Cloth Saturation', ['resin-volume', 'resin-weight', 'hardener-amount', 'estimated-cost']);
+            injectEmailCaptureUI('clothEmailCapture', 'Fiberglass Cloth Saturation', ['clothEmailVolume', 'clothEmailWeight', 'clothEmailHardener', 'clothEmailCost']);
         });
     </script>
     <script src="affiliate_links.js"></script>

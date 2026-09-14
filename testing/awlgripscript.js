@@ -56,6 +56,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var outA = document.getElementById("resultAccelerator");
   var outAccelBox = document.getElementById("resultAcceleratorBox");
   var outCov = document.getElementById("resultCoverage");
+  // sr-only, full-labeled-sentence mirrors for email-results.js's
+  // injectEmailCaptureUI (see awlgrip.html) -- the visible spans above
+  // hold bare values next to a separate .mp-compare-label element,
+  // which injectEmailCaptureUI can't see.
+  var emailP = document.getElementById("awlgripEmailPaint");
+  var emailC = document.getElementById("awlgripEmailConverter");
+  var emailR = document.getElementById("awlgripEmailReducer");
+  var emailA = document.getElementById("awlgripEmailAccelerator");
   var affiliateLinksList = document.getElementById("affiliateLinksList");
   var affiliateLinksContainer = document.getElementById("affiliateLinksContainer");
   // #resultsCard is a real, stable id on the results section -- the old
@@ -103,15 +111,16 @@ document.addEventListener("DOMContentLoaded", function() {
   function ratios(p, m) {
     switch (p) {
       case "545primer":
-        return { conv: 1, red: m === "spray" ? 0.25 : 0.15 };
+        return { conv: 1, red: m === "spray" ? 0.25 : 0.10 };
       case "awlgrip":
         return { conv: m === "spray" ? 1 : 0.5, red: m === "spray" ? 0.25 : 0.2 };
       case "awlcraft2000":
         return { conv: 0.5, red: 0.33 };
       // ── New products ──────────────────────────────────────
       case "awlcraftse":
-        // TDS: 4:1 base to G3010, reducer T0006 variable (use 44% of base+conv as TDS states)
-        return { conv: 0.25, red: 0.55 };
+        // TDS-confirmed fixed ratio, 100:15:50 (Base:Converter:Reducer),
+        // reducers T0001/T0003/T0005, no accelerator.
+        return { conv: 0.15, red: 0.50 };
       case "awlcraft3000":
         // TDS: 2:1 base:G3010, reducer 15-33% of (base+conv) — read from slider
         var pct = parseFloat((document.getElementById("reducerPercent") || {}).value) || 25;
@@ -401,18 +410,36 @@ document.addEventListener("DOMContentLoaded", function() {
     cVol = cVol ? cVol.toFixed(2) : "Err";
     rVol = rVol ? rVol.toFixed(2) : "Err";
 
-    // Product-specific result labels
+    // Product-specific result labels, including real AkzoNobel part
+    // numbers so users know exactly what to buy. Base labels never carry
+    // a specific color/tint code for Awlgrip Topcoat, Awlcraft 2000,
+    // Awlcraft SE, or Awlcraft 3000 -- these are custom-tinted (Awlmix)
+    // products with no single fixed part number; "no fixed code" is the
+    // correct, complete answer there, not a gap. 545 Epoxy Primer is the
+    // one product with fixed base codes (no color-tinting/Awlmix step),
+    // so both stocked colors are listed since there's no color selector
+    // in this UI to pick one.
     var baseLabel = "Paint Base";
     var convLabel = "Converter / Catalyst";
     var redLabel = "Reducer";
-    if (paintType === "awlcraftse") {
+    if (paintType === "545primer") {
+      baseLabel = "545 Primer Base (D8001 White / D1001 Grey)";
+      convLabel = "545 Primer Converter (D3001)";
+      redLabel = methodType === "spray" ? "Reducer (T0006)" : "Reducer (T0031)";
+    } else if (paintType === "awlgrip") {
+      convLabel = methodType === "spray" ? "Awlcat #2 (G3010) Converter" : "Awlcat #3 (H3002) Brushing Converter";
+      redLabel = methodType === "spray" ? "Reducer (T0001/T0002/T0003/T0005)" : "Reducer (T0031)";
+    } else if (paintType === "awlcraft2000") {
+      convLabel = "Awlcat #2 (G3010) Converter";
+      redLabel = "Reducer (T0001/T0002/T0003/T0005)";
+    } else if (paintType === "awlcraftse") {
       baseLabel = "Awlcraft SE Basecoat";
       convLabel = "Awlcat #2 (G3010) Converter";
-      redLabel = "Reducer (T0006)";
+      redLabel = "Reducer (T0001/T0003/T0005)";
     } else if (paintType === "awlcraft3000") {
       baseLabel = "Awlcraft 3000 Base";
       convLabel = "Awlcat #2 (G3010) Converter";
-      redLabel = "Reducer (" + ((document.getElementById("reducerPercent") || {}).value || 25) + "%)";
+      redLabel = "Reducer (T0001/T0002/T0003/T0005, " + ((document.getElementById("reducerPercent") || {}).value || 25) + "%)";
     } else if (paintType === "awlgriphdtclear") {
       baseLabel = "HDT Clear Base (OC0300)";
       convLabel = "Curing Solution (OC0010)";
@@ -431,15 +458,24 @@ document.addEventListener("DOMContentLoaded", function() {
     outRLabel.textContent = redLabel;
     outR.textContent = rVol + " " + labels[outUnit];
 
+    // sr-only email mirrors: full labeled sentences, same label/value
+    // pair as the visible spans just above.
+    emailP.textContent = baseLabel + ": " + pVol + " " + labels[outUnit];
+    emailC.textContent = convLabel + ": " + cVol + " " + labels[outUnit];
+    emailR.textContent = redLabel + ": " + rVol + " " + labels[outUnit];
+
     // Show accelerator only for Awlcraft 2000, always in mL for easier measurement
     if (paintType === "awlcraft2000") {
       var aVolML = acceleratorCC ? acceleratorCC.toFixed(2) : "Err";
       outA.textContent = aVolML + " mL";
       outA.style.display = "block";
       outAccelBox.style.display = "block";
+      emailA.textContent = "Accelerator (Pro-Cure X-98): " + aVolML + " mL";
+      emailA.style.display = "block";
     } else {
       outA.style.display = "none";
       outAccelBox.style.display = "none";
+      emailA.style.display = "none";
     }
 
     if (cov[paintType] && cov[paintType][methodType]) {
@@ -490,8 +526,12 @@ document.addEventListener("DOMContentLoaded", function() {
     outC.textContent = msg;
     outRLabel.textContent = "Reducer";
     outR.textContent = msg;
+    emailP.textContent = "Paint Base: " + msg;
+    emailC.textContent = "Converter / Catalyst: " + msg;
+    emailR.textContent = "Reducer: " + msg;
     outA.style.display = "none";
     outAccelBox.style.display = "none";
+    emailA.style.display = "none";
     outCov.textContent = "";
     if (affiliateLinksList) affiliateLinksList.innerHTML = ""; 
     if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none"; 

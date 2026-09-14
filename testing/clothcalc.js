@@ -53,6 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const mekpDropsEl = document.getElementById("mekp-drops");
   const clothResinRatioEl = document.getElementById("cloth-resin-ratio");
 
+  // sr-only, full-labeled-sentence mirrors for email-results.js's
+  // injectEmailCaptureUI (see clothcalc.html) -- the visible spans above
+  // hold bare values next to a separate .mp-compare-label element,
+  // which injectEmailCaptureUI can't see.
+  const clothEmailVolumeEl = document.getElementById("clothEmailVolume");
+  const clothEmailWeightEl = document.getElementById("clothEmailWeight");
+  const clothEmailHardenerEl = document.getElementById("clothEmailHardener");
+  const clothEmailCostEl = document.getElementById("clothEmailCost");
+
   // Print Summary Elements
   const printTimestampEl = document.getElementById("print-timestamp");
   const printSystemEl = document.getElementById("print-system");
@@ -731,6 +740,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Poly/Vinylester: unchanged, base resin only.
     const heroVolumeLiters = (resinType === "epoxy") ? (resinVolumeLiters + hardenerVolumeLiters) : resinVolumeLiters;
     resinVolumeEl.textContent = formatDisplayVolume(heroVolumeLiters, resultUnit, selectedSystem);
+    clothEmailVolumeEl.textContent = "Total resin needed: " + resinVolumeEl.textContent;
 
     // Resin Weight box -- same combined-vs-base-only split as the hero,
     // and the same label distinction ("Total Resin Weight" for epoxy vs.
@@ -740,6 +750,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalResinWeightKg = (resinType === "epoxy") ? (totalResinKg + hardenerWeightKg) : totalResinKg;
     if (resinWeightLabelEl) resinWeightLabelEl.textContent = (resinType === "epoxy") ? "Total Resin Weight" : "Resin Weight";
     resinWeightEl.textContent = formatDisplayWeight(totalResinWeightKg, weightDisplayUnit, selectedSystem);
+    clothEmailWeightEl.textContent = (resinWeightLabelEl ? resinWeightLabelEl.textContent : "Resin Weight") + ": " + resinWeightEl.textContent;
 
     // Hardener/Catalyst box -- epoxy only. Poly/Vinylester's own MEKP-%
     // detail block below already covers that case under MEKP's own
@@ -760,8 +771,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const resinWeightDisplay = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
       const hardenerWeightDisplay = formatDisplayWeight(hardenerWeightKg, weightDisplayUnit, selectedSystem);
       hardenerAmountEl.innerHTML = `${resinVolDisplay} : ${hardenerVolDisplay}<span class="mp-compare-value-sub">(${resinWeightDisplay} : ${hardenerWeightDisplay})</span>`;
+      clothEmailHardenerEl.textContent = `${hardenerLabelEl ? hardenerLabelEl.textContent : "Resin : Hardener"}: ${resinVolDisplay} : ${hardenerVolDisplay} (${resinWeightDisplay} : ${hardenerWeightDisplay})`;
+      clothEmailHardenerEl.style.display = "block";
     } else {
       if (hardenerBoxEl) hardenerBoxEl.style.display = "none";
+      clothEmailHardenerEl.style.display = "none";
     }
 
     // Estimated Cost normally spans both grid columns (.mp-compare-box-wide
@@ -780,6 +794,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mekpDropsEl.textContent = `${mekpDrops.toFixed(0)} drops`;
     workingTimeEl.textContent = `~${workingTime.toFixed(0)} minutes`;
     estimatedCostEl.textContent = `$${estimatedCost.toFixed(2)}`;
+    clothEmailCostEl.textContent = "Estimated Cost: " + estimatedCostEl.textContent;
 
     lastCalculatedResults = {
         length, width, units,

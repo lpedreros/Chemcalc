@@ -608,19 +608,29 @@ main.awlgrip-app{
 .awlgrip-app h1,.awlgrip-app h2,.awlgrip-app h3{font-family:var(--chrome-font-sans);}
 
 /* ---------- Field cards ---------- */
-/* grid-auto-flow:dense lets the two compact toggle-only cards
-   (Measurement System, Application Method) backfill into the same row
-   instead of leaving an empty cell next to each -- Coating Amount and
-   Product Line (both marked -wide below) are visually heavier and stay
-   full-width. Source order (Measurement System, Coating Amount,
-   Application Method, Product Line -- unchanged from the dispatch/the
-   original page) still drives tab order and screen-reader order;
-   `dense` only repacks the visual grid. */
+/* All 3 cards (Measurement System, Product Line, the merged Coating Area
+   and Application Method card) are marked -wide and stack full-width,
+   one per row -- since the field reorder/merge (Leo's request) left
+   Measurement System with no remaining compact card to pair with,
+   stacking cleanly avoids an empty half-row next to it. grid-auto-flow:
+   dense kept (harmless no-op at 3-wide-of-3) in case a future compact
+   card is ever added back. */
 .awlgrip-fields{display:grid;gap:1rem;grid-auto-flow:row dense;}
 @media (min-width:576px){
   .awlgrip-fields{grid-template-columns:1fr 1fr;}
 }
 .awlgrip-field-card-wide{grid-column:1 / -1;}
+
+/* ---------- Merged Coating Area / Application Method card -- two
+   visually separated sub-sections (not interleaved) inside one card. */
+.awlgrip-merged-grid{display:grid;gap:1.5rem;}
+@media (min-width:576px){
+  .awlgrip-merged-grid{grid-template-columns:1fr 1fr;}
+}
+.awlgrip-merged-subtitle{
+  font-size:.85rem;font-weight:700;color:var(--chrome-ink-900);
+  margin:0 0 .75rem;
+}
 
 /* ---------- Input rows (Coating Amount's Value/Units and
    Length/Width/Dimension-Units groups) -- same shared row-of-fields
@@ -3689,7 +3699,17 @@ body,
      just computed. See #captureEmailInput below for the rest of the
      truncation fix -- the padding reduction alone doesn't fully solve it
      at every panel width. */
-  .mp-results-panel{padding-right:8.5rem;}
+  /* Flat 8.5rem was redundant dead space past the .container's own
+     1200px max-width, where the container's auto-centering margin
+     already grows with viewport width and provides real clearance from
+     the fixed cluster on its own (confirmed live via direct DOM
+     measurement) -- this scales the padding down above 1200px while
+     preserving the original 8.5rem at/below it. The inner max(0px, ...)
+     floors the viewport-width term at zero below 1200px; without it,
+     viewports under 1200px would get MORE padding than 8.5rem, not
+     less. Shared by mekpcalc.html and clothcalc.html too -- one fix
+     here covers all three calculator pages. */
+  .mp-results-panel{padding-right:max(0px, 8.5rem - max(0px, (100vw - 1200px) / 2));}
 }
 
 /* Email-capture input (email-results.js injects #captureEmailInput +

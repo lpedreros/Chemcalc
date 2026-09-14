@@ -422,3 +422,395 @@
   }
 }
 
+/* ============================================================
+   -- ClothCalc print letterhead -- (Section 4)
+   Fiberglass Cloth Saturation Calculator — same structure/classes as
+   Section 3's MEKP letterhead above, .cloth-lh-* instead of .mekp-lh-*.
+   Every selector below is scoped under #clothcalcPrintLetterhead, an ID
+   that exists ONLY on clothcalc.html -- so none of this can affect the
+   print output of any other calculator page that also loads this
+   shared stylesheet.
+   ============================================================ */
+@media print {
+  #clothcalcPrintLetterhead {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #0b0b0b !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+    page-break-inside: avoid !important;
+  }
+  #clothcalcPrintLetterhead * {
+    visibility: visible !important;
+    box-shadow: none !important;
+  }
+
+  #clothcalcPrintLetterhead .cloth-lh-head {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    gap: 1.5rem !important;
+    border-bottom: 3px solid #0b0b0b !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 14px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-mark {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    flex: none !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-mark img {
+    display: block !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    border: none !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-name {
+    display: block !important;
+    font-size: 15pt !important;
+    font-weight: 800 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-tagline {
+    display: block !important;
+    font-size: 7.5pt !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .08em !important;
+    color: #3a3a3a !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-doc {
+    text-align: right !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-doc-title {
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-doc-meta {
+    font-size: 8pt !important;
+    color: #3a3a3a !important;
+    margin: 2px 0 0 !important;
+  }
+
+  #clothcalcPrintLetterhead .cloth-lh-recap {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    border-bottom: 1px solid #cfcfcf !important;
+    padding-bottom: 12px !important;
+    margin: 0 0 14px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-recap dt {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin: 0 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-recap dd {
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+    margin: 2px 0 0 !important;
+  }
+
+  #clothcalcPrintLetterhead .cloth-lh-primary {
+    margin: 0 0 14px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-primary-label {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin: 0 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-primary-value {
+    font-size: 32pt !important;
+    font-weight: 800 !important;
+    margin: 4px 0 0 !important;
+    line-height: 1 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-primary-sub {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #3a3a3a !important;
+    margin: 4px 0 0 !important;
+  }
+
+  #clothcalcPrintLetterhead .cloth-lh-compare {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    margin: 0 0 14px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-compare > div {
+    border: 1px solid #cfcfcf !important;
+    border-radius: 5px !important;
+    padding: 8px 12px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-compare dt {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin: 0 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-compare dd {
+    font-size: 13pt !important;
+    font-weight: 700 !important;
+    margin: 2px 0 0 !important;
+  }
+
+  #clothcalcPrintLetterhead .cloth-lh-advisory {
+    font-size: 9pt !important;
+    font-weight: 600 !important;
+    border-top: 1px solid #cfcfcf !important;
+    padding-top: 8px !important;
+    margin: 0 0 14px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-advisory:empty {
+    display: none !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+    margin: 0 !important;
+  }
+
+  #clothcalcPrintLetterhead .cloth-lh-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    gap: 14px !important;
+    border-top: 1px solid #cfcfcf !important;
+    padding-top: 10px !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-disclaimer {
+    font-size: 7.5pt !important;
+    line-height: 1.35 !important;
+    color: #3a3a3a !important;
+    max-width: 70% !important;
+    margin: 0 !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-qr {
+    flex: none !important;
+    text-align: center !important;
+  }
+  #clothcalcPrintLetterhead .cloth-lh-qr span {
+    display: block !important;
+    font-size: 6.5pt !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin-top: 2px !important;
+  }
+  #clothcalcPrintLetterhead #printQrCode img {
+    max-width: 70px !important;
+    width: 70px !important;
+    height: 70px !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* ============================================================
+   -- Awlgrip print letterhead -- (Section 5)
+   Awlgrip Coatings Calculator — same structure/classes as Section 3's
+   MEKP letterhead above, .awlgrip-lh-* instead of .mekp-lh-*. Every
+   selector below is scoped under #awlgripPrintLetterhead, an ID that
+   exists ONLY on awlgrip.html -- so none of this can affect the print
+   output of any other calculator page that also loads this shared
+   stylesheet.
+   ============================================================ */
+@media print {
+  #awlgripPrintLetterhead {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #0b0b0b !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+    page-break-inside: avoid !important;
+  }
+  #awlgripPrintLetterhead * {
+    visibility: visible !important;
+    box-shadow: none !important;
+  }
+
+  #awlgripPrintLetterhead .awlgrip-lh-head {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    gap: 1.5rem !important;
+    border-bottom: 3px solid #0b0b0b !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 14px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-mark {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    flex: none !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-mark img {
+    display: block !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    border: none !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-name {
+    display: block !important;
+    font-size: 15pt !important;
+    font-weight: 800 !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-tagline {
+    display: block !important;
+    font-size: 7.5pt !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .08em !important;
+    color: #3a3a3a !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-doc {
+    text-align: right !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-doc-title {
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-doc-meta {
+    font-size: 8pt !important;
+    color: #3a3a3a !important;
+    margin: 2px 0 0 !important;
+  }
+
+  #awlgripPrintLetterhead .awlgrip-lh-recap {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    border-bottom: 1px solid #cfcfcf !important;
+    padding-bottom: 12px !important;
+    margin: 0 0 14px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-recap dt {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin: 0 !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-recap dd {
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+    margin: 2px 0 0 !important;
+  }
+
+  #awlgripPrintLetterhead .awlgrip-lh-primary {
+    margin: 0 0 14px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-primary-label {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin: 0 !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-primary-value {
+    font-size: 32pt !important;
+    font-weight: 800 !important;
+    margin: 4px 0 0 !important;
+    line-height: 1 !important;
+  }
+
+  #awlgripPrintLetterhead .awlgrip-lh-compare {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin: 0 0 14px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-compare > div {
+    border: 1px solid #cfcfcf !important;
+    border-radius: 5px !important;
+    padding: 8px 12px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-compare dt {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin: 0 !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-compare dd {
+    font-size: 13pt !important;
+    font-weight: 700 !important;
+    margin: 2px 0 0 !important;
+  }
+
+  #awlgripPrintLetterhead .awlgrip-lh-advisory {
+    font-size: 9pt !important;
+    font-weight: 600 !important;
+    border-top: 1px solid #cfcfcf !important;
+    padding-top: 8px !important;
+    margin: 0 0 14px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-advisory:empty {
+    display: none !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+    margin: 0 !important;
+  }
+
+  #awlgripPrintLetterhead .awlgrip-lh-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+    gap: 14px !important;
+    border-top: 1px solid #cfcfcf !important;
+    padding-top: 10px !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-disclaimer {
+    font-size: 7.5pt !important;
+    line-height: 1.35 !important;
+    color: #3a3a3a !important;
+    max-width: 70% !important;
+    margin: 0 !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-qr {
+    flex: none !important;
+    text-align: center !important;
+  }
+  #awlgripPrintLetterhead .awlgrip-lh-qr span {
+    display: block !important;
+    font-size: 6.5pt !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    color: #555555 !important;
+    margin-top: 2px !important;
+  }
+  #awlgripPrintLetterhead #printQrCode img {
+    max-width: 70px !important;
+    width: 70px !important;
+    height: 70px !important;
+    margin: 0 auto !important;
+  }
+}
+

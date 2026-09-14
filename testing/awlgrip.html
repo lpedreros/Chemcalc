@@ -69,7 +69,7 @@
           "@type": "HowToStep",
           "name": "Select Application Method",
           "text": "Choose between Spray or Roll/Brush application. This affects the reducer percentage.",
-          "url": "https://chemcalc.co/awlgrip.html#methodTypeCard"
+          "url": "https://chemcalc.co/awlgrip.html#inputMethodCard"
         },
         {
           "@type": "HowToStep",
@@ -271,7 +271,7 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><main class="container awlgrip-app">
+<!-- #EndLibraryItem --><main class="container awlgrip-app d-print-none">
 
   <!-- Title band -->
   <div class="mp-hero">
@@ -285,7 +285,7 @@
       <div class="awlgrip-fields">
 
         <!-- Measurement System -->
-        <section class="mp-field-card" id="unitSystemCard">
+        <section class="mp-field-card awlgrip-field-card-wide" id="unitSystemCard">
           <div class="mp-field-head">
             <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg></span>
             <div>
@@ -305,98 +305,6 @@
             <button type="button" class="mp-unit-btn" data-system="metric" aria-pressed="false">Metric</button>
           </div>
           <select id="unitSystem" hidden><option value="imperial" selected>Imperial (ft², oz, qt, gal)</option><option value="metric">Metric (m², mL, L)</option></select>
-        </section>
-
-        <!-- Coating Amount / Input Method -->
-        <section class="mp-field-card awlgrip-field-card-wide" id="inputMethodCard">
-          <div class="mp-field-head">
-            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
-            <div>
-              <h2 class="mp-field-title">Coating Amount</h2>
-              <p class="mp-field-hint">Enter area or volume directly, or calculate area from dimensions.</p>
-            </div>
-          </div>
-          <!-- Visible control: a two-button toggle, same sync pattern as
-               the Measurement System toggle above but driving the
-               existing hidden input[name="inputMethod"] radio pair
-               instead of a select -- see awlgripcalc-ui.js. Radio ids/
-               values/name stay exactly as-is so
-               document.querySelector('input[name="inputMethod"]:checked').value
-               keeps working unmodified. -->
-          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Coating amount input method">
-            <button type="button" class="mp-unit-btn" data-input="areaVolume" aria-pressed="true">Area / Volume</button>
-            <button type="button" class="mp-unit-btn" data-input="lengthWidth" aria-pressed="false">Length &times; Width</button>
-          </div>
-          <input type="radio" name="inputMethod" id="inputMethodAreaVolume" value="areaVolume" checked hidden>
-          <input type="radio" name="inputMethod" id="inputMethodLengthWidth" value="lengthWidth" hidden>
-
-          <!-- Direct Area/Volume Inputs -->
-          <div id="areaVolumeInputs" class="mt-3">
-            <p class="mp-field-hint mb-2">Enter surface area <em>or</em> the paint volume you plan to mix.</p>
-            <div class="awlgrip-input-row">
-              <div class="awlgrip-input-group">
-                <label class="awlgrip-input-label" for="inputValue">Value</label>
-                <input type="number" id="inputValue" class="mp-input" min="0" step="any" placeholder="e.g., 100 or 1">
-              </div>
-              <div class="awlgrip-input-group">
-                <label class="awlgrip-input-label" for="unitType">Input Units</label>
-                <select id="unitType" class="mp-select"></select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Length/Width Inputs (Initially Hidden) -->
-          <div id="lengthWidthInputs" class="mt-3" style="display: none;">
-            <p class="mp-field-hint mb-2">Enter the dimensions of the surface area.</p>
-            <div class="awlgrip-input-row">
-              <div class="awlgrip-input-group">
-                <label class="awlgrip-input-label" for="length">Length</label>
-                <input type="number" id="length" class="mp-input" min="0" step="any" placeholder="e.g., 10">
-              </div>
-              <div class="awlgrip-input-group">
-                <label class="awlgrip-input-label" for="width">Width</label>
-                <input type="number" id="width" class="mp-input" min="0" step="any" placeholder="e.g., 10">
-              </div>
-              <div class="awlgrip-input-group awlgrip-input-group-compact">
-                <label class="awlgrip-input-label" for="dimensionUnit">Dimension Units</label>
-                <select id="dimensionUnit" class="mp-select mp-select-compact">
-                    <!-- Options will be added by JS based on system -->
-                </select>
-              </div>
-            </div>
-            <p class="mp-field-hint mt-2">Calculated Area: <span id="calculatedAreaDisplay">&mdash;</span></p>
-          </div>
-
-          <!-- Result unit selector (shown only when area chosen) -->
-          <div id="resultUnitRow" class="mt-3 d-none">
-            <div class="awlgrip-input-group">
-              <label class="awlgrip-input-label" for="resultUnit">Result Units</label>
-              <select id="resultUnit" class="mp-select"></select>
-            </div>
-          </div>
-        </section>
-
-        <!-- Application Method -->
-        <section class="mp-field-card" id="methodTypeCard">
-          <div class="mp-field-head">
-            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/></svg></span>
-            <div>
-              <h2 class="mp-field-title">Application Method</h2>
-              <p class="mp-field-hint">Spray or roll/brush &mdash; changes the reducer ratio.</p>
-            </div>
-          </div>
-          <!-- Visible control: a two-button toggle. The hidden select
-               below keeps id="methodType" with a plain .value of
-               "spray"/"roll" in sync with it, so awlgripscript.js's
-               method.addEventListener("change", calc) runs completely
-               unmodified. Roll is disabled here the same way
-               awlgripscript.js already disables the real <option> for
-               spray-only products -- see awlgripcalc-ui.js. -->
-          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Application method">
-            <button type="button" class="mp-unit-btn" data-appmethod="spray" aria-pressed="true">Spray</button>
-            <button type="button" class="mp-unit-btn" data-appmethod="roll" aria-pressed="false">Roll / Brush</button>
-          </div>
-          <select id="methodType" hidden><option value="spray" selected>Spray</option><option value="roll">Roll / Brush</option></select>
         </section>
 
         <!-- Product Type -->
@@ -430,11 +338,108 @@
 
           <!-- Product-specific notes (shown conditionally) -->
           <div id="productNoteAwlcraftSE" class="awlgrip-note" style="display:none;">
-            <strong>Note:</strong> Awlcraft SE is a basecoat. A compatible clearcoat (Awlgrip HDT Clear or Awlcraft 2000 Clear) must be applied after this product.
+            <strong>Note:</strong> Awlcraft SE is a basecoat. A compatible clearcoat (Awlgrip HDT Clear or Awlcraft 2000 Clear) must be applied after this product. An accelerator (including Pro-Cure) must not be added to this product.
           </div>
           <div id="productNoteHDTClear" class="awlgrip-note" style="display:none;">
             <strong>Induction Time:</strong> After mixing, allow <strong>15 minutes</strong> before spraying.<br>
             <strong>Activator Guide:</strong> 59–73°F → Fast (OA0020) &nbsp;|&nbsp; 68–86°F → Medium (OA0015 or 50:50 blend) &nbsp;|&nbsp; &gt;86°F → Slow (OA0010)
+          </div>
+        </section>
+
+        <!-- Coating Area and Application Method (merged, Leo's explicit
+             request: previously two separate cards. Both toggle groups
+             and all input fields moved here verbatim -- same ids/names/
+             sync behavior via awlgripcalc-ui.js, unchanged -- just
+             visually regrouped into one card with two sub-sections
+             instead of two cards. -->
+        <section class="mp-field-card awlgrip-field-card-wide" id="inputMethodCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Coating Area and Application Method</h2>
+              <p class="mp-field-hint">How much you're coating, and how you'll apply it.</p>
+            </div>
+          </div>
+
+          <div class="awlgrip-merged-grid">
+            <div class="awlgrip-merged-col">
+              <h3 class="awlgrip-merged-subtitle">Coating Amount</h3>
+              <!-- Visible control: a two-button toggle, same sync pattern
+                   as the Measurement System toggle above but driving the
+                   existing hidden input[name="inputMethod"] radio pair
+                   instead of a select -- see awlgripcalc-ui.js. Radio
+                   ids/values/name stay exactly as-is so
+                   document.querySelector('input[name="inputMethod"]:checked').value
+                   keeps working unmodified. -->
+              <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Coating amount input method">
+                <button type="button" class="mp-unit-btn" data-input="areaVolume" aria-pressed="true">Area / Volume</button>
+                <button type="button" class="mp-unit-btn" data-input="lengthWidth" aria-pressed="false">Length &times; Width</button>
+              </div>
+              <input type="radio" name="inputMethod" id="inputMethodAreaVolume" value="areaVolume" checked hidden>
+              <input type="radio" name="inputMethod" id="inputMethodLengthWidth" value="lengthWidth" hidden>
+
+              <!-- Direct Area/Volume Inputs -->
+              <div id="areaVolumeInputs" class="mt-3">
+                <p class="mp-field-hint mb-2">Enter surface area <em>or</em> the paint volume you plan to mix.</p>
+                <div class="awlgrip-input-row">
+                  <div class="awlgrip-input-group">
+                    <label class="awlgrip-input-label" for="inputValue">Value</label>
+                    <input type="number" id="inputValue" class="mp-input" min="0" step="any" placeholder="e.g., 100 or 1">
+                  </div>
+                  <div class="awlgrip-input-group">
+                    <label class="awlgrip-input-label" for="unitType">Input Units</label>
+                    <select id="unitType" class="mp-select"></select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Length/Width Inputs (Initially Hidden) -->
+              <div id="lengthWidthInputs" class="mt-3" style="display: none;">
+                <p class="mp-field-hint mb-2">Enter the dimensions of the surface area.</p>
+                <div class="awlgrip-input-row">
+                  <div class="awlgrip-input-group">
+                    <label class="awlgrip-input-label" for="length">Length</label>
+                    <input type="number" id="length" class="mp-input" min="0" step="any" placeholder="e.g., 10">
+                  </div>
+                  <div class="awlgrip-input-group">
+                    <label class="awlgrip-input-label" for="width">Width</label>
+                    <input type="number" id="width" class="mp-input" min="0" step="any" placeholder="e.g., 10">
+                  </div>
+                  <div class="awlgrip-input-group awlgrip-input-group-compact">
+                    <label class="awlgrip-input-label" for="dimensionUnit">Dimension Units</label>
+                    <select id="dimensionUnit" class="mp-select mp-select-compact">
+                        <!-- Options will be added by JS based on system -->
+                    </select>
+                  </div>
+                </div>
+                <p class="mp-field-hint mt-2">Calculated Area: <span id="calculatedAreaDisplay">&mdash;</span></p>
+              </div>
+
+              <!-- Result unit selector (shown only when area chosen) -->
+              <div id="resultUnitRow" class="mt-3 d-none">
+                <div class="awlgrip-input-group">
+                  <label class="awlgrip-input-label" for="resultUnit">Result Units</label>
+                  <select id="resultUnit" class="mp-select"></select>
+                </div>
+              </div>
+            </div>
+
+            <div class="awlgrip-merged-col">
+              <h3 class="awlgrip-merged-subtitle">Application Method</h3>
+              <!-- Visible control: a two-button toggle. The hidden select
+                   below keeps id="methodType" with a plain .value of
+                   "spray"/"roll" in sync with it, so awlgripscript.js's
+                   method.addEventListener("change", calc) runs completely
+                   unmodified. Roll is disabled here the same way
+                   awlgripscript.js already disables the real <option>
+                   for spray-only products -- see awlgripcalc-ui.js. -->
+              <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Application method">
+                <button type="button" class="mp-unit-btn" data-appmethod="spray" aria-pressed="true">Spray</button>
+                <button type="button" class="mp-unit-btn" data-appmethod="roll" aria-pressed="false">Roll / Brush</button>
+              </div>
+              <select id="methodType" hidden><option value="spray" selected>Spray</option><option value="roll">Roll / Brush</option></select>
+              <p class="mp-field-hint mt-3">Spray-only: Awlcraft 2000, Awlcraft SE, Awlcraft 3000, and Awlgrip HDT Clear. Spray or roll/brush: 545 Epoxy Primer and Awlgrip Topcoat.</p>
+            </div>
           </div>
         </section>
 
@@ -470,6 +475,20 @@
             </div>
           </div>
 
+          <!-- Real calc() output, full labeled sentences -- left in the
+               DOM for email-results.js's injectEmailCaptureUI to read
+               (mirrors mekpcalc.html's #mekpRecommended/etc. sr-only
+               pattern). The visible .mp-compare-value spans above hold
+               bare values next to a separate .mp-compare-label, which
+               injectEmailCaptureUI can't see -- these give the emailed
+               "Email Me Results" copy the label back. Visually hidden
+               but still announced to assistive tech in full-sentence
+               form. -->
+          <p id="awlgripEmailPaint" class="sr-only">Paint Base: &mdash;</p>
+          <p id="awlgripEmailConverter" class="sr-only">Converter / Catalyst: &mdash;</p>
+          <p id="awlgripEmailReducer" class="sr-only">Reducer: &mdash;</p>
+          <p id="awlgripEmailAccelerator" class="sr-only" style="display:none;">Accelerator (Pro-Cure X-98): &mdash;</p>
+
           <div id="awlgripEmailCapture" class="awlgrip-email-capture"></div>
 
           <!-- Affiliate Links Placeholder -->
@@ -479,11 +498,10 @@
             <span class="mp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
           </div>
 
-          <!-- Print Button and QR Code -->
+          <!-- Print Button -->
           <div class="mp-print-cta d-print-none">
             <button id="printButton" class="mp-print-btn">Print Results</button>
           </div>
-          <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
         </div>
       </section>
     </div>
@@ -559,7 +577,80 @@
   </div>
   <!-- End Feedback Button Section -->
 
-</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+</main>
+
+<!-- ============================================================
+     Print-only letterhead summary. Hidden on screen via Bootstrap's
+     d-none, shown only inside @media print via d-print-block -- same
+     convention as mekpcalc.html's #mekpPrintLetterhead (mirrored
+     structure/classes, .awlgrip-lh-* instead of .mekp-lh-*). Populated
+     by awlgrip-print-summary.js from the calculator's real inputs and
+     calc()'s already-computed output (including Part F's manufacturer
+     part-number labels); calc() itself is never called from here.
+     #printQrCode is the same real element awlgripscript.js's existing
+     print button handler already generates into -- just relocated
+     here, same as MEKP's. -->
+<section id="awlgripPrintLetterhead" class="d-none d-print-block">
+  <div class="awlgrip-lh-head">
+    <div class="awlgrip-lh-brand">
+      <span class="awlgrip-lh-mark"><img src="images/Think-and-Engage-Logo1c-Black-Seal.png" alt=""></span>
+      <span>
+        <span class="awlgrip-lh-name">ChemCalc</span>
+        <span class="awlgrip-lh-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </div>
+    <div class="awlgrip-lh-doc">
+      <p class="awlgrip-lh-doc-title">Awlgrip Coatings Calculator &mdash; Mix Results</p>
+      <p class="awlgrip-lh-doc-meta">Generated <span id="awlgripPrintGeneratedOn"></span> &middot; chemcalc.co/awlgrip</p>
+    </div>
+  </div>
+
+  <dl class="awlgrip-lh-recap">
+    <div>
+      <dt>Product Line</dt>
+      <dd id="awlgripPrintRecapProduct">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Application Method</dt>
+      <dd id="awlgripPrintRecapMethod">&mdash;</dd>
+    </div>
+    <div>
+      <dt>Coating Amount</dt>
+      <dd id="awlgripPrintRecapAmount">&mdash;</dd>
+    </div>
+  </dl>
+
+  <div class="awlgrip-lh-primary">
+    <p class="awlgrip-lh-primary-label" id="awlgripPrintRecapBaseLabel">Paint Base</p>
+    <p class="awlgrip-lh-primary-value" id="awlgripPrintRecapBase">&mdash;</p>
+  </div>
+
+  <dl class="awlgrip-lh-compare">
+    <div>
+      <dt id="awlgripPrintRecapConverterLabel">Converter / Catalyst</dt>
+      <dd id="awlgripPrintRecapConverter">&mdash;</dd>
+    </div>
+    <div>
+      <dt id="awlgripPrintRecapReducerLabel">Reducer</dt>
+      <dd id="awlgripPrintRecapReducer">&mdash;</dd>
+    </div>
+    <div id="awlgripPrintRecapAcceleratorRow" style="display:none;">
+      <dt>Accelerator (Pro-Cure X-98)</dt>
+      <dd id="awlgripPrintRecapAccelerator">&mdash;</dd>
+    </div>
+  </dl>
+
+  <p class="awlgrip-lh-advisory" id="awlgripPrintRecapCoverage"></p>
+
+  <div class="awlgrip-lh-footer">
+    <p class="awlgrip-lh-disclaimer">Reference only &mdash; always confirm mix ratios against the product&rsquo;s technical data sheet. Recalculate before every batch; application method and product line both change the reducer ratio.</p>
+    <div class="awlgrip-lh-qr">
+      <div id="printQrCode"></div>
+      <span>Scan to reopen</span>
+    </div>
+  </div>
+</section>
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
      onclick="openHelpModal()" and each page's #helpModal / helpContent
@@ -722,6 +813,9 @@ document.getElementById("year").textContent = new Date().getFullYear();
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
 <script src="awlgripscript.js"></script>
+<!-- Print letterhead sync (see file header comment) -- loads after
+     awlgripscript.js so its listeners always run after calc() -->
+<script src="awlgrip-print-summary.js"></script>
 <!-- Unit-toggle shims (Measurement System / Coating Amount / Application
      Method) -- see file header comment. Loads after awlgripscript.js so
      its DOMContentLoaded handler always registers (and therefore always
@@ -730,7 +824,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 <script src="awlgripcalc-ui.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['resultPaint', 'resultConverter', 'resultReducer', 'resultAccelerator', 'resultCoverage']);
+    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['awlgripEmailPaint', 'awlgripEmailConverter', 'awlgripEmailReducer', 'awlgripEmailAccelerator', 'resultCoverage']);
   });
 </script>
 <!-- Bootstrap JS (ensure Popper.js is loaded if needed by Bootstrap v4) -->
