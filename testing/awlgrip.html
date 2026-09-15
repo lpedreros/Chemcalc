@@ -822,8 +822,42 @@ document.getElementById("year").textContent = new Date().getFullYear();
      listeners see the already-updated DOM state. -->
 <script src="awlgripcalc-ui.js"></script>
 <script>
+  // Batch-input recap for "Email me results" -- mirrors
+  // awlgrip-print-summary.js's own recap reads (paintType, methodType,
+  // inputMethod/inputValue/unitType or calculatedAreaDisplay) exactly,
+  // but called AT SEND TIME via email-results.js's sendResultsEmail(),
+  // so it always reflects whatever's in the form right now.
+  function awlgripEmailRecap() {
+    function selectedOptionText(select) {
+      if (!select || select.selectedIndex < 0) return '';
+      var opt = select.options[select.selectedIndex];
+      return opt ? opt.text : '';
+    }
+    var paintSelect = document.getElementById('paintType');
+    var methodSelect = document.getElementById('methodType');
+    var inputMethodRadio = document.querySelector('input[name="inputMethod"]:checked');
+    var inputValueEl = document.getElementById('inputValue');
+    var unitTypeSelect = document.getElementById('unitType');
+    var calculatedAreaDisplay = document.getElementById('calculatedAreaDisplay');
+
+    var amountText;
+    if (inputMethodRadio && inputMethodRadio.value === 'lengthWidth') {
+      amountText = calculatedAreaDisplay ? calculatedAreaDisplay.textContent.trim() : '—';
+    } else {
+      var v = inputValueEl ? (inputValueEl.value || '').trim() : '';
+      var u = selectedOptionText(unitTypeSelect);
+      amountText = v ? (v + ' ' + u) : '—';
+    }
+
+    return [
+      { label: 'Product Line', value: selectedOptionText(paintSelect) || '—' },
+      { label: 'Application Method', value: selectedOptionText(methodSelect) || '—' },
+      { label: 'Coating Amount', value: amountText }
+    ];
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
-    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['awlgripEmailPaint', 'awlgripEmailConverter', 'awlgripEmailReducer', 'awlgripEmailAccelerator', 'resultCoverage']);
+    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['awlgripEmailPaint', 'awlgripEmailConverter', 'awlgripEmailReducer', 'awlgripEmailAccelerator', 'resultCoverage'], 'awlgripEmailRecap');
   });
 </script>
 <!-- Bootstrap JS (ensure Popper.js is loaded if needed by Bootstrap v4) -->

@@ -794,8 +794,48 @@
          clothcalc.js so its listeners always run after calculateResin() -->
     <script src="clothcalc-print-summary.js"></script>
     <script>
+        // Batch-input recap for "Email me results" -- mirrors
+        // clothcalc-print-summary.js's own recap reads (length/width/units,
+        // resin-type + epoxy-mix-ratio, temperature/temp-unit-label)
+        // exactly, called AT SEND TIME so it reflects the form right now.
+        function clothcalcEmailRecap() {
+            function selectedOptionText(select) {
+                if (!select || select.selectedIndex < 0) return '';
+                var opt = select.options[select.selectedIndex];
+                return opt ? opt.text : '';
+            }
+            var lengthInput = document.getElementById('length');
+            var widthInput = document.getElementById('width');
+            var unitsSelect = document.getElementById('units');
+            var resinTypeSelect = document.getElementById('resin-type');
+            var epoxyMixRatioSelect = document.getElementById('epoxy-mix-ratio');
+            var temperatureInput = document.getElementById('temperature');
+            var tempUnitLabel = document.getElementById('temp-unit-label');
+
+            var l = lengthInput ? (lengthInput.value || '').trim() : '';
+            var w = widthInput ? (widthInput.value || '').trim() : '';
+            var unitText = selectedOptionText(unitsSelect);
+            var dimensionsText = (l && w) ? (l + ' x ' + w + ' ' + unitText) : '—';
+
+            var resinText = selectedOptionText(resinTypeSelect);
+            if (resinTypeSelect && resinTypeSelect.value === 'epoxy' && epoxyMixRatioSelect) {
+                var ratioText = selectedOptionText(epoxyMixRatioSelect);
+                if (ratioText) resinText += ' (' + ratioText + ')';
+            }
+
+            var t = temperatureInput ? (temperatureInput.value || '').trim() : '';
+            var unit = tempUnitLabel ? tempUnitLabel.textContent : '';
+            var tempText = t ? (t + unit) : '—';
+
+            return [
+                { label: 'Dimensions', value: dimensionsText },
+                { label: 'Resin Type', value: resinText || '—' },
+                { label: 'Temperature', value: tempText }
+            ];
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
-            injectEmailCaptureUI('clothEmailCapture', 'Fiberglass Cloth Saturation', ['clothEmailVolume', 'clothEmailWeight', 'clothEmailHardener', 'clothEmailCost']);
+            injectEmailCaptureUI('clothEmailCapture', 'Fiberglass Cloth Saturation', ['clothEmailVolume', 'clothEmailWeight', 'clothEmailHardener', 'clothEmailCost'], 'clothcalcEmailRecap');
         });
     </script>
     <script src="affiliate_links.js"></script>
