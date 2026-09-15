@@ -276,7 +276,7 @@
   <!-- Title band -->
   <div class="mp-hero">
     <h1 class="mp-hero-title">Awlgrip Coatings Calculator</h1>
-    <p class="mp-hero-tagline">Awlgrip Topcoat &middot; Awlcraft 2000 &middot; 545 Epoxy Primer &middot; Awlcraft SE &middot; Awlcraft 3000 &middot; Awlgrip HDT Clear</p>
+    <p class="mp-hero-tagline">Awlgrip Topcoat &middot; Awlcraft 2000/3000 &middot; 545 Epoxy Primer &middot; Awlcraft SE &middot; Awlgrip HDT Clear</p>
     <p class="mp-hero-copy">Set your surface area or paint volume, pick spray or roll/brush application, and choose your product line — get exact base, converter, and reducer amounts, plus estimated coverage, before you crack a can.</p>
   </div>
 
@@ -317,15 +317,14 @@
             </div>
           </div>
           <select id="paintType" class="mp-select">
-            <option value="awlcraft2000">Awlcraft 2000 Topcoat</option>
+            <option value="awlcraft2000">Awlcraft 2000/3000 Topcoat</option>
             <option value="awlgrip">Awlgrip Topcoat</option>
             <option value="545primer">545 Epoxy Primer</option>
             <option value="awlcraftse">Awlcraft SE Basecoat</option>
-            <option value="awlcraft3000">Awlcraft 3000 Topcoat</option>
             <option value="awlgriphdtclear">Awlgrip HDT Clear</option>
           </select>
 
-          <!-- Awlcraft 3000 Reducer Percentage (shown only when awlcraft3000 selected) -->
+          <!-- Awlcraft 2000/3000 Reducer Percentage (shown only when awlcraft2000 selected) -->
           <div id="reducerPercentRow" class="mt-3" style="display:none;">
             <div class="awlgrip-slider-label-row">
               <label for="reducerPercent">Reducer Percentage</label>
@@ -438,7 +437,7 @@
                 <button type="button" class="mp-unit-btn" data-appmethod="roll" aria-pressed="false">Roll / Brush</button>
               </div>
               <select id="methodType" hidden><option value="spray" selected>Spray</option><option value="roll">Roll / Brush</option></select>
-              <p class="mp-field-hint mt-3">Spray-only: Awlcraft 2000, Awlcraft SE, Awlcraft 3000, and Awlgrip HDT Clear. Spray or roll/brush: 545 Epoxy Primer and Awlgrip Topcoat.</p>
+              <p class="mp-field-hint mt-3">Spray-only: Awlcraft 2000/3000, Awlcraft SE, and Awlgrip HDT Clear. Spray or roll/brush: 545 Epoxy Primer and Awlgrip Topcoat.</p>
             </div>
           </div>
         </section>

@@ -22,15 +22,14 @@ document.addEventListener("DOMContentLoaded", function() {
   // Coverage ft²/gal + coats
   var cov = {
     awlgrip: { spray: { c: 542.9, k: 3 }, roll: { c: 814.8, k: 2 } },
-    awlcraft2000: { spray: { c: 725.2, k: 3 } }, 
+    awlcraft2000: { spray: { c: 725.2, k: 3 } },
     "545primer": { spray: { c: 317.8, k: 2 }, roll: { c: 635.6, k: 2 } },
     awlcraftse: { spray: { c: 806.7, k: 2 } },
-    awlcraft3000: { spray: { c: 741.5, k: 3 } },
     awlgriphdtclear: { spray: { c: 537.8, k: 2 } }
   };
 
   // Products that are spray-only (Roll/Brush disabled)
-  var sprayOnlyProducts = ["awlcraft2000", "awlcraftse", "awlcraft3000", "awlgriphdtclear"];
+  var sprayOnlyProducts = ["awlcraft2000", "awlcraftse", "awlgriphdtclear"];
 
   // DOM elements
   var sys = document.getElementById("unitSystem");
@@ -115,17 +114,16 @@ document.addEventListener("DOMContentLoaded", function() {
       case "awlgrip":
         return { conv: m === "spray" ? 1 : 0.5, red: m === "spray" ? 0.25 : 0.2 };
       case "awlcraft2000":
-        return { conv: 0.5, red: 0.33 };
+        // TDS-confirmed 2:1 base:G3010 converter (both former 2000/3000 lines).
+        // Reducer is a range, "up to 33%, varies color to color" per TDS — slider,
+        // read literally as a fraction of base (no derived conversion).
+        var pct = parseFloat((document.getElementById("reducerPercent") || {}).value) || 25;
+        return { conv: 0.5, red: pct / 100 };
       // ── New products ──────────────────────────────────────
       case "awlcraftse":
         // TDS-confirmed fixed ratio, 100:15:50 (Base:Converter:Reducer),
         // reducers T0001/T0003/T0005, no accelerator.
         return { conv: 0.15, red: 0.50 };
-      case "awlcraft3000":
-        // TDS: 2:1 base:G3010, reducer 15-33% of (base+conv) — read from slider
-        var pct = parseFloat((document.getElementById("reducerPercent") || {}).value) || 25;
-        // reducer as fraction of base: (base+conv)*pct/100 / base = (1+0.5)*pct/100 = 1.5*pct/100
-        return { conv: 0.5, red: 1.5 * pct / 100 };
       case "awlgriphdtclear":
         // TDS: 1:1:12.5% (Base:Curing Solution:Activator) = 1:1:0.25
         return { conv: 1, red: 0.25 };
@@ -212,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function() {
       } else { 
         reducerKey = "awlgrip_rollbrush_reducer_1quart"; 
       }
-    } else if (paintType === "awlcraftse" || paintType === "awlcraft3000") {
+    } else if (paintType === "awlcraftse") {
       baseKeys = [];
       converterKey = "awlcraft2000awlgrip_spray_converter_1quart";
       reducerKey = "awlcraft2000awlgrip_spray_reducer_1quart";
@@ -303,10 +301,10 @@ document.addEventListener("DOMContentLoaded", function() {
       methodType = method.value; 
     }
 
-    // Show/hide Awlcraft 3000 reducer slider
+    // Show/hide Awlcraft 2000/3000 reducer slider
     var reducerPercentRow = document.getElementById("reducerPercentRow");
     if (reducerPercentRow) {
-      reducerPercentRow.style.display = (paintType === "awlcraft3000") ? "block" : "none";
+      reducerPercentRow.style.display = (paintType === "awlcraft2000") ? "block" : "none";
     }
     // Show/hide product-specific notes
     var noteAwlcraftSE = document.getElementById("productNoteAwlcraftSE");
@@ -412,9 +410,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Product-specific result labels, including real AkzoNobel part
     // numbers so users know exactly what to buy. Base labels never carry
-    // a specific color/tint code for Awlgrip Topcoat, Awlcraft 2000,
-    // Awlcraft SE, or Awlcraft 3000 -- these are custom-tinted (Awlmix)
-    // products with no single fixed part number; "no fixed code" is the
+    // a specific color/tint code for Awlgrip Topcoat, Awlcraft 2000/3000,
+    // or Awlcraft SE -- these are custom-tinted (Awlmix) products with no
+    // single fixed part number; "no fixed code" is the
     // correct, complete answer there, not a gap. 545 Epoxy Primer is the
     // one product with fixed base codes (no color-tinting/Awlmix step),
     // so both stocked colors are listed since there's no color selector
@@ -430,16 +428,13 @@ document.addEventListener("DOMContentLoaded", function() {
       convLabel = methodType === "spray" ? "Awlcat #2 (G3010) Converter" : "Awlcat #3 (H3002) Brushing Converter";
       redLabel = methodType === "spray" ? "Reducer (T0001/T0002/T0003/T0005)" : "Reducer (T0031)";
     } else if (paintType === "awlcraft2000") {
+      baseLabel = "Awlcraft 2000/3000 Base";
       convLabel = "Awlcat #2 (G3010) Converter";
-      redLabel = "Reducer (T0001/T0002/T0003/T0005)";
+      redLabel = "Reducer (T0001/T0002/T0003/T0005, " + ((document.getElementById("reducerPercent") || {}).value || 25) + "%)";
     } else if (paintType === "awlcraftse") {
       baseLabel = "Awlcraft SE Basecoat";
       convLabel = "Awlcat #2 (G3010) Converter";
       redLabel = "Reducer (T0001/T0003/T0005)";
-    } else if (paintType === "awlcraft3000") {
-      baseLabel = "Awlcraft 3000 Base";
-      convLabel = "Awlcat #2 (G3010) Converter";
-      redLabel = "Reducer (T0001/T0002/T0003/T0005, " + ((document.getElementById("reducerPercent") || {}).value || 25) + "%)";
     } else if (paintType === "awlgriphdtclear") {
       baseLabel = "HDT Clear Base (OC0300)";
       convLabel = "Curing Solution (OC0010)";
@@ -551,7 +546,7 @@ document.addEventListener("DOMContentLoaded", function() {
   resU.addEventListener("change", calc);
   method.addEventListener("change", calc);
   paint.addEventListener("change", calc);
-  // Awlcraft 3000 reducer slider
+  // Awlcraft 2000/3000 reducer slider
   var reducerSlider = document.getElementById("reducerPercent");
   var reducerSliderLabel = document.getElementById("reducerPercentValue");
   if (reducerSlider) {

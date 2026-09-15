@@ -643,7 +643,7 @@ main.awlgrip-app{
   color:var(--chrome-ink-600);margin:0 0 .3rem;
 }
 
-/* ---------- Awlcraft 3000 reducer-percentage slider (MEKP's slider
+/* ---------- Awlcraft 2000/3000 reducer-percentage slider (MEKP's slider
    visual language, copied and renamed -- see .mekp-slider above)
    ---------- */
 .awlgrip-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
