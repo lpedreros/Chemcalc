@@ -414,10 +414,13 @@ document.addEventListener("DOMContentLoaded", function() {
     var pVol = convert(baseCC, "ccs", outUnit);
     var cVol = convert(convCC, "ccs", outUnit);
     var rVol = convert(redCC, "ccs", outUnit);
-    
-    pVol = pVol ? pVol.toFixed(2) : "Err";
-    cVol = cVol ? cVol.toFixed(2) : "Err";
-    rVol = rVol ? rVol.toFixed(2) : "Err";
+
+    // pVol/cVol/rVol keep holding the raw numbers (used by the analytics
+    // block further down) -- the formatted display strings go into their
+    // own *Str variables instead of overwriting them.
+    var pVolStr = pVol ? pVol.toFixed(2) : "Err";
+    var cVolStr = cVol ? cVol.toFixed(2) : "Err";
+    var rVolStr = rVol ? rVol.toFixed(2) : "Err";
 
     // Product-specific result labels, including real AkzoNobel part
     // numbers so users know exactly what to buy. Base labels never carry
@@ -458,17 +461,17 @@ document.addEventListener("DOMContentLoaded", function() {
     // .mp-compare-label element per row for the (genuinely per-product
     // dynamic) label, so label and value are written separately here.
     outPLabel.textContent = baseLabel;
-    outP.textContent = pVol + " " + labels[outUnit];
+    outP.textContent = pVolStr + " " + labels[outUnit];
     outCLabel.textContent = convLabel;
-    outC.textContent = cVol + " " + labels[outUnit];
+    outC.textContent = cVolStr + " " + labels[outUnit];
     outRLabel.textContent = redLabel;
-    outR.textContent = rVol + " " + labels[outUnit];
+    outR.textContent = rVolStr + " " + labels[outUnit];
 
     // sr-only email mirrors: full labeled sentences, same label/value
     // pair as the visible spans just above.
-    emailP.textContent = baseLabel + ": " + pVol + " " + labels[outUnit];
-    emailC.textContent = convLabel + ": " + cVol + " " + labels[outUnit];
-    emailR.textContent = redLabel + ": " + rVol + " " + labels[outUnit];
+    emailP.textContent = baseLabel + ": " + pVolStr + " " + labels[outUnit];
+    emailC.textContent = convLabel + ": " + cVolStr + " " + labels[outUnit];
+    emailR.textContent = redLabel + ": " + rVolStr + " " + labels[outUnit];
 
     // Show accelerator only for Awlcraft 2000, always in mL for easier
     // measurement. Accelerator name follows the same dynamic-label style
@@ -519,21 +522,45 @@ document.addEventListener("DOMContentLoaded", function() {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: only log when user has entered a real input value
     if (typeof logCalculation === 'function' && inVal > 0) {
+      const CC = window.CC_UNITS;
+      const areaUnitMap = { squareFootage: CC.FT2, squareMeters: CC.M2 };
+      // "ccs" displays as "mL (cc)" in this file's own labels table above
+      // -- maps to ML (not CCS) to match what's actually shown, same as
+      // the hardcoded-mL accelerator value below.
+      const volUnitMap = { gallons: CC.GAL, quarts: CC.QT, ounces: CC.FLOZ, liters: CC.L, ccs: CC.ML };
+      const inputValueUnit = isArea ? areaUnitMap[inUnit] : volUnitMap[inUnit];
+      const outputUnit = volUnitMap[outUnit];
       const _ccInputs = {
         paintType:   paintType,
         methodType:  methodType,
         inputMethod: selectedInputMethod,
-        inputValue:  inVal,
-        inputUnit:   inUnit,
+        // areaFt2 (area path) / baseCC (direct-volume-entry path) are
+        // canonical values the calculator already computed above -- not
+        // re-derived here.
+        inputValue:  isArea
+          ? { value: inVal, unit: inputValueUnit, base: areaFt2, baseUnit: CC.FT2 }
+          : { value: inVal, unit: inputValueUnit, base: baseCC, baseUnit: CC.CCS },
         unitSystem:  sysType,
         acceleratorType: acceleratorType.value
       };
       const _ccResults = {
-        paintBase:   outP.textContent,
-        converter:   outC.textContent,
-        reducer:     outR.textContent,
-        accelerator: (paintType === 'awlcraft2000') ? outA.textContent : null,
-        coverage:    outCov.textContent
+        // pVol/cVol/rVol are the raw numbers convert() returned, before
+        // .toFixed(2) formatted them into pVolStr/cVolStr/rVolStr above
+        // for display -- not parsed back out of the display strings.
+        paintBase:   { value: pVol, unit: outputUnit, base: baseCC, baseUnit: CC.CCS },
+        converter:   { value: cVol, unit: outputUnit, base: convCC, baseUnit: CC.CCS },
+        reducer:     { value: rVol, unit: outputUnit, base: redCC, baseUnit: CC.CCS },
+        accelerator: (paintType === 'awlcraft2000') ? { value: acceleratorCC, unit: CC.ML } : null,
+        // cov[paintType][methodType].c/.k are the fixed ft²/gal coverage
+        // rate and recommended-coat count from the product-spec table
+        // above -- a lookup, not something derived from this
+        // calculation. No single CC_UNITS entry represents a compound
+        // rate (ft² per gal), so the field name itself carries that unit
+        // instead of forcing it into {value, unit}.
+        coverage: (cov[paintType] && cov[paintType][methodType]) ? {
+          coverageFt2PerGal: cov[paintType][methodType].c,
+          recommendedCoats: { value: cov[paintType][methodType].k, unit: CC.COUNT }
+        } : null
       };
       logCalculation('awlgrip', _ccInputs, _ccResults);
       // Cached for Print/Email Me to log this settled answer immediately

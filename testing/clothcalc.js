@@ -816,25 +816,43 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: only log when user has entered real dimensions (function already returns early for <= 0)
     if (typeof logCalculation === 'function' && length > 0 && width > 0) {
+      const CC = window.CC_UNITS;
+      const dimUnitMap = { in: CC.IN, ft: CC.FT, cm: CC.CM, m: CC.M };
+      const resultVolUnitMap = { gal: CC.GAL, qt: CC.QT, floz: CC.FLOZ, l: CC.L, ml: CC.ML };
+      const dimUnit = dimUnitMap[units];
+      // tempCForWorkingTime (computed above, used in the working-time
+      // formula) is already temp converted to Celsius regardless of
+      // resinType -- reused here as temperature's canonical base rather
+      // than re-deriving the same conversion a second time.
       const _ccInputs = {
-        length:       length,
-        width:        width,
-        units:        units,
-        resinType:    resinType,
+        length:        { value: length, unit: dimUnit },
+        width:         { value: width, unit: dimUnit },
+        resinType:     resinType,
         epoxyMixRatio: (resinType === 'epoxy') ? epoxyMixRatio : null,
-        temperature:  temp,
-        tempUnit:     isFahrenheit ? 'fahrenheit' : 'celsius',
-        layers:       Array.from(layers).map(l => l.querySelector('.material-type').value),
-        resultSystem: selectedSystem,
-        resultUnit:   resultUnit
+        temperature:   { value: temp, unit: (isFahrenheit ? CC.F : CC.C), base: tempCForWorkingTime, baseUnit: CC.C },
+        layers:        Array.from(layers).map(l => l.querySelector('.material-type').value),
+        resultSystem:  selectedSystem,
+        resultUnit:    resultVolUnitMap[resultUnit]
       };
       const _ccResults = {
-        resinVolume:   resinVolumeEl.textContent,
-        resinWeight:   resinWeightEl.textContent,
-        hardener:      (resinType === 'epoxy') ? hardenerAmountEl.textContent : null,
-        mekpVolume:    (resinType !== 'epoxy') ? mekpCcsEl.textContent : null,
-        workingTime:   workingTimeEl.textContent,
-        estimatedCost: estimatedCostEl.textContent
+        // heroVolumeLiters/totalResinWeightKg are the COMBINED (resin +
+        // hardener) numbers for epoxy -- the ones actually shown in the
+        // hero/weight boxes (see the comments above where they're
+        // computed). resinVolumeLiters/totalResinKg (base-resin-only)
+        // are logged separately below, under the "hardener" field, since
+        // that's the box that actually displays the base-vs-hardener
+        // split for epoxy.
+        resinVolume:   { value: heroVolumeLiters, unit: CC.L },
+        resinWeight:   { value: totalResinWeightKg, unit: CC.KG },
+        hardener:      (resinType === 'epoxy') ? {
+          resinVolume:    { value: resinVolumeLiters, unit: CC.L },
+          hardenerVolume: { value: hardenerVolumeLiters, unit: CC.L },
+          resinWeight:    { value: totalResinKg, unit: CC.KG },
+          hardenerWeight: { value: hardenerWeightKg, unit: CC.KG }
+        } : null,
+        mekpVolume:    (resinType !== 'epoxy') ? { value: mekpCcs, unit: CC.ML } : null,
+        workingTime:   { value: workingTime, unit: CC.MIN },
+        estimatedCost: { value: estimatedCost, unit: CC.USD }
       };
       logCalculation('clothcalc', _ccInputs, _ccResults);
       // Cached for Print/Email Me to log this settled answer immediately

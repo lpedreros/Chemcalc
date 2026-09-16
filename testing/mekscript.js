@@ -127,8 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (resinMl > 0) {
         let recommendedPct = "N/A";
+        // Hoisted out of the block below (rather than left as a `const`
+        // scoped to the `if (!isNaN(tempC))` branch) so the analytics
+        // block further down can read the actual number instead of
+        // re-parsing it back out of mekpRecommendedP's formatted text.
+        let recommendedNum = null;
         if (!isNaN(tempC)) {
-            const recommendedNum = getRecommendedMekpPercent(tempC);
+            recommendedNum = getRecommendedMekpPercent(tempC);
             recommendedPct = (recommendedNum === 3.0) ? "3.0% (Caution!)" : `${recommendedNum.toFixed(1)}%`;
             mekpRecommendedP.textContent = `Recommended MEKP % (based on ${temp.toFixed(0)}°${selectedTempUnit === 'fahrenheit' ? 'F' : 'C'}): ${recommendedPct}`;
         } else {
@@ -151,19 +156,25 @@ document.addEventListener("DOMContentLoaded", () => {
         // ── Analytics: log this calculation (fire-and-forget) ──
         // Guard: only log when user has entered a real resin amount AND a temperature
         if (typeof logCalculation === 'function' && resinAmount > 0 && !isNaN(tempC)) {
+          const CC = window.CC_UNITS;
+          // Volume-unit select values ("oz" etc.) -> shared vocabulary.
+          // "oz" here is Fluid Ounces (see updateVolumeUnits()'s option
+          // list above), so it maps to FLOZ, not the mass OZ.
+          const volumeUnitMap = { oz: CC.FLOZ, quart: CC.QT, gallon: CC.GAL, ml: CC.ML, liter: CC.L };
           const _ccInputs = {
-            resinAmount:      resinAmount,
-            volumeUnit:       selectedVolumeUnit,
-            temperature:      temp,
-            tempUnit:         selectedTempUnit,
+            resinAmount:      { value: resinAmount, unit: volumeUnitMap[selectedVolumeUnit], base: resinMl, baseUnit: CC.ML },
+            temperature:      { value: temp, unit: (selectedTempUnit === 'fahrenheit' ? CC.F : CC.C), base: tempC, baseUnit: CC.C },
             usingDuratec:     useDuratec,
-            mekpPercentage:   mekpPercentage,
+            mekpPercentage:   { value: mekpPercentage, unit: CC.PCT },
             percentageSource: percentageSource
           };
           const _ccResults = {
-            mekpVolume: mekpCcsP.textContent,
-            mekpDrops:  mekpDropsP.textContent,
-            recommended: mekpRecommendedP.textContent
+            mekpVolume:  { value: mekpMl, unit: CC.ML },
+            mekpDrops:   { value: mekpDrops, unit: CC.DROPS },
+            // recommendedNum is the number getRecommendedMekpPercent()
+            // returned (or null if temp was invalid) -- not a re-parse of
+            // mekpRecommendedP's formatted text.
+            recommended: (recommendedNum === null) ? null : { value: recommendedNum, unit: CC.PCT }
           };
           logCalculation('mekp', _ccInputs, _ccResults);
           // Cached for Print/Email Me to log this settled answer immediately

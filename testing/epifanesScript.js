@@ -137,13 +137,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: function already returns early for <= 0, but be explicit
     if (typeof logCalculation === 'function' && totalVolumeValue > 0) {
+      const CC = window.CC_UNITS;
+      // toCcs/fromCcs keys ("ounces" etc.) are volumes of mixed paint,
+      // not mass -- "ounces" maps to FLOZ, not the mass OZ.
+      const unitMap = { ccs: CC.CCS, ounces: CC.FLOZ, liters: CC.L, quarts: CC.QT, gallons: CC.GAL };
       const _ccInputs = {
-        totalVolume: totalVolumeValue,
-        unit:        unit
+        totalVolume: { value: totalVolumeValue, unit: unitMap[unit], base: totalVolumeCcs, baseUnit: CC.CCS }
       };
       const _ccResults = {
-        base:     resultBaseDisplay.innerHTML,
-        hardener: resultHardenerDisplay.innerHTML
+        base:     { value: baseVolumeOutput, unit: unitMap[unit], base: baseVolumeCcs, baseUnit: CC.CCS },
+        hardener: { value: hardenerVolumeOutput, unit: unitMap[unit], base: hardenerVolumeCcs, baseUnit: CC.CCS }
       };
       logCalculation('epifanes', _ccInputs, _ccResults);
       // Cached for Print/Email Me to log this settled answer immediately

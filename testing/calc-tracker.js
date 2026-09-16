@@ -54,6 +54,21 @@ async function getLocation() {
   }
 }
 
+// ── Shared unit vocabulary ───────────────────────────────────
+// Every calculator references these constants instead of typing unit
+// strings by hand, so "l" vs "L" vs "liters" can't silently split the
+// analytics data into two buckets. A typo becomes undefined and fails
+// loudly (a jsonb value that's obviously wrong) instead of quietly
+// creating a second bucket for the same unit.
+window.CC_UNITS = Object.freeze({
+  ML:'ml', L:'l', FLOZ:'floz', QT:'qt', GAL:'gal', CCS:'ccs',
+  G:'g', KG:'kg', OZ:'oz', LB:'lb',
+  MM:'mm', CM:'cm', M:'m', IN:'in', FT:'ft',
+  M2:'m2', FT2:'ft2', CM2:'cm2', IN2:'in2',
+  C:'c', F:'f',
+  PCT:'pct', DROPS:'drops', MIN:'min', USD:'usd', RATIO:'ratio', COUNT:'count'
+});
+
 // ── Debounce timer ──────────────────────────────────────────
 // Prevents logging on every keystroke. Only logs after user stops
 // typing/changing inputs for 13 seconds — long enough that someone
