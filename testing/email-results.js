@@ -70,7 +70,15 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
                 email: email,
                 calculatorName: calculatorName,
                 resultsHtml: recapHtml + resultsHtml,
-                sourceUrl: window.location.href
+                sourceUrl: window.location.href,
+                // Canonical tracker identifier ("awlgrip"/"clothcalc"/"epifanes"/
+                // "mekp" -- same one calc-tracker.js/meta-pixel.js's
+                // CALCULATOR_MAP already use), NOT calculatorName above --
+                // that's just the human-readable display string used for the
+                // email subject and can be reworded without meaning to change
+                // tip selection. Guarded so a missing window._ccLastCalc sends
+                // null instead of throwing.
+                calculatorId: window._ccLastCalc && window._ccLastCalc.calculator ? window._ccLastCalc.calculator : null
             }
         });
 

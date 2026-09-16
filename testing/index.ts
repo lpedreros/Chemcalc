@@ -15,28 +15,16 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// ─── Helper: fetch a random tip from the tips table ──────────────────────────
-async function getRandomTip(supabase: ReturnType<typeof createClient>): Promise<string> {
+// ─── Helper: fetch a random tip, scoped to the sending calculator ───────────
+// public.get_random_tip(p_calculator) does the tip_category_calculators join
+// and the random pick in one call (already deployed; see
+// public.tip_category_calculators). Unknown/null calculatorId falls back to
+// General Pro Tips only, on the DB side -- no fallback logic needed here.
+async function getRandomTip(supabase: ReturnType<typeof createClient>, calculatorId: string | null): Promise<string> {
   try {
-    // Count active tips, pick a random offset, fetch that one row
-    const { count } = await supabase
-      .from('tips')
-      .select('id', { count: 'exact', head: true })
-      .eq('active', true)
-
-    if (!count || count === 0) return ''
-
-    const randomOffset = Math.floor(Math.random() * count)
-
-    const { data, error } = await supabase
-      .from('tips')
-      .select('tip')
-      .eq('active', true)
-      .range(randomOffset, randomOffset)
-      .single()
-
+    const { data, error } = await supabase.rpc('get_random_tip', { p_calculator: calculatorId ?? null })
     if (error || !data) return ''
-    return data.tip as string
+    return data as string
   } catch {
     return ''
   }
@@ -101,7 +89,7 @@ serve(async (req) => {
   }
 
   try {
-    const { email, calculatorName, resultsHtml, sourceUrl } = await req.json()
+    const { email, calculatorName, resultsHtml, sourceUrl, calculatorId } = await req.json()
 
     if (!email || !calculatorName || !resultsHtml) {
       throw new Error("Missing required fields: email, calculatorName, or resultsHtml")
@@ -118,7 +106,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-    const tip = await getRandomTip(supabase)
+    const tip = await getRandomTip(supabase, calculatorId)
 
     // ── 2. Send email via Resend ─────────────────────────────────────────────
     const resendResponse = await fetch('https://api.resend.com/emails', {
