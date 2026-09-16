@@ -525,7 +525,8 @@ document.addEventListener("DOMContentLoaded", function() {
         inputMethod: selectedInputMethod,
         inputValue:  inVal,
         inputUnit:   inUnit,
-        unitSystem:  sysType
+        unitSystem:  sysType,
+        acceleratorType: acceleratorType.value
       };
       const _ccResults = {
         paintBase:   outP.textContent,

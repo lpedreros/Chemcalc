@@ -93,7 +93,7 @@
     [
       'unitSystem', 'inputValue', 'unitType', 'length', 'width',
       'dimensionUnit', 'resultUnit', 'methodType', 'paintType',
-      'reducerPercent'
+      'reducerPercent', 'acceleratorType'
     ].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) {

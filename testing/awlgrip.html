@@ -112,6 +112,37 @@
     .awlgrip-accel-table tbody tr:last-child th,
     .awlgrip-accel-table tbody tr:last-child td{border-bottom:none;}
     .awlgrip-accel-footnote{font-size:.72rem;color:var(--chrome-ink-500);font-style:italic;}
+
+    /* Right-side clearance from the fixed bottom-right floating-action
+       cluster (Donate/BoatMD chat/Help -- see --chrome-fab-right and
+       .fab-donate/.help-float-btn/#chemcalc-chatbot in style.css). Same
+       "tune padding, don't touch the cluster" approach as the existing
+       .mp-results-panel desktop fix in style.css.
+
+       QA (Sentinel) flagged this as broken at ~375-410px and clean at
+       430px+; live bounding-rect testing here (full scroll-range sweep,
+       not a single snapshot -- same methodology as the earlier
+       floating-cluster fixes) found the real broken range is wider: the
+       card's text -- not just the footnote/guidance lines Sentinel
+       happened to catch, the whole card is full-width and every part of
+       it sweeps through the cluster's fixed y-band while scrolling --
+       overlaps the cluster continuously from 375px up through 991px,
+       becoming clean only at 992px, where .mp-grid's own 7fr/5fr
+       breakpoint (style.css) moves this card's column away from the
+       right edge entirely. Confirmed overlap amounts: 39px at
+       375/410/430px, 23px at 576px, 74px at 768/900px (the Donate
+       button gains a text label above 767px and gets wider, not
+       narrower). 991.98px matches this project's own established
+       tablet-ceiling breakpoint (see main.awlgrip-app's tablet tier in
+       style.css) and lines up exactly with where .mp-grid's own
+       breakpoint takes over, so the fix's range is tied to a real
+       layout boundary, not a guess. 6rem clears the worst measured
+       case (74px) with margin, re-verified clean at 375/410/430/576/
+       768/900px after applying, with no visual cramping at the
+       narrowest (375px) width. */
+    @media (max-width:991.98px){
+      .awlgrip-accel-info{padding-right:6rem;}
+    }
   </style>
 
 <!-- Adsense 
