@@ -696,6 +696,87 @@ main.awlgrip-app{
    inline styles; this wrapper only provides spacing (same convention as
    .mekp-email-capture/.cloth-email-capture above). */
 
+/* ---------- Accelerator comparison card (Pro-Cure X-98 vs X-138) --
+   moved here from an inline <style> block in awlgrip.html's <head> (see
+   CLOTHCALC/MEKPCALC PAGE-SPECIFIC STYLES above for the one-stylesheet
+   rule this follows); that block only existed because the dispatch that
+   added it had write access limited to awlgrip.html. Neutral
+   (non-warning) card, matching the page's existing
+   .mp-field-card/.awlgrip-note visual language via the same --chrome-*
+   tokens already used sitewide. ---------- */
+.awlgrip-accel-info{
+  margin-top:.75rem;padding:.75rem .85rem;border-radius:8px;
+  border:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);
+}
+.awlgrip-accel-info p{margin:0 0 .5rem;font-size:.8rem;color:var(--chrome-ink-700);line-height:1.4;}
+.awlgrip-accel-info p:last-child{margin-bottom:0;}
+.awlgrip-accel-table{width:100%;border-collapse:collapse;font-size:.78rem;margin:0 0 .5rem;}
+.awlgrip-accel-table th,.awlgrip-accel-table td{padding:.35rem .5rem;text-align:left;border-bottom:1px solid var(--chrome-paper-line);}
+.awlgrip-accel-table th{font-weight:700;color:var(--chrome-ink-900);}
+.awlgrip-accel-table td:first-child{color:var(--chrome-ink-600);font-weight:600;}
+.awlgrip-accel-table tbody tr:last-child th,
+.awlgrip-accel-table tbody tr:last-child td{border-bottom:none;}
+.awlgrip-accel-footnote{font-size:.72rem;color:var(--chrome-ink-500);font-style:italic;}
+
+/* Right-side clearance from the fixed bottom-right floating-action
+   cluster (Donate/BoatMD chat/Help -- see --chrome-fab-right and
+   .fab-donate/.help-float-btn/#chemcalc-chatbot in style.css). Same
+   "tune padding, don't touch the cluster" approach as the existing
+   .mp-results-panel desktop fix in style.css.
+
+   QA (Sentinel) flagged this as broken at ~375-410px and clean at
+   430px+; live bounding-rect testing here (full scroll-range sweep,
+   not a single snapshot -- same methodology as the earlier
+   floating-cluster fixes) found the real broken range is wider: the
+   card's text -- not just the footnote/guidance lines Sentinel
+   happened to catch, the whole card is full-width and every part of
+   it sweeps through the cluster's fixed y-band while scrolling --
+   overlaps the cluster continuously from 375px up through 991px,
+   becoming clean only at 992px, where .mp-grid's own 7fr/5fr
+   breakpoint (style.css) moves this card's column away from the
+   right edge entirely. Confirmed overlap amounts: 39px at
+   375/410/430px, 23px at 576px, 74px at 768/900px (the Donate
+   button gains a text label above 767px and gets wider, not
+   narrower). 991.98px matches this project's own established
+   tablet-ceiling breakpoint (see main.awlgrip-app's tablet tier in
+   style.css) and lines up exactly with where .mp-grid's own
+   breakpoint takes over, so the fix's range is tied to a real
+   layout boundary, not a guess. 6rem clears the worst measured
+   case (74px) with margin, re-verified clean at 375/410/430/576/
+   768/900px after applying, with no visual cramping at the
+   narrowest (375px) width. */
+@media (max-width:991.98px){
+  .awlgrip-accel-info{padding-right:6rem;}
+}
+
+/* 768-991.98px sub-range needs more clearance than the base rule
+   above: #chemcalc-chatbot's "Ask BoatMD" text label (chatbot_
+   styles.css, shown only above the 767px icon-only-collapse
+   breakpoint) widens the button to ~143px, wider than Donate/Help
+   at this range. Independently re-measured with a full-scroll-range
+   sweep (2px steps, every scroll position from 0 to
+   document.body.scrollHeight - innerHeight) checking the actual
+   text elements (.awlgrip-accel-table, its last row, the footnote,
+   and the guidance paragraph) against all three floating buttons'
+   real getBoundingClientRect() -- not the outer .awlgrip-accel-info
+   div, which doesn't shrink from padding the way its text content
+   does. Found a consistent, real 13.203125px overlap against
+   #chemcalc-chatbot specifically (the table, at whatever scroll
+   position aligns the table with the chat button's fixed y-band),
+   reproduced identically at 768px, 900px, and 991px -- confirms
+   this is a stable deficit across the whole sub-range, not a
+   one-off. 7.5rem (120px) total clears that 13.2px deficit over the
+   base rule's 96px (109.2px needed) with ~11px to spare -- verified
+   clean (zero overlap at every scroll position) at 768/900/991px
+   after applying; 375/410/430/576px remain clean under the base
+   6rem rule alone (unchanged, not touched here); 992px+ still needs
+   neither rule (.mp-grid's own breakpoint moves this card away from
+   the right edge entirely). Placed after the base rule so it wins
+   by cascade order for this narrower, more specific range. */
+@media (min-width:768px) and (max-width:991.98px){
+  .awlgrip-accel-info{padding-right:7.5rem;}
+}
+
 /* ============================================================
    END PAGE-SPECIFIC STYLES -- everything below this point was
    already in style.css before the 2026-09-14 consolidation.
