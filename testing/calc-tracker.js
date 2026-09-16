@@ -142,16 +142,16 @@ async function markEmailCaptured() {
 
     const sessionId = getSessionId();
 
-    // Find the most recent row for this session and update it
-    const { error } = await _sb
-      .from('calculator_events')
-      .update({ email_captured: true })
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: false })
-      .limit(1);
+    // RLS has no SELECT policy for anon, so a direct UPDATE can never locate
+    // its target row for anonymous sessions and silently affects zero rows.
+    // mark_email_captured() is SECURITY DEFINER and bypasses RLS to do the
+    // same update safely, without exposing row data to anon.
+    const { data, error } = await _sb.rpc('mark_email_captured', { p_session_id: sessionId });
 
     if (error) {
       console.warn('[calc-tracker] markEmailCaptured failed:', error.message);
+    } else if (data === 0) {
+      console.warn('[calc-tracker] markEmailCaptured: no matching row found for session', sessionId);
     }
   } catch (err) {
     console.warn('[calc-tracker] markEmailCaptured unexpected error:', err.message);
