@@ -53,7 +53,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var outR = document.getElementById("resultReducer");
   var outRLabel = document.getElementById("resultReducerLabel");
   var outA = document.getElementById("resultAccelerator");
+  var outALabel = document.getElementById("resultAcceleratorLabel");
   var outAccelBox = document.getElementById("resultAcceleratorBox");
+  var acceleratorType = document.getElementById("acceleratorType");
   var outCov = document.getElementById("resultCoverage");
   // sr-only, full-labeled-sentence mirrors for email-results.js's
   // injectEmailCaptureUI (see awlgrip.html) -- the visible spans above
@@ -306,6 +308,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if (reducerPercentRow) {
       reducerPercentRow.style.display = (paintType === "awlcraft2000") ? "block" : "none";
     }
+    // Show/hide Awlcraft 2000/3000 Accelerator (Pro-Cure X-98/X-138)
+    // type toggle -- same gate the accelerator result box below uses.
+    var acceleratorTypeRow = document.getElementById("acceleratorTypeRow");
+    if (acceleratorTypeRow) {
+      acceleratorTypeRow.style.display = (paintType === "awlcraft2000") ? "block" : "none";
+    }
     // Show/hide product-specific notes
     var noteAwlcraftSE = document.getElementById("productNoteAwlcraftSE");
     var noteHDTClear = document.getElementById("productNoteHDTClear");
@@ -389,11 +397,14 @@ document.addEventListener("DOMContentLoaded", function() {
     var convCC = baseCC * conv;
     var redCC = baseCC * red;
 
-    // Calculate accelerator for Awlcraft 2000 only
-    // Pro-Cure X-98: 0.5 fl oz per 2 gallons (256 fl oz) of mixed topcoat (base + converter)
-    // Ratio: 0.5 / 256 = 0.001953125 fl oz accelerator per 1 fl oz mixed topcoat
+    // Calculate accelerator for Awlcraft 2000 only -- Pro-Cure X-98
+    // (default) or X-138, per #acceleratorType.
+    // X-98:  0.5 fl oz per 2 gallons (256 fl oz) of mixed topcoat (base + converter) -> 0.5/256 = 0.001953125
+    // X-138: 1 fl oz per 2 gallons (256 fl oz) of mixed topcoat -> 1/256 = 0.00390625
     var mixedTopcoatCC = baseCC + convCC; // base + converter (before reducer)
-    var acceleratorRatio = 0.001953125; // fl oz accelerator per fl oz mixed topcoat
+    var acceleratorRatio = (acceleratorType && acceleratorType.value === "x138")
+      ? 0.00390625
+      : 0.001953125; // fl oz accelerator per fl oz mixed topcoat
     var mixedTopcoatOunces = convert(mixedTopcoatCC, "ccs", "ounces");
     var acceleratorOunces = mixedTopcoatOunces * acceleratorRatio;
     var acceleratorCC = convert(acceleratorOunces, "ounces", "ccs");
@@ -459,14 +470,31 @@ document.addEventListener("DOMContentLoaded", function() {
     emailC.textContent = convLabel + ": " + cVol + " " + labels[outUnit];
     emailR.textContent = redLabel + ": " + rVol + " " + labels[outUnit];
 
-    // Show accelerator only for Awlcraft 2000, always in mL for easier measurement
+    // Show accelerator only for Awlcraft 2000, always in mL for easier
+    // measurement. Accelerator name follows the same dynamic-label style
+    // as baseLabel/convLabel/redLabel above -- Pro-Cure X-98 (default)
+    // or X-138, per #acceleratorType.
     if (paintType === "awlcraft2000") {
       var aVolML = acceleratorCC ? acceleratorCC.toFixed(2) : "Err";
+      var acceleratorName = "Pro-Cure X-98";
+      if (acceleratorType && acceleratorType.value === "x138") {
+        acceleratorName = "Pro-Cure X-138";
+      }
+      var acceleratorLabel = "Accelerator (" + acceleratorName + ")";
+
+      outALabel.textContent = acceleratorLabel;
       outA.textContent = aVolML + " mL";
       outA.style.display = "block";
       outAccelBox.style.display = "block";
-      emailA.textContent = "Accelerator (Pro-Cure X-98): " + aVolML + " mL";
+      emailA.textContent = acceleratorLabel + ": " + aVolML + " mL";
       emailA.style.display = "block";
+      // Print-letterhead accelerator label -- the rest of that row
+      // (value + show/hide) is synced by awlgrip-print-summary.js from
+      // #resultAccelerator/#resultAcceleratorBox as before; this label
+      // text doesn't change on its own timer, so it's simplest to set
+      // it directly here, once, alongside its two other mirrors above.
+      var printAccelLabelEl = document.getElementById("awlgripPrintRecapAcceleratorLabel");
+      if (printAccelLabelEl) printAccelLabelEl.textContent = acceleratorLabel;
     } else {
       outA.style.display = "none";
       outAccelBox.style.display = "none";
@@ -546,6 +574,7 @@ document.addEventListener("DOMContentLoaded", function() {
   resU.addEventListener("change", calc);
   method.addEventListener("change", calc);
   paint.addEventListener("change", calc);
+  if (acceleratorType) acceleratorType.addEventListener("change", calc);
   // Awlcraft 2000/3000 reducer slider
   var reducerSlider = document.getElementById("reducerPercent");
   var reducerSliderLabel = document.getElementById("reducerPercentValue");

@@ -23,6 +23,10 @@
 //   4. Reducer-percentage slider fill gradient -- a CSS custom property
 //      set from the slider's own value/min/max, same technique as
 //      mekpcalc-ui.js's customPercentage slider.
+//   5. Accelerator type toggle shim -- same simple pattern as #1, for
+//      document.getElementById('acceleratorType').value ("x98" | "x138").
+//      Only visible for paintType === "awlcraft2000", gated by
+//      awlgripscript.js's calc() alongside the accelerator result box.
 //
 // Loads after awlgripscript.js (see awlgrip.html) so this file's
 // DOMContentLoaded handler always registers -- and therefore always
@@ -139,6 +143,39 @@
     if (paintSelect) paintSelect.addEventListener('change', syncAppMethodButtons);
   }
 
+  // ---------- 4b. Accelerator type toggle ----------
+  // Same simple pattern as Measurement System above (no disabled-state
+  // handling needed here, unlike Application Method) -- for
+  // document.getElementById('acceleratorType').value ("x98" | "x138").
+  // Only visible/relevant when paintType === "awlcraft2000"; that show/
+  // hide is driven by awlgripscript.js's calc(), same as the accelerator
+  // result box itself.
+  function initAcceleratorTypeToggle() {
+    var hidden = document.getElementById('acceleratorType');
+    var buttons = Array.prototype.slice.call(
+      document.querySelectorAll('.mp-unit-btn[data-accelerator]')
+    );
+    if (!hidden || !buttons.length) return;
+
+    function setAcceleratorType(type) {
+      hidden.value = type;
+      buttons.forEach(function (btn) {
+        var active = btn.getAttribute('data-accelerator') === type;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      // awlgripscript.js's own "change" listener on this exact element
+      // re-runs calc().
+      hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (btn.getAttribute('aria-pressed') === 'true') return;
+        setAcceleratorType(btn.getAttribute('data-accelerator'));
+      });
+    });
+  }
+
   // ---------- 4. Reducer-percentage slider fill gradient ----------
   function updateReducerSliderGradient() {
     var slider = document.getElementById('reducerPercent');
@@ -156,6 +193,7 @@
     initInputMethodToggle();
     initAppMethodToggle();
     syncAppMethodButtons();
+    initAcceleratorTypeToggle();
 
     var reducerSlider = document.getElementById('reducerPercent');
     if (reducerSlider) {

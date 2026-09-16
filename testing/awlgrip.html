@@ -92,6 +92,28 @@
   	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="print_style_fix_v4.css" media="print">
 
+  <!-- Page-scoped CSS for the new Accelerator comparison card (Pro-Cure
+       X-98 vs X-138) -- kept here rather than in style.css since this
+       dispatch's write scope is limited to awlgrip.html/awlgripscript.js/
+       awlgripcalc-ui.js only. Neutral (non-warning) card, matching the
+       page's existing .mp-field-card/.awlgrip-note visual language via
+       the same --chrome-* tokens already used sitewide. -->
+  <style>
+    .awlgrip-accel-info{
+      margin-top:.75rem;padding:.75rem .85rem;border-radius:8px;
+      border:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);
+    }
+    .awlgrip-accel-info p{margin:0 0 .5rem;font-size:.8rem;color:var(--chrome-ink-700);line-height:1.4;}
+    .awlgrip-accel-info p:last-child{margin-bottom:0;}
+    .awlgrip-accel-table{width:100%;border-collapse:collapse;font-size:.78rem;margin:0 0 .5rem;}
+    .awlgrip-accel-table th,.awlgrip-accel-table td{padding:.35rem .5rem;text-align:left;border-bottom:1px solid var(--chrome-paper-line);}
+    .awlgrip-accel-table th{font-weight:700;color:var(--chrome-ink-900);}
+    .awlgrip-accel-table td:first-child{color:var(--chrome-ink-600);font-weight:600;}
+    .awlgrip-accel-table tbody tr:last-child th,
+    .awlgrip-accel-table tbody tr:last-child td{border-bottom:none;}
+    .awlgrip-accel-footnote{font-size:.72rem;color:var(--chrome-ink-500);font-style:italic;}
+  </style>
+
 <!-- Adsense 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1179454606770448"
      crossorigin="anonymous"></script>
@@ -335,6 +357,41 @@
             <p class="mp-field-hint mt-2"><strong>Guide:</strong> Start around 25%. Use less (15–20%) in cooler temps or small jobs. Use more (25–33%) in hot/dry conditions or large panels. Target: 11–15 sec DIN 4 viscosity.</p>
           </div>
 
+          <!-- Awlcraft 2000/3000 Accelerator (Pro-Cure X-98 / X-138) --
+               shown only when awlcraft2000 selected, same gate the
+               accelerator result box already uses. Same .mp-unit-toggle
+               pattern as Application Method, synced by
+               awlgripcalc-ui.js's exact methodType-toggle-sync approach,
+               just driving the new hidden #acceleratorType select
+               instead of #methodType. -->
+          <div id="acceleratorTypeRow" class="mt-3" style="display:none;">
+            <div class="awlgrip-slider-label-row">
+              <label for="acceleratorType">Accelerator</label>
+            </div>
+            <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Accelerator type">
+              <button type="button" class="mp-unit-btn" data-accelerator="x98" aria-pressed="true">Pro-Cure X-98</button>
+              <button type="button" class="mp-unit-btn" data-accelerator="x138" aria-pressed="false">Pro-Cure X-138</button>
+            </div>
+            <select id="acceleratorType" hidden><option value="x98" selected>Pro-Cure X-98</option><option value="x138">Pro-Cure X-138</option></select>
+
+            <div class="awlgrip-accel-info">
+              <p>The two Pro-Cure accelerators differ in dosage, temperature limit, application method, and cure speed:</p>
+              <table class="awlgrip-accel-table">
+                <thead>
+                  <tr><th scope="col"></th><th scope="col">X-98</th><th scope="col">X-138</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">Max dosage</th><td>0.5 fl oz / 2 gal topcoat</td><td>1 fl oz / 2 gal topcoat</td></tr>
+                  <tr><th scope="row">Max use temperature</th><td>75&deg;F</td><td>85&deg;F</td></tr>
+                  <tr><th scope="row">Application</th><td>Spray only</td><td>Spray or brush</td></tr>
+                  <tr><th scope="row">Dry time / working life (at 70&deg;F)</th><td>4&ndash;5 hr / 2&ndash;3 hr</td><td>11&ndash;12 hr / 6&ndash;7 hr</td></tr>
+                </tbody>
+              </table>
+              <p class="awlgrip-accel-footnote">Both accelerators carry a general 85&deg;F ceiling; X-98&rsquo;s own limit is lower, at 75&deg;F.</p>
+              <p>General guidance, not a manufacturer recommendation: X-98&rsquo;s shorter working life suits quick spray jobs; X-138&rsquo;s longer window suits larger or slower jobs.</p>
+            </div>
+          </div>
+
           <!-- Product-specific notes (shown conditionally) -->
           <div id="productNoteAwlcraftSE" class="awlgrip-note" style="display:none;">
             <strong>Note:</strong> Awlcraft SE is a basecoat. A compatible clearcoat (Awlgrip HDT Clear or Awlcraft 2000 Clear) must be applied after this product. An accelerator (including Pro-Cure) must not be added to this product.
@@ -465,7 +522,7 @@
               <span class="mp-compare-value" id="resultReducer">&mdash;</span>
             </div>
             <div class="mp-compare-box" id="resultAcceleratorBox" style="display:none">
-              <span class="mp-compare-label">Accelerator (Pro-Cure X-98)</span>
+              <span class="mp-compare-label" id="resultAcceleratorLabel">Accelerator (Pro-Cure X-98)</span>
               <span class="mp-compare-value" id="resultAccelerator">&mdash;</span>
             </div>
             <div class="mp-compare-box mp-compare-box-wide">
@@ -634,7 +691,7 @@
       <dd id="awlgripPrintRecapReducer">&mdash;</dd>
     </div>
     <div id="awlgripPrintRecapAcceleratorRow" style="display:none;">
-      <dt>Accelerator (Pro-Cure X-98)</dt>
+      <dt id="awlgripPrintRecapAcceleratorLabel">Accelerator (Pro-Cure X-98)</dt>
       <dd id="awlgripPrintRecapAccelerator">&mdash;</dd>
     </div>
   </dl>
@@ -803,11 +860,7 @@
     <p class="mb-2">&copy; 2026 ChemCalc. All rights reserved.</p>
   </div>
 </footer>
-<!-- #EndLibraryItem --><script>
-// Simple year update for footer
-document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-<!-- Load affiliate links data first -->
+<!-- #EndLibraryItem --><!-- Load affiliate links data first -->
 <script src="affiliate_links.js"></script>
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
