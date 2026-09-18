@@ -2568,20 +2568,38 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   /* Scroll-edge fades, CSS only. The two "cover" gradients are
      painted in the card's own colour and scroll WITH the content
      (background-attachment: local), so each one slides out of view
-     once you reach that end; the two shadow gradients are fixed to
-     the box (scroll), so a shadow is only visible where a cover has
-     moved away. Net effect: a soft fade appears at the top once you
-     have scrolled down, and at the bottom whenever more content
-     remains -- and neither shows when the content fits. */
+     once you reach that end; the two colour bands stay fixed to the
+     box (scroll), so a band is only visible where a cover has moved
+     away. Net effect: a band appears at the bottom whenever more
+     content remains, at the top once you have scrolled down, and
+     neither shows when the content fits.
+
+     Sized at 96px (about one inch at 96dpi) in signal orange. The
+     first version was 14px of 14%-opacity ink in a radial gradient
+     -- strongest at the centre, nothing at the corners -- and was
+     invisible on a white card. Orange rather than ink because ink
+     reads as a drop shadow, and a shadow is exactly what nobody
+     could see; orange is this design system's own attention colour
+     (CTA buttons, active tabs, the step badges in this modal).
+     rgba literals rather than the token because a hex custom
+     property cannot take an alpha channel directly -- the value
+     242,166,60 IS --chrome-signal-400 (#F2A63C). Change both band
+     stops together if this ever needs retuning.
+
+     COVERS ARE 120px WITH THEIR FIRST 96px SOLID, deliberately
+     taller than the 96px bands. A cover whose solid region is
+     shorter than its band leaks colour at that edge permanently,
+     even at scroll position zero. Keep cover solid-length >= band
+     height if either number is ever changed. */
   background-image:
-    linear-gradient(var(--chrome-paper-card) 30%, rgba(255, 255, 255, 0)),
-    linear-gradient(rgba(255, 255, 255, 0), var(--chrome-paper-card) 70%),
-    radial-gradient(farthest-side at 50% 0, rgba(4, 20, 26, 0.14), rgba(4, 20, 26, 0)),
-    radial-gradient(farthest-side at 50% 100%, rgba(4, 20, 26, 0.14), rgba(4, 20, 26, 0));
+    linear-gradient(var(--chrome-paper-card) 80%, rgba(255, 255, 255, 0)),
+    linear-gradient(rgba(255, 255, 255, 0), var(--chrome-paper-card) 20%),
+    linear-gradient(rgba(242, 166, 60, 0.30), rgba(242, 166, 60, 0)),
+    linear-gradient(rgba(242, 166, 60, 0), rgba(242, 166, 60, 0.30));
   background-position: 0 0, 0 100%, 0 0, 0 100%;
   background-repeat: no-repeat;
   background-attachment: local, local, scroll, scroll;
-  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  background-size: 100% 120px, 100% 120px, 100% 96px, 100% 96px;
 }
 .modal-box::-webkit-scrollbar { width: 6px; }
 .modal-box::-webkit-scrollbar-track { background: var(--chrome-paper-card, #ffffff); }
