@@ -2550,17 +2550,43 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   padding: 1rem; overflow-y: auto;
 }
 .modal-box {
-  background: var(--chrome-paper-card); border-radius: 12px; padding: 2rem;
+  background-color: var(--chrome-paper-card); border-radius: 12px; padding: 2rem;
   width: 100%; max-width: 700px; position: relative;
   color: var(--chrome-ink-900);
   box-shadow: var(--chrome-shadow-lift);
   margin: auto;
   max-height: 90vh;
   overflow-y: auto;
-  scrollbar-width: none;           /* Firefox */
-  -ms-overflow-style: none;        /* IE/Edge */
+  /* Slim scrollbar rather than none. The bar used to be hidden
+     outright, which left long modal content clipped with no signal
+     that anything was below -- measured at 317px hidden on a
+     1440x900 laptop and 1586px hidden on a phone. Values match
+     .chatbot-messages' scrollbar further down this file, the site's
+     only other custom bar, so the two look like one system. */
+  scrollbar-width: thin;                                         /* Firefox */
+  scrollbar-color: var(--chrome-paper-line) var(--chrome-paper-card);  /* Firefox: thumb track */
+  /* Scroll-edge fades, CSS only. The two "cover" gradients are
+     painted in the card's own colour and scroll WITH the content
+     (background-attachment: local), so each one slides out of view
+     once you reach that end; the two shadow gradients are fixed to
+     the box (scroll), so a shadow is only visible where a cover has
+     moved away. Net effect: a soft fade appears at the top once you
+     have scrolled down, and at the bottom whenever more content
+     remains -- and neither shows when the content fits. */
+  background-image:
+    linear-gradient(var(--chrome-paper-card) 30%, rgba(255, 255, 255, 0)),
+    linear-gradient(rgba(255, 255, 255, 0), var(--chrome-paper-card) 70%),
+    radial-gradient(farthest-side at 50% 0, rgba(4, 20, 26, 0.14), rgba(4, 20, 26, 0)),
+    radial-gradient(farthest-side at 50% 100%, rgba(4, 20, 26, 0.14), rgba(4, 20, 26, 0));
+  background-position: 0 0, 0 100%, 0 0, 0 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
 }
-.modal-box::-webkit-scrollbar { display: none; } /* Chrome/Safari/Edge */
+.modal-box::-webkit-scrollbar { width: 6px; }
+.modal-box::-webkit-scrollbar-track { background: var(--chrome-paper-card, #ffffff); }
+.modal-box::-webkit-scrollbar-thumb { background: var(--chrome-paper-line, #DCE3E2); border-radius: 3px; }
+.modal-box::-webkit-scrollbar-thumb:hover { background: var(--chrome-ink-500, #4A7C88); }
 .modal-wide { max-width: 1100px; width: 96vw; }
 .modal-close {
   position: sticky; float: right;
@@ -5154,7 +5180,7 @@ body,
   background: rgba(4, 20, 26, 0.6);
 }
 #helpModal .modal-box {
-  background: var(--chrome-paper-card);
+  background-color: var(--chrome-paper-card);
   box-shadow: var(--chrome-shadow-lift);
   color: var(--chrome-ink-900);
   font-family: var(--chrome-font-sans);
