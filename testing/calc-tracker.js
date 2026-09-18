@@ -76,6 +76,16 @@ window.CC_UNITS = Object.freeze({
 // settles on one row per finished answer instead of several per session.
 let _logTimer = null;
 
+// Content signature of the last row this page actually inserted.
+// Used to suppress byte-identical repeat inserts -- a second settle
+// cycle on unchanged values, or a Print/Email immediate insert
+// landing on top of an already-written debounced row, both produced
+// duplicate rows carrying identical inputs and results. Compares
+// content rather than timing so it catches every path. Resets on
+// page navigation, which is intended: a fresh page visit logging
+// the same values again is a genuine new event.
+let _lastLoggedSignature = null;
+
 // ── Main log function ────────────────────────────────────────
 // Called by each calculator script after every calculation.
 // DEBOUNCED by default: waits 13 seconds of inactivity before actually
@@ -116,6 +126,11 @@ function logCalculation(calculator, inputs, results, immediate = false) {
         userId = user ? user.id : null;
       } catch (e) { /* anonymous — that's fine */ }
 
+      const signature = calculator + '|' + JSON.stringify(inputs) + '|' + JSON.stringify(results);
+      if (signature === _lastLoggedSignature) {
+        return;
+      }
+
       const { error } = await _sb
         .from('calculator_events')
         .insert({
@@ -131,6 +146,8 @@ function logCalculation(calculator, inputs, results, immediate = false) {
 
       if (error) {
         console.warn('[calc-tracker] Insert failed:', error.message);
+      } else {
+        _lastLoggedSignature = signature;
       }
 
     } catch (err) {
@@ -141,8 +158,7 @@ function logCalculation(calculator, inputs, results, immediate = false) {
 
   if (immediate) {
     _logTimer = null;
-    doInsert();
-    return;
+    return doInsert();
   }
 
   _logTimer = setTimeout(doInsert, 13000); // 13-second debounce

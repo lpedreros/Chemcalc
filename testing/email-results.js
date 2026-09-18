@@ -89,19 +89,28 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
         msg.style.display = "block";
         emailInput.value = ""; // clear input
 
-        // Mark this session as having captured an email in analytics
-        if (typeof markEmailCaptured === 'function') {
-          markEmailCaptured();
-        }
-
-        // Log this settled answer immediately (skips the debounce).
+        // Log this settled answer immediately (skips the debounce), and
+        // AWAIT it -- mark_email_captured() flips the most recent row for
+        // this session, so the row this send corresponds to has to exist
+        // before the mark runs. Previously the mark fired first and
+        // unawaited, so it either found no row at all (the immediate path
+        // cancels the pending debounced write) or flipped an older,
+        // unrelated row.
+        //
         // NOTE: window._ccLastCalc.calculator is the tracker's own
         // identifier (e.g. 'mekp') set by the calculator script alongside
         // its logCalculation() call -- NOT this function's own
         // calculatorName parameter above, which is just the display
         // string used for the email subject (e.g. "MEKP Catalyst").
         if (window._ccLastCalc && typeof logCalculation === 'function') {
-          logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+          await logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+
+          // Only mark once that row is actually in. With no _ccLastCalc
+          // there is no row for this send, and marking would flip whatever
+          // unrelated row happened to be most recent -- the exact bug above.
+          if (typeof markEmailCaptured === 'function') {
+            await markEmailCaptured();
+          }
         }
 
     } catch (err) {

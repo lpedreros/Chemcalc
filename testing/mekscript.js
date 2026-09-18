@@ -154,8 +154,11 @@ document.addEventListener("DOMContentLoaded", () => {
         displayAffiliateLinks();
 
         // ── Analytics: log this calculation (fire-and-forget) ──
-        // Guard: only log when user has entered a real resin amount AND a temperature
-        if (typeof logCalculation === 'function' && resinAmount > 0 && !isNaN(tempC)) {
+        // Guard: only log when the user has entered a real resin amount.
+        // Temperature is deliberately NOT required: the slider/Duratec path
+        // produces a complete, correct answer without one, and those
+        // calculations were previously invisible to analytics entirely.
+        if (typeof logCalculation === 'function' && resinAmount > 0) {
           const CC = window.CC_UNITS;
           // Volume-unit select values ("oz" etc.) -> shared vocabulary.
           // "oz" here is Fluid Ounces (see updateVolumeUnits()'s option
@@ -163,7 +166,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const volumeUnitMap = { oz: CC.FLOZ, quart: CC.QT, gallon: CC.GAL, ml: CC.ML, liter: CC.L };
           const _ccInputs = {
             resinAmount:      { value: resinAmount, unit: volumeUnitMap[selectedVolumeUnit], base: resinMl, baseUnit: CC.ML },
-            temperature:      { value: temp, unit: (selectedTempUnit === 'fahrenheit' ? CC.F : CC.C), base: tempC, baseUnit: CC.C },
+            temperature:      isNaN(tempC)
+              ? null
+              : { value: temp, unit: (selectedTempUnit === 'fahrenheit' ? CC.F : CC.C), base: tempC, baseUnit: CC.C },
             usingDuratec:     useDuratec,
             mekpPercentage:   { value: mekpPercentage, unit: CC.PCT },
             percentageSource: percentageSource
