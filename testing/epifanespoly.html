@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- SEO: Title optimized -->
-  <title>Epifanes Polyurethane Paint &amp; Varnish Mix Calculator | ChemCalc</title>
+  <title>Epifanes Polyurethane Paint &amp; Varnish Calculator | ChemCalc</title>
   <!-- SEO: Description optimized (Enhanced) -->
   <meta name="description" content="Calculate precise 2:1 mix ratios for Epifanes Polyurethane Clear Gloss Varnish and Topside Paint. Get accurate component volumes in imperial or metric units with ChemCalc's free calculator.">
   <!-- SEO: Keywords optimized -->
@@ -13,7 +13,7 @@
   <link rel="canonical" href="https://chemcalc.co/epifanespoly.html" />
 
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Epifanes Polyurethane Paint &amp; Varnish Mix Calculator | ChemCalc" />
+  <meta property="og:title" content="Epifanes Polyurethane Paint &amp; Varnish Calculator | ChemCalc" />
   <meta property="og:description" content="Calculate accurate 2:1 mix ratios for Epifanes Polyurethane paint and varnish. Supports imperial/metric units." />
   <meta property="og:url" content="https://chemcalc.co/epifanespoly.html" />
   <meta property="og:type" content="website" />
@@ -23,7 +23,7 @@
 
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Epifanes Polyurethane Paint &amp; Varnish Mix Calculator | ChemCalc" />
+  <meta name="twitter:title" content="Epifanes Polyurethane Paint &amp; Varnish Calculator | ChemCalc" />
   <meta name="twitter:description" content="Calculate accurate 2:1 mix ratios for Epifanes Polyurethane paint and varnish." />
   <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
 
@@ -32,7 +32,7 @@
   {
     "@context": "https://schema.org",
     "@type": ["WebPage", "WebApplication"],
-    "name": "Epifanes Polyurethane Paint &amp; Varnish Mix Calculator | ChemCalc",
+    "name": "Epifanes Polyurethane Paint &amp; Varnish Calculator | ChemCalc",
     "description": "Calculate precise 2:1 mix ratios for Epifanes Polyurethane Clear Gloss Varnish and Topside Paint. Get accurate component volumes in imperial or metric units with ChemCalc's free calculator.",
     "url": "https://chemcalc.co/epifanespoly.html",
     "applicationCategory": "UtilitiesApplication",
@@ -48,26 +48,26 @@
     },
     "mainEntity": {
       "@type": "HowTo",
-      "name": "How to Use the Epifanes Polyurethane Mix Calculator",
-      "description": "Calculate the correct 2:1 mix ratio for Epifanes Polyurethane Clear Gloss Varnish or Topside Paint.",
+      "name": "How to Use the Epifanes Polyurethane Calculator",
+      "description": "Choose your Epifanes Poly-urethane product and application method, then calculate the correct 2:1 mix ratio by volume.",
       "step": [
         {
           "@type": "HowToStep",
-          "name": "Enter Total Volume Needed",
-          "text": "Input the total final volume of mixed paint or varnish you require.",
-          "url": "https://chemcalc.co/epifanespoly.html#totalVolumeGroup"
+          "name": "Select Product and Application Method",
+          "text": "Choose one of the six Epifanes Poly-urethane products and whether you're applying by Brush/Roll or Spray. PU Speedcoat products are spray-only.",
+          "url": "https://chemcalc.co/epifanespoly.html#epifanesProductCard"
         },
         {
           "@type": "HowToStep",
-          "name": "Select Volume Units",
-          "text": "Choose the units for your total volume (e.g., mL, oz, L, qt, gal). The results will be displayed in the same unit system.",
-          "url": "https://chemcalc.co/epifanespoly.html#volumeUnitGroup"
+          "name": "Enter Total Volume Needed",
+          "text": "Input the total final volume of mixed product you require, and choose its units (e.g., mL, oz, L, qt, gal).",
+          "url": "https://chemcalc.co/epifanespoly.html#totalVolumeCard"
         },
         {
           "@type": "HowToStep",
           "name": "View Results",
-          "text": "The calculator automatically displays the required volume for Component A (Base) and Component B (Hardener) based on the 2:1 ratio.",
-          "url": "https://chemcalc.co/epifanespoly.html#resultCard"
+          "text": "The calculator automatically displays the required base and hardener amounts based on the 2:1 ratio, plus thinning guidance for your product and method.",
+          "url": "https://chemcalc.co/epifanespoly.html#resultsCard"
         }
       ]
     }
@@ -259,86 +259,244 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><!-- Main Content Section -->
-  <main class="container">
-    <h1 class="text-center mb-4">Epifanes Polyurethane Paint &amp; Varnish Calculator</h1>
-    <p class="text-center text-muted mb-4">Calculates mix for Clear Gloss Varnish and Topside Paint (2:1 Base:Hardener)</p>
+<!-- #EndLibraryItem --><main class="container epifanes-app d-print-none">
 
-    <!-- Placeholder for supporting content (Step 005) -->
-    <!-- <section class="mb-4">
-      <p>Introductory paragraph explaining Epifanes Polyurethane, the 2:1 ratio, importance of accuracy, and how this calculator helps...</p>
-    </section> -->
+  <!-- Title band -->
+  <div class="mp-hero">
+    <h1 class="mp-hero-title">Epifanes Polyurethane Paint &amp; Varnish Calculator</h1>
+    <p class="mp-hero-tagline">Poly-urethane Clear Gloss &middot; Clear Satin &middot; Colour &middot; PU Speedcoat Clear Gloss &middot; Clear Satin &middot; Colour</p>
+    <p class="mp-hero-copy">Pick your product and application method, set your total mixed volume, and get exact base and hardener amounts plus thinning guidance &mdash; every product in this line mixes 2:1 by volume.</p>
+  </div>
 
-    <form id="epifanesForm">
-      <!-- Total Volume Input -->
-      <div class="form-group" id="totalVolumeGroup">
-        <label for="totalVolume">Total Mixed Volume Needed:</label>
-        <input type="number" class="form-control" id="totalVolume" required min="0" step="any" placeholder="e.g., 750">
-      </div>
-      <!-- Volume Units -->
-      <div class="form-group" id="volumeUnitGroup">
-        <label for="volumeUnit">Volume Units:</label>
-        <select class="form-control" id="volumeUnit">
-          <option value="ccs" selected>Milliliters (mL/cc)</option>
-          <option value="ounces">Fluid Ounces (US fl oz)</option>
-          <option value="liters">Liters (L)</option>
-          <option value="quarts">Quarts (US qt)</option>
-          <option value="gallons">Gallons (US gal)</option>
-        </select>
-      </div>
+  <div class="mp-grid">
+    <div class="epifanes-form-col d-print-none">
+      <div class="epifanes-fields">
 
-      <!-- Results Display -->
-      <div id="resultCard" class="mt-4 card p-3 printable-section">
-        <h2 class="card-title">Mix Components:</h2>
-        <p id="resultBase">Component A (Base): —</p>
-        <p id="resultHardener">Component B (Hardener): —</p>
-        <p id="resultThinner" class="small text-muted">Thinner (Optional): See product sheet for recommendations.</p>
-        <div id="epifanesEmailCapture"></div>
+        <!-- Product Line -->
+        <section class="mp-field-card" id="epifanesProductCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Product Line</h2>
+              <p class="mp-field-hint">Sets the result labels and which application methods are available.</p>
+            </div>
+          </div>
+          <select id="epifanesProduct" class="mp-select">
+            <optgroup label="Standard">
+              <option value="en009" selected>Poly-urethane Clear Gloss</option>
+              <option value="en010">Poly-urethane Clear Satin</option>
+              <option value="en105">Poly-urethane Colour (Yacht Coating)</option>
+            </optgroup>
+            <optgroup label="PU Speedcoat">
+              <option value="en012">PU Speedcoat Clear Gloss</option>
+              <option value="en013">PU Speedcoat Clear Satin</option>
+              <option value="en110">PU Speedcoat Colour</option>
+            </optgroup>
+          </select>
+          <!-- PU Speedcoat is spray-only by manufacturer design -- shown
+               only when a Speedcoat product is selected, same
+               style="display:none;" + JS pattern as awlgrip.html's
+               productNoteAwlcraftSE/productNoteHDTClear. -->
+          <div id="epifanesNoteSpeedcoat" class="epifanes-note" style="display:none;">
+            <strong>Note:</strong> PU Speedcoat products are spray application only, by Epifanes&rsquo; own manufacturer design. Brush/Roll is disabled for this selection.
+          </div>
+        </section>
 
-        <!-- Affiliate Links Placeholder (Step 006) -->
-        <div id="affiliateLinksContainer">
-          <h3>Related Products:</h3>
-          <ul id="affiliateLinksList"></ul>
-          <span class="affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
-        </div>
+        <!-- Application Method -->
+        <section class="mp-field-card" id="epifanesMethodCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Application Method</h2>
+              <p class="mp-field-hint">Brush/Roll or Spray -- affects the thinning guidance below.</p>
+            </div>
+          </div>
+          <!-- Visible control: a two-button toggle. The hidden select
+               below keeps id="epifanesMethod" with a plain .value of
+               "brush"/"spray" in sync with it -- same pattern as
+               awlgrip.html's methodType toggle (see awlgripcalc-ui.js),
+               folded directly into epifanesScript.js since this page
+               only has the one toggle to sync. Brush/Roll is disabled
+               here the same way awlgripscript.js disables its real
+               <option value="roll"> for spray-only products. -->
+          <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Application method">
+            <button type="button" class="mp-unit-btn" data-method="brush" aria-pressed="true">Brush/Roll</button>
+            <button type="button" class="mp-unit-btn" data-method="spray" aria-pressed="false">Spray</button>
+          </div>
+          <select id="epifanesMethod" hidden><option value="brush" selected>Brush/Roll</option><option value="spray">Spray</option></select>
+          <!-- Shown only for a standard (non-Speedcoat) product with
+               Spray selected -- carries Epifanes' own guidance toward
+               the Speedcoat sibling for spray work. -->
+          <div id="epifanesNoteSprayGuidance" class="epifanes-note" style="display:none;">
+            <strong>Note:</strong> For spray application, Epifanes recommends the PU Speedcoat version of this product instead of this standard-line product.
+          </div>
+        </section>
 
-        <!-- Print Button and QR Code Placeholder -->
-        <div class="mt-3 d-print-none">
-            <button id="printButton" class="btn btn-secondary">Print Results</button>
-        </div>
-        <div id="printQrCode" class="mt-3 d-none d-print-block text-center"></div>
+        <!-- Total Volume and Units -->
+        <section class="mp-field-card" id="totalVolumeCard">
+          <div class="mp-field-head">
+            <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/></svg></span>
+            <div>
+              <h2 class="mp-field-title">Total Volume</h2>
+              <p class="mp-field-hint">How much mixed product you need, and in what units.</p>
+            </div>
+          </div>
+          <label for="totalVolume" class="epifanes-input-label">Total Mixed Volume Needed</label>
+          <input type="number" class="mp-input" id="totalVolume" required min="0" step="any" placeholder="e.g., 750">
+          <div class="mt-3">
+            <label for="volumeUnit" class="epifanes-input-label">Volume Units</label>
+            <select class="mp-select" id="volumeUnit">
+              <option value="ccs" selected>Milliliters (mL/cc)</option>
+              <option value="ounces">Fluid Ounces (US fl oz)</option>
+              <option value="liters">Liters (L)</option>
+              <option value="quarts">Quarts (US qt)</option>
+              <option value="gallons">Gallons (US gal)</option>
+            </select>
+          </div>
+        </section>
 
-      </div>
-    </form>
-
-    <!-- Additional Links Section -->
-    <div class="row mt-5">
-      <!-- Tips and Safety Links -->
-      <div class="col-md-6">
-        <div class="card p-3 mb-3">
-          <h2 class="card-title">Tips and Safety</h2>
-          <p><a href="https://www.epifanes.com/page/two-part-polyurethane" target="_blank">Epifanes Polyurethane Product Page</a></p>
-          <p><a href="https://cdn.shopify.com/s/files/1/0550/8751/8711/files/PPVCLR_TDS_EN.pdf?v=1698308118" target="_blank">Clear Varnish Technical Data Sheet (PDF)</a></p>
-          <p><a href="https://cdn.shopify.com/s/files/1/0550/8751/8711/files/PP_TDS_EN.pdf?v=1698308118" target="_blank">Topside Paint Technical Data Sheet (PDF)</a></p>
-          <p><a href="legal.html">Legal Disclaimer</a></p>
-        </div>
-      </div>
-      <!-- Other Calculators Links -->
-      <div class="col-md-6">
-        <div class="card p-3 mb-3">
-          <h2 class="card-title">Other Calculators</h2>
-          <p><a href="clothcalc.html">Fiberglass Cloth Saturation Calculator</a></p>
-          <p><a href="mekpcalc.html">MEKP Calculator</a></p>
-          <p><a href="awlgrip.html">Awlgrip Coatings Calculator</a></p>
-        </div>
       </div>
     </div>
-		<!-- Feedback Button Section -->
-<div class="container mt-4 mb-5 text-center">
-    <button id="feedbackBtn" class="btn btn-info btn-lg">Report an Issue / Suggest a Feature</button>
-</div>
-<!-- End Feedback Button Section -->
-  </main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+
+    <div class="epifanes-results-col">
+      <section class="mp-results-panel printable-section" id="resultsCard" aria-label="Calculated results">
+        <div class="mp-results-head">
+          <h2>Mix Result</h2>
+        </div>
+        <div class="mp-results-body">
+          <div class="mp-result-compare">
+            <div class="mp-compare-box">
+              <span class="mp-compare-label" id="resultBaseLabel">Component A (clear)</span>
+              <span class="mp-compare-value" id="resultBase">&mdash;</span>
+            </div>
+            <div class="mp-compare-box">
+              <span class="mp-compare-label" id="resultHardenerLabel">Component B (hardener)</span>
+              <span class="mp-compare-value" id="resultHardener">&mdash;</span>
+            </div>
+            <div class="mp-compare-box mp-compare-box-wide">
+              <span class="mp-compare-label" id="resultThinnerLabel">Thinning</span>
+              <span class="mp-compare-value" id="resultThinner">&mdash;</span>
+            </div>
+          </div>
+
+          <!-- sr-only, full-labeled-sentence mirrors for email-results.js's
+               injectEmailCaptureUI -- the visible .mp-compare-value spans
+               above hold bare values next to a separate .mp-compare-label,
+               which injectEmailCaptureUI can't see. Same fix awlgrip.html
+               needed (see awlgripEmailPaint/etc. there). -->
+          <p id="epifanesEmailBase" class="sr-only">Component A (clear): &mdash;</p>
+          <p id="epifanesEmailHardener" class="sr-only">Component B (hardener): &mdash;</p>
+          <p id="epifanesEmailThinner" class="sr-only">Thinning: &mdash;</p>
+
+          <div id="epifanesEmailCapture" class="epifanes-email-capture"></div>
+
+          <!-- Affiliate Links Placeholder -->
+          <div class="mp-affiliate-block" id="affiliateLinksContainer" style="display:none;">
+            <h3>Related Products</h3>
+            <ul id="affiliateLinksList" class="mp-affiliate-list"></ul>
+            <span class="mp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
+          </div>
+
+          <!-- Print Button -->
+          <div class="mp-print-cta d-print-none">
+            <button id="printButton" class="mp-print-btn">Print Results</button>
+          </div>
+          <div id="printQrCode" class="d-none d-print-block text-center"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Tips & Safety / Other Calculators -->
+  <div class="mp-resources-grid d-print-none">
+    <section class="mp-resource-card">
+      <h2>Tips &amp; Safety</h2>
+      <p class="mp-resource-desc">Epifanes specifies its 2:1 ratio by weight &mdash; get the mix right before you open the can.</p>
+      <ul class="mp-resource-links">
+        <li>
+          <a href="https://www.epifanes.com/page/poly-urethane" class="mp-resource-link" target="_blank" rel="noopener">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Epifanes Poly-urethane Product Page</span>
+              <span class="mp-resource-link-detail">Mixing ratio, application and recoat guidance from the manufacturer</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.epifanes.com/related/fcece99e-6464-4f64-a4e8-212a64940a13.pdf" class="mp-resource-link" target="_blank" rel="noopener">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Clear Gloss Technical Data Sheet (PDF)</span>
+              <span class="mp-resource-link-detail">Applies to Clear Gloss and Clear Satin</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.epifanes.com/related/7104df13-e9d0-4b62-bc86-798d023692e1.pdf" class="mp-resource-link" target="_blank" rel="noopener">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Colour (Topside Paint) Technical Data Sheet (PDF)</span>
+              <span class="mp-resource-link-detail">Applies to every stocked colour</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="legal.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Legal Disclaimer</span>
+              <span class="mp-resource-link-detail">Results are guidance &mdash; always verify against the TDS</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <section class="mp-resource-card">
+      <h2>Other Calculators</h2>
+      <p class="mp-resource-desc">More mixing tools for hull, deck and topside work.</p>
+      <ul class="mp-resource-links">
+        <li>
+          <a href="clothcalc.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Fiberglass Cloth Saturation Calculator</span>
+              <span class="mp-resource-link-detail">Resin and cloth quantities by laminate schedule</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="mekpcalc.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">MEKP Calculator</span>
+              <span class="mp-resource-link-detail">Catalyst percentage and drops by batch temperature</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="awlgrip.html" class="mp-resource-link">
+            <span class="mp-resource-link-text">
+              <span class="mp-resource-link-title">Awlgrip Coatings Calculator</span>
+              <span class="mp-resource-link-detail">Base, converter and reducer ratios</span>
+            </span>
+            <svg class="mp-resource-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Feedback Button Section -->
+  <div class="mp-report-banner d-print-none">
+    <div>
+      <h2>Spot something off, or need another ratio?</h2>
+      <p>Tell us what to fix or add — every report is read by the team behind ChemCalc.</p>
+    </div>
+    <button id="feedbackBtn" class="mp-report-btn">Report an Issue / Suggest a Feature</button>
+  </div>
+  <!-- End Feedback Button Section -->
+
+</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
      onclick="openHelpModal()" and each page's #helpModal / helpContent
@@ -357,15 +515,16 @@
       <h3 class="modal-title">How to Use the Epifanes Polyurethane Calculator</h3>
       <p class="help-modal-pitch">Epifanes Poly-urethane is a two-component topcoat that requires precise mixing of base and hardener. This calculator gives you the exact amounts for your batch size, with thinning guidance.</p>
       <ol class="help-modal-steps">
-        <li><strong>Enter total volume needed</strong> &mdash; Input how much mixed paint or varnish you need.</li>
-        <li><strong>Select volume units</strong> &mdash; Choose mL, oz, L, qt, or gal.</li>
-        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of Component A (Base) and Component B (Hardener). Results update automatically.</li>
+        <li><strong>Select your product</strong> &mdash; Choose from the six Epifanes Poly-urethane products, standard or PU Speedcoat.</li>
+        <li><strong>Choose an application method</strong> &mdash; Brush/Roll or Spray. PU Speedcoat products are spray-only, so Brush/Roll is disabled for those.</li>
+        <li><strong>Enter total volume needed</strong> &mdash; Input how much mixed product you need, and select mL, oz, L, qt, or gal.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact base and hardener amounts, with thinning guidance. Results update automatically.</li>
       </ol>
       <ul class="help-modal-bullets">
-        <li><strong>Mix ratio:</strong> 2 parts base : 1 part hardener by volume.</li>
-        <li><strong>Pot life:</strong> Approximately 4 hours at 68&deg;F &mdash; mix only what you can use.</li>
-        <li><strong>Thinning:</strong> Add up to 10% Epifanes Thinner No. 2 for spray; 5% for brush/roll.</li>
-        <li><strong>Recoat window:</strong> 16&ndash;24 hours between coats at 68&deg;F.</li>
+        <li><strong>Mix ratio:</strong> Epifanes specifies 2 parts base : 1 part hardener by weight; this calculator gives you the volume equivalent.</li>
+        <li><strong>Pot life:</strong> Approximately 3 hours at 68&deg;F &mdash; mix only what you can use.</li>
+        <li><strong>Thinning:</strong> Standard line 0&ndash;15% brush/roll or 15&ndash;20% spray; PU Speedcoat 15&ndash;20% spray only. See the product's TDS for the exact thinner to use.</li>
+        <li><strong>Recoat window:</strong> 24&ndash;48 hours between coats at 68&deg;F.</li>
       </ul>
       <div class="help-modal-cta-box">
         <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
@@ -377,15 +536,16 @@
       <h3 class="modal-title">How to Use the Epifanes Polyurethane Calculator</h3>
       <p class="help-modal-pitch">Epifanes Poly-urethane is a two-component topcoat that requires precise mixing of base and hardener. This calculator gives you the exact amounts for your batch size, with thinning guidance.</p>
       <ol class="help-modal-steps">
-        <li><strong>Enter total volume needed</strong> &mdash; Input how much mixed paint or varnish you need.</li>
-        <li><strong>Select volume units</strong> &mdash; Choose mL, oz, L, qt, or gal.</li>
-        <li><strong>Read the result</strong> &mdash; The calculator shows exact amounts of Component A (Base) and Component B (Hardener). Results update automatically.</li>
+        <li><strong>Select your product</strong> &mdash; Choose from the six Epifanes Poly-urethane products, standard or PU Speedcoat.</li>
+        <li><strong>Choose an application method</strong> &mdash; Brush/Roll or Spray. PU Speedcoat products are spray-only, so Brush/Roll is disabled for those.</li>
+        <li><strong>Enter total volume needed</strong> &mdash; Input how much mixed product you need, and select mL, oz, L, qt, or gal.</li>
+        <li><strong>Read the result</strong> &mdash; The calculator shows exact base and hardener amounts, with thinning guidance. Results update automatically.</li>
       </ol>
       <ul class="help-modal-bullets">
-        <li><strong>Mix ratio:</strong> 2 parts base : 1 part hardener by volume.</li>
-        <li><strong>Pot life:</strong> Approximately 4 hours at 68&deg;F &mdash; mix only what you can use.</li>
-        <li><strong>Thinning:</strong> Add up to 10% Epifanes Thinner No. 2 for spray; 5% for brush/roll.</li>
-        <li><strong>Recoat window:</strong> 16&ndash;24 hours between coats at 68&deg;F.</li>
+        <li><strong>Mix ratio:</strong> Epifanes specifies 2 parts base : 1 part hardener by weight; this calculator gives you the volume equivalent.</li>
+        <li><strong>Pot life:</strong> Approximately 3 hours at 68&deg;F &mdash; mix only what you can use.</li>
+        <li><strong>Thinning:</strong> Standard line 0&ndash;15% brush/roll or 15&ndash;20% spray; PU Speedcoat 15&ndash;20% spray only. See the product's TDS for the exact thinner to use.</li>
+        <li><strong>Recoat window:</strong> 24&ndash;48 hours between coats at 68&deg;F.</li>
       </ul>
       <div class="help-modal-cta-box">
         <p>Upgrade to <strong>Pro</strong> to email your results and access the full Repair Estimator with paint cost tracking.</p>
@@ -397,15 +557,38 @@
       <h3 class="modal-title">Epifanes Calculator &mdash; Pro Quick Reference</h3>
       <ul class="help-modal-bullets">
         <li><strong>Mix ratio:</strong> 2 parts base : 1 part hardener by volume. Do not deviate.</li>
-        <li><strong>Pot life:</strong> ~4 hours at 68&deg;F. Shorter in heat, longer in cold.</li>
-        <li><strong>Spray:</strong> Add 10% Epifanes Thinner No. 2 for atomization.</li>
-        <li><strong>Brush/roll:</strong> Add 5% thinner. Apply thin coats for best leveling.</li>
-        <li><strong>Recoat window:</strong> 16&ndash;24 hours between coats at 68&deg;F.</li>
+        <li><strong>Pot life:</strong> ~3 hours at 68&deg;F. Shorter in heat, longer in cold.</li>
+        <li><strong>Spray:</strong> Standard line 15&ndash;20% with Epifanes Poly-urethane Spray Thinner (Speedcoat recommended instead); PU Speedcoat 15&ndash;20% with Epifanes PU Speedcoat Spraythinner.</li>
+        <li><strong>Brush/roll:</strong> 0&ndash;15% depending on coat and substrate, with Epifanes Poly-urethane Brush Thinner or Epifanes PU Slow Reducer. See the TDS.</li>
+        <li><strong>Recoat window:</strong> 24&ndash;48 hours between coats at 68&deg;F.</li>
         <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
       </ul>
     </div>
   </div>
-</div><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</div>
+<!-- ===== EPIFANES CALCULATOR FEEDBACK MODAL ===== -->
+<div class="modal-overlay" id="feedbackModal" style="display:none;" onclick="overlayClose(event,'feedbackModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('feedbackModal')">&#10005;</button>
+    <h3 class="modal-title">Report an Issue / Suggest a Feature</h3>
+    <p class="help-modal-pitch">Every report is read by the team behind ChemCalc.</p>
+    <form id="feedbackForm">
+      <label for="feedbackType" class="est-label">Type</label>
+      <select id="feedbackType" class="mp-select">
+        <option value="Bug Report">Bug Report</option>
+        <option value="Feature Request">Feature Request</option>
+        <option value="Other">Other</option>
+      </select>
+      <label for="feedbackDescription" class="est-label mt-3">Description</label>
+      <textarea id="feedbackDescription" class="mp-input" rows="5" placeholder="What happened, or what would you like to see?" required></textarea>
+      <label for="feedbackReplyEmail" class="est-label mt-3">Your email (optional, if you'd like a reply)</label>
+      <input type="email" id="feedbackReplyEmail" class="mp-input" placeholder="you@example.com">
+      <p id="feedbackMsg" style="display:none;font-size:0.85rem;margin-top:8px;"></p>
+      <button type="submit" class="mp-print-btn" id="feedbackSubmitBtn" style="margin-top:12px;">Send Feedback</button>
+    </form>
+  </div>
+</div>
+<!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Donate — top of the bottom-right floating-action cluster (with the
      BoatMD chat toggle from chatbot_styles.css and the page Help button
      from Library/HelpButton.lbi below it; see --chrome-fab-right and
@@ -467,10 +650,6 @@
   </div>
 </footer>
 <!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
-  <script>
-  // Simple year update for footer
-  document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -482,7 +661,7 @@
   <script src="epifanesScript.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      injectEmailCaptureUI('epifanesEmailCapture', 'Epifanes Polyurethane Mix', ['resultBase', 'resultHardener', 'resultThinner']);
+      injectEmailCaptureUI('epifanesEmailCapture', 'Epifanes Polyurethane Mix', ['epifanesEmailBase', 'epifanesEmailHardener', 'epifanesEmailThinner']);
     });
   </script>
   <script src="main.js"></script>

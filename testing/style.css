@@ -1637,6 +1637,79 @@ main.awlgrip-app{
 }
 
 /* ============================================================
+   EPIFANES PAGE-SPECIFIC STYLES
+   Added 2026-09-19 for the Epifanes Polyurethane Calculator's visual/
+   DOM rebuild onto the shared .mp-* component vocabulary already
+   established by the CLOTHCALC/MEKPCALC/AWLGRIPCALC sections above --
+   see those for the full history of that system. Like awlgrip.html,
+   epifanespoly.html had no page-scoped stylesheet before this (plain
+   Bootstrap .card markup) -- this section is new, not a merge of a
+   pre-existing file. The .mp-* vocabulary already covers nearly
+   everything this page needs; only a handful of rules are genuinely
+   new here.
+   ============================================================ */
+
+/* main.epifanes-app (tag+class) rather than a bare .epifanes-app --
+   same cascade-order fix as main.awlgrip-app/main.cloth-app/
+   main.mekp-app above: style.css's sitewide .container{background-
+   color:#2c2c2e} has the same single-class specificity and loads
+   later in this file, so it would otherwise win on cascade order
+   alone. Uses the same #2c2c2e dark background the other three
+   calculator pages deliberately share. */
+main.epifanes-app{
+  font-family:var(--chrome-font-sans);
+  color:var(--chrome-ink-900);
+  background:#2c2c2e;
+}
+@media (max-width:767.98px){
+  /* Bottom clearance from the fixed bottom-right floating-action
+     cluster -- same mechanic as main.awlgrip-app/main.cloth-app/
+     main.mekp-app above (single-column page, cluster's fixed
+     viewport band passes over the report banner while scrolling).
+     Same values carried over on the strength of the other three
+     calculator pages sharing the same single-column, report-banner-
+     at-bottom structure; re-measure if this page's real content
+     height ever diverges enough to matter. */
+  main.epifanes-app{padding-bottom:17.5rem;}
+}
+@media (min-width:768px) and (max-width:991.98px){
+  main.epifanes-app{padding-bottom:5rem;}
+}
+.epifanes-app h1,.epifanes-app h2,.epifanes-app h3{font-family:var(--chrome-font-sans);}
+
+/* ---------- Field cards ----------
+   3 cards (Product Line, Application Method, Total Volume and Units),
+   no natural 2-up pairing -- same reasoning as .awlgrip-fields' own
+   3-card case above: stack all full-width rather than leave an empty
+   half-row next to one of them. */
+.epifanes-fields{display:grid;gap:1rem;}
+
+/* Total Volume field card's own label -- same shared field-label
+   pattern as clothcalc.css's .cloth-input-label/awlgrip.css's
+   .awlgrip-input-label (light .mp-field-card background needs a
+   darker label than .est-label's default #ccc, which is meant for
+   dark surfaces). */
+.epifanes-input-label{
+  display:block;font-size:.72rem;font-weight:600;
+  color:var(--chrome-ink-600);margin:0 0 .3rem;
+}
+
+/* ---------- Product/method-driven note callouts (PU Speedcoat
+   spray-only / standard-product-spray guidance) -- same visual
+   treatment as awlgrip.html's .awlgrip-note: a light, always-visible-
+   while-shown callout box, not a Bootstrap .alert. ---------- */
+.epifanes-note{
+  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
+  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
+  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
+}
+
+.epifanes-email-capture{margin-top:1rem;}
+/* email-results.js injects its own inline-styled light box into this
+   container -- left unstyled here on purpose so we don't fight its
+   inline styles (same convention as .awlgrip-email-capture above). */
+
+/* ============================================================
    END PAGE-SPECIFIC STYLES -- everything below this point was
    already in style.css before the 2026-09-14 consolidation.
    ============================================================ */
