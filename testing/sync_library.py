@@ -542,6 +542,9 @@ def print_library_report(report: dict, check_only: bool) -> bool:
     mojibake_count = len(report["mojibake"])
     written_count = len(report["written"])
 
+    if check_only and drift_count > 0:
+        had_errors = True
+
     print(
         f"{verb_written}: {drift_count} drifted block(s)"
         + ("" if check_only else f" ({written_count} written)")
@@ -572,6 +575,9 @@ def print_head_common_report(report: dict, check_only: bool) -> bool:
     print(f"Already in sync: {len(report['unchanged'])} page(s)")
 
     had_errors = False
+    if check_only and len(report["updated"]) > 0:
+        had_errors = True
+
     if report["missing"]:
         had_errors = True
         print(f"\nERROR: {len(report['missing'])} page(s) could not be synced:", file=sys.stderr)
