@@ -602,8 +602,11 @@
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────
-  // IMPORTANT: resolveSession() starts IMMEDIATELY at script parse time
-  // (only needs _sb which loaded before this script in <head>).
+  // IMPORTANT: resolveSession() starts IMMEDIATELY at script parse time.
+  // It does NOT assume _sb has already loaded -- _doResolveSession() polls
+  // for it (bounded wait, ~10s; see line 14 and _doResolveSession() below),
+  // since global-account-modal.js can execute before supabase-client.js
+  // finishes loading.
   // This gives the async profile fetch maximum time to complete before
   // the user can interact with the page.
   // inject() still waits for DOMContentLoaded because it needs the DOM.
