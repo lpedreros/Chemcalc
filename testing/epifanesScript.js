@@ -175,8 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Deliberately advisory rather than a calculated volume: the real TDS
   // gives ranges that vary by coat and substrate, not one number per
   // product, so a single computed figure would be invented precision.
-  // Placeholder text is Leo's own wording, used verbatim -- final
-  // copy is being written separately.
   function thinnerAdvisory(productType, methodType) {
     if (speedcoatProducts.indexOf(productType) !== -1) {
       return "Thin 15-20%. Use Epifanes PU Speedcoat Spraythinner - a different product from the standard line's spray thinner.";
