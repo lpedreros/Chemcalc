@@ -22,3 +22,14 @@
 <FilesMatch "\.(png|jpg|jpeg|gif|svg|ico|webp)$">
   Header set Cache-Control "public, max-age=2592000"
 </FilesMatch>
+
+# ── Deny Dreamweaver Bookkeeping Files ─────────────────────────
+# _notes/ directories (Library/_notes/, images/_notes/) hold
+# Dreamweaver's dwsync.xml files, which record the origin server's
+# path and IP. They currently return 404 only because of the host's
+# own default behavior for this path, not anything in this repo --
+# that protection would not follow the files to a different host.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule "(^|/)_notes(/|$)" - [F,L]
+</IfModule>
