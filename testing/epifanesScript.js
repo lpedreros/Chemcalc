@@ -60,6 +60,19 @@ document.addEventListener("DOMContentLoaded", () => {
     gallons: 1 / 3785.41,
   };
 
+  // Human-readable unit labels for display/email only -- toCcs/fromCcs
+  // keys stay the lookup keys and analytics unit codes. "ounces" reads
+  // "fl oz", not "Ounces": these are fluid ounces (the page's own
+  // <option> reads "Fluid Ounces (US fl oz)", and the analytics comment
+  // below states "ounces" maps to FLOZ, not the mass OZ).
+  const unitLabels = {
+    ccs: "mL (cc)",
+    ounces: "fl oz",
+    liters: "Liters",
+    quarts: "Quarts",
+    gallons: "Gallons"
+  };
+
   // Standard line supports Brush/Roll and Spray; PU Speedcoat is
   // spray-only by manufacturer design. Colour products (both lines) get
   // the "(colour)" result label instead of "(clear)".
@@ -249,8 +262,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const baseVolumeOutput = baseVolumeCcs * (fromCcs[unit] || 0);
     const hardenerVolumeOutput = hardenerVolumeCcs * (fromCcs[unit] || 0);
 
-    const baseValueStr = formatNumber(baseVolumeOutput) + " " + unit;
-    const hardenerValueStr = formatNumber(hardenerVolumeOutput) + " " + unit;
+    const baseValueStr = formatNumber(baseVolumeOutput) + " " + (unitLabels[unit] || unit);
+    const hardenerValueStr = formatNumber(hardenerVolumeOutput) + " " + (unitLabels[unit] || unit);
 
     setResults(baseLabel, baseValueStr, hardenerLabel, hardenerValueStr);
 
