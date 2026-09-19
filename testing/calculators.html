@@ -102,9 +102,13 @@
 
      DO NOT put page-specific meta (title, description, OG/Twitter,
      canonical, JSON-LD schema, robots) or page-only assets (calculator
-     CSS/JS, print_style_fix_v4.css, qrcode.min.js,
-     affiliate-click-tracker.js, the Estimator's own scripts) here --
-     those stay outside the markers, per page.
+     CSS/JS, qrcode.min.js, affiliate-click-tracker.js, the Estimator's
+     own scripts) here -- those stay outside the markers, per page.
+     print_style_fix_v4.css and chatbot_styles.css used to belong on
+     this list too, but both are gone as of 2026-09-16 (commit
+     6529dd1) -- folded into style.css, whose one shared link is
+     already above in this file, so neither needs a link of its own
+     anymore, page-specific or otherwise.
 
      DELIBERATELY NOT included here, even though every other page
      shares them, because they are not actually safe to force onto
