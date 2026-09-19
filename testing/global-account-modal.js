@@ -10,7 +10,9 @@
 // because estimate.js and materials_library.js provide the required functions.
 //
 // Usage: <script src="/global-account-modal.js"></script>
-//        (load AFTER supabase-client.js on all pages)
+//        Tolerates loading either before or after supabase-client.js --
+//        resolveSession() polls for _sb to appear (bounded wait, ~10s)
+//        instead of assuming it is already there.
 (function () {
   'use strict';
 
@@ -128,6 +130,19 @@
     _sessionReady = _doResolveSession();
   }
   async function _doResolveSession() {
+    // _sb is a top-level `const` in supabase-client.js -- a lexical
+    // binding, never a window property, so `window._sb` is always
+    // undefined. On 15 of 20 pages this script loads in <head> BEFORE
+    // supabase-client.js, so _sb genuinely does not exist yet here.
+    // Poll for it instead of giving up immediately; bounded so a page
+    // that never loads supabase-client.js still gives up cleanly.
+    var waitedMs = 0;
+    var pollMs = 50;
+    var maxWaitMs = 10000;
+    while (!(typeof _sb !== 'undefined' && _sb) && waitedMs < maxWaitMs) {
+      await new Promise(function (resolve) { setTimeout(resolve, pollMs); });
+      waitedMs += pollMs;
+    }
     if (typeof _sb === 'undefined' || !_sb) return;
     try {
       var sessionResult = await _sb.auth.getSession();
