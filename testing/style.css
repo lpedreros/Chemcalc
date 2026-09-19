@@ -5085,6 +5085,26 @@ body,
   align-items: center;
   gap: 1.1rem;
 }
+@media (max-width: 767.98px) {
+  /* Bottom clearance from the fixed bottom-right floating-action cluster
+     (Donate/BoatMD chat/Help) -- same mechanism already applied to
+     main.cloth-app/main.mekp-app's mobile tier above: the footer is the
+     last element on every page, so scrolled to the true bottom, the
+     cluster's fixed band covers the last line(s) of its brand/copyright
+     text the same way it covered those mains' own last content before
+     their padding-bottom fix. Confirmed identically on epifanespoly.html
+     and awlgrip.html at 375x812, scrolled to the actual bottom of the
+     page (not just the outer container) -- via real getBoundingClientRect
+     overlap checks against all three cluster buttons, not a single
+     screenshot. Started from those mains' 17.5rem, but live-measured a
+     real 5.5x19px overlap between the copyright line and the Help button
+     on epifanespoly.html at that value (awlgrip.html was already clean,
+     by a ~2.5px margin -- too close to trust). 20rem re-verified clean
+     on both pages, plus mekpcalc.html as a third, with zero overlap
+     against all three buttons; re-verify live if this cluster's own
+     size/position ever changes. */
+  .site-footer-inner { padding-bottom: 20rem; }
+}
 @media (min-width: 992px) {
   .site-footer-inner {
     flex-direction: row;
