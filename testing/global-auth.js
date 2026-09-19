@@ -93,7 +93,7 @@
       autofillEmailFields(session.user.email);
     } else {
       updateIndicator(null, null);
-      sessionStorage.setItem('chemcalc_user_tier', 'free');
+      sessionStorage.setItem('chemcalc_user_tier', 'guest');
     }
 
     // Listen for login / logout events
@@ -105,7 +105,7 @@
         sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
       } else {
         updateIndicator(null, null);
-        sessionStorage.setItem('chemcalc_user_tier', 'free');
+        sessionStorage.setItem('chemcalc_user_tier', 'guest');
       }
     });
   }
