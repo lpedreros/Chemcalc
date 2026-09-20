@@ -437,6 +437,42 @@ create policy "Authenticated users can read"
   on public.affiliate_clicks for select
   using (auth.uid() is not null);
 
+-- ── 15. USER_FAVORITES ───────────────────────────────────────
+-- Per-account favoriting of affiliate_materials rows, logged-in only.
+-- Separate from affiliate_materials.is_favorite (the sitewide
+-- editorial flag Leo sets, rendered as a non-clickable star for every
+-- visitor) -- that stays untouched. Logged-out favoriting stays in
+-- the client's localStorage; no migration of prior localStorage
+-- favorites into this table (2026-09-20, Leo's call -- test data only).
+create table if not exists public.user_favorites (
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  material_id uuid not null references public.affiliate_materials(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  primary key (user_id, material_id)
+);
+
+create index if not exists user_favorites_user_id_idx on public.user_favorites (user_id);
+
+alter table public.user_favorites enable row level security;
+
+-- (select auth.uid()) wrapping (not bare auth.uid()) avoids a known
+-- non-blocking performance-advisor WARN -- unlike the older, unwrapped
+-- auth.uid() calls elsewhere in this file.
+create policy "Users can view own favorites"
+  on public.user_favorites for select
+  using ((select auth.uid()) = user_id);
+
+create policy "Users can insert own favorites"
+  on public.user_favorites for insert
+  with check ((select auth.uid()) = user_id);
+
+create policy "Users can delete own favorites"
+  on public.user_favorites for delete
+  using ((select auth.uid()) = user_id);
+
+-- No UPDATE policy, by design -- a favorite is created or deleted,
+-- never edited.
+
 -- ============================================================
 -- DONE. After running this:
 -- 1. Go to Authentication → Providers → enable Email

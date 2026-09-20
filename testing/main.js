@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             try {
                 const { data, error } = await _sb
                     .from('affiliate_materials')
-                    .select('name, url, section, tags, is_favorite')
+                    .select('id, name, url, section, tags, is_favorite')
                     .order('section', { ascending: true })
                     .order('name', { ascending: true });
 
@@ -86,8 +86,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const url = item.url ? escapeHtml(item.url) : "#";
                 const name = escapeHtml(item.name || "Unnamed Item");
-                
-                html += `    <li data-tags="${escapeHtml(tagsStr)}"><a href="${url}" target="_blank" rel="noopener">${name}</a></li>\n`;
+                const materialId = escapeHtml(item.id);
+
+                html += `    <li data-tags="${escapeHtml(tagsStr)}" data-material-id="${materialId}"><a href="${url}" target="_blank" rel="noopener">${name}</a></li>\n`;
             });
             
             html += `  </ul>\n</div>\n`;
@@ -261,6 +262,75 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Per-account favorites: logged-in users read/write public.user_favorites
+    // (scoped by RLS), logged-out users (and items with no data-material-id,
+    // i.e. the loadFallbackProductList() path) keep using localStorage exactly
+    // as before. This is unrelated to affiliate_materials.is_favorite (the
+    // "favorite" tag / isPreFavorite below) -- that sitewide editorial star
+    // is untouched.
+    let favoritesAuthListenerBound = false;
+
+    async function getCurrentSession() {
+        if (typeof _sb === 'undefined' || _sb === null) return null;
+        try {
+            const { data, error } = await _sb.auth.getSession();
+            if (error) {
+                console.warn("Error checking session for favorites:", error.message);
+                return null;
+            }
+            return data && data.session ? data.session : null;
+        } catch (err) {
+            console.warn("Exception checking session for favorites:", err);
+            return null;
+        }
+    }
+
+    // Logged-out (and fallback-path-item) source of truth: localStorage,
+    // matched by href -- same read this function replaces used to do inline.
+    // Also used to revert visual state on logout, so it must set BOTH
+    // directions (★ and ☆), not only add stars for matches.
+    function syncFavoriteStarsFromLocalStorage() {
+        const savedFavorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
+        const listItems = productListContainer.querySelectorAll(".content ul li");
+        listItems.forEach(item => {
+            const star = item.querySelector(".star-toggle:not(.my-favorite)");
+            if (!star) return;
+            const linkElem = item.querySelector("a");
+            const isFavorited = !!(linkElem && savedFavorites.includes(linkElem.href));
+            star.classList.toggle("user-favorite", isFavorited);
+            star.innerHTML = isFavorited ? "★" : "☆";
+        });
+    }
+
+    // Logged-in source of truth for items WITH a data-material-id: the
+    // user_favorites table (plain select -- RLS already scopes it to userId).
+    // Items with no data-material-id (fallback-path) are left untouched here;
+    // they stay governed by localStorage regardless of login state.
+    async function syncFavoriteStarsFromTable(userId) {
+        let favoritedIds = new Set();
+        try {
+            const { data, error } = await _sb.from('user_favorites').select('material_id');
+            if (error) {
+                console.warn("Error fetching user_favorites, treating as no favorites:", error.message);
+            } else if (data) {
+                favoritedIds = new Set(data.map(row => row.material_id));
+            }
+        } catch (err) {
+            console.warn("Exception fetching user_favorites, treating as no favorites:", err);
+        }
+
+        const listItems = productListContainer.querySelectorAll(".content ul li");
+        listItems.forEach(item => {
+            const materialId = item.getAttribute("data-material-id");
+            if (!materialId) return; // fallback-path item: stays on localStorage
+            const star = item.querySelector(".star-toggle:not(.my-favorite)");
+            if (!star) return;
+            const isFavorited = favoritedIds.has(materialId);
+            star.classList.toggle("user-favorite", isFavorited);
+            star.innerHTML = isFavorited ? "★" : "☆";
+        });
+    }
+
     function initializeFavorites() {
         const listItems = productListContainer.querySelectorAll(".content ul li");
         listItems.forEach(item => {
@@ -275,23 +345,44 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 star.innerHTML = "☆"; // Empty star for others
             }
-            
+
             // Insert star before the link/text content of the li
             const firstChild = item.firstChild;
             item.insertBefore(star, firstChild);
 
             // Add click listener only if it's not a pre-defined favorite
             if (!isPreFavorite) {
-                star.addEventListener("click", function(e) {
+                star.addEventListener("click", async function(e) {
                     e.stopPropagation(); // Prevent li click if any
-                    this.classList.toggle("user-favorite");
-                    this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
-                    
+
+                    const materialId = item.getAttribute("data-material-id");
                     const linkElem = item.querySelector("a");
-                    if (linkElem) {
-                        const link = linkElem.href;
+                    const link = linkElem ? linkElem.href : null;
+                    const session = await getCurrentSession();
+
+                    // Optimistic UI update.
+                    const nowFavorited = !this.classList.contains("user-favorite");
+                    this.classList.toggle("user-favorite");
+                    this.innerHTML = nowFavorited ? "★" : "☆";
+
+                    if (session && materialId) {
+                        // Logged in, table-backed item.
+                        const userId = session.user.id;
+                        const { error } = nowFavorited
+                            ? await _sb.from('user_favorites').insert({ user_id: userId, material_id: materialId })
+                            : await _sb.from('user_favorites').delete().eq('user_id', userId).eq('material_id', materialId);
+
+                        if (error) {
+                            console.warn("Failed to save favorite:", error.message);
+                            // Revert the optimistic update.
+                            this.classList.toggle("user-favorite");
+                            this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
+                        }
+                    } else if (link) {
+                        // Logged out, or logged in with no data-material-id
+                        // (fallback-path item): localStorage, unchanged.
                         let favorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
-                        if (this.classList.contains("user-favorite")) {
+                        if (nowFavorited) {
                             if (!favorites.includes(link)) favorites.push(link);
                         } else {
                             favorites = favorites.filter(fav => fav !== link);
@@ -302,19 +393,31 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        // Load saved user favorites from localStorage
-        const savedFavorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
-        if (savedFavorites.length > 0) {
-            listItems.forEach(item => {
-                const linkElem = item.querySelector("a");
-                if (linkElem && savedFavorites.includes(linkElem.href)) {
-                    const star = item.querySelector(".star-toggle:not(.my-favorite)"); // Only target non-pre-defined favorites
-                    if (star) {
-                        star.classList.add("user-favorite");
-                        star.innerHTML = "★";
-                    }
+        // Set initial visual state: localStorage first (covers logged-out
+        // and fallback-path items), then override with the table for
+        // whichever session is currently resolved (covers data-material-id
+        // items for a logged-in user).
+        syncFavoriteStarsFromLocalStorage();
+
+        if (typeof _sb !== 'undefined' && _sb !== null) {
+            getCurrentSession().then(session => {
+                if (session) {
+                    syncFavoriteStarsFromTable(session.user.id);
                 }
             });
+
+            // Re-sync visual state only (no DOM rebuild, no re-binding) on
+            // login/logout, without a page reload.
+            if (!favoritesAuthListenerBound) {
+                favoritesAuthListenerBound = true;
+                _sb.auth.onAuthStateChange((event, session) => {
+                    if (session) {
+                        syncFavoriteStarsFromTable(session.user.id);
+                    } else {
+                        syncFavoriteStarsFromLocalStorage();
+                    }
+                });
+            }
         }
     }
 
