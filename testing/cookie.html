@@ -35,15 +35,18 @@
 <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-<!-- HEAD-COMMON:START -->
+<!-- #BeginLibraryItem "/Library/head-common.lbi" -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- ============================================================
      Common head resources -- loaded on every real page. Kept in sync
-     by sync_head.py (run from \testing\): it reads this file and
-     replaces everything between the HEAD-COMMON:START/END markers on
-     each listed page. To update sitewide: edit ONLY this file, then
-     re-run `python sync_head.py`. Never hand-edit the marked block on
-     an individual page -- the next sync will overwrite it.
+     by sync_library.py's marker-based auto-discovery (run from
+     \testing\): it reads this file and replaces everything between
+     the #BeginLibraryItem "/Library/head-common.lbi" / #EndLibraryItem
+     markers on every page that has them -- the same mechanism as
+     every other .lbi (nav.lbi, Footer.lbi, etc.), no separate page
+     list to maintain. To update sitewide: edit ONLY this file, then
+     re-run `python3 sync_library.py`. Never hand-edit the marked
+     block on an individual page -- the next sync will overwrite it.
 
      DO NOT put page-specific meta (title, description, OG/Twitter,
      canonical, JSON-LD schema, robots) or page-only assets (calculator
@@ -121,7 +124,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/supabase-client.js"></script>
 <script src="/global-auth.js"></script>
-<!-- HEAD-COMMON:END -->
+<!-- #EndLibraryItem -->
 <script src="/global-account-modal.js?v=1"></script> <!-- page-specific: fixes a dead Log In link, see head-common.lbi's own note -->
 </head>
 <body>

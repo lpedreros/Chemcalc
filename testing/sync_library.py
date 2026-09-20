@@ -3,34 +3,31 @@
 sync_library.py -- keep every Dreamweaver library item in sync across
 every real ChemCalc page, without Dreamweaver.
 
-WHY THIS EXISTS: six shared components (nav, icons, global-scripts,
-Chatbot, Footer, HelpButton) are updated sitewide today by Dreamweaver's
-Library feature. When the Creative Cloud subscription that Dreamweaver
-comes with lapses, the alternative is a hand edit of every page that
-uses each one, with nothing checking that none were missed. This script
-replaces that update path.
+WHY THIS EXISTS: seven shared components (nav, icons, global-scripts,
+Chatbot, Footer, HelpButton, head-common) are updated sitewide today by
+Dreamweaver's Library feature. When the Creative Cloud subscription that
+Dreamweaver comes with lapses, the alternative is a hand edit of every
+page that uses each one, with nothing checking that none were missed.
+This script replaces that update path.
 
-What it does, in two independent parts:
+What it does: scans every testing/*.html page for Dreamweaver's own
+markers:
+    <!-- #BeginLibraryItem "/Library/X.lbi" --> ... <!-- #EndLibraryItem -->
+and, for each pair found, compares the block against Library/X.lbi. The
+opening marker names its own source file, so both the page list and the
+library-item list are DISCOVERED from the markers -- there is no
+hand-maintained list to fall out of date. Nothing about the markers
+changes, so Dreamweaver keeps working alongside this script --
+deliberately: the tool can be proven while Dreamweaver is still
+available as a fallback.
 
-  1. Dreamweaver library items. Scans every testing/*.html page for
-     Dreamweaver's own markers:
-         <!-- #BeginLibraryItem "/Library/X.lbi" --> ... <!-- #EndLibraryItem -->
-     and, for each pair found, compares the block against Library/X.lbi.
-     The opening marker names its own source file, so both the page list
-     and the library-item list are DISCOVERED from the markers -- there
-     is no hand-maintained list to fall out of date (an improvement on
-     sync_head.py's PAGES constant, which the HEAD-COMMON block below
-     still needs, since it predates marker adoption and isn't wrapped in
-     one). Nothing about the markers changes, so Dreamweaver keeps
-     working alongside this script -- deliberately: the tool can be
-     proven while Dreamweaver is still available as a fallback.
-
-  2. The HEAD-COMMON block. Unchanged in behaviour from sync_head.py:
-     reads Library/head-common.lbi and replaces whatever sits between
-         <!-- HEAD-COMMON:START --> ... <!-- HEAD-COMMON:END -->
-     on each page in the hand-maintained PAGES list below. head-common.lbi
-     is referenced by zero Dreamweaver markers -- it is driven entirely
-     by this pair of markers instead -- so it keeps needing its own list.
+head-common.lbi (the shared <head> block: manifest, favicon, fonts,
+style.css, analytics, Supabase) is just another library item here -- it
+used to be driven by a separate, hand-maintained PAGES list and its own
+HEAD-COMMON:START/END markers, a mechanism inherited unchanged from this
+script's predecessor, sync_head.py, which predated marker adoption. That
+was retired in favor of ordinary #BeginLibraryItem markers, so it now
+discovers its pages the same way every other library item does.
 
 Known drift, and how this script treats it (read why before changing any
 of this -- each rule exists because of one specific, verified cause):
@@ -62,16 +59,10 @@ Usage (from \\testing\\):
 
 To change a library item sitewide: edit the .lbi in Library/ only, then
 re-run this script. Never hand-edit the marked region on an individual
-page -- the next run overwrites it (for the Dreamweaver items) or, for
-HEAD-COMMON, is simply undone the next time anyone runs this script.
-
-Adding a new HEAD-COMMON page: add its filename to PAGES below, then
-wrap the block you want synced in the two HEAD-COMMON marker comments
-(on its own, once) before running this script -- it errors on any listed
-page missing the markers rather than silently skipping it, by design.
-Adding a new Dreamweaver library item needs no change here at all: wrap
-the content in #BeginLibraryItem/#EndLibraryItem markers naming its .lbi
-and this script finds it on the next run.
+page -- the next run overwrites it. Adding a new library item, or a new
+page for an existing one, needs no change here at all: wrap the content
+in #BeginLibraryItem/#EndLibraryItem markers naming its .lbi and this
+script finds it on the next run.
 """
 
 import argparse
@@ -82,39 +73,8 @@ from typing import NamedTuple, Optional
 
 ROOT = Path(__file__).resolve().parent
 LIBRARY_DIR = ROOT / "Library"
-HEAD_COMMON_PATH = LIBRARY_DIR / "head-common.lbi"
 
 ENCODING = "utf-8"
-
-# ── HEAD-COMMON block (unchanged from sync_head.py) ────────────────────
-HEAD_START_MARKER = "<!-- HEAD-COMMON:START -->"
-HEAD_END_MARKER = "<!-- HEAD-COMMON:END -->"
-
-# Every real page that carries the shared head block. products.html is a
-# raw content fragment, not a page, and is deliberately excluded. This
-# list is NOT used for the Dreamweaver library items below -- those
-# discover their own pages from the markers themselves.
-PAGES = [
-    "about.html",
-    "awlgrip.html",
-    "awlgrip-safety.html",
-    "calculators.html",
-    "clothcalc.html",
-    "contact.html",
-    "cookie.html",
-    "epifanespoly.html",
-    "estimate.html",
-    "history.html",
-    "index.html",
-    "kits.html",
-    "legal.html",
-    "mekp-safety.html",
-    "mekpcalc.html",
-    "privacy.html",
-    "services.html",
-    "terms.html",
-    "trello-setup.html",
-]
 
 # ── Dreamweaver library markers ─────────────────────────────────────────
 # Parsed by content, not by line: these frequently sit on the same line
@@ -388,13 +348,11 @@ def sync_dreamweaver_items(check_only: bool) -> dict:
                 written.append(block)
             write_text(page_path, text)
 
-    # Orphan .lbi files: present in Library/, referenced by no marker,
-    # and not head-common.lbi (which is intentionally marker-free --
-    # see the module docstring).
+    # Orphan .lbi files: present in Library/, referenced by no marker.
     all_lbi_files = sorted(p.name for p in LIBRARY_DIR.glob("*.lbi"))
     orphans = [
         name for name in all_lbi_files
-        if name not in referenced_lbi_names and name != HEAD_COMMON_PATH.name
+        if name not in referenced_lbi_names
     ]
 
     return {
@@ -410,57 +368,6 @@ def sync_dreamweaver_items(check_only: bool) -> dict:
         "orphans": orphans,
         "referenced_lbi_names": sorted(referenced_lbi_names),
     }
-
-
-def sync_head_common_page(page_path: Path, head_common: str, check_only: bool) -> str:
-    """Identical logic to sync_head.py's sync_page(). Returns one of:
-    'updated', 'unchanged', 'missing-markers'."""
-    original = read_text(page_path)
-
-    start_idx = original.find(HEAD_START_MARKER)
-    end_idx = original.find(HEAD_END_MARKER)
-
-    if start_idx == -1 or end_idx == -1 or end_idx < start_idx:
-        return "missing-markers"
-
-    before = original[: start_idx + len(HEAD_START_MARKER)]
-    after = original[end_idx:]  # starts at END_MARKER itself
-
-    new_content = before + "\n" + head_common.rstrip("\n") + "\n" + after
-
-    if new_content == original:
-        return "unchanged"
-
-    if not check_only:
-        write_text(page_path, new_content)
-    return "updated"
-
-
-def sync_head_common(check_only: bool) -> dict:
-    """Unchanged behaviour from sync_head.py, reimplemented here so this
-    one script covers both jobs. Returns a report dict."""
-    if not HEAD_COMMON_PATH.exists():
-        return {"fatal": f"{HEAD_COMMON_PATH} not found."}
-
-    head_common = read_text(HEAD_COMMON_PATH)
-
-    updated, unchanged, missing = [], [], []
-
-    for name in PAGES:
-        page_path = ROOT / name
-        if not page_path.exists():
-            missing.append((name, "file not found"))
-            continue
-
-        result = sync_head_common_page(page_path, head_common, check_only)
-        if result == "updated":
-            updated.append(name)
-        elif result == "unchanged":
-            unchanged.append(name)
-        else:
-            missing.append((name, "HEAD-COMMON:START/END markers not found"))
-
-    return {"updated": updated, "unchanged": unchanged, "missing": missing}
 
 
 def print_library_report(report: dict, check_only: bool) -> bool:
@@ -556,40 +463,6 @@ def print_library_report(report: dict, check_only: bool) -> bool:
     return had_errors
 
 
-def print_head_common_report(report: dict, check_only: bool) -> bool:
-    """Prints the HEAD-COMMON section, in the same shape sync_head.py
-    printed it. Returns True if it hit a fatal or missing-markers error."""
-    print("=" * 72)
-    print("HEAD-COMMON BLOCK")
-    print("=" * 72)
-
-    if "fatal" in report:
-        print(f"ERROR: {report['fatal']}", file=sys.stderr)
-        return True
-
-    verb = "Would update" if check_only else "Updated"
-    print(f"{verb}: {len(report['updated'])} page(s)")
-    for name in report["updated"]:
-        print(f"  - {name}")
-
-    print(f"Already in sync: {len(report['unchanged'])} page(s)")
-
-    had_errors = False
-    if check_only and len(report["updated"]) > 0:
-        had_errors = True
-
-    if report["missing"]:
-        had_errors = True
-        print(f"\nERROR: {len(report['missing'])} page(s) could not be synced:", file=sys.stderr)
-        for name, reason in report["missing"]:
-            print(f"  - {name}: {reason}", file=sys.stderr)
-    else:
-        print("\nAll listed pages are in sync with Library/head-common.lbi.")
-
-    print()
-    return had_errors
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -600,12 +473,10 @@ def main() -> int:
     args = parser.parse_args()
 
     library_report = sync_dreamweaver_items(args.check)
-    head_common_report = sync_head_common(args.check)
 
     had_library_errors = print_library_report(library_report, args.check)
-    had_head_errors = print_head_common_report(head_common_report, args.check)
 
-    if had_library_errors or had_head_errors:
+    if had_library_errors:
         return 1
     return 0
 
