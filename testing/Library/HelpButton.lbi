@@ -7,4 +7,5 @@
 <!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
 <button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">
   <span aria-hidden="true">?</span>
+  <span class="fab-help-label">Help</span>
 </button>
