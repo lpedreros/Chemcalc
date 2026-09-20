@@ -617,7 +617,9 @@
 <!-- Pattern: data-target="#pageNameHelpModal" — see estimate.html for reference -->
 <button class="help-float-btn d-print-none" id="helpFloatBtn" onclick="openHelpModal()" title="How to use this page">
   <span aria-hidden="true">?</span>
-</button><!-- #EndLibraryItem --><!-- ===== MEKP CALCULATOR HELP MODAL ===== -->
+  <span class="fab-help-label">Help</span>
+</button>
+<!-- #EndLibraryItem --><!-- ===== MEKP CALCULATOR HELP MODAL ===== -->
 <div class="modal-overlay" id="helpModal" style="display:none;" onclick="overlayClose(event,'helpModal')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('helpModal')">&#10005;</button>
