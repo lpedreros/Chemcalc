@@ -4292,83 +4292,13 @@ body,
 }
 
 /* ============================================================
-   FLOATING HELP BUTTON & HELP MODAL
-   Used on estimate.html and kits.html
+   HELP MODAL CONTENT
+   Used on estimate.html and kits.html. The Help button's own
+   CHROME (position/size/hover-expand/focus-visible/print) now
+   lives in the "FLOATING-ACTION CLUSTER -- SHARED CHROME" section
+   further down this file -- see .help-float-btn there. Only the
+   modal's own content styling remains below.
    ============================================================ */
-.help-float-btn {
-  /* Bottom-right floating-action cluster: Help sits closest to the screen
-     edge, with the BoatMD chat toggle (chatbot_styles.css) and Donate
-     button (Library/Footer.lbi's .fab-donate) stacked above it. See the
-     shared --chrome-fab-right token in the "SITEWIDE HEADER/FOOTER" block
-     below. Recolored to the same tokens (Leo/MP redesign, Phase 0).
-     Icon-only at rest at every viewport width; expands into the labeled
-     pill on hover/focus instead of a permanent label -- same hover-expand
-     technique as .fab-donate and .chatbot-toggle below. */
-  position: fixed;
-  bottom: 1.25rem;
-  right: var(--chrome-fab-right, 1.25rem);
-  z-index: 9998;
-  width: 3.5rem;
-  height: 3.5rem;
-  padding: 0;
-  border-radius: 50%;
-  background: var(--chrome-ink-900, #082029);
-  border: none;
-  color: var(--chrome-signal-400, #F2A63C);
-  font-size: 1.5rem;
-  font-weight: 700;
-  font-family: var(--chrome-font-sans, inherit);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
-  transition: transform 150ms var(--chrome-ease-smooth, ease), background 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
-  line-height: 1;
-}
-/* Accessible label, clipped at rest (NOT display:none, which would strip
-   the button's accessible name since it has no aria-label of its own) --
-   same clip technique as .fab-donate-label below. Revealed on hover/focus
-   alongside the pill expansion. */
-.fab-help-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  font-family: var(--chrome-font-sans);
-  white-space: nowrap;
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-.help-float-btn:hover,
-.help-float-btn:focus-visible {
-  background: var(--chrome-ink-800, #0E2E3A);
-  transform: translateY(-2px);
-  width: auto;
-  padding: 0.6rem 1.15rem;
-  border-radius: 999px;
-  flex-direction: row-reverse;
-}
-.help-float-btn:hover .fab-help-label,
-.help-float-btn:focus-visible .fab-help-label {
-  position: static;
-  width: auto;
-  height: auto;
-  padding: 0;
-  margin: 0;
-  overflow: visible;
-  clip: auto;
-  white-space: nowrap;
-  border: 0;
-}
-@media (min-width: 992px) {
-  .help-float-btn { bottom: 1.75rem; }
-}
 
 /* Help modal content sections */
 .help-modal-section { display: none; }
@@ -4447,9 +4377,8 @@ body,
   font-size: 0.88rem;
   margin-bottom: 0.75rem;
 }
-@media print {
-  .help-float-btn { display: none !important; }
-}
+/* .help-float-btn's print-hide moved to the FLOATING-ACTION CLUSTER --
+   SHARED CHROME section. */
 
 /* ===== UPGRADE MODAL — PLAN TOGGLE ===== */
 .plan-toggle-row {
@@ -4540,8 +4469,10 @@ body,
    Library/nav.lbi and Library/Footer.lbi, which render on every
    page via Dreamweaver library includes -- editing this section
    changes the header/footer everywhere. The floating-action
-   cluster (Donate/BoatMD chat/Help) is styled here plus in
-   chatbot_styles.css; see .fab-donate and .help-float-btn.
+   cluster's (Donate/BoatMD chat/Help) button CHROME lives in the
+   "FLOATING-ACTION CLUSTER -- SHARED CHROME" section further down
+   this file; this section only sets the shared --chrome-fab-right
+   token those buttons use (below) and the header/footer chrome.
 
    Everything header/footer-specific below is scoped under the
    .site-header-dark / .site-footer-dark compound classes (same
@@ -4622,9 +4553,10 @@ body,
   --chrome-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Shared right-edge offset for the bottom-right floating-action cluster
-     (Donate / BoatMD chat toggle / Help) -- see .fab-donate below,
-     chatbot_styles.css's #chemcalc-chatbot/.chatbot-window, and
-     .help-float-btn above. */
+     (Donate / BoatMD chat toggle / Help) -- see the "FLOATING-ACTION
+     CLUSTER -- SHARED CHROME" section further down this file, where
+     all three buttons' chrome (including their use of this token) now
+     lives together. */
   --chrome-fab-right: 1.25rem;
 }
 @media (min-width: 992px) {
@@ -5200,13 +5132,29 @@ body,
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ---------- Floating-action cluster: Donate ----------
-   Bottom-right stack, matching FloatingActions.tsx: Help (closest to the
-   edge, above) sits at bottom ~1.25/1.75rem, the BoatMD chat toggle
-   (chatbot_styles.css) sits above that, Donate sits at the top of the
-   stack. .fixed-donate-btn (old blue pill, further up this file) is no
-   longer emitted by Library/Footer.lbi and is left in place unused, same
-   minimal-diff pattern as the rest of this section. */
+/* ============================================================
+   FLOATING-ACTION CLUSTER -- SHARED CHROME
+   (Donate / BoatMD chat toggle / Help)
+   ------------------------------------------------------------
+   Position, size, icon-only-at-rest, hover/focus-visible pill
+   expansion, and print hiding for all three bottom-right floating
+   buttons, consolidated here (2026-09-20) so a cluster-wide change
+   touches one place instead of three. Each button's own modal/
+   panel CONTENT (donation modal, help modal, chat window) is NOT
+   here -- see .fab-donate-modal, the "FLOATING HELP BUTTON & HELP
+   MODAL" section, and the "CHATBOT STYLES" section respectively.
+   Shared right-edge token: --chrome-fab-right (defined in the
+   SITEWIDE DESIGN TOKENS section).
+
+   Bottom-right stack, matching FloatingActions.tsx: Help (closest to
+   the edge) sits at bottom ~1.25/1.75rem, the BoatMD chat toggle sits
+   above that, Donate sits at the top of the stack. .fixed-donate-btn
+   (old blue pill, further up this file) is no longer emitted by
+   Library/Footer.lbi and is left in place unused, same minimal-diff
+   pattern as the rest of this section.
+   ============================================================ */
+
+/* ---------- Donate ---------- */
 .fab-donate {
   position: fixed;
   right: var(--chrome-fab-right, 1.25rem);
@@ -5274,6 +5222,157 @@ body,
 }
 @media print {
   .fab-donate { display: none !important; }
+}
+
+/* ---------- Help ---------- */
+.help-float-btn {
+  /* Bottom-right floating-action cluster: Help sits closest to the screen
+     edge, with the BoatMD chat toggle (chatbot_styles.css) and Donate
+     button (Library/Footer.lbi's .fab-donate) stacked above it. See the
+     shared --chrome-fab-right token in the "SITEWIDE HEADER/FOOTER" block
+     below. Recolored to the same tokens (Leo/MP redesign, Phase 0).
+     Icon-only at rest at every viewport width; expands into the labeled
+     pill on hover/focus instead of a permanent label -- same hover-expand
+     technique as .fab-donate and .chatbot-toggle below. */
+  position: fixed;
+  bottom: 1.25rem;
+  right: var(--chrome-fab-right, 1.25rem);
+  z-index: 9998;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--chrome-ink-900, #082029);
+  border: none;
+  color: var(--chrome-signal-400, #F2A63C);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--chrome-font-sans, inherit);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
+  transition: transform 150ms var(--chrome-ease-smooth, ease), background 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
+  line-height: 1;
+}
+/* Accessible label, clipped at rest (NOT display:none, which would strip
+   the button's accessible name since it has no aria-label of its own) --
+   same clip technique as .fab-donate-label below. Revealed on hover/focus
+   alongside the pill expansion. */
+.fab-help-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--chrome-font-sans);
+  white-space: nowrap;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+.help-float-btn:hover,
+.help-float-btn:focus-visible {
+  background: var(--chrome-ink-800, #0E2E3A);
+  transform: translateY(-2px);
+  width: auto;
+  padding: 0.6rem 1.15rem;
+  border-radius: 999px;
+  flex-direction: row-reverse;
+}
+.help-float-btn:hover .fab-help-label,
+.help-float-btn:focus-visible .fab-help-label {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: nowrap;
+  border: 0;
+}
+@media (min-width: 992px) {
+  .help-float-btn { bottom: 1.75rem; }
+}
+@media print {
+  .help-float-btn { display: none !important; }
+}
+
+/* ---------- BoatMD chat toggle ---------- */
+/* Position rule -- chatbot.js injects the toggle button/icon markup into
+   this fixed container; DOM structure and JS logic untouched by this
+   restyle. See the "CHATBOT STYLES" section further down this file for
+   the chat window/panel content and this section's own merge history. */
+#chemcalc-chatbot {
+    position: fixed;
+    bottom: 5.5rem;
+    right: var(--chrome-fab-right, 1.25rem);
+    z-index: 1040;
+    font-family: var(--chrome-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+}
+@media (min-width: 992px) {
+    #chemcalc-chatbot { bottom: 6.25rem; }
+}
+/* Toggle Button -- icon-only circle at rest, at every viewport width;
+   expands into the pill shape with icon + "Ask BoatMD" label on
+   hover/focus, matching MP's chat trigger. The label is a CSS-only
+   ::after (chatbot.js's injected button markup/icon SVG is untouched --
+   this keeps the restyle to CSS, no JS/logic edit). */
+.chatbot-toggle {
+    padding: 0.75rem;
+    border-radius: 50%;
+    min-height: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: var(--chrome-sea-500, #0F7A85);
+    color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
+    transition: transform 150ms var(--chrome-ease-smooth, ease), background-color 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
+}
+.chatbot-toggle::after {
+    content: "Ask BoatMD";
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    display: none;
+}
+/* aria-label="Toggle chatbot" (chatbot.js) already carries the accessible
+   name, so this ::after content is decorative only -- display:none at
+   rest loses nothing for assistive tech, unlike Donate's bare text node
+   above. */
+.chatbot-toggle:hover,
+.chatbot-toggle:focus-visible {
+    background-color: var(--chrome-sea-600, #0A5D66);
+    transform: translateY(-2px);
+    width: auto;
+    height: auto;
+    min-height: 3rem;
+    padding: 0.65rem 1rem 0.65rem 1.15rem;
+    border-radius: 999px;
+    flex-direction: row-reverse;
+}
+.chatbot-toggle:hover::after,
+.chatbot-toggle:focus-visible::after {
+    display: inline;
+}
+.chatbot-toggle svg {
+    width: 20px;
+    height: 20px;
+    flex: none;
+}
+@media print {
+    #chemcalc-chatbot { display: none !important; }
 }
 
 /* Donation modal -- recolored to tokens (was inline hex on each element in
@@ -5478,105 +5577,25 @@ body,
 
 /* ============================================================
    CHATBOT STYLES (#chemcalc-chatbot / BoatMD, chatbot.js)
-   Merged into style.css 2026-09-16 (single-file consolidation -- see
-   the "PRINT STYLES" section near the top of this file for the same
-   rule's origin). chatbot_styles.css itself is now deleted (git rm,
-   not renamed to .deprecated) -- see git history on this commit for
-   the pre-merge original file if it's ever needed again.
+   ------------------------------------------------------------
+   The BoatMD toggle button's own CHROME (position/size/hover-expand/
+   focus-visible/print) now lives in the "FLOATING-ACTION CLUSTER --
+   SHARED CHROME" section further up this file -- see #chemcalc-chatbot
+   and .chatbot-toggle there. Only the chat window/panel's own content
+   styling remains below.
 
-   Placed at the very BOTTOM of style.css, not near the top --
-   chatbot_styles.css's <link> order on all 19 pages that carried it
-   was AFTER /style.css in the <head>, meaning this content already
-   WINS any specificity tie against the rest of style.css. Appending
-   here keeps that true. A selector-by-selector grep against the rest
-   of this file at merge time found no rule anywhere else that actually
-   collides with any of chatbot_styles.css's selectors (all scoped
-   under #chemcalc-chatbot or a .chatbot-* prefix) -- so this placement
-   is a formality that preserves today's cascade order rather than a
-   fix for a found conflict.
-
-   Original chatbot_styles.css header comment follows, verbatim: */
-/* ChemCalc Chatbot Styles
-   Container/trigger restyle only (Phase 0, ChemCalc_FullSite_Blueprint.md) --
-   chatbot.js's DOM injection, event wiring, and message/product logic are
-   unchanged. Colors below now reference the shared design tokens defined in
-   style.css's ":root" block (see its "SITEWIDE DESIGN TOKENS" section)
-   instead of the old ad hoc blue (#89CFF0). Source: Magic Patterns
-   FloatingActions.tsx (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw).
-
-   This is the middle item of the bottom-right floating-action cluster --
-   Donate (Library/Footer.lbi's .fab-donate) stacks above it, the page Help
-   button (style.css's .help-float-btn) stacks below it. See the shared
-   --chrome-fab-right token and the "bottom" values below/there. */
-
-#chemcalc-chatbot {
-    position: fixed;
-    bottom: 5.5rem;
-    right: var(--chrome-fab-right, 1.25rem);
-    z-index: 1040;
-    font-family: var(--chrome-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
-}
-@media (min-width: 992px) {
-    #chemcalc-chatbot { bottom: 6.25rem; }
-}
-
-/* Toggle Button -- icon-only circle at rest, at every viewport width;
-   expands into the pill shape with icon + "Ask BoatMD" label on
-   hover/focus, matching MP's chat trigger. The label is a CSS-only
-   ::after (chatbot.js's injected button markup/icon SVG is untouched --
-   this keeps the restyle to CSS, no JS/logic edit). */
-.chatbot-toggle {
-    padding: 0.75rem;
-    border-radius: 50%;
-    min-height: 0;
-    width: 3.5rem;
-    height: 3.5rem;
-    background-color: var(--chrome-sea-500, #0F7A85);
-    color: #ffffff;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
-    transition: transform 150ms var(--chrome-ease-smooth, ease), background-color 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
-}
-
-.chatbot-toggle::after {
-    content: "Ask BoatMD";
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-    display: none;
-}
-
-/* aria-label="Toggle chatbot" (chatbot.js) already carries the accessible
-   name, so this ::after content is decorative only -- display:none at
-   rest loses nothing for assistive tech, unlike Donate's bare text node
-   above. */
-.chatbot-toggle:hover,
-.chatbot-toggle:focus-visible {
-    background-color: var(--chrome-sea-600, #0A5D66);
-    transform: translateY(-2px);
-    width: auto;
-    height: auto;
-    min-height: 3rem;
-    padding: 0.65rem 1rem 0.65rem 1.15rem;
-    border-radius: 999px;
-    flex-direction: row-reverse;
-}
-
-.chatbot-toggle:hover::after,
-.chatbot-toggle:focus-visible::after {
-    display: inline;
-}
-
-.chatbot-toggle svg {
-    width: 20px;
-    height: 20px;
-    flex: none;
-}
+   This section was merged into style.css from a standalone
+   chatbot_styles.css on 2026-09-16 (single-file consolidation --
+   chatbot_styles.css itself is deleted via git rm; see git history
+   for the pre-merge original if it's ever needed). It originally sat
+   at the very bottom of this file to preserve a cascade-order
+   guarantee from that merge (chatbot_styles.css's own <link> loaded
+   AFTER /style.css on every page, so its rules won any specificity
+   tie) -- no actual collision was ever found, at merge time or in the
+   2026-09-20 chrome consolidation that moved the button rules further
+   up, so that bottom placement was always a formality rather than a
+   fix for a real conflict.
+   ============================================================ */
 
 /* Chat Window */
 .chatbot-window {
@@ -5916,9 +5935,6 @@ body,
 
 /* Mobile Responsive */
 @media (max-width: 480px) {
-    #chemcalc-chatbot {
-    }
-
     .chatbot-window {
         width: calc(100vw - 20px);
         height: calc(100vh - 100px);
@@ -5932,6 +5948,5 @@ body,
     }
 }
 
-@media print {
-    #chemcalc-chatbot { display: none !important; }
-}
+/* #chemcalc-chatbot's print-hide moved to the FLOATING-ACTION CLUSTER --
+   SHARED CHROME section above. */
