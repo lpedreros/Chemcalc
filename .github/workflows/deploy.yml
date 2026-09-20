@@ -22,17 +22,34 @@ concurrency:
 
 jobs:
   gate:
-    name: Library sync gate
+    name: Library sync
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      # Fails the build if any page has drifted from its .lbi source.
-      - name: sync_library.py --check
+      # Writes any drifted .lbi/HEAD-COMMON content into the pages that embed
+      # it. Genuine errors (e.g. a HEAD-COMMON page missing its markers) still
+      # fail this step and block the deploy below -- only drift itself no
+      # longer fails the build, since it's fixed and committed automatically
+      # instead of requiring a human/Forge to run this before pushing.
+      - name: sync_library.py (write mode)
         working-directory: testing
-        run: python sync_library.py --check
+        run: python sync_library.py
+      # Commits any files the sync just changed, straight back onto this
+      # branch, using the workflow's own GITHUB_TOKEN (never a personal
+      # token/PAT) -- a GITHUB_TOKEN-authored push does not retrigger this
+      # workflow, so this cannot create a push loop. No-ops cleanly if
+      # sync_library.py made no changes.
+      - name: Commit any synced changes
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
+        with:
+          commit_message: "ci: auto-sync library items"
+          file_pattern: 'testing/*.html'
+          branch: ${{ github.ref_name }}
 
   staging:
     name: Deploy to testing.chemcalc.co
@@ -42,7 +59,13 @@ jobs:
       (github.event_name == 'push' || inputs.target == 'staging')
     runs-on: ubuntu-latest
     steps:
+      # ref override is required: without it this checkout defaults to
+      # github.sha, the commit that triggered the run, frozen before gate's
+      # auto-commit above. That would deploy pre-sync content. Checking out
+      # the branch tip instead picks up gate's commit if it made one.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       - name: FTP sync
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0 -- pin to SHA, not tag: this action receives a live FTP password in a public repo
         with:
