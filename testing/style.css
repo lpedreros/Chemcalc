@@ -5917,7 +5917,6 @@ body,
 /* Mobile Responsive */
 @media (max-width: 480px) {
     #chemcalc-chatbot {
-        bottom: 4.75rem;
     }
 
     .chatbot-window {
