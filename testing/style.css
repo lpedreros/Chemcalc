@@ -5918,7 +5918,6 @@ body,
 @media (max-width: 480px) {
     #chemcalc-chatbot {
         bottom: 4.75rem;
-        right: 0.75rem;
     }
 
     .chatbot-window {
