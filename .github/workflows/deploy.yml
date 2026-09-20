@@ -1,0 +1,89 @@
+name: Deploy
+
+on:
+  push:
+    branches: [clear-testing]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Where to deploy'
+        required: true
+        type: choice
+        options: [staging, production]
+        default: staging
+      confirm_production:
+        description: 'Type PRODUCTION (all caps) to allow a production deploy'
+        required: false
+        default: ''
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: Library sync gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # Fails the build if any page has drifted from its .lbi source.
+      - name: sync_library.py --check
+        working-directory: testing
+        run: python sync_library.py --check
+
+  staging:
+    name: Deploy to testing.chemcalc.co
+    needs: gate
+    if: >-
+      github.ref == 'refs/heads/clear-testing' &&
+      (github.event_name == 'push' || inputs.target == 'staging')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: FTP sync
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0 -- pin to SHA, not tag: this action receives a live FTP password in a public repo
+        with:
+          protocol: ftp
+          port: 21
+          server:   ${{ secrets.STAGING_SFTP_HOST }}
+          username: ${{ secrets.STAGING_SFTP_USERNAME }}
+          password: ${{ secrets.STAGING_SFTP_PASSWORD }}
+          # Secret names say SFTP -- that's stale/misleading, not descriptive.
+          # Confirmed 2026-09-20: the account is plain FTP, no encryption, port 21.
+          # The account lands in .../public_html/testing, and local-dir is
+          # testing/ -- so the testing/ prefix is stripped on both sides.
+          # Getting this wrong recreates the stale testing/testing/ copy
+          # that had to be deleted by hand on 2026-09-19.
+          local-dir: ./testing/
+          server-dir: ./
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/_notes/**
+            Library/**
+            Templates/**
+            .github/**
+            **/*.py
+            **/*.sql
+            **/*.ts
+            **/*.csv
+            **/*.deprecated
+            requirements.txt
+            LICENSE
+            CNAME
+
+  production:
+    name: Deploy to chemcalc.co — MANUAL ONLY
+    needs: gate
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.target == 'production' &&
+      inputs.confirm_production == 'PRODUCTION'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Production deploy is intentionally not implemented yet."
+      - run: exit 1
