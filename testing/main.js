@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function to fetch product list from Supabase affiliate_materials table
     async function loadProductList() {
+        if (!productListContainer) return;
         if (typeof _sb !== 'undefined' && _sb !== null) {
             try {
                 const { data, error } = await _sb
@@ -422,24 +423,26 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Affiliate click tracking
-    productListContainer.addEventListener("click", function(event) {
-        let targetElement = event.target;
-        // Traverse up the DOM tree to find an anchor tag if the click was on a child element
-        while (targetElement != null && targetElement.tagName !== "A") {
-            targetElement = targetElement.parentElement;
-        }
-
-        if (targetElement && targetElement.tagName === "A" && targetElement.hasAttribute("target") && targetElement.getAttribute("target") === "_blank") {
-            if (typeof gtag === "function") {
-                gtag("event", "click", {
-                    "event_category": "Affiliate Link",
-                    "event_label": targetElement.href,
-                    "value": targetElement.textContent.trim()
-                });
+    if (productListContainer) {
+        productListContainer.addEventListener("click", function(event) {
+            let targetElement = event.target;
+            // Traverse up the DOM tree to find an anchor tag if the click was on a child element
+            while (targetElement != null && targetElement.tagName !== "A") {
+                targetElement = targetElement.parentElement;
             }
-            console.log("Affiliate link clicked: " + targetElement.href);
-        }
-    });
+
+            if (targetElement && targetElement.tagName === "A" && targetElement.hasAttribute("target") && targetElement.getAttribute("target") === "_blank") {
+                if (typeof gtag === "function") {
+                    gtag("event", "click", {
+                        "event_category": "Affiliate Link",
+                        "event_label": targetElement.href,
+                        "value": targetElement.textContent.trim()
+                    });
+                }
+                console.log("Affiliate link clicked: " + targetElement.href);
+            }
+        });
+    }
     
     // Footer Year
     const currentYearSpan = document.getElementById("currentYear");

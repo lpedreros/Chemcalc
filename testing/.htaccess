@@ -32,4 +32,5 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule "(^|/)_notes(/|$)" - [F,L]
+  RewriteRule "(^|/)\.ftp-deploy-sync-state\.json$" - [F,L]
 </IfModule>
