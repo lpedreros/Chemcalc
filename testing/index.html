@@ -223,54 +223,154 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><!-- Hero Section -->
-  <section class="container hero text-center py-5">
-    <h2 class="display-4">Your Essential Toolkit for Flawless Boat Repair.</h2>
-    <p class="lead">
-      ChemCalc provides the calculators, kits, and guidance you need for professional-quality results on every marine project.
-    </p>
-    <p class="mt-4 d-flex justify-content-center flex-wrap">
-      <a class="btn btn-primary btn-lg mx-2 mb-2" href="kits.html">Shop Marine Repair Kits</a>
-      <a class="btn btn-secondary btn-lg mx-2 mb-2" href="calculators.html">Try Our Calculators</a>
-    </p>
-  </section>
-
-<!-- Combined What We Offer & Get Started Section -->
-  <section class="container solutions-section py-5">
-    <h2 class="text-center mb-4">Explore Our Solutions &amp; Get Started</h2>
-    <p class="text-center lead mb-5">
-      Whether you need to run detailed chemical calculations, require expert advice, or want a custom repair kit assembled for your project, ChemCalc has the tools and expertise to help. Explore our resources below.
-    </p>
-    <div class="row">
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 text-center calculator-card">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">Advanced Calculators</h5>
-            <p class="card-text">Access precise formulas for your resins, paints, gel coats, and custom mix formulations to ensure perfect results every time.</p>
-            <a href="calculators.html" class="btn btn-primary mt-auto">Explore Calculators</a>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 text-center calculator-card">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">Expert Services</h5>
-            <p class="card-text">Benefit from marine repair consultations, hands-on training sessions, and custom project support tailored to your needs.</p>
-            <a href="services.html" class="btn btn-primary mt-auto">View Services</a>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 text-center calculator-card">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">Curated Kits &amp; Supplies</h5>
-            <p class="card-text">Find comprehensive repair kits and affiliate-recommended materials and tools, perfect for your specific marine repair tasks.</p>
-            <a href="kits.html" class="btn btn-primary mt-auto">Browse Kits &amp; Supplies</a>
-          </div>
+<!-- #EndLibraryItem --><!-- ============================================================
+     HOME HERO -- approved Magic Patterns Home.tsx translation
+     (layout/copy reference only; no React/Tailwind ported). See
+     "HOME PAGE-SPECIFIC STYLES" in style.css for .home-* rules.
+     ============================================================ -->
+<section class="home-hero">
+  <div class="home-container home-hero-inner">
+    <div class="home-hero-copy">
+      <h1 class="home-hero-title">Your Essential Toolkit for Flawless Boat Repair.</h1>
+      <p class="home-hero-lead">ChemCalc provides the calculators, kits, and guidance you need for professional-quality results on every marine project.</p>
+      <p class="home-hero-ctas">
+        <a class="home-btn home-btn-primary" href="kits.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          Shop Marine Repair Kits
+        </a>
+        <a class="home-btn home-btn-ghost" href="calculators.html">Try Our Calculators</a>
+      </p>
+      <p class="home-hero-service">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+        Mobile repair service across Central Florida — Cape to Ormond Beach.
+      </p>
+    </div>
+    <div class="home-hero-media">
+      <div class="home-hero-photo">
+        <!-- TODO: real project photo pending Leo's pick -->
+        <div class="home-stat-card">
+          <span class="home-stat-label">MEKP @ 72&deg;F &middot; 32 oz batch</span>
+          <span class="home-stat-value">18.9 cc catalyst &middot; 379 drops</span>
         </div>
       </div>
     </div>
-  </section><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </div>
+</section>
+
+<!-- ============================================================
+     HOME SOLUTIONS + PRO-TIER PANEL
+     ============================================================ -->
+<section class="home-solutions">
+  <div class="home-container">
+    <h2 class="home-section-title">Explore Our Solutions &amp; Get Started</h2>
+    <p class="home-section-lead">Whether you need to run detailed chemical calculations, require expert advice, or want a custom repair kit assembled for your project, ChemCalc has the tools and expertise to help. Explore our resources below.</p>
+
+    <div class="home-solutions-grid">
+      <div class="home-calc-card">
+        <h3 class="home-card-title">
+          <svg aria-hidden="true"><use href="#icon-beaker"/></svg>
+          Advanced Calculators
+        </h3>
+        <p class="home-card-text">Access precise formulas for your resins, paints, gel coats, and custom mix formulations to ensure perfect results every time. Free to use, no account needed.</p>
+        <ul class="home-calc-list">
+          <li>
+            <a class="home-calc-row" href="mekpcalc.html">
+              <span class="home-calc-row-icon"><svg aria-hidden="true"><use href="#icon-beaker"/></svg></span>
+              <span class="home-calc-row-text">
+                <span class="home-calc-row-name">MEKP Calculator</span>
+                <span class="home-calc-row-blurb">Precisely calculate MEKP catalyst ratios for polyester resins and gelcoats, crucial for proper curing in marine repairs.</span>
+              </span>
+              <span class="home-calc-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="home-calc-row" href="awlgrip.html">
+              <span class="home-calc-row-icon"><svg aria-hidden="true"><use href="#icon-beaker"/></svg></span>
+              <span class="home-calc-row-text">
+                <span class="home-calc-row-name">Awlgrip Coatings Calculator</span>
+                <span class="home-calc-row-blurb">Get accurate mixing ratios for Awlgrip topcoats, Awlcraft 2000, and 545 Epoxy Primer for a professional finish on your boat.</span>
+              </span>
+              <span class="home-calc-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="home-calc-row" href="epifanespoly.html">
+              <span class="home-calc-row-icon"><svg aria-hidden="true"><use href="#icon-beaker"/></svg></span>
+              <span class="home-calc-row-text">
+                <span class="home-calc-row-name">Epifanes Polyurethane Paint &amp; Varnish Calculator</span>
+                <span class="home-calc-row-blurb">Easily determine the correct mix for Epifanes Polyurethane two-part paints and varnishes for durable marine coatings.</span>
+              </span>
+              <span class="home-calc-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="home-calc-row" href="clothcalc.html">
+              <span class="home-calc-row-icon"><svg aria-hidden="true"><use href="#icon-beaker"/></svg></span>
+              <span class="home-calc-row-text">
+                <span class="home-calc-row-name">Fiberglass Cloth Saturation Calculator</span>
+                <span class="home-calc-row-blurb">Calculate the ideal amount of resin needed to saturate fiberglass cloth for strong, void-free laminates in boat building and repair.</span>
+              </span>
+              <span class="home-calc-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="home-support-cards">
+        <div class="home-support-card">
+          <h3 class="home-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>
+            Expert Services
+          </h3>
+          <p class="home-card-text">Benefit from marine repair consultations, hands-on training sessions, and custom project support tailored to your needs.</p>
+          <a class="home-card-link" href="services.html">
+            See what we do
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="home-support-card">
+          <h3 class="home-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            Curated Kits &amp; Supplies
+          </h3>
+          <p class="home-card-text">Find comprehensive repair kits and affiliate-recommended materials and tools, perfect for your specific marine repair tasks.</p>
+          <a class="home-card-link" href="kits.html">
+            Browse Kits &amp; Supplies
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-pro-panel">
+      <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
+      <h2 class="home-pro-title">Every calculator stays free. Pro remembers the job.</h2>
+      <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+      <p class="home-pro-ctas">
+        <button type="button" class="home-btn home-btn-primary" onclick="openModal('loginModal')">Sign Up / Log In</button>
+        <a class="home-btn home-btn-ghost" href="estimate.html">Preview the Estimator</a>
+      </p>
+      <ul class="home-pro-checklist">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Save estimates and reopen them later
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Email calculator results to yourself or a client
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Full Repair Estimator with labor, materials, and markup
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Starred kit favorites synced across devices
+        </li>
+      </ul>
+    </div>
+  </div>
+</section><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Donate — top of the bottom-right floating-action cluster (with the
      BoatMD chat toggle from chatbot_styles.css and the page Help button
      from Library/HelpButton.lbi below it; see --chrome-fab-right and

@@ -5950,3 +5950,178 @@ body,
 
 /* #chemcalc-chatbot's print-hide moved to the FLOATING-ACTION CLUSTER --
    SHARED CHROME section above. */
+
+/* ============================================================
+   HOME PAGE-SPECIFIC STYLES (index.html)
+   Added 2026-09-21 for the Home page's rebuild onto the approved
+   Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
+   c/igj1coepi9s4kwq41co9iw). Visual-only translation from React/
+   Tailwind to plain CSS; index.html has no calculator math or
+   Supabase data of its own, so there was no page logic underneath
+   the old markup to preserve. Built on the same --chrome-* token
+   system as every other page-specific section in this file (see
+   AWLGRIP PAGE-SPECIFIC STYLES above for the pattern this follows)
+   -- no new hardcoded colors were needed. Namespaced under .home-*
+   so nothing here can leak onto other pages.
+   ============================================================ */
+
+/* ---------- Shared home-* primitives (button, container) ---------- */
+.home-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;}
+
+.home-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  cursor:pointer;text-decoration:none;line-height:1;
+  transition:background-color .15s var(--chrome-ease-smooth),
+    border-color .15s var(--chrome-ease-smooth),
+    color .15s var(--chrome-ease-smooth),
+    transform .15s var(--chrome-ease-smooth);
+}
+.home-btn:hover{transform:translateY(-1px);text-decoration:none;}
+.home-btn svg{width:1.05rem;height:1.05rem;flex:none;}
+.home-btn-primary{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
+.home-btn-primary:hover{background:var(--chrome-signal-200);color:var(--chrome-ink-950);}
+.home-btn-ghost{background:transparent;color:#ffffff;border-color:rgba(255,255,255,.3);}
+.home-btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);color:#ffffff;}
+
+/* ---------- Hero ---------- */
+.home-hero{background:var(--chrome-ink-950);padding:3.5rem 0;}
+.home-hero-inner{
+  display:grid;gap:2.5rem;align-items:center;
+  grid-template-columns:1fr;
+}
+@media (min-width:992px){
+  .home-hero-inner{grid-template-columns:7fr 5fr;}
+}
+.home-hero-title{
+  font-family:var(--chrome-font-sans);font-size:2.5rem;font-weight:800;
+  letter-spacing:-0.02em;line-height:1.1;color:#ffffff;margin:0 0 1rem;
+}
+.home-hero-lead{
+  font-size:1.1rem;line-height:1.6;color:rgba(255,255,255,.72);
+  margin:0 0 1.75rem;max-width:36rem;
+}
+.home-hero-ctas{display:flex;flex-wrap:wrap;gap:.85rem;margin:0 0 1.5rem;}
+.home-hero-service{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.88rem;color:rgba(255,255,255,.6);margin:0;
+}
+.home-hero-service svg{width:1rem;height:1rem;flex:none;color:var(--chrome-signal-400);}
+
+.home-hero-photo{
+  position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;
+  background:var(--chrome-ink-900);border:1px dashed var(--chrome-ink-700);
+  box-shadow:var(--chrome-shadow-lift);
+}
+.home-stat-card{
+  position:absolute;left:1rem;bottom:1rem;max-width:calc(100% - 2rem);
+  background:var(--chrome-paper-card);border-radius:10px;
+  padding:.85rem 1.1rem;box-shadow:var(--chrome-shadow-lift);
+  display:flex;flex-direction:column;gap:.2rem;
+}
+.home-stat-label{
+  font-family:var(--chrome-font-mono);font-size:.72rem;font-weight:600;
+  color:var(--chrome-ink-600);text-transform:uppercase;letter-spacing:.02em;
+}
+.home-stat-value{font-size:1rem;font-weight:700;color:var(--chrome-ink-900);}
+
+@media (max-width:575.98px){
+  .home-hero{padding:2.5rem 0;}
+  .home-hero-title{font-size:1.9rem;}
+}
+
+/* ---------- Solutions section ---------- */
+.home-solutions{background:var(--chrome-paper);padding:4rem 0;}
+.home-section-title{
+  font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
+  color:var(--chrome-ink-900);text-align:center;margin:0 0 .75rem;
+}
+.home-section-lead{
+  font-size:1.05rem;line-height:1.6;color:var(--chrome-ink-600);
+  text-align:center;max-width:44rem;margin:0 auto 2.5rem;
+}
+
+.home-solutions-grid{
+  display:grid;gap:1.5rem;align-items:start;
+  grid-template-columns:1fr;
+}
+@media (min-width:992px){
+  .home-solutions-grid{grid-template-columns:11fr 9fr;}
+}
+
+.home-card-title{
+  display:flex;align-items:center;gap:.6rem;
+  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 .6rem;
+}
+.home-card-title svg{width:1.15rem;height:1.15rem;flex:none;color:var(--chrome-signal-500);}
+.home-card-text{font-size:.92rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
+
+.home-calc-card,.home-support-card{
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);
+}
+.home-calc-card{padding:1.5rem;}
+.home-support-cards{display:flex;flex-direction:column;gap:1.5rem;}
+.home-support-card{padding:1.5rem;display:flex;flex-direction:column;}
+
+.home-calc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem;}
+.home-calc-row{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.85rem;border-radius:10px;text-decoration:none;
+  transition:background-color .15s var(--chrome-ease-smooth);
+}
+.home-calc-row:hover{background:var(--chrome-paper-muted);text-decoration:none;}
+.home-calc-row-icon{
+  flex:none;width:2.25rem;height:2.25rem;border-radius:8px;
+  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
+  display:flex;align-items:center;justify-content:center;
+}
+.home-calc-row-icon svg{width:1.1rem;height:1.1rem;}
+.home-calc-row-text{flex:1 1 auto;min-width:0;}
+.home-calc-row-name{display:block;font-size:.95rem;font-weight:600;color:var(--chrome-ink-900);}
+.home-calc-row-blurb{display:block;font-size:.82rem;line-height:1.45;color:var(--chrome-ink-600);margin-top:.15rem;}
+.home-calc-row-arrow{flex:none;color:var(--chrome-ink-500);}
+.home-calc-row-arrow svg{width:1.1rem;height:1.1rem;}
+.home-calc-row:hover .home-calc-row-arrow{color:var(--chrome-signal-500);}
+
+.home-card-link{
+  display:inline-flex;align-items:center;gap:.4rem;margin-top:auto;
+  font-size:.88rem;font-weight:700;color:var(--chrome-sea-600);text-decoration:none;
+}
+.home-card-link:hover{color:var(--chrome-sea-500);text-decoration:underline;}
+.home-card-link svg{width:.95rem;height:.95rem;}
+
+/* ---------- Pro-tier panel (same outer container as the Solutions
+   grid above -- see home-container usage in index.html) ---------- */
+.home-pro-panel{
+  margin-top:2.5rem;background:var(--chrome-ink-950);border-radius:16px;
+  padding:2.5rem;color:#ffffff;
+}
+.home-pro-eyebrow{
+  display:block;font-family:var(--chrome-font-mono);font-size:.8rem;font-weight:600;
+  color:var(--chrome-signal-400);text-transform:uppercase;letter-spacing:.04em;
+  margin:0 0 .75rem;
+}
+.home-pro-title{
+  font-family:var(--chrome-font-sans);font-size:1.75rem;font-weight:800;
+  line-height:1.2;margin:0 0 .75rem;max-width:38rem;
+}
+.home-pro-copy{font-size:1rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;max-width:38rem;}
+.home-pro-ctas{display:flex;flex-wrap:wrap;gap:.85rem;margin:0 0 1.75rem;}
+
+.home-pro-checklist{
+  list-style:none;margin:0;padding:0;display:grid;gap:.75rem;
+  grid-template-columns:1fr;
+}
+@media (min-width:768px){
+  .home-pro-checklist{grid-template-columns:1fr 1fr;}
+}
+.home-pro-checklist li{display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:rgba(255,255,255,.85);}
+.home-pro-checklist svg{flex:none;width:1.1rem;height:1.1rem;color:var(--chrome-signal-400);margin-top:.1rem;}
+
+@media (max-width:575.98px){
+  .home-pro-panel{padding:1.75rem;}
+  .home-pro-title{font-size:1.4rem;}
+}
