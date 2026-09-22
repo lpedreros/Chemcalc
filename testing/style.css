@@ -5980,8 +5980,8 @@ body,
 }
 .home-btn:hover{transform:translateY(-1px);text-decoration:none;}
 .home-btn svg{width:1.05rem;height:1.05rem;flex:none;}
-.home-btn-primary{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
-.home-btn-primary:hover{background:var(--chrome-signal-200);color:var(--chrome-ink-950);}
+.home-btn-primary{background:var(--chrome-signal-200);color:var(--chrome-ink-950);}
+.home-btn-primary:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
 .home-btn-ghost{background:transparent;color:#ffffff;border-color:rgba(255,255,255,.3);}
 .home-btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);color:#ffffff;}
 
@@ -6011,7 +6011,7 @@ body,
 
 .home-hero-photo{
   position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;
-  background:var(--chrome-ink-900);border:1px dashed var(--chrome-ink-700);
+  background:var(--chrome-ink-900);
   box-shadow:var(--chrome-shadow-lift);
 }
 .home-stat-card{
