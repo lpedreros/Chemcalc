@@ -6029,8 +6029,10 @@ body,
 .home-stat-value{font-size:1rem;font-weight:700;color:var(--chrome-ink-900);}
 
 @media (max-width:575.98px){
-  .home-hero{padding:2.5rem 0;}
-  .home-hero-title{font-size:1.9rem;}
+  .home-hero{padding:1rem 0 2.5rem;}
+  .home-hero-title{font-size:1.5rem;margin:0 0 .75rem;}
+  .home-hero-lead{margin:0 0 1.25rem;}
+  .home-hero-ctas{margin:0 0 1.25rem;}
 }
 
 /* ---------- Solutions section ---------- */
