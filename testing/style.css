@@ -5984,6 +5984,8 @@ body,
 .home-btn-primary:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
 .home-btn-ghost{background:transparent;color:#ffffff;border-color:rgba(255,255,255,.3);}
 .home-btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);color:#ffffff;}
+.home-btn-primary:visited{color:var(--chrome-ink-950);}
+.home-btn-ghost:visited{color:#ffffff;}
 
 /* ---------- Hero ---------- */
 .home-hero{background:var(--chrome-ink-950);padding:3.5rem 0;}
@@ -6060,11 +6062,10 @@ body,
 
 .home-calc-card,.home-support-card{
   background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
 }
-.home-calc-card{padding:1.5rem;}
 .home-support-cards{display:flex;flex-direction:column;gap:1.5rem;}
-.home-support-card{padding:1.5rem;display:flex;flex-direction:column;}
+.home-support-card{display:flex;flex-direction:column;}
 
 .home-calc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem;}
 .home-calc-row{
