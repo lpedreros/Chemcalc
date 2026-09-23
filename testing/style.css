@@ -6221,4 +6221,12 @@ body,
 @media (max-width:575.98px){
   .calc-index-cta{padding:1.5rem;}
   .calc-index-cta-title{font-size:1.15rem;}
+  /* MEKP (first) card's real height ends close enough to the fixed
+     floating cluster's occupied band (#chemcalc-chatbot, bottom:5.5rem,
+     56px tall) that the Awlgrip card's tag pill lands inside it at
+     initial paint, scroll 0 -- confirmed via Range.getClientRects() on
+     the tag text. Extra clearance after the first card only, so the
+     rest of the stack's spacing is untouched. Floating cluster's own
+     CSS is not touched. */
+  .calc-index-card:first-child{margin-bottom:3.5rem;}
 }
