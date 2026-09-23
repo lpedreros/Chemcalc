@@ -6130,3 +6130,95 @@ body,
   .home-pro-panel{padding:1.75rem;}
   .home-pro-title{font-size:1.4rem;}
 }
+
+/* ============================================================
+   CALCULATORS INDEX PAGE-SPECIFIC STYLES (calculators.html)
+   Added 2026-09-23 for the Calculators index rebuild onto the
+   approved Magic Patterns design (Calculators.tsx -- chemcalc-redesign
+   repo). Visual-only translation; this page has no calculator math
+   of its own, just links out to the four real calculator pages.
+
+   Reuses .mp-hero/.mp-hero-title/.mp-hero-tagline/.mp-hero-copy
+   verbatim (SHARED CALCULATOR COMPONENTS section above) for the
+   title band. Icon-badge treatment (background:ink-900, color:
+   signal-400) matches .home-calc-row-icon on index.html's own
+   Solutions list, for consistency between the two places these same
+   four calculators are listed -- including reusing icon-beaker for
+   all four (same disclosed deviation as that section: the shared
+   sprite has no distinct spray-can/paintbrush/layers icons).
+
+   Namespaced under .calc-index-* so nothing here can leak onto other
+   pages -- same discipline as .home-*. .calc-index-cta-btn duplicates
+   .home-btn-primary's visual treatment as its own independent
+   ruleset rather than depending on that page-scoped class.
+   ============================================================ */
+
+.calc-index-grid{
+  display:grid;gap:1.25rem;margin-top:-1.75rem;
+  grid-template-columns:1fr;
+}
+@media (min-width:768px){
+  .calc-index-grid{grid-template-columns:1fr 1fr;}
+}
+
+.calc-index-card{
+  display:flex;flex-direction:column;
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
+  text-decoration:none;margin-top:0;font-style:normal;
+  transition:border-color .15s var(--chrome-ease-smooth);
+}
+.calc-index-card:hover{border-color:var(--chrome-ink-500);text-decoration:none;margin-top:0;font-style:normal;}
+.calc-index-card:visited,.calc-index-card:active{margin-top:0;font-style:normal;}
+
+.calc-index-card-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;}
+.calc-index-card-icon{
+  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
+  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
+  display:flex;align-items:center;justify-content:center;
+}
+.calc-index-card-icon svg{width:1.2rem;height:1.2rem;}
+.calc-index-card-tag{
+  background:var(--chrome-paper-muted);color:var(--chrome-ink-600);
+  font-size:.75rem;font-weight:600;border-radius:6px;padding:.25rem .6rem;
+}
+
+.calc-index-card-title{
+  font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 .6rem;
+}
+.calc-index-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0;}
+
+.calc-index-card-link{
+  display:flex;align-items:center;gap:.4rem;margin-top:auto;padding-top:1.25rem;
+  font-size:.88rem;font-weight:600;color:var(--chrome-sea-600);
+}
+.calc-index-card-arrow{width:1rem;height:1rem;transition:transform .15s var(--chrome-ease-smooth);}
+.calc-index-card:hover .calc-index-card-arrow{transform:translateX(2px);}
+
+.calc-index-cta{
+  margin-top:1.5rem;background:var(--chrome-ink-950);border-radius:16px;
+  padding:1.75rem 2rem;color:#ffffff;
+  display:flex;flex-wrap:wrap;gap:1.25rem;align-items:center;justify-content:space-between;
+}
+.calc-index-cta-text{max-width:34rem;}
+.calc-index-cta-title{font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:800;margin:0 0 .4rem;}
+.calc-index-cta-copy{font-size:.92rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0;}
+
+.calc-index-cta-btn{
+  display:inline-flex;align-items:center;gap:.5rem;flex:none;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
+  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
+}
+.calc-index-cta-btn svg{width:1.05rem;height:1.05rem;flex:none;}
+.calc-index-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+.calc-index-cta-btn:visited{color:var(--chrome-ink-950);}
+.calc-index-cta-btn:visited,.calc-index-cta-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+
+@media (max-width:575.98px){
+  .calc-index-cta{padding:1.5rem;}
+  .calc-index-cta-title{font-size:1.15rem;}
+}
