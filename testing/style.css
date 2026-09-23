@@ -5978,7 +5978,7 @@ body,
     color .15s var(--chrome-ease-smooth),
     transform .15s var(--chrome-ease-smooth);
 }
-.home-btn:hover{transform:translateY(-1px);text-decoration:none;}
+.home-btn:hover{transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
 .home-btn svg{width:1.05rem;height:1.05rem;flex:none;}
 .home-btn-primary{background:var(--chrome-signal-200);color:var(--chrome-ink-950);}
 .home-btn-primary:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
@@ -5986,6 +5986,8 @@ body,
 .home-btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);color:#ffffff;}
 .home-btn-primary:visited{color:var(--chrome-ink-950);}
 .home-btn-ghost:visited{color:#ffffff;}
+.home-btn:visited,
+.home-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
 
 /* ---------- Hero ---------- */
 .home-hero{background:var(--chrome-ink-950);padding:3.5rem 0;}
