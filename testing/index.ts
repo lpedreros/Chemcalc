@@ -89,7 +89,7 @@ serve(async (req) => {
   }
 
   try {
-    const { email, calculatorName, resultsHtml, sourceUrl, calculatorId } = await req.json()
+    const { email, calculatorName, resultsHtml, sourceUrl, calculatorId, marketingOptIn } = await req.json()
 
     if (!email || !calculatorName || !resultsHtml) {
       throw new Error("Missing required fields: email, calculatorName, or resultsHtml")
@@ -130,24 +130,29 @@ serve(async (req) => {
     }
 
     // ── 3. Add/update contact in Brevo (non-blocking — failure does not abort) ─
-    const brevoResponse = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'api-key': BREVO_API_KEY,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        updateEnabled: true,
-        attributes: { LAST_CALCULATOR_USED: calculatorName },
-        listIds: [2]   // Confirm your Brevo list ID in the Brevo dashboard
+    // Gated on explicit opt-in: skip the Brevo call entirely unless the user
+    // checked the marketing-tips checkbox. The Resend send above always runs
+    // regardless -- this only controls the marketing-list signup side effect.
+    if (marketingOptIn === true) {
+      const brevoResponse = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'api-key': BREVO_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          updateEnabled: true,
+          attributes: { LAST_CALCULATOR_USED: calculatorName },
+          listIds: [2]   // Confirm your Brevo list ID in the Brevo dashboard
+        })
       })
-    })
 
-    if (!brevoResponse.ok) {
-      const brevoErr = await brevoResponse.text()
-      console.warn("Brevo warning (contact may not have been added):", brevoErr)
+      if (!brevoResponse.ok) {
+        const brevoErr = await brevoResponse.text()
+        console.warn("Brevo warning (contact may not have been added):", brevoErr)
+      }
     }
 
     return new Response(

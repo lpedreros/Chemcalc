@@ -65,6 +65,9 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
             throw new Error("Supabase client not loaded.");
         }
 
+        const optInEl = document.getElementById('marketingOptIn');
+        const marketingOptIn = optInEl ? optInEl.checked : false;
+
         const { data, error } = await _sb.functions.invoke('send-results', {
             body: {
                 email: email,
@@ -78,7 +81,8 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
                 // email subject and can be reworded without meaning to change
                 // tip selection. Guarded so a missing window._ccLastCalc sends
                 // null instead of throwing.
-                calculatorId: window._ccLastCalc && window._ccLastCalc.calculator ? window._ccLastCalc.calculator : null
+                calculatorId: window._ccLastCalc && window._ccLastCalc.calculator ? window._ccLastCalc.calculator : null,
+                marketingOptIn: marketingOptIn
             }
         });
 
@@ -138,12 +142,16 @@ function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray
     const html = `
         <div class="email-capture-box mt-4 p-3" style="background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
             <h6 style="margin-bottom: 10px; color: #2c3e50;">Save Your Results</h6>
-            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">Enter your email to get a copy of these results and helpful marine repair tips.</p>
+            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">Enter your email to get a copy of these results.</p>
             <div class="input-group mb-2">
                 <input type="email" id="captureEmailInput" class="form-control" placeholder="your@email.com">
                 <div class="input-group-append">
                     <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")}${recapArg})">Email Me</button>
                 </div>
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="marketingOptIn">
+                <label class="form-check-label" for="marketingOptIn" style="font-size: 0.8rem; color:#5f6b6c;">Also send me occasional marine repair tips (unsubscribe anytime)</label>
             </div>
             <div id="emailResultsMsg" style="display:none; font-size: 0.85rem; margin-top: 5px;"></div>
         </div>
