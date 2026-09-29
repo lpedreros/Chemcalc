@@ -1776,6 +1776,8 @@ main.alexseal-app{
   color:var(--chrome-ink-600);margin:0 0 .3rem;
 }
 
+#acceleratorEnabledLabel{color:var(--chrome-ink-900);}
+
 /* ---------- Reducer-percentage slider -- every Alexseal product uses
    one (unlike awlgrip.html, where only Awlcraft 2000/3000 does); same
    visual language as .awlgrip-slider, copied and renamed per this
