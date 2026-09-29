@@ -186,6 +186,27 @@ document.addEventListener("DOMContentLoaded", () => {
           // (see calc-tracker.js's logCalculation immediate=true path).
           window._ccLastCalc = { calculator: 'mekp', inputs: _ccInputs, results: _ccResults };
         }
+
+        if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+          ChemCalcPrintLetterhead.render({
+            docTitle: 'MEKP Calculator — Mix Results',
+            pageSlug: 'mekpcalc',
+            recap: [
+              { label: 'Batch Volume', value: resinAmount ? (resinAmount + ' ' + ({oz:'oz',quart:'qt',gallon:'gal',ml:'mL',liter:'L'}[selectedVolumeUnit] || selectedVolumeUnit)) : '—' },
+              { label: 'Ambient Temperature', value: !isNaN(temp) ? (temp.toFixed(0) + '°' + (selectedTempUnit === 'fahrenheit' ? 'F' : 'C')) : '—' },
+              { label: 'MEKP Method', value: useDuratec ? 'Duratec 904-001 (locked 2%)' : 'Custom percentage' }
+            ],
+            primary: { label: 'Add this much MEKP catalyst', value: mekpMl.toFixed(1), unit: 'cc', sub: '≈ ' + mekpDrops.toFixed(0) + ' drops' },
+            compare: [
+              { label: 'Recommended (by temp)', value: recommendedPct },
+              { label: 'Percentage used', value: mekpPercentage.toFixed(2) + '%' }
+            ],
+            advisory: (!isNaN(tempC) && tempC < 15.6)
+              ? 'Warning: Temperature is below 60°F (15.6°C). Curing may be significantly slowed or inhibited. Consider warming the workspace or materials.'
+              : '',
+            disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and catalyst percentage both change gel time.'
+          });
+        }
     } else {
         mekpRecommendedP.textContent = "Recommended MEKP % (based on temperature): —";
         mekpPercentageP.textContent = "Using: —";
@@ -193,6 +214,25 @@ document.addEventListener("DOMContentLoaded", () => {
         mekpDropsP.textContent = "MEKP Drops: —";
         tempAdviceP.style.display = "none";
         if (affiliateLinksList) affiliateLinksList.innerHTML = "";
+
+        if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+          ChemCalcPrintLetterhead.render({
+            docTitle: 'MEKP Calculator — Mix Results',
+            pageSlug: 'mekpcalc',
+            recap: [
+              { label: 'Batch Volume', value: '—' },
+              { label: 'Ambient Temperature', value: '—' },
+              { label: 'MEKP Method', value: useDuratec ? 'Duratec 904-001 (locked 2%)' : 'Custom percentage' }
+            ],
+            primary: { label: 'Add this much MEKP catalyst', value: '—', unit: 'cc', sub: '' },
+            compare: [
+              { label: 'Recommended (by temp)', value: '—' },
+              { label: 'Percentage used', value: '—' }
+            ],
+            advisory: '',
+            disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and catalyst percentage both change gel time.'
+          });
+        }
     }
   }
 
@@ -259,8 +299,16 @@ document.addEventListener("DOMContentLoaded", () => {
         logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
       }
       const pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = "";
-      new QRCode(qrCodeContainer, {
+      // Fresh lookup, not the qrCodeContainer captured at page-load: the
+      // print letterhead's render() (print-letterhead.js) rebuilds
+      // #printLetterhead's whole innerHTML -- including a brand new
+      // #printQrCode div -- on every calculation, so the page-load
+      // reference goes stale (detached from the DOM) the moment the user
+      // changes any input. Generating into the stale node would produce
+      // a QR code nobody can see.
+      const freshQrContainer = document.getElementById("printQrCode") || qrCodeContainer;
+      freshQrContainer.innerHTML = "";
+      new QRCode(freshQrContainer, {
         text: pageUrl,
         width: 100,
         height: 100,
@@ -268,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.H
       });
-      
+
       setTimeout(() => {
           window.print();
       }, 250);

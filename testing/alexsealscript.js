@@ -14,11 +14,10 @@
 // Amount input method, Application Method) are folded directly into this
 // file's own DOMContentLoaded handler -- same "no separate -ui.js file
 // needed" approach epifanesScript.js already uses for its one toggle, just
-// covering three toggles instead of one. Likewise, print/QR is handled
-// inline (epifanesScript.js's pattern) rather than via a separate branded
-// letterhead file like awlgrip-print-summary.js -- the visible results
-// panel (.printable-section) is what prints, with #printQrCode injected
-// into it.
+// covering three toggles instead of one. The print letterhead itself is
+// rendered by the shared print-letterhead.js (ChemCalcPrintLetterhead
+// .render(), called from calc()/reset() below) -- the same component
+// every other calculator now uses, not a page-specific file.
 //
 // COATS COUNT -- deliberately different from awlgripscript.js's cov{}:
 // Alexseal's Coverage-table ft²/gal figures are used directly with NO
@@ -213,6 +212,76 @@ document.addEventListener("DOMContentLoaded", function() {
     if (f === t) return n;
     var r = (cv[f] || {})[t];
     return r ? n * r : null;
+  }
+
+  // ── Small-quantity dual display (Leo's decision) ────────────────────
+  // Ports clothcalc.js's formatDisplayVolume() pattern -- same constants
+  // (MIN_DISPLAY_ML, FL_OZ_DUAL_THRESHOLD, LITER_DUAL_THRESHOLD_ML) and
+  // the same three-tier behavior (floor notation / dual display / plain
+  // display) -- but reimplemented here rather than shared, since
+  // Alexseal's unit set (gallons/quarts/ounces/liters/ccs) and canonical
+  // unit (mL/ccs, via this file's own cv table) differ from ClothCalc's
+  // (gal/qt/floz/l/ml, canonical Liters). Applied independently to each
+  // of Base/Converter/Reducer's displayed value.
+  var MIN_DISPLAY_ML = 0.01;
+  var FL_OZ_DUAL_THRESHOLD = 0.5;
+  var LITER_DUAL_THRESHOLD_ML = 0.01;
+
+  function formatDisplayVolume(valueCC, displayUnit, system) {
+    if (valueCC === null || isNaN(valueCC)) return "Err";
+    var primary = "", secondary = "";
+    var mlToFlOz = cv.ccs.ounces; // 0.033814
+
+    if (system === "imperial") {
+      var valOz = valueCC * mlToFlOz;
+      if (displayUnit === "ounces") {
+        if (valOz < MIN_DISPLAY_ML * mlToFlOz && valOz !== 0) {
+          primary = "< " + MIN_DISPLAY_ML.toFixed(2) + " mL";
+        } else if (valOz < FL_OZ_DUAL_THRESHOLD && valOz !== 0) {
+          primary = valOz.toFixed(2) + " fl oz";
+          secondary = "(" + valueCC.toFixed(2) + " mL)";
+        } else {
+          primary = valOz.toFixed(2) + " fl oz";
+        }
+      } else if (displayUnit === "quarts") {
+        if (valOz < MIN_DISPLAY_ML * mlToFlOz && valOz !== 0) {
+          primary = "< " + MIN_DISPLAY_ML.toFixed(2) + " mL";
+        } else if (valOz < FL_OZ_DUAL_THRESHOLD && valOz !== 0) {
+          primary = valOz.toFixed(2) + " fl oz";
+          secondary = "(" + valueCC.toFixed(2) + " mL)";
+        } else {
+          primary = (valueCC * cv.ccs.quarts).toFixed(3) + " qt";
+        }
+      } else if (displayUnit === "gallons") {
+        if (valOz < MIN_DISPLAY_ML * mlToFlOz && valOz !== 0) {
+          primary = "< " + MIN_DISPLAY_ML.toFixed(2) + " mL";
+        } else if (valOz < FL_OZ_DUAL_THRESHOLD && valOz !== 0) {
+          primary = valOz.toFixed(2) + " fl oz";
+          secondary = "(" + valueCC.toFixed(2) + " mL)";
+        } else {
+          primary = (valueCC * cv.ccs.gallons).toFixed(3) + " gal";
+        }
+      }
+    } else {
+      if (displayUnit === "liters") {
+        var valL = valueCC * cv.ccs.liters;
+        if (valueCC < MIN_DISPLAY_ML && valueCC !== 0) {
+          primary = "< " + MIN_DISPLAY_ML.toFixed(2) + " mL";
+        } else if (valL < LITER_DUAL_THRESHOLD_ML && valL !== 0) {
+          primary = valL.toFixed(3) + " L";
+          secondary = "(" + valueCC.toFixed(2) + " mL)";
+        } else {
+          primary = valL.toFixed(3) + " L";
+        }
+      } else if (displayUnit === "ccs") {
+        if (valueCC < MIN_DISPLAY_ML && valueCC !== 0) {
+          primary = "< " + MIN_DISPLAY_ML.toFixed(2) + " mL";
+        } else {
+          primary = valueCC.toFixed(2) + " mL";
+        }
+      }
+    }
+    return (primary + " " + secondary).trim();
   }
 
   function populateLists() {
@@ -503,18 +572,22 @@ document.addEventListener("DOMContentLoaded", function() {
     var cVol = convert(convCC, "ccs", outUnit);
     var rVol = convert(redCC, "ccs", outUnit);
 
-    var pVolStr = pVol !== null ? pVol.toFixed(2) : "Err";
-    var cVolStr = cVol !== null ? cVol.toFixed(2) : "Err";
-    var rVolStr = rVol !== null ? rVol.toFixed(2) : "Err";
+    // Dual-display formatted strings (small-quantity fallback baked in) --
+    // already include the unit, unlike the old plain toFixed()+labels[]
+    // pattern, since the dual-display fallback needs the raw mL value to
+    // decide whether to show a secondary unit at all.
+    var pVolStr = formatDisplayVolume(baseCC, outUnit, sysType);
+    var cVolStr = formatDisplayVolume(convCC, outUnit, sysType);
+    var rVolStr = formatDisplayVolume(redCC, outUnit, sysType);
 
     var bLabel = baseLabel(productType);
     var cLabel = converterLabel(productType, methodType);
     var rLabel = reducerReplacedByAccelerator ? "Reducer (replaced by Accelerator)" : "Reducer";
 
     outPLabel.textContent = bLabel;
-    outP.textContent = pVolStr + " " + labels[outUnit];
+    outP.textContent = pVolStr;
     outCLabel.textContent = cLabel;
-    outC.textContent = cVolStr + " " + labels[outUnit];
+    outC.textContent = cVolStr;
 
     if (reducerReplacedByAccelerator) {
       // Keep the row present (matches the shared print/email markup other
@@ -524,12 +597,12 @@ document.addEventListener("DOMContentLoaded", function() {
       outR.textContent = "—";
     } else {
       outRLabel.textContent = rLabel;
-      outR.textContent = rVolStr + " " + labels[outUnit];
+      outR.textContent = rVolStr;
     }
 
-    emailP.textContent = bLabel + ": " + pVolStr + " " + labels[outUnit];
-    emailC.textContent = cLabel + ": " + cVolStr + " " + labels[outUnit];
-    emailR.textContent = reducerReplacedByAccelerator ? (rLabel + ": —") : (rLabel + ": " + rVolStr + " " + labels[outUnit]);
+    emailP.textContent = bLabel + ": " + pVolStr;
+    emailC.textContent = cLabel + ": " + cVolStr;
+    emailR.textContent = reducerReplacedByAccelerator ? (rLabel + ": —") : (rLabel + ": " + rVolStr);
 
     if (accelChecked) {
       var aVol = convert(acceleratorCC, "ccs", "ccs"); // stays mL for display, same as Awlgrip's accelerator
@@ -589,6 +662,34 @@ document.addEventListener("DOMContentLoaded", function() {
       logCalculation('alexseal', _ccInputs, _ccResults);
       window._ccLastCalc = { calculator: 'alexseal', inputs: _ccInputs, results: _ccResults };
     }
+
+    if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+      var printAmountText;
+      if (selectedInputMethod === "lengthWidth") {
+        printAmountText = calculatedAreaDisplaySpan.textContent.trim();
+      } else {
+        var printV = (val.value || "").trim();
+        var printU = inU.options[inU.selectedIndex] ? inU.options[inU.selectedIndex].text : "";
+        printAmountText = printV ? (printV + " " + printU) : "—";
+      }
+      ChemCalcPrintLetterhead.render({
+        docTitle: 'Alexseal Coatings Calculator — Mix Results',
+        pageSlug: 'alexseal',
+        recap: [
+          { label: 'Product', value: (product.options[product.selectedIndex] ? product.options[product.selectedIndex].text : '') || '—' },
+          { label: 'Method', value: method.value === 'brush' ? 'Brush / Roll' : 'Spray' },
+          { label: 'Amount', value: printAmountText }
+        ],
+        primary: { label: outPLabel.textContent, value: outP.textContent, unit: null, sub: null },
+        compare: [
+          { label: outCLabel.textContent, value: outC.textContent },
+          { label: outRLabel.textContent, value: outR.textContent },
+          { label: outALabel.textContent, value: outA.textContent, hidden: !accelChecked }
+        ],
+        advisory: outCov.textContent,
+        disclaimer: 'Reference only — always confirm mix ratios against Alexseal’s technical data sheet.'
+      });
+    }
   }
 
   function reset(msg) {
@@ -609,6 +710,25 @@ document.addEventListener("DOMContentLoaded", function() {
     if (affiliateLinksList) affiliateLinksList.innerHTML = "";
     if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
     calculatedAreaDisplaySpan.textContent = "—";
+
+    if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+      ChemCalcPrintLetterhead.render({
+        docTitle: 'Alexseal Coatings Calculator — Mix Results',
+        pageSlug: 'alexseal',
+        recap: [
+          { label: 'Product', value: (product.options[product.selectedIndex] ? product.options[product.selectedIndex].text : '') || '—' },
+          { label: 'Method', value: method.value === 'brush' ? 'Brush / Roll' : 'Spray' },
+          { label: 'Amount', value: '—' }
+        ],
+        primary: { label: 'Paint Base', value: msg, unit: null, sub: null },
+        compare: [
+          { label: 'Converter', value: msg },
+          { label: 'Reducer', value: msg }
+        ],
+        advisory: '',
+        disclaimer: 'Reference only — always confirm mix ratios against Alexseal’s technical data sheet.'
+      });
+    }
   }
 
   // ── Toggle-button-syncs-to-hidden-select shims (folded in directly,
@@ -684,17 +804,26 @@ document.addEventListener("DOMContentLoaded", function() {
   dimensionUnitSelect.addEventListener("change", calc);
 
   var printButton = document.getElementById("printButton");
-  var qrCodeContainer = document.getElementById("printQrCode");
 
-  if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
+  // #printQrCode is not looked up here: it only exists once calc() has
+  // run at least once (it's built fresh inside #printLetterhead on
+  // every calculation, per print-letterhead.js's render()), and calc()
+  // hasn't run yet at this point in setup -- see epifanesScript.js's
+  // identical fix. The click handler below does its own fresh lookup
+  // instead, both to sidestep that ordering issue and because render()'s
+  // innerHTML rebuild would detach any reference captured here the
+  // moment the user changes an input anyway.
+  if (printButton && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", function(event) {
       event.preventDefault();
       if (window._ccLastCalc && typeof logCalculation === 'function') {
         logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
       }
       var pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = "";
-      new QRCode(qrCodeContainer, {
+      var freshQrContainer = document.getElementById("printQrCode");
+      if (!freshQrContainer) { console.error("QR code container not found at print time."); return; }
+      freshQrContainer.innerHTML = "";
+      new QRCode(freshQrContainer, {
         text: pageUrl,
         width: 100,
         height: 100,
@@ -709,7 +838,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   } else {
     if (!printButton) console.error("Print button not found");
-    if (!qrCodeContainer) console.error("QR code container not found");
     if (typeof QRCode === "undefined") console.error("QRCode library not loaded");
   }
 

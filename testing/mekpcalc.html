@@ -451,11 +451,12 @@
           <div class="mekp-print-cta">
             <button id="printButton" class="mp-print-btn">Print Results</button>
           </div>
-          <!-- #printQrCode intentionally lives in the print letterhead
-               footer now (see #mekpPrintLetterhead below) so it survives
-               the on-screen results card being hidden entirely for print.
-               mekscript.js still generates it exactly as before — this is
-               the same real QR call, just a new home in the DOM. -->
+          <!-- #printQrCode is rebuilt fresh into the print letterhead
+               (see #printLetterhead below) on every render() call, so it
+               survives the on-screen results card being hidden entirely
+               for print. mekscript.js still generates it exactly as
+               before — this is the same real QR call, just rendered into
+               a freshly-built DOM each time. -->
         </div>
       </section>
     </div>
@@ -557,69 +558,12 @@
 
 <!-- ============================================================
      Print-only letterhead summary. Hidden on screen via Bootstrap's
-     d-none, shown only inside @media print via d-print-block — the
-     same convention already used by #printQrCode on this page (see
-     print_style_fix_v4.css). Populated by mekpcalc-print-summary.js from
-     the calculator's real inputs and calculateMEKP()'s already-computed
-     output; calculateMEKP() itself is never called from here.
+     d-none, shown only inside @media print via d-print-block. Rendered
+     by print-letterhead.js's ChemCalcPrintLetterhead.render(), called
+     from mekscript.js's calculateMEKP(); calculateMEKP() itself owns
+     all the math, this section is populated only, never computed into.
      ============================================================ -->
-<section id="mekpPrintLetterhead" class="d-none d-print-block">
-  <div class="mekp-lh-head">
-    <div class="mekp-lh-brand">
-      <span class="mekp-lh-mark"><img src="images/Think-and-Engage-Logo1c-Black-Seal.png" alt=""></span>
-      <span>
-        <span class="mekp-lh-name">ChemCalc</span>
-        <span class="mekp-lh-tagline">A Think &amp; Engage Brand</span>
-      </span>
-    </div>
-    <div class="mekp-lh-doc">
-      <p class="mekp-lh-doc-title">MEKP Calculator — Mix Results</p>
-      <p class="mekp-lh-doc-meta">Generated <span id="printGeneratedOn"></span> &middot; chemcalc.co/mekpcalc</p>
-    </div>
-  </div>
-
-  <dl class="mekp-lh-recap">
-    <div>
-      <dt>Batch Volume</dt>
-      <dd id="printRecapVolume">&mdash;</dd>
-    </div>
-    <div>
-      <dt>Ambient Temperature</dt>
-      <dd id="printRecapTemp">&mdash;</dd>
-    </div>
-    <div>
-      <dt>MEKP Method</dt>
-      <dd id="printRecapMethod">&mdash;</dd>
-    </div>
-  </dl>
-
-  <div class="mekp-lh-primary">
-    <p class="mekp-lh-primary-label">Add this much MEKP catalyst</p>
-    <p class="mekp-lh-primary-value"><span id="printRecapCcs">&mdash;</span><span class="unit">cc</span></p>
-    <p class="mekp-lh-primary-sub" id="printRecapDrops">&mdash;</p>
-  </div>
-
-  <dl class="mekp-lh-compare">
-    <div>
-      <dt>Recommended (by temp)</dt>
-      <dd id="printRecapRecommended">&mdash;</dd>
-    </div>
-    <div>
-      <dt>Percentage used</dt>
-      <dd id="printRecapUsed">&mdash;</dd>
-    </div>
-  </dl>
-
-  <p class="mekp-lh-advisory" id="printRecapAdvisory"></p>
-
-  <div class="mekp-lh-footer">
-    <p class="mekp-lh-disclaimer">Reference only &mdash; always confirm cure characteristics against your resin manufacturer&rsquo;s technical data sheet. Recalculate before every batch; temperature and catalyst percentage both change gel time.</p>
-    <div class="mekp-lh-qr">
-      <div id="printQrCode"></div>
-      <span>Scan to reopen</span>
-    </div>
-  </div>
-</section>
+<section id="printLetterhead" class="d-none d-print-block"></section>
 <!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
@@ -781,10 +725,8 @@
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
 <script src="mekp-curve.js"></script>
+<script src="print-letterhead.js"></script>
 <script src="mekscript.js"></script>
-<!-- Print letterhead sync (see file header comment) — loads after
-     mekscript.js so its listeners always run after calculateMEKP() -->
-<script src="mekpcalc-print-summary.js"></script>
 <!-- Unit toggle shim, temp advisory, results panel restructure, slider
      gradient, Duratec locked message, default pre-fill — see file header
      comment. Loads after mekscript.js so its DOMContentLoaded handler
@@ -792,9 +734,10 @@
 <script src="mekpcalc-ui.js"></script>
 <script>
   // Batch-input recap for the "Email me results" button (email-results.js's
-  // sendResultsEmail()) — mirrors mekpcalc-print-summary.js's own recap
-  // reads (resinVolume, volumeUnit, ambientTemp, tempUnit,
-  // usingDuratec), but this one is called AT SEND TIME, not baked in when
+  // sendResultsEmail()) — mirrors the print letterhead's own recap reads
+  // (resinVolume, volumeUnit, ambientTemp, tempUnit, usingDuratec; see
+  // mekscript.js's ChemCalcPrintLetterhead.render() calls), but this one
+  // is called AT SEND TIME, not baked in when
   // the page loads, so it always reflects whatever's in the form the
   // moment "Email Me" is actually clicked. calculateMEKP() is not
   // involved -- these are direct reads of the real input elements.

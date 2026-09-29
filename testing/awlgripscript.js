@@ -491,13 +491,6 @@ document.addEventListener("DOMContentLoaded", function() {
       outAccelBox.style.display = "block";
       emailA.textContent = acceleratorLabel + ": " + aVolML + " mL";
       emailA.style.display = "block";
-      // Print-letterhead accelerator label -- the rest of that row
-      // (value + show/hide) is synced by awlgrip-print-summary.js from
-      // #resultAccelerator/#resultAcceleratorBox as before; this label
-      // text doesn't change on its own timer, so it's simplest to set
-      // it directly here, once, alongside its two other mirrors above.
-      var printAccelLabelEl = document.getElementById("awlgripPrintRecapAcceleratorLabel");
-      if (printAccelLabelEl) printAccelLabelEl.textContent = acceleratorLabel;
     } else {
       outA.style.display = "none";
       outAccelBox.style.display = "none";
@@ -567,6 +560,34 @@ document.addEventListener("DOMContentLoaded", function() {
       // (see calc-tracker.js's logCalculation immediate=true path).
       window._ccLastCalc = { calculator: 'awlgrip', inputs: _ccInputs, results: _ccResults };
     }
+
+    if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+      var printAmountText;
+      if (selectedInputMethod === "lengthWidth") {
+        printAmountText = calculatedAreaDisplaySpan.textContent.trim();
+      } else {
+        var printV = (val.value || "").trim();
+        var printU = inU.options[inU.selectedIndex] ? inU.options[inU.selectedIndex].text : "";
+        printAmountText = printV ? (printV + " " + printU) : "—";
+      }
+      ChemCalcPrintLetterhead.render({
+        docTitle: 'Awlgrip Coatings Calculator — Mix Results',
+        pageSlug: 'awlgrip',
+        recap: [
+          { label: 'Product Line', value: (paint.options[paint.selectedIndex] ? paint.options[paint.selectedIndex].text : '') || '—' },
+          { label: 'Application Method', value: (method.options[method.selectedIndex] ? method.options[method.selectedIndex].text : '') || '—' },
+          { label: 'Coating Amount', value: printAmountText }
+        ],
+        primary: { label: outPLabel.textContent, value: outP.textContent, unit: null, sub: null },
+        compare: [
+          { label: outCLabel.textContent, value: outC.textContent },
+          { label: outRLabel.textContent, value: outR.textContent },
+          { label: outALabel.textContent, value: outA.textContent, hidden: paintType !== 'awlcraft2000' }
+        ],
+        advisory: outCov.textContent,
+        disclaimer: 'Reference only — always confirm mix ratios against the product’s technical data sheet. Recalculate before every batch; application method and product line both change the reducer ratio.'
+      });
+    }
   }
 
   function reset(msg) {
@@ -584,9 +605,28 @@ document.addEventListener("DOMContentLoaded", function() {
     outAccelBox.style.display = "none";
     emailA.style.display = "none";
     outCov.textContent = "";
-    if (affiliateLinksList) affiliateLinksList.innerHTML = ""; 
-    if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none"; 
-    calculatedAreaDisplaySpan.textContent = "—"; 
+    if (affiliateLinksList) affiliateLinksList.innerHTML = "";
+    if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+    calculatedAreaDisplaySpan.textContent = "—";
+
+    if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+      ChemCalcPrintLetterhead.render({
+        docTitle: 'Awlgrip Coatings Calculator — Mix Results',
+        pageSlug: 'awlgrip',
+        recap: [
+          { label: 'Product Line', value: (paint.options[paint.selectedIndex] ? paint.options[paint.selectedIndex].text : '') || '—' },
+          { label: 'Application Method', value: (method.options[method.selectedIndex] ? method.options[method.selectedIndex].text : '') || '—' },
+          { label: 'Coating Amount', value: '—' }
+        ],
+        primary: { label: 'Paint Base', value: msg, unit: null, sub: null },
+        compare: [
+          { label: 'Converter / Catalyst', value: msg },
+          { label: 'Reducer', value: msg }
+        ],
+        advisory: '',
+        disclaimer: 'Reference only — always confirm mix ratios against the product’s technical data sheet. Recalculate before every batch; application method and product line both change the reducer ratio.'
+      });
+    }
   }
 
   sys.addEventListener("change", function() {
@@ -618,16 +658,26 @@ document.addEventListener("DOMContentLoaded", function() {
   dimensionUnitSelect.addEventListener("change", calc);
 
   var printButton = document.getElementById("printButton");
-  var qrCodeContainer = document.getElementById("printQrCode");
 
-  if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
+  // #printQrCode is not looked up here: it only exists once calc() has
+  // run at least once (it's built fresh inside #printLetterhead on
+  // every calculation, per print-letterhead.js's render()), and this
+  // setup code runs BEFORE the calc() call at the very end of this
+  // handler (below) -- so it wouldn't be found yet even on a page that
+  // pre-fills valid inputs. The click handler below does its own fresh
+  // lookup instead, both to sidestep that ordering issue and because
+  // render()'s innerHTML rebuild would detach any reference captured
+  // here the moment the user changes an input anyway.
+  if (printButton && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", function() {
       if (window._ccLastCalc && typeof logCalculation === 'function') {
         logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
       }
       var pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = ""; 
-      new QRCode(qrCodeContainer, {
+      var freshQrContainer = document.getElementById("printQrCode");
+      if (!freshQrContainer) { console.error("QR code container not found at print time."); return; }
+      freshQrContainer.innerHTML = "";
+      new QRCode(freshQrContainer, {
         text: pageUrl,
         width: 100,
         height: 100,
@@ -635,14 +685,13 @@ document.addEventListener("DOMContentLoaded", function() {
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.H
       });
-      
+
       setTimeout(function() {
         window.print();
-      }, 250); 
+      }, 250);
     });
   } else {
     if (!printButton) console.error("Print button not found");
-    if (!qrCodeContainer) console.error("QR code container not found");
     if (typeof QRCode === "undefined") console.error("QRCode library not loaded");
   }
 

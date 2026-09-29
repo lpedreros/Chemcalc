@@ -486,7 +486,6 @@
           <div class="mp-print-cta d-print-none">
             <button id="printButton" class="mp-print-btn">Print Results</button>
           </div>
-          <div id="printQrCode" class="d-none d-print-block text-center"></div>
         </div>
       </section>
     </div>
@@ -571,7 +570,22 @@
   </div>
   <!-- End Feedback Button Section -->
 
-</main><!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
+</main>
+<!-- ============================================================
+     Print-only letterhead summary. Hidden on screen via Bootstrap's
+     d-none, shown only inside @media print via d-print-block. This
+     page's results were previously unprintable: <main> carries
+     d-print-none, which hides ALL descendants in print (including
+     the .printable-section results card) -- a descendant's own
+     display:block!important cannot override an ancestor's
+     display:none. Escaping <main> the same way mekpcalc.html/
+     clothcalc.html/awlgrip.html already do fixes it. Rendered by
+     print-letterhead.js's ChemCalcPrintLetterhead.render(), called
+     from alexsealscript.js's calc(); calc() itself owns all the
+     math, this section is populated only, never computed into.
+     ============================================================ -->
+<section id="printLetterhead" class="d-none d-print-block"></section>
+<!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
      onclick="openHelpModal()" and each page's #helpModal / helpContent
@@ -736,6 +750,7 @@
 <script src="affiliate_links.js"></script>
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
+<script src="print-letterhead.js"></script>
 <script src="alexsealscript.js"></script>
 <script>
   // Batch-input recap for "Email me results" -- mirrors

@@ -859,6 +859,48 @@ document.addEventListener("DOMContentLoaded", () => {
       // (see calc-tracker.js's logCalculation immediate=true path).
       window._ccLastCalc = { calculator: 'clothcalc', inputs: _ccInputs, results: _ccResults };
     }
+
+    if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+      function selectedOptionText(select) {
+        if (!select || select.selectedIndex < 0) return '';
+        const opt = select.options[select.selectedIndex];
+        return opt ? opt.text : '';
+      }
+      let resinText = selectedOptionText(resinTypeSelect);
+      if (resinType === 'epoxy' && epoxyMixRatioSelect) {
+        const ratioText = selectedOptionText(epoxyMixRatioSelect);
+        if (ratioText) resinText += ' (' + ratioText + ')';
+      }
+      const dimText = (lengthVal && widthVal)
+        ? (lengthVal.trim() + ' x ' + widthVal.trim() + ' ' + selectedOptionText(unitsSelect))
+        : '—';
+      const tempText = temperatureInput.value
+        ? (temperatureInput.value.trim() + (tempUnitLabel ? tempUnitLabel.textContent : ''))
+        : '—';
+      const catalystText = (resinType === 'epoxy')
+        ? clothEmailHardenerEl.textContent
+        : ((mekpPercentageEl.textContent || mekpCcsEl.textContent || mekpDropsEl.textContent)
+            ? ('MEKP Catalyst: ' + mekpPercentageEl.textContent + ' • ' + mekpCcsEl.textContent + ' • ' + mekpDropsEl.textContent)
+            : '');
+
+      ChemCalcPrintLetterhead.render({
+        docTitle: 'Fiberglass Cloth Saturation Calculator — Mix Results',
+        pageSlug: 'clothcalc',
+        recap: [
+          { label: 'Dimensions', value: dimText },
+          { label: 'Resin Type', value: resinText || '—' },
+          { label: 'Temperature', value: tempText }
+        ],
+        primary: { label: 'Total resin needed', value: resinVolumeEl.textContent || '—', unit: null, sub: clothResinRatioEl.textContent },
+        compare: [
+          { label: resinWeightLabelEl ? resinWeightLabelEl.textContent : 'Resin Weight', value: resinWeightEl.textContent || '—' },
+          { label: 'Working Time', value: workingTimeEl.textContent || '—' },
+          { label: 'Estimated Cost', value: estimatedCostEl.textContent || '—' }
+        ],
+        advisory: catalystText,
+        disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and layer schedule both change resin demand.'
+      });
+    }
   }
 
   function setupEventListeners() {
@@ -996,9 +1038,17 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeCalculator();
 
   const printButton = document.getElementById("printButton");
-  const qrCodeContainer = document.getElementById("printQrCode");
 
-  if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
+  // #printQrCode is not looked up here: it only exists once
+  // calculateResin() has run its success path at least once (it's built
+  // fresh inside #printLetterhead on every successful calculation, per
+  // print-letterhead.js's render()), and this setup code runs before
+  // the user has entered any dimensions -- so it wouldn't be found yet.
+  // The click handler below (already guarded on lastCalculatedResults)
+  // does its own fresh lookup instead, both to sidestep that ordering
+  // issue and because render()'s innerHTML rebuild would detach any
+  // reference captured here the moment a new calculation runs anyway.
+  if (printButton && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", (event) => {
       event.preventDefault();
       if (window._ccLastCalc && typeof logCalculation === 'function') {
@@ -1025,8 +1075,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       const pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = "";
-      new QRCode(qrCodeContainer, {
+      const freshQrContainer = document.getElementById("printQrCode");
+      if (!freshQrContainer) { console.error("QR code container not found at print time."); return; }
+      freshQrContainer.innerHTML = "";
+      new QRCode(freshQrContainer, {
         text: pageUrl,
         width: 100,
         height: 100,
@@ -1040,7 +1092,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   } else {
       if (!printButton) console.error("Print button not found");
-      if (!qrCodeContainer) console.error("QR code container not found");
       if (typeof QRCode === "undefined") console.error("QRCode library not loaded");
   }
 });

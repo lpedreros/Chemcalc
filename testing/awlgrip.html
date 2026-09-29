@@ -637,75 +637,12 @@
 
 <!-- ============================================================
      Print-only letterhead summary. Hidden on screen via Bootstrap's
-     d-none, shown only inside @media print via d-print-block -- same
-     convention as mekpcalc.html's #mekpPrintLetterhead (mirrored
-     structure/classes, .awlgrip-lh-* instead of .mekp-lh-*). Populated
-     by awlgrip-print-summary.js from the calculator's real inputs and
-     calc()'s already-computed output (including Part F's manufacturer
-     part-number labels); calc() itself is never called from here.
-     #printQrCode is the same real element awlgripscript.js's existing
-     print button handler already generates into -- just relocated
-     here, same as MEKP's. -->
-<section id="awlgripPrintLetterhead" class="d-none d-print-block">
-  <div class="awlgrip-lh-head">
-    <div class="awlgrip-lh-brand">
-      <span class="awlgrip-lh-mark"><img src="images/Think-and-Engage-Logo1c-Black-Seal.png" alt=""></span>
-      <span>
-        <span class="awlgrip-lh-name">ChemCalc</span>
-        <span class="awlgrip-lh-tagline">A Think &amp; Engage Brand</span>
-      </span>
-    </div>
-    <div class="awlgrip-lh-doc">
-      <p class="awlgrip-lh-doc-title">Awlgrip Coatings Calculator &mdash; Mix Results</p>
-      <p class="awlgrip-lh-doc-meta">Generated <span id="awlgripPrintGeneratedOn"></span> &middot; chemcalc.co/awlgrip</p>
-    </div>
-  </div>
-
-  <dl class="awlgrip-lh-recap">
-    <div>
-      <dt>Product Line</dt>
-      <dd id="awlgripPrintRecapProduct">&mdash;</dd>
-    </div>
-    <div>
-      <dt>Application Method</dt>
-      <dd id="awlgripPrintRecapMethod">&mdash;</dd>
-    </div>
-    <div>
-      <dt>Coating Amount</dt>
-      <dd id="awlgripPrintRecapAmount">&mdash;</dd>
-    </div>
-  </dl>
-
-  <div class="awlgrip-lh-primary">
-    <p class="awlgrip-lh-primary-label" id="awlgripPrintRecapBaseLabel">Paint Base</p>
-    <p class="awlgrip-lh-primary-value" id="awlgripPrintRecapBase">&mdash;</p>
-  </div>
-
-  <dl class="awlgrip-lh-compare">
-    <div>
-      <dt id="awlgripPrintRecapConverterLabel">Converter / Catalyst</dt>
-      <dd id="awlgripPrintRecapConverter">&mdash;</dd>
-    </div>
-    <div>
-      <dt id="awlgripPrintRecapReducerLabel">Reducer</dt>
-      <dd id="awlgripPrintRecapReducer">&mdash;</dd>
-    </div>
-    <div id="awlgripPrintRecapAcceleratorRow" style="display:none;">
-      <dt id="awlgripPrintRecapAcceleratorLabel">Accelerator (Pro-Cure X-98)</dt>
-      <dd id="awlgripPrintRecapAccelerator">&mdash;</dd>
-    </div>
-  </dl>
-
-  <p class="awlgrip-lh-advisory" id="awlgripPrintRecapCoverage"></p>
-
-  <div class="awlgrip-lh-footer">
-    <p class="awlgrip-lh-disclaimer">Reference only &mdash; always confirm mix ratios against the product&rsquo;s technical data sheet. Recalculate before every batch; application method and product line both change the reducer ratio.</p>
-    <div class="awlgrip-lh-qr">
-      <div id="printQrCode"></div>
-      <span>Scan to reopen</span>
-    </div>
-  </div>
-</section>
+     d-none, shown only inside @media print via d-print-block. Rendered
+     by print-letterhead.js's ChemCalcPrintLetterhead.render(), called
+     from awlgripscript.js's calc(); calc() itself owns all the math,
+     this section is populated only, never computed into.
+     ============================================================ -->
+<section id="printLetterhead" class="d-none d-print-block"></section>
 <!-- #BeginLibraryItem "/Library/HelpButton.lbi" --><!-- Floating Help Button — bottom of the bottom-right floating-action
      cluster (closest to the screen edge; see --chrome-fab-right and
      .help-float-btn in style.css). Restyled trigger only —
@@ -868,10 +805,8 @@
 <script src="affiliate_links.js"></script>
 <script src="calc-tracker.js"></script>
 <script src="email-results.js"></script>
+<script src="print-letterhead.js"></script>
 <script src="awlgripscript.js"></script>
-<!-- Print letterhead sync (see file header comment) -- loads after
-     awlgripscript.js so its listeners always run after calc() -->
-<script src="awlgrip-print-summary.js"></script>
 <!-- Unit-toggle shims (Measurement System / Coating Amount / Application
      Method) -- see file header comment. Loads after awlgripscript.js so
      its DOMContentLoaded handler always registers (and therefore always
@@ -879,10 +814,11 @@
      listeners see the already-updated DOM state. -->
 <script src="awlgripcalc-ui.js"></script>
 <script>
-  // Batch-input recap for "Email me results" -- mirrors
-  // awlgrip-print-summary.js's own recap reads (paintType, methodType,
-  // inputMethod/inputValue/unitType or calculatedAreaDisplay) exactly,
-  // but called AT SEND TIME via email-results.js's sendResultsEmail(),
+  // Batch-input recap for "Email me results" -- mirrors the print
+  // letterhead's own recap reads (paintType, methodType, inputMethod/
+  // inputValue/unitType or calculatedAreaDisplay; see awlgripscript.js's
+  // ChemCalcPrintLetterhead.render() calls) exactly, but called AT SEND
+  // TIME via email-results.js's sendResultsEmail(),
   // so it always reflects whatever's in the form right now.
   function awlgripEmailRecap() {
     function selectedOptionText(select) {

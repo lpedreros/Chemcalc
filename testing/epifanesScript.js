@@ -79,6 +79,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const speedcoatProducts = ['en012', 'en013', 'en110'];
   const colourProducts = ['en105', 'en110'];
 
+  function selectedOptionText(select) {
+    if (!select || select.selectedIndex < 0) return '';
+    const opt = select.options[select.selectedIndex];
+    return opt ? opt.text : '';
+  }
+
+  function renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel) {
+    if (typeof ChemCalcPrintLetterhead === 'undefined') return;
+    const v = (totalVolumeInput.value || '').trim();
+    const amountText = v ? (v + ' ' + selectedOptionText(volumeUnitSelect)) : '—';
+    ChemCalcPrintLetterhead.render({
+      docTitle: 'Epifanes Clear Varnish / Topside Paint — Mix Results',
+      pageSlug: 'epifanespoly',
+      recap: [
+        { label: 'Product', value: selectedOptionText(productSelect) || '—' },
+        { label: 'Method', value: selectedOptionText(methodSelect) || '—' },
+        { label: 'Amount', value: amountText }
+      ],
+      primary: { label: resultBaseLabelEl.textContent, value: resultBaseDisplay.textContent, unit: null, sub: null },
+      compare: [
+        { label: resultHardenerLabelEl.textContent, value: resultHardenerDisplay.textContent },
+        { label: resultThinnerLabelEl ? resultThinnerLabelEl.textContent : 'Thinning', value: resultThinnerDisplay ? resultThinnerDisplay.textContent : '—' }
+      ],
+      advisory: '',
+      disclaimer: 'Reference only — always confirm mix ratios against Epifanes’ technical data sheet.'
+    });
+  }
+
   function formatNumber(number) {
     if (isNaN(number) || number === null) {
         return "--";
@@ -244,6 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (totalVolumeValue <= 0) {
       setResults(baseLabel, "--", hardenerLabel, "--");
+      renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel);
       return;
     }
 
@@ -251,6 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (totalVolumeCcs <= 0) {
       setResults(baseLabel, "Error", hardenerLabel, "Error");
+      renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel);
       return;
     }
 
@@ -286,6 +316,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // (see calc-tracker.js's logCalculation immediate=true path).
       window._ccLastCalc = { calculator: 'epifanes', inputs: _ccInputs, results: _ccResults };
     }
+
+    renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel);
   }
 
   totalVolumeInput.addEventListener("input", calculateEpifanes);
@@ -294,9 +326,17 @@ document.addEventListener("DOMContentLoaded", () => {
   methodSelect.addEventListener("change", calculateEpifanes);
 
   const printButton = document.getElementById("printButton");
-  const qrCodeContainer = document.getElementById("printQrCode");
 
-  if (printButton && qrCodeContainer) {
+  // #printQrCode is not looked up here: it only exists once
+  // renderPrintLetterhead() has run at least once (it's built fresh
+  // inside #printLetterhead on every calculation, per print-letterhead
+  // .js's render()) -- at this point in setup, calculateEpifanes() below
+  // hasn't run yet, so it wouldn't exist yet either. The click handler
+  // below does its own fresh lookup instead, both to sidestep that
+  // ordering issue and because render()'s innerHTML rebuild would
+  // detach any reference captured here the moment the user changes an
+  // input anyway (same fix as every other calculator's print handler).
+  if (printButton) {
     if (typeof QRCode !== "undefined") {
         printButton.addEventListener("click", (event) => {
             event.preventDefault();
@@ -304,8 +344,10 @@ document.addEventListener("DOMContentLoaded", () => {
               logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
             }
             const pageUrl = window.location.href;
-            qrCodeContainer.innerHTML = "";
-            new QRCode(qrCodeContainer, {
+            const freshQrContainer = document.getElementById("printQrCode");
+            if (!freshQrContainer) { console.error("QR code container not found at print time."); return; }
+            freshQrContainer.innerHTML = "";
+            new QRCode(freshQrContainer, {
                 text: pageUrl,
                 width: 100,
                 height: 100,
@@ -323,8 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if(printButton) printButton.style.display = 'none';
     }
   } else {
-      if (!printButton) console.warn("Print button not found.");
-      if (!qrCodeContainer) console.warn("QR code container for print not found.");
+      console.warn("Print button not found.");
   }
 
   calculateEpifanes();
