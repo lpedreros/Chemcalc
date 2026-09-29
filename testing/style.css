@@ -1710,6 +1710,126 @@ main.epifanes-app{
    inline styles (same convention as .awlgrip-email-capture above). */
 
 /* ============================================================
+   ALEXSEAL PAGE-SPECIFIC STYLES
+   Added 2026-09-29 for the Alexseal Yacht Coatings Calculator (Premium
+   Topcoat 501, Finish Primer 442, Protective Primer 161 -- Round 1, see
+   build dispatch for full product scope). Reuses the shared .mp-*
+   component vocabulary throughout; the rules below are the genuinely new
+   ones, following the exact same naming/structure discipline as the
+   AWLGRIP and EPIFANES sections above -- .alexseal-slider/-note/-input-*/
+   -merged-* are this page's own copies of those patterns (never reused
+   directly across pages, per this project's established convention), not
+   new visual language.
+   ============================================================ */
+
+/* main.alexseal-app (tag+class) -- same cascade-order fix as
+   main.awlgrip-app/main.epifanes-app above. */
+main.alexseal-app{
+  font-family:var(--chrome-font-sans);
+  color:var(--chrome-ink-900);
+  background:#2c2c2e;
+}
+@media (max-width:767.98px){
+  /* Bottom clearance from the fixed bottom-right floating-action
+     cluster -- same mechanic as main.awlgrip-app/main.epifanes-app
+     above (single-column page, cluster's fixed viewport band passes
+     over the report banner while scrolling). Same values carried over
+     on the strength of those pages sharing the same single-column,
+     report-banner-at-bottom structure; re-measure if this page's real
+     content height ever diverges enough to matter. */
+  main.alexseal-app{padding-bottom:17.5rem;}
+}
+@media (min-width:768px) and (max-width:991.98px){
+  main.alexseal-app{padding-bottom:5rem;}
+}
+.alexseal-app h1,.alexseal-app h2,.alexseal-app h3{font-family:var(--chrome-font-sans);}
+
+/* ---------- Field cards ---------- */
+/* All 3 cards (Measurement System, Product, the merged Coating Area and
+   Application Method card) stack full-width, one per row -- same
+   reasoning as .awlgrip-fields' own 3-card case. */
+.alexseal-fields{display:grid;gap:1rem;grid-auto-flow:row dense;}
+@media (min-width:576px){
+  .alexseal-fields{grid-template-columns:1fr 1fr;}
+}
+.alexseal-field-card-wide{grid-column:1 / -1;}
+
+/* ---------- Merged Coating Area / Application Method card -- two
+   visually separated sub-sections (not interleaved) inside one card. */
+.alexseal-merged-grid{display:grid;gap:1.5rem;}
+@media (min-width:576px){
+  .alexseal-merged-grid{grid-template-columns:1fr 1fr;}
+}
+.alexseal-merged-subtitle{
+  font-size:.85rem;font-weight:700;color:var(--chrome-ink-900);
+  margin:0 0 .75rem;
+}
+
+/* ---------- Input rows (Coating Amount's Value/Units and
+   Length/Width/Dimension-Units groups) -- same shared row-of-fields
+   pattern as awlgrip.css's .awlgrip-input-row/-group/-label. ---------- */
+.alexseal-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
+.alexseal-input-group{flex:1 1 140px;min-width:0;}
+.alexseal-input-group-compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
+.alexseal-input-label{
+  display:block;font-size:.72rem;font-weight:600;
+  color:var(--chrome-ink-600);margin:0 0 .3rem;
+}
+
+/* ---------- Reducer-percentage slider -- every Alexseal product uses
+   one (unlike awlgrip.html, where only Awlcraft 2000/3000 does); same
+   visual language as .awlgrip-slider, copied and renamed per this
+   project's page-scoping convention. ---------- */
+.alexseal-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
+.alexseal-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
+#reducerPercentValue{
+  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
+}
+.alexseal-slider{
+  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
+  height:6px;border-radius:999px;
+  /* Live two-tone fill gradient -- --slider-fill is a percentage set
+     from the slider's own value/min/max by alexsealscript.js on every
+     input, same technique as awlgripcalc-ui.js's reducer slider. */
+  background:linear-gradient(
+    to right,
+    var(--chrome-sea-500) 0%,
+    var(--chrome-signal-400) var(--slider-fill,50%),
+    var(--chrome-paper-line) var(--slider-fill,50%),
+    var(--chrome-paper-line) 100%
+  );
+}
+.alexseal-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;border:2px solid var(--chrome-ink-800);
+  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
+}
+.alexseal-slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  border:2px solid var(--chrome-ink-800);cursor:pointer;
+}
+.alexseal-slider-scale{
+  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
+  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
+}
+
+/* ---------- Product-specific note callouts (Finish Primer 442's metal-
+   substrate warning) -- same visual treatment as .awlgrip-note/
+   .epifanes-note: a light, always-visible-while-shown callout box, not
+   a Bootstrap .alert. ---------- */
+.alexseal-note{
+  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
+  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
+  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
+}
+
+.alexseal-email-capture{margin-top:1rem;}
+/* email-results.js injects its own inline-styled light box into this
+   container -- left unstyled here on purpose so we don't fight its
+   inline styles (same convention as .awlgrip-email-capture/.epifanes-
+   email-capture above). */
+
+/* ============================================================
    END PAGE-SPECIFIC STYLES -- everything below this point was
    already in style.css before the 2026-09-14 consolidation.
    ============================================================ */
