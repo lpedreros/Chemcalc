@@ -584,6 +584,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Dashed-placeholder print letterhead for calculateResin()'s early-
+  // return paths (blank/invalid length, blank/invalid width, zero valid
+  // layers, and the defensive !resinInfo case -- unreachable via the
+  // real <select>, but the same gap in kind, so fixed alongside the
+  // other three rather than left as a known miss). Without this, the
+  // letterhead kept showing the PRIOR successful calculation's real
+  // numbers after inputs were cleared/invalidated, and Print would
+  // generate a QR over that stale printout with no warning (Sentinel's
+  // post-437c891 QA). Mirrors MEKP's own empty-state render() call --
+  // same label strings and disclaimer text as this file's own success-
+  // path render() call below, not retyped from memory.
+  function renderEmptyPrintLetterhead() {
+    if (typeof ChemCalcPrintLetterhead === 'undefined') return;
+    ChemCalcPrintLetterhead.render({
+      docTitle: 'Fiberglass Cloth Saturation Calculator — Mix Results',
+      pageSlug: 'clothcalc',
+      recap: [
+        { label: 'Dimensions', value: '—' },
+        { label: 'Resin Type', value: '—' },
+        { label: 'Temperature', value: '—' }
+      ],
+      primary: { label: 'Total resin needed', value: '—', unit: null, sub: null },
+      compare: [
+        { label: resinWeightLabelEl ? resinWeightLabelEl.textContent : 'Resin Weight', value: '—' },
+        { label: 'Working Time', value: '—' },
+        { label: 'Estimated Cost', value: '—' }
+      ],
+      advisory: '',
+      disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and layer schedule both change resin demand.'
+    });
+  }
+
   function calculateResin() {
     updateClothTempAdvisory();
     const lengthVal = lengthInput.value;
@@ -601,6 +633,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
       resultsSection.style.display = "none";
       if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+      lastCalculatedResults = null;
+      renderEmptyPrintLetterhead();
       return;
     }
 
@@ -608,6 +642,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (areaSqMeters <= 0) {
         resultsSection.style.display = "none";
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+        lastCalculatedResults = null;
+        renderEmptyPrintLetterhead();
         return;
     }
 
@@ -645,6 +681,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         resultsSection.style.display = "none";
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+        lastCalculatedResults = null;
+        renderEmptyPrintLetterhead();
         return;
     }
 
@@ -652,6 +690,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!resinInfo) {
         resultsSection.style.display = "none";
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+        lastCalculatedResults = null;
+        renderEmptyPrintLetterhead();
         return;
     }
 
