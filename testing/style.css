@@ -6140,3 +6140,93 @@ body,
 .services-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:1.05rem;font-weight:700;}
 .services-cta-btn:visited{color:var(--chrome-ink-950);}
 .services-cta-btn:visited,.services-cta-btn:active{margin-top:0;font-style:normal;font-size:1.05rem;font-weight:700;}
+
+/* ============================================================
+   ABOUT PAGE-SPECIFIC STYLES (about.html)
+   Added 2026-09-30 for the About page interior rebuild onto the chrome
+   design system, the same pattern already used by index.html,
+   calculators.html, and services.html. Reuses .mp-hero and
+   .mp-hero-title verbatim for the H1 band (no tagline, no copy
+   paragraph on this page). The two-column grid below it (.about-grid)
+   models its responsive breakpoint on .services-estimator-grid's own
+   single-column-to-two-column split (min-width:992px), with its own
+   independent class -- that rule itself is untouched.
+
+   Namespaced under .about-* so nothing here can leak onto other pages
+   -- same discipline as .home-*, .calc-index-*, .services-*. The new
+   interactive class .about-cta-btn declares margin-top, font-style,
+   font-size, and font-weight explicitly in its base rule AND
+   replicates them across :hover, :visited, and :active -- the legacy
+   sitewide anchor rule (style.css line 1454) wins on any property a
+   new class doesn't itself set, the same lesson already paid for on
+   the Home page buttons and the Calculators Index and Services CTA
+   buttons. Button spacing uses a flex gap wrapper (.about-cta-list)
+   rather than sibling margins, so no per-position margin value needs
+   separate hover/visited/active coverage.
+   ============================================================ */
+
+.about-grid{
+  display:grid;gap:1.5rem;
+  grid-template-columns:1fr;
+}
+@media (min-width:992px){
+  .about-grid{grid-template-columns:7fr 5fr;align-items:start;}
+}
+
+/* ---------- Story card (left column) ---------- */
+.about-story-card{
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:2rem;
+}
+.about-story-section + .about-story-section{
+  border-top:1px solid var(--chrome-paper-line);
+  margin-top:1.75rem;padding-top:1.75rem;
+}
+.about-story-section h2{
+  font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 .75rem;
+}
+.about-story-section p{
+  font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0;
+}
+
+/* ---------- Sidebar (right column) ---------- */
+.about-sidebar{display:flex;flex-direction:column;gap:1.5rem;}
+
+.about-expertise-card{
+  background:var(--chrome-ink-950);border-radius:12px;padding:1.75rem;color:#ffffff;
+}
+.about-expertise-card h2{
+  font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
+  color:#ffffff;margin:0 0 1.1rem;
+}
+.about-expertise-list{list-style:none;margin:0;padding:0;display:grid;gap:.75rem;}
+.about-expertise-list li{position:relative;padding-left:1.6rem;font-size:.92rem;line-height:1.5;color:rgba(255,255,255,.8);}
+.about-expertise-list li::before{content:"\2713";position:absolute;left:0;top:0;color:var(--chrome-signal-400);font-weight:700;}
+
+.about-explore-card{
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;padding:1.75rem;
+}
+.about-explore-card h2{
+  font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 1.1rem;
+}
+
+.about-cta-list{display:flex;flex-direction:column;gap:.85rem;}
+.about-cta-btn{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
+  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
+}
+.about-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+.about-cta-btn:visited{color:var(--chrome-ink-950);}
+.about-cta-btn:visited,.about-cta-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+
+@media (max-width:575.98px){
+  .about-story-card{padding:1.5rem;}
+  .about-expertise-card,.about-explore-card{padding:1.5rem;}
+}
