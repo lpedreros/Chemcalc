@@ -746,8 +746,6 @@ main.cloth-app{
    container — left unstyled here on purpose so we don't fight its
    inline styles; this wrapper only provides spacing. */
 
-.cloth-print-cta{margin-top:1.25rem;}
-
 /* ---------- Share this Calculator (small card, own QR — separate
    from the print QR code) ---------- */
 .cloth-share-card{
@@ -1020,8 +1018,6 @@ main.mekp-app{
 .mekp-result-advisory[data-band="hot"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
 .mekp-result-advisory[data-band="cool"],
 .mekp-result-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
-
-.mekp-print-cta{margin-top:1rem;}
 
 .mekp-email-capture{margin-top:1rem;}
 /* email-results.js injects its own inline-styled light box into this
@@ -4523,6 +4519,8 @@ body,
 .mp-affiliate-list li{margin-bottom:.4rem;}
 .mp-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
 .mp-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
+
+.mp-print-cta{margin-top:1.25rem;}
 
 .mp-print-btn{
   width:100%;background:var(--chrome-signal-400);color:var(--chrome-ink-950);
