@@ -5960,3 +5960,169 @@ body,
      CSS is not touched. */
   .calc-index-card:first-child{margin-bottom:3.5rem;}
 }
+
+/* ============================================================
+   SERVICES PAGE-SPECIFIC STYLES (services.html)
+   Added 2026-09-29 for the Services page interior rebuild onto the
+   chrome design system, mirroring the Calculators Index rebuild's own
+   conventions (5865, above) -- same .mp-hero reuse, same light
+   .services-card-on-dark-.container treatment as .calc-index-card,
+   same CSS Grid replacement for the old Bootstrap col-md-6/col-lg-4
+   and col-lg-7/col-lg-5 rows. This page has no calculator math of its
+   own, just service listings, a real-photo project showcase (Facebook
+   links preserved), and the Custom Estimator pitch section.
+
+   Namespaced under .services-* so nothing here can leak onto other
+   pages -- same discipline as .home-*/.calc-index-*. New button
+   classes (.services-card-btn/.services-showcase-btn/.services-cta-btn)
+   each declare margin-top/font-style/font-size/font-weight explicitly
+   in their base rule AND replicate that in :hover/:visited/:active --
+   the exact home-btn-bug lesson (db58c2a/e17feab): the legacy
+   `a, a:visited, a:hover, a:active` rule (style.css:1454) wins on any
+   property a new class doesn't itself set, at every specificity these
+   selectors have, so partial coverage produces a state-to-state size/
+   position jump instead of no coverage at all.
+   ============================================================ */
+
+/* ---------- Section heading/lead (centered, light-on-dark) ---------- */
+.services-section-title{
+  font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
+  color:var(--chrome-paper-card);text-align:center;margin:0 0 .75rem;
+}
+.services-section-lead{
+  font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,.72);
+  text-align:center;max-width:44rem;margin:0 auto 2.5rem;
+}
+@media (max-width:575.98px){
+  .services-section-title{font-size:1.5rem;}
+}
+
+/* ---------- Service cards grid ---------- */
+.services-grid{
+  display:grid;gap:1.25rem;
+  grid-template-columns:1fr;
+}
+@media (min-width:768px){
+  .services-grid{grid-template-columns:1fr 1fr;}
+}
+@media (min-width:992px){
+  .services-grid{grid-template-columns:1fr 1fr 1fr;}
+}
+
+.services-card{
+  display:flex;flex-direction:column;
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
+}
+.services-card-icon{
+  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
+  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
+  display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;
+}
+.services-card-title{
+  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 .6rem;
+}
+.services-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
+
+.services-card-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
+  cursor:pointer;text-decoration:none;line-height:1;margin-top:auto;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
+}
+.services-card-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
+.services-card-btn:visited{color:var(--chrome-ink-950);}
+.services-card-btn:visited,.services-card-btn:active{margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
+
+/* ---------- Project showcase grid ---------- */
+.services-showcase-grid{
+  display:grid;gap:1.25rem;
+  grid-template-columns:1fr;
+}
+@media (min-width:768px){
+  .services-showcase-grid{grid-template-columns:1fr 1fr;}
+}
+@media (min-width:992px){
+  .services-showcase-grid{grid-template-columns:1fr 1fr 1fr;}
+}
+
+.services-showcase-card{
+  display:flex;flex-direction:column;
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);overflow:hidden;
+}
+.services-showcase-img{width:100%;height:12rem;object-fit:cover;display:block;}
+.services-showcase-title{
+  font-family:var(--chrome-font-sans);font-size:1.05rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:1.25rem 1.25rem .9rem;
+}
+.services-showcase-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.88rem;
+  padding:.7rem 1.4rem;border-radius:999px;border:1px solid var(--chrome-sea-600);
+  background:transparent;color:var(--chrome-sea-600);
+  cursor:pointer;text-decoration:none;line-height:1;margin:auto 1.25rem 1.25rem;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
+}
+.services-showcase-btn:hover{background:var(--chrome-sea-600);color:#ffffff;text-decoration:none;margin-top:auto;font-style:normal;font-size:.88rem;font-weight:700;}
+.services-showcase-btn:visited{color:var(--chrome-sea-600);}
+.services-showcase-btn:visited,.services-showcase-btn:active{margin-top:auto;font-style:normal;font-size:.88rem;font-weight:700;}
+
+/* ---------- Custom Estimator section ---------- */
+.services-estimator-grid{
+  display:grid;gap:2.5rem;align-items:center;
+  grid-template-columns:1fr;
+}
+@media (min-width:992px){
+  .services-estimator-grid{grid-template-columns:7fr 5fr;}
+}
+
+.services-estimator-title{
+  font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
+  color:var(--chrome-paper-card);margin:0 0 .85rem;
+}
+.services-estimator-lead{font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0 0 1rem;}
+.services-estimator-copy-text{font-size:.95rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;}
+
+.services-estimator-features{list-style:none;margin:0 0 1.75rem;padding:0;display:grid;gap:.75rem;}
+.services-estimator-features li{position:relative;padding-left:1.6rem;font-size:.95rem;line-height:1.5;color:rgba(255,255,255,.85);}
+.services-estimator-features li::before{content:"\2713";position:absolute;left:0;top:0;color:var(--chrome-signal-400);font-weight:700;}
+
+.services-estimator-panel{
+  background:var(--chrome-ink-950);border-radius:16px;padding:1.75rem;
+  color:var(--chrome-paper-card);
+}
+.services-estimator-panel h5{
+  font-family:var(--chrome-font-sans);font-size:1.1rem;font-weight:700;
+  color:var(--chrome-signal-400);margin:0 0 1rem;
+}
+.services-estimator-industries{
+  display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;
+  font-size:.9rem;line-height:2;color:rgba(255,255,255,.85);
+}
+.services-estimator-industries-col div{position:relative;padding-left:1rem;}
+.services-estimator-industries-col div::before{content:"\25B8";position:absolute;left:0;color:var(--chrome-signal-400);}
+.services-estimator-divider{border:none;border-top:1px solid rgba(255,255,255,.14);margin:1.25rem 0;}
+.services-estimator-footnote{font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.65);margin:0;}
+
+@media (max-width:575.98px){
+  .services-estimator-title{font-size:1.5rem;}
+  .services-estimator-panel{padding:1.5rem;}
+}
+
+/* ---------- Final CTA ---------- */
+.services-final-cta{max-width:36rem;margin-left:auto;margin-right:auto;}
+.services-cta-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:1.05rem;
+  padding:1rem 2rem;border-radius:999px;border:1px solid transparent;
+  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
+  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
+}
+.services-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:1.05rem;font-weight:700;}
+.services-cta-btn:visited{color:var(--chrome-ink-950);}
+.services-cta-btn:visited,.services-cta-btn:active{margin-top:0;font-style:normal;font-size:1.05rem;font-weight:700;}
