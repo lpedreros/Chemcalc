@@ -61,6 +61,14 @@ function selectMaterialKeys(candidateRows, job) {
       keys.add(row.aff_key);
     }
   });
+  // job.keys / job.cleanupKeys: plain hardcoded aff_key arrays, same
+  // mechanism as job.respiratorKey below -- not tag-driven. MEKP/ClothCalc
+  // use these (with identityTags:[] and isResinJob:false) instead of the
+  // tag-sweep above, which still only contributes universal-tagged rows
+  // for them. Awlgrip (untouched identityTags/isResinJob) adds cleanupKeys
+  // on top of its own existing universal-tag sweep.
+  if (job.keys) job.keys.forEach(k => keys.add(k));
+  if (job.cleanupKeys) job.cleanupKeys.forEach(k => keys.add(k));
   if (job.respiratorKey) keys.add(job.respiratorKey);
   return keys;
 }

@@ -483,14 +483,61 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     affiliateLinksList.innerHTML = "";
-    // Tag-driven selection (material-selection.js) replaces the old
-    // hardcoded Set-building block. identityTags is just this job's
-    // resinType -- polyester/vinylester/epoxy rows carry the matching
-    // identity tag, and bare-resin items (cloth, gloves, respirator, etc.)
-    // match via isResinJob + the 'resin' tag regardless of resinType.
+    // Curated selection (material-selection.js): job.keys branches by
+    // resinType and is the explicit list this calculator actually needs --
+    // no more identityTags/isResinJob tag-sweep (that matched too broadly).
+    // identityTags:[] and isResinJob:false mean selectMaterialKeys' tag
+    // sweep now only ever contributes universal-tagged rows, same as
+    // Awlgrip. cleanupKeys (same for all 3 resin types) are the chemistry-
+    // specific post-work solvents; universal-tagged rows already cover
+    // general pre-work cleanup.
+    const CLOTHCALC_KEYS_BY_RESIN = {
+      polyester: [
+        'polyester_resin_1gallon_kit_with_mekp',
+        'mekp_catalyst_8oz_236cc',
+        'duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite',
+        'fiberglass_cloth_1708_biaxial_50_in_x_10_yards',
+        'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'peel_ply_30_inch_x_15_yards',
+        'peel_ply_40_inch_x_400_inch'
+      ],
+      vinylester: [
+        'fgci_vinylester_resin_1gallon_kit_with_4oz_mekp',
+        'fgci_vinylester_resin_1quart_kit_with_1oz_mekp',
+        'mekp_catalyst_8oz_236cc',
+        'duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite',
+        'fiberglass_cloth_1708_biaxial_50_in_x_10_yards',
+        'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'peel_ply_30_inch_x_15_yards',
+        'peel_ply_40_inch_x_400_inch'
+      ],
+      epoxy: [
+        'epoxy_resin_base_1gallon',
+        'epoxy_resin_hardener_fast_1quart',
+        'epoxy_resin_hardener_slow_1_quart',
+        'fiberglass_cloth_1708_biaxial_50_in_x_10_yards',
+        'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'peel_ply_30_inch_x_15_yards',
+        'peel_ply_40_inch_x_400_inch'
+      ]
+    };
     const job = {
-      isResinJob: true,
-      identityTags: [resinType],
+      isResinJob: false,
+      identityTags: [],
+      keys: CLOTHCALC_KEYS_BY_RESIN[resinType] || [],
+      cleanupKeys: ['denatured_alcohol_1gallon', 'denatured_alcohol_5gallon', 'acetone_5gallon'],
       respiratorKey: '3m_full_face_respirator_medium_model_6800_filter_kit_linked_below'
     };
     const linksToShowKeys = selectMaterialKeys(getCandidateRows(), job);

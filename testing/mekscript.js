@@ -240,15 +240,31 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!affiliateLinksList || typeof affiliateLinksData === "undefined") return;
 
     affiliateLinksList.innerHTML = "";
-    // Tag-driven selection (material-selection.js) replaces the old
-    // hardcoded key array. MEKP is always a polyester/vinylester/gel-coat
-    // resin job with no sanding step of its own -- gritPhaseBucket()
-    // never contributes a key here since no row's grit maps to a phase
-    // without isResinJob-specific 400/800 handling also requiring an
-    // active finishing step this page doesn't have.
+    // Curated selection (material-selection.js): job.keys is the explicit
+    // list this calculator actually needs -- no more identityTags/
+    // isResinJob tag-sweep (that matched too broadly, including spray
+    // hardware and other unrelated items sharing a resin-identity tag).
+    // identityTags:[] and isResinJob:false mean selectMaterialKeys' tag
+    // sweep now only ever contributes universal-tagged rows, same as
+    // Awlgrip. cleanupKeys are the chemistry-specific post-work solvents;
+    // universal-tagged rows already cover general pre-work cleanup.
     const job = {
-      isResinJob: true,
-      identityTags: ['polyester', 'vinylester', 'gel-coat'],
+      isResinJob: false,
+      identityTags: [],
+      keys: [
+        'mekp_catalyst_8oz_236cc',
+        'polyester_resin_1gallon_kit_with_mekp',
+        'white_gel_coat_1gallon_kit_with_wax_and_mekp',
+        'white_gel_coat_1quart_kit_with_wax_and_mekp',
+        'duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'fgci_vinylester_resin_1gallon_kit_with_4oz_mekp',
+        'fgci_vinylester_resin_1quart_kit_with_1oz_mekp'
+      ],
+      cleanupKeys: ['denatured_alcohol_1gallon', 'denatured_alcohol_5gallon', 'acetone_5gallon'],
       respiratorKey: '3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below'
     };
     const linksToShow = Array.from(selectMaterialKeys(getCandidateRows(), job));

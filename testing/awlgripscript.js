@@ -251,6 +251,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var universalKeys = selectMaterialKeys(getCandidateRows(), {
       isResinJob: false,
       identityTags: [],
+      cleanupKeys: ['lacquer_thinner_1gallon'],
       respiratorKey: '3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below'
     });
     universalKeys.forEach(function(key) {
