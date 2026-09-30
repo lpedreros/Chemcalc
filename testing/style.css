@@ -1324,8 +1324,8 @@ main.epifanes-app{
    build dispatch for full product scope). Reuses the shared .mp-*
    component vocabulary throughout; the rules below are the genuinely new
    ones, following the exact same naming/structure discipline as the
-   AWLGRIP and EPIFANES sections above -- .alexseal-slider/-note/-input-*/
-   -merged-* are this page's own copies of those patterns (never reused
+   AWLGRIP and EPIFANES sections above -- .alexseal-slider, -note,
+   -input-*, -merged-* are this page's own copies of those patterns (never reused
    directly across pages, per this project's established convention), not
    new visual language.
    ============================================================ */
