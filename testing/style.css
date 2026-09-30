@@ -5997,6 +5997,15 @@ body,
    position jump instead of no coverage at all.
    ============================================================ */
 
+/* main.services-page's own bottom spacing before the footer --
+   previously py-5's bottom half (padding-bottom:3rem, removed from
+   <main>'s class list along with its top half, which caused the
+   hero-gap round 1 patched around). Round 2: py-5 gone entirely, its
+   bottom half moves here so the footer gap stays the same as before. */
+.services-page{
+  padding-bottom:3rem;
+}
+
 /* ---------- Hero background (services-hero, added 2026-09-29) ----------
    Modifier class on the same shared .mp-hero div -- .mp-hero itself is
    reused verbatim by Calculators Index and every calculator page, so all
@@ -6006,7 +6015,6 @@ body,
    legible over the dark end, while the real project photo shows through
    on the right where the panel would otherwise be empty. */
 .services-hero{
-  margin-top:-3rem;
   background:
     linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
     url("images/Paint repairs - cover image.jpg") center 35% / cover no-repeat;
@@ -6179,6 +6187,15 @@ body,
    separate hover/visited/active coverage.
    ============================================================ */
 
+/* main.about's own bottom spacing before the footer -- previously
+   py-5's bottom half (padding-bottom:3rem, removed from <main>'s class
+   list along with its top half, which caused the hero-gap round 1
+   patched around). Round 2: py-5 gone entirely, its bottom half moves
+   here so the footer gap stays the same as before. */
+.about{
+  padding-bottom:3rem;
+}
+
 /* ---------- Hero background (about-hero) ----------
    Modifier class on the same shared .mp-hero div -- .mp-hero itself is
    reused verbatim by every calculator page and the index, calculators,
@@ -6187,7 +6204,6 @@ body,
    .services-hero (that rule untouched); only the image and vertical
    position differ, see IMG_20230306_131440.jpg's own crop note below. */
 .about-hero{
-  margin-top:-3rem;
   background:
     linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
     url("images/IMG_20230306_131440.jpg") center 52% / cover no-repeat;
