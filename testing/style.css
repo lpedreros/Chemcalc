@@ -560,6 +560,10 @@ main.cloth-app{
 }
 .cloth-app h1,.cloth-app h2,.cloth-app h3{font-family:var(--chrome-font-sans);}
 
+/* Tips & Safety list items -- 5 duplicate inline-styled paragraphs,
+   extracted per the sitewide no-inline-CSS rule. */
+.cloth-safety-tip{margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);}
+
 /* ---------- Field cards ----------
    Hybrid layout (unlike mekpcalc.css's clean 2-col + -wide split, where
    all 4 cards pair up): most of this page's cards carry multi-item
@@ -1454,6 +1458,7 @@ a, a:visited, a:hover, a:active {
     font-weight: bold;
     color: #89CFF0;
 }
+.svg-sprite-hidden{position:absolute;width:0;height:0;overflow:hidden;}
 h1 {
     font-size: 1.5em;
 }
@@ -4530,6 +4535,9 @@ body,
 .mp-print-btn:hover{background:var(--chrome-signal-200);}
 .mp-print-btn:focus-visible{outline:3px solid rgba(242,166,60,.5);outline-offset:2px;}
 
+.mp-feedback-msg{display:none;font-size:.85rem;margin-top:8px;}
+.mp-feedback-submit-btn{margin-top:12px;}
+
 .mp-resources-grid{display:grid;gap:1.25rem;margin-top:2rem;}
 @media (min-width:900px){
   .mp-resources-grid{grid-template-columns:1fr 1fr;}
@@ -5746,6 +5754,7 @@ body,
   background:var(--chrome-ink-900);
   box-shadow:var(--chrome-shadow-lift);
 }
+.home-hero-img-cover{width:100%;height:100%;object-fit:cover;display:block;}
 .home-stat-card{
   position:absolute;left:1rem;bottom:1rem;max-width:calc(100% - 2rem);
   background:var(--chrome-paper-card);border-radius:10px;
@@ -6272,3 +6281,20 @@ body,
   .about-story-card{padding:1.5rem;}
   .about-expertise-card,.about-explore-card{padding:1.5rem;}
 }
+
+/* ============================================================
+   TRELLO-SETUP PAGE-SPECIFIC STYLES
+   Added 2026-09-30, extracted from trello-setup.html's own one-off
+   inline style="..." attributes per the sitewide no-inline-CSS rule.
+   The page's modal reuses the existing .modal-content-custom/
+   .modal-header-custom/.modal-footer-custom classes (Donation Modal
+   Customizations, style.css ~1868) rather than respecifying identical
+   rules under new names -- those three were already defined but
+   unused by any page before this.
+   ============================================================ */
+.trello-setup-main{max-width:780px;}
+.trello-setup-subtitle{color:#aaa;}
+.trello-setup-hint{color:#aaa;font-size:0.9rem;}
+.trello-setup-table{color:inherit;}
+.trello-setup-modal-close{color:#ffffff;}
+.trello-setup-hr{border-color:#48484a;}

@@ -161,10 +161,10 @@
   </div>
 </header>
 <!-- #EndLibraryItem --><!-- Main Content -->
-<main class="container py-5" style="max-width: 780px;">
+<main class="container py-5 trello-setup-main">
 
   <h1 class="text-center mb-2">Connecting Trello to ChemCalc</h1>
-  <p class="text-center mb-5" style="color: #aaa;">A step-by-step guide for ChemCalc Pro users</p>
+  <p class="text-center mb-5 trello-setup-subtitle">A step-by-step guide for ChemCalc Pro users</p>
 
   <!-- What this does -->
   <div class="card mb-4">
@@ -197,7 +197,7 @@
         <li>On the next screen, click <strong>API Key</strong> in the left sidebar</li>
         <li>Your API Key will be displayed at the top of the page — copy it and keep this tab open</li>
       </ol>
-      <p class="mt-3 mb-0" style="color: #aaa; font-size: 0.9rem;">Your API Key is not a password, but treat it like one. Do not share it publicly.</p>
+      <p class="mt-3 mb-0 trello-setup-hint">Your API Key is not a password, but treat it like one. Do not share it publicly.</p>
     </div>
   </div>
 
@@ -223,7 +223,7 @@
         <li>A Trello popup will open asking you to confirm access &mdash; click <strong>Allow</strong></li>
         <li>The popup will close automatically and ChemCalc will confirm the connection</li>
       </ol>
-      <p class="mt-3 mb-0" style="color: #aaa; font-size: 0.9rem;">If the popup does not open, check that your browser allows popups for chemcalc.co.</p>
+      <p class="mt-3 mb-0 trello-setup-hint">If the popup does not open, check that your browser allows popups for chemcalc.co.</p>
     </div>
   </div>
 
@@ -256,7 +256,7 @@
   <div class="card mb-5">
     <div class="card-body">
       <h5 class="card-title">Troubleshooting</h5>
-      <table class="table table-sm mb-0" style="color: inherit;">
+      <table class="table table-sm mb-0 trello-setup-table">
         <thead>
           <tr>
             <th>Problem</th>
@@ -302,17 +302,17 @@
 <!-- Donation Modal -->
 <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-      <div class="modal-header" style="border-bottom: 1px solid #48484a;">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom">
         <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;">
+        <button type="button" class="close trello-setup-modal-close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <p>Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence.</p>
         <p>Your support goes toward site development, content updates, and continuous improvement of our services.</p>
-        <hr style="border-color: #48484a;">
+        <hr class="trello-setup-hr">
         <div class="donation-options">
           <form action="https://www.paypal.com/donate" method="post" target="_top">
             <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
@@ -324,7 +324,7 @@
           </form>
         </div>
       </div>
-      <div class="modal-footer" style="border-top: 1px solid #48484a;">
+      <div class="modal-footer modal-footer-custom">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
