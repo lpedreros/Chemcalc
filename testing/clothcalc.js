@@ -500,6 +500,9 @@ document.addEventListener("DOMContentLoaded", () => {
         'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
         'chip_brushes_1inch_24pack',
         'chip_brushes_2inch_36pack',
+        'electric_scissors_for_cutting_fiberglass_cloth',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack',
         'poly_resin_roller_covers_9inch_6pack',
         'roller_tray_with_liners_and_roller_frame_9inch_10pack',
         'peel_ply_30_inch_x_15_yards',
@@ -514,6 +517,9 @@ document.addEventListener("DOMContentLoaded", () => {
         'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
         'chip_brushes_1inch_24pack',
         'chip_brushes_2inch_36pack',
+        'electric_scissors_for_cutting_fiberglass_cloth',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack',
         'poly_resin_roller_covers_9inch_6pack',
         'roller_tray_with_liners_and_roller_frame_9inch_10pack',
         'peel_ply_30_inch_x_15_yards',
@@ -527,6 +533,9 @@ document.addEventListener("DOMContentLoaded", () => {
         'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
         'chip_brushes_1inch_24pack',
         'chip_brushes_2inch_36pack',
+        'electric_scissors_for_cutting_fiberglass_cloth',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack',
         'poly_resin_roller_covers_9inch_6pack',
         'roller_tray_with_liners_and_roller_frame_9inch_10pack',
         'peel_ply_30_inch_x_15_yards',
@@ -569,6 +578,43 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       affiliateLinksList.innerHTML = "<li>No specific products found. Check Kits page.</li>";
       if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
+    }
+  }
+
+  // Epoxy-only hardener product advisory (fast-cure vs. slow-cure, by
+  // temperature) -- separate from computeClothAdvisory()'s general
+  // cure-temperature warning below. Non-blocking informational text,
+  // does not touch the resin-volume math or mix-ratio dropdown.
+  function computeEpoxyHardenerAdvisory(rawTemp, isFahrenheitFlag) {
+    if (rawTemp === '' || rawTemp === null || isNaN(rawTemp)) return null;
+    var f = isFahrenheitFlag ? rawTemp : celsiusToFahrenheit(rawTemp);
+    var tempLine;
+    if (f < 60) {
+      tempLine = "Under 60°F: a fast-cure hardener is the better call — slow-cure may struggle to kick off in the cold.";
+    } else if (f <= 80) {
+      tempLine = "60–80°F: either fast- or slow-cure hardener works fine here.";
+    } else {
+      tempLine = "Above 80°F: a slow-cure hardener buys you working time before the pot kicks.";
+    }
+    return tempLine + " Need a clear, natural-wood finish? Consider System Three's 207 Special Clear instead of picking by temperature alone. Mixing a large batch? Consider splitting it into smaller pours to manage heat buildup.";
+  }
+
+  function updateEpoxyHardenerAdvisory() {
+    var el = document.getElementById('epoxy-hardener-advisory');
+    if (!el || !temperatureInput || !resinTypeSelect) return;
+    if (resinTypeSelect.value !== 'epoxy') {
+      el.textContent = '';
+      el.style.display = 'none';
+      return;
+    }
+    var raw = temperatureInput.value === '' ? NaN : parseFloat(temperatureInput.value);
+    var advisory = computeEpoxyHardenerAdvisory(raw, isFahrenheit);
+    if (advisory) {
+      el.textContent = advisory;
+      el.style.display = 'block';
+    } else {
+      el.textContent = '';
+      el.style.display = 'none';
     }
   }
 
@@ -649,6 +695,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function calculateResin() {
     updateClothTempAdvisory();
+    updateEpoxyHardenerAdvisory();
     const lengthVal = lengthInput.value;
     const widthVal = widthInput.value;
     const length = parseFloat(lengthVal);

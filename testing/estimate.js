@@ -318,7 +318,7 @@ var MATERIAL_PRESETS = {
       { name: '3M Platinum Plus Filler (gallon)', cost: 0, qty: 1, source: 'amz', affKey: '3m_platinum_plus_filler_1_gallon' },
       { name: '80-grit Sanding Disc 5-inch (50-box)', cost: 0, qty: 2, source: 'amz', affKey: '80_grit_sanding_disc_5inch_50box' },
       { name: '400-grit Wet Sandpaper (50 sheets)', cost: 0, qty: 2, source: 'amz', affKey: '400_grit_wet_paper_50_sheets' },
-      { name: 'Preval Sprayer (single)', cost: 0, qty: 2, source: 'amz', affKey: 'preval_singlepack' },
+      { name: 'Preval Sprayer (single)', cost: 0, qty: 2, source: 'amz', affKey: 'preval' },
       { name: 'Denatured Alcohol (gallon)', cost: 0, qty: 1, source: 'amz', affKey: 'denatured_alcohol_1gallon' },
       { name: 'Masking Paper 12-inch', cost: 0, qty: 1, source: 'amz', affKey: 'masking_paper_12inch' },
       { name: '3M Clean Sanding Blocks', cost: 0, qty: 1, source: 'amz', affKey: '3m_clean_sanding_blocks' }

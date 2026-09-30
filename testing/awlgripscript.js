@@ -261,6 +261,10 @@ document.addEventListener("DOMContentLoaded", function() {
     if (methodType === "spray") {
       linksToShowKeys.push("3m_performance_spray_gun_kit");
       linksToShowKeys.push("masking_plastic_24inch_with_dispenser");
+      linksToShowKeys.push("paint_strainers_50pack");
+      linksToShowKeys.push("paint_strainers_250pack");
+      linksToShowKeys.push("toilet_paper_filter_kit");
+      linksToShowKeys.push("inline_air_filter_moisture_trap");
     } else {
       linksToShowKeys.push("foam_rollers_6inch_20pack"); 
       linksToShowKeys.push("roller_tray_with_liners_and_roller_frame_6inch_11pack"); 
