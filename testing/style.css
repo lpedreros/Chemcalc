@@ -5883,6 +5883,19 @@ body,
    ruleset rather than depending on that page-scoped class.
    ============================================================ */
 
+/* ---------- Hero background (calc-hero) ----------
+   Modifier class on the same shared .mp-hero div -- .mp-hero itself is
+   reused verbatim by every calculator page and by the index, about,
+   and services pages, so the image/gradient layering lives here
+   instead, scoped to this page only. Same left-to-right gradient as
+   .services-hero/.about-hero (neither rule touched); only the image
+   and vertical position differ. */
+.calc-hero{
+  background:
+    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
+    url("images/hero-image-calculators.jpg") center 50% / cover no-repeat;
+}
+
 .calc-index-grid{
   display:grid;gap:1.25rem;margin-top:-1.75rem;
   grid-template-columns:1fr;
