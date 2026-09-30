@@ -5973,7 +5973,7 @@ body,
    links preserved), and the Custom Estimator pitch section.
 
    Namespaced under .services-* so nothing here can leak onto other
-   pages -- same discipline as .home-*/.calc-index-*. New button
+   pages -- same discipline as .home-* and .calc-index-*. New button
    classes (.services-card-btn/.services-showcase-btn/.services-cta-btn)
    each declare margin-top/font-style/font-size/font-weight explicitly
    in their base rule AND replicate that in :hover/:visited/:active --
@@ -5983,6 +5983,20 @@ body,
    selectors have, so partial coverage produces a state-to-state size/
    position jump instead of no coverage at all.
    ============================================================ */
+
+/* ---------- Hero background (services-hero, added 2026-09-29) ----------
+   Modifier class on the same shared .mp-hero div -- .mp-hero itself is
+   reused verbatim by Calculators Index and every calculator page, so all
+   the image/gradient layering lives here instead, scoped to this page
+   only. Left-to-right gradient (dark panel color -> transparent) keeps
+   .mp-hero-title/.mp-hero-copy (left-aligned, max-width:640px) fully
+   legible over the dark end, while the real project photo shows through
+   on the right where the panel would otherwise be empty. */
+.services-hero{
+  background:
+    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
+    url("images/Paint repairs - cover image.jpg") center 35% / cover no-repeat;
+}
 
 /* ---------- Section heading/lead (centered, light-on-dark) ---------- */
 .services-section-title{
