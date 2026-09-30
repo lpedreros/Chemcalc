@@ -6006,6 +6006,7 @@ body,
    legible over the dark end, while the real project photo shows through
    on the right where the panel would otherwise be empty. */
 .services-hero{
+  margin-top:-3rem;
   background:
     linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
     url("images/Paint repairs - cover image.jpg") center 35% / cover no-repeat;
@@ -6186,6 +6187,7 @@ body,
    .services-hero (that rule untouched); only the image and vertical
    position differ, see IMG_20230306_131440.jpg's own crop note below. */
 .about-hero{
+  margin-top:-3rem;
   background:
     linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
     url("images/IMG_20230306_131440.jpg") center 52% / cover no-repeat;
