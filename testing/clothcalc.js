@@ -482,34 +482,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    affiliateLinksList.innerHTML = ""; 
-    const linksToShowKeys = new Set();
-
-    // Add Resin Specific Links
-    if (resinType === "polyester" || resinType === "vinylester") {
-        linksToShowKeys.add("polyester_resin_1gallon_kit_with_mekp");
-        // MEKp is usually included or bought separately, but the kit has it.
-        // If a standalone MEKp link existed, it would be added here.
-    } else if (resinType === "epoxy") {
-        linksToShowKeys.add("epoxy_resin_base_1gallon");
-        linksToShowKeys.add("epoxy_resin_hardener_fast_1quart"); // Or slow, depending on preference
-    }
-
-    // Add Fiberglass Cloth Links (examples)
-    linksToShowKeys.add("fiberglass_cloth_1708_biaxial_50_in_x_10_yards");
-    linksToShowKeys.add("fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards");
-
-    // Add General Supplies (using standardized keys)
-    linksToShowKeys.add("latex_gloves");
-    linksToShowKeys.add("mixing_sticks_reusable");
-    linksToShowKeys.add("disposable_paper_cups_125pack");
-    linksToShowKeys.add("chip_brushes_2inch_36pack"); // Example, could be 1-inch too
-    linksToShowKeys.add("blue_tape_1inch_6pack");
-    linksToShowKeys.add("rags");
-    linksToShowKeys.add("ribbed_bubble_rollers_for_fiberglass_assorted_sizes_4pack");
-    linksToShowKeys.add("3m_full_face_respirator_medium_model_6800_filter_kit_linked_below");
-    linksToShowKeys.add("acetone"); // Common for polyester/vinylester cleanup
-    linksToShowKeys.add("denatured_alcohol_1gallon"); // Common for epoxy cleanup
+    affiliateLinksList.innerHTML = "";
+    // Tag-driven selection (material-selection.js) replaces the old
+    // hardcoded Set-building block. identityTags is just this job's
+    // resinType -- polyester/vinylester/epoxy rows carry the matching
+    // identity tag, and bare-resin items (cloth, gloves, respirator, etc.)
+    // match via isResinJob + the 'resin' tag regardless of resinType.
+    const job = {
+      isResinJob: true,
+      identityTags: [resinType],
+      respiratorKey: '3m_full_face_respirator_medium_model_6800_filter_kit_linked_below'
+    };
+    const linksToShowKeys = selectMaterialKeys(getCandidateRows(), job);
 
     if (linksToShowKeys.size > 0) {
       let hasDisplayedLinks = false;

@@ -242,16 +242,25 @@ document.addEventListener("DOMContentLoaded", function() {
       console.warn("Affiliate link key for reducer not found: " + reducerKey);
     }
 
-    linksToShowKeys.push("latex_gloves");
-    linksToShowKeys.push("mixing_sticks_reusable"); 
-    linksToShowKeys.push("disposable_paper_cups_125pack"); 
-    linksToShowKeys.push("blue_tape_1inch_6pack"); 
+    // Tag-driven selection (material-selection.js) replaces the old 4
+    // unconditional pushes. Not a resin job, no identity tags -- only
+    // universal-tagged rows match. Respirator is now unconditional on
+    // both spray and roll (merged in here via job.respiratorKey rather
+    // than only inside the spray branch below) -- an intentional
+    // behavior change per this dispatch.
+    var universalKeys = selectMaterialKeys(getCandidateRows(), {
+      isResinJob: false,
+      identityTags: [],
+      respiratorKey: '3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below'
+    });
+    universalKeys.forEach(function(key) {
+      linksToShowKeys.push(key);
+    });
 
     if (methodType === "spray") {
       linksToShowKeys.push("3m_performance_spray_gun_kit");
-      linksToShowKeys.push("masking_plastic_24inch_with_dispenser"); 
-      linksToShowKeys.push("3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below"); 
-    } else { 
+      linksToShowKeys.push("masking_plastic_24inch_with_dispenser");
+    } else {
       linksToShowKeys.push("foam_rollers_6inch_20pack"); 
       linksToShowKeys.push("roller_tray_with_liners_and_roller_frame_6inch_11pack"); 
     }

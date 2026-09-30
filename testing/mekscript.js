@@ -240,15 +240,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!affiliateLinksList || typeof affiliateLinksData === "undefined") return;
 
     affiliateLinksList.innerHTML = "";
-    // Corrected keys based on console output and affiliate_links.js structure
-    const linksToShow = [
-        "polyester_resin_1gallon_kit_with_mekp",      // Corrected: was polyester_resin_1_gallon_kit_with_mekp
-        "white_gel_coat_1gallon_kit_with_wax_and_mekp", // Corrected: was white_gel_coat_1_gallon_kit_with_mekp
-        "latex_gloves",                               // Correct (was working)
-        "disposable_paper_cups_125pack",              // Corrected: was disposable_paper_cups_125_pack
-        "mixing_sticks_reusable",                     // Correct (was working)
-        "3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below" // Corrected: was 3m_full_face_respirator_large_model_ultimate_fx_ff_402_filter_kit_linked_below
-    ];
+    // Tag-driven selection (material-selection.js) replaces the old
+    // hardcoded key array. MEKP is always a polyester/vinylester/gel-coat
+    // resin job with no sanding step of its own -- gritPhaseBucket()
+    // never contributes a key here since no row's grit maps to a phase
+    // without isResinJob-specific 400/800 handling also requiring an
+    // active finishing step this page doesn't have.
+    const job = {
+      isResinJob: true,
+      identityTags: ['polyester', 'vinylester', 'gel-coat'],
+      respiratorKey: '3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below'
+    };
+    const linksToShow = Array.from(selectMaterialKeys(getCandidateRows(), job));
 
     linksToShow.forEach(key => {
       const linkData = affiliateLinksData[key]; 
