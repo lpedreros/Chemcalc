@@ -23,10 +23,21 @@ function gritPhaseBucket(grit, isResinJob) {
   return ['finishing'];
 }
 
+// Rows tagged 'spray'/'tool' (spray-application hardware) or
+// 'filling-and-fairing' (Awlgrip's own Awlfair line) share resin-identity
+// tags (gel-coat/epoxy/polyester) with the catalog's actual base materials
+// for an unrelated reason -- excluded from the identityTags match
+// specifically so they don't leak onto MEKP/ClothCalc. Doesn't affect the
+// 'universal' or bare-'resin' clauses (e.g. fumed silica/milled fibers/
+// mica powder also carry 'filling-and-fairing' but still match correctly
+// via the bare-'resin' clause below, untouched by this exclusion).
+const NON_IDENTITY_CONTEXT_TAGS = ['spray', 'tool', 'filling-and-fairing'];
+
 function isSelected(itemTags, job) {
+  const isIdentityContext = !NON_IDENTITY_CONTEXT_TAGS.some(t => itemTags.includes(t));
   return itemTags.includes('universal')
       || (job.isResinJob && itemTags.includes('resin'))
-      || job.identityTags.some(t => itemTags.includes(t));
+      || (isIdentityContext && job.identityTags.some(t => itemTags.includes(t)));
 }
 
 // Grit/phase-based selection is for a future job type (kits.html /
