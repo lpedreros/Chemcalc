@@ -53,8 +53,10 @@ function applyAuthUI() {
   const logoutBtn    = document.getElementById('logoutBtn');
   const upgradeBtn   = document.querySelector('.btn-tier-upgrade');
   const manageSubBtn = document.getElementById('manageSubBtn');
+  const manageSubCompedBtn = document.getElementById('manageSubCompedBtn');
   const tier         = currentProfile ? currentProfile.tier : 'free';
   const proActive    = isPro();
+  const hasStripeCustomer = !!(currentProfile && currentProfile.stripe_customer_id);
 
   if (currentUser) {
     const name = currentProfile?.full_name || currentUser.email;
@@ -72,7 +74,8 @@ function applyAuthUI() {
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
     // Show Manage Subscription for Pro, Upgrade button for Free
     if (upgradeBtn)   upgradeBtn.style.display   = proActive ? 'none'         : 'inline-block';
-    if (manageSubBtn) manageSubBtn.style.display = proActive ? 'inline-block' : 'none';
+    if (manageSubBtn) manageSubBtn.style.display = (proActive && hasStripeCustomer) ? 'inline-block' : 'none';
+    if (manageSubCompedBtn) manageSubCompedBtn.style.display = (proActive && !hasStripeCustomer) ? 'inline-block' : 'none';
   } else {
     if (tierLabel) {
       tierLabel.textContent = '\uD83D\uDD10 Free Plan';
@@ -82,6 +85,7 @@ function applyAuthUI() {
     if (logoutBtn)    logoutBtn.style.display    = 'none';
     if (upgradeBtn)   upgradeBtn.style.display   = 'inline-block';
     if (manageSubBtn) manageSubBtn.style.display = 'none';
+    if (manageSubCompedBtn) manageSubCompedBtn.style.display = 'none';
   }
 
   // Tell estimate.js what tier we're on
