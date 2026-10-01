@@ -177,6 +177,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
+  // role:'base' keys -- the actual computed primer/converter/reducer
+  // items, across every paintType/methodType branch below. These carry
+  // spray/roll tags in affiliate_materials for unrelated (kits.html
+  // filtering) reasons and must render in "Your Materials" only, never
+  // also in the Application bucket -- enforced by renderGroupedMaterialLinks
+  // checking this set before any tag-based bucketing.
+  var AWLGRIP_BASE_KEYS = [
+    'awlgrip_545_primer_base_white_1gallon',
+    'awlgrip_545_primer_base_grey_1gallon',
+    'awlgrip_545_primer_converter_1gallon',
+    'awlcraft2000awlgrip_spray_converter_1quart',
+    'awlcraft2000awlgrip_spray_reducer_1quart',
+    'awlgrip_rollbrush_converter_1pint',
+    'awlgrip_rollbrush_reducer_1quart'
+  ];
+  var AWLGRIP_ALLOWED_BUCKETS = ['PPE', 'Prep & Masking', 'Filling & Fairing', 'Mixing', 'Application', 'Finishing'];
+
   function displayAffiliateLinks(paintType, methodType) {
     if (!affiliateLinksList || !affiliateLinksContainer || typeof affiliateLinksData === "undefined") {
       console.error("Affiliate links container or data not found.");
@@ -271,23 +288,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (linksToShowKeys.length > 0) {
-      var hasDisplayedLinks = false;
-      linksToShowKeys.forEach(function(key) {
-        var linkData = affiliateLinksData[key];
-        if (linkData && linkData.url && linkData.name) {
-          var li = document.createElement("li");
-          var a = document.createElement("a");
-          a.href = linkData.url;
-          a.textContent = linkData.name;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer sponsored";
-          li.appendChild(a);
-          affiliateLinksList.appendChild(li);
-          hasDisplayedLinks = true;
-        } else {
-          console.warn("Attempted to render link for key but not found in affiliateLinksData: " + key);
-        }
-      });
+      var hasDisplayedLinks = renderGroupedMaterialLinks(affiliateLinksList, linksToShowKeys, AWLGRIP_BASE_KEYS, AWLGRIP_ALLOWED_BUCKETS);
       if (hasDisplayedLinks) {
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
       } else {

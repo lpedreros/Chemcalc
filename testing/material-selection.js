@@ -73,6 +73,102 @@ function selectMaterialKeys(candidateRows, job) {
   return keys;
 }
 
+// ── Phase-bucket grouping for the materials display (2026-10 build) ──
+// Groups an already-selected key list into "Your Materials" (role:'base'
+// items -- the actual computed paint/resin/catalyst, never bucketed by
+// tag even if they also carry a bucket tag for unrelated reasons, e.g.
+// Awlgrip's base items carry spray/roll tags from kits.html filtering)
+// plus phase-bucket sections, each populated by matching role:'suggestion'
+// items against their real affiliate_materials.tags. A suggestion item
+// matching none of the 6 buckets (or matching only a bucket this
+// calculator excludes via allowedBucketLabels) falls into
+// MATERIALS_FALLBACK_LABEL instead of being silently dropped -- found
+// during this build that several resin/hardener/cloth suggestion links
+// carry only chemistry-identity tags (polyester/vinylester/epoxy/
+// fiberglass) with no process-phase tag at all; Leo's call (2026-10-01)
+// was a catch-all section over letting them disappear or stretching
+// what role:'base' means.
+const MATERIAL_BUCKETS = [
+  { label: 'PPE', tags: ['ppe'] },
+  { label: 'Prep & Masking', tags: ['prep', 'clean-and-prep', 'masking', 'sanding'] },
+  { label: 'Filling & Fairing', tags: ['filling-and-fairing'] },
+  { label: 'Mixing', tags: ['mixing'] },
+  { label: 'Application', tags: ['spray', 'roll', 'brush'] },
+  { label: 'Finishing', tags: ['buff-and-polish', 'sealant'] }
+];
+const MATERIALS_FALLBACK_LABEL = 'Materials & Supplies';
+const APPLICATION_TAGS = ['spray', 'roll', 'brush'];
+
+// Dual-tag tie-break: an item carrying both a Mixing tag and an
+// Application tag renders in Application only (general rule, not a
+// hardcoded special case -- holds for any future item with this
+// combination, not just today's paint_strainers_*/toilet_paper_filter_kit).
+function bucketLabelForTags(tags) {
+  const hasApplicationTag = APPLICATION_TAGS.some(t => tags.includes(t));
+  for (const bucket of MATERIAL_BUCKETS) {
+    if (bucket.label === 'Mixing' && hasApplicationTag) continue;
+    if (bucket.tags.some(t => tags.includes(t))) return bucket.label;
+  }
+  return MATERIALS_FALLBACK_LABEL;
+}
+
+// Renders `keys` (the Set/array already returned by selectMaterialKeys)
+// into listEl, grouped under section headings in a fixed order: "Your
+// Materials", then whichever of the 6 phase buckets this calculator
+// allows (in MATERIAL_BUCKETS order), then the fallback section. A
+// section with zero items is not rendered at all. Replaces each
+// calculator's own flat forEach->li/a loop -- same rendering, now
+// shared once instead of copied 3 times, same reasoning as the
+// selection logic above.
+function renderGroupedMaterialLinks(listEl, keys, baseKeys, allowedBucketLabels) {
+  listEl.innerHTML = '';
+  const baseKeySet = new Set(baseKeys);
+  const sectionOrder = ['Your Materials']
+    .concat(MATERIAL_BUCKETS.filter(function (b) { return allowedBucketLabels.indexOf(b.label) !== -1; }).map(function (b) { return b.label; }))
+    .concat([MATERIALS_FALLBACK_LABEL]);
+  const sections = {};
+  sectionOrder.forEach(function (label) { sections[label] = []; });
+
+  keys.forEach(function (key) {
+    if (baseKeySet.has(key)) {
+      sections['Your Materials'].push(key);
+      return;
+    }
+    const row = (typeof affiliateLinksData !== 'undefined') ? affiliateLinksData[key] : null;
+    const tags = (row && row.tags) || [];
+    const label = bucketLabelForTags(tags);
+    const target = (allowedBucketLabels.indexOf(label) !== -1) ? label : MATERIALS_FALLBACK_LABEL;
+    sections[target].push(key);
+  });
+
+  let hasDisplayedLinks = false;
+  sectionOrder.forEach(function (label) {
+    const sectionKeys = sections[label];
+    if (!sectionKeys || sectionKeys.length === 0) return;
+    const heading = document.createElement('li');
+    heading.className = 'mp-affiliate-section-heading';
+    heading.textContent = label;
+    listEl.appendChild(heading);
+    sectionKeys.forEach(function (key) {
+      const linkData = affiliateLinksData[key];
+      if (!linkData || !linkData.url || !linkData.name) {
+        console.warn('Attempted to render link for key but not found in affiliateLinksData: ' + key);
+        return;
+      }
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = linkData.url;
+      a.textContent = linkData.name;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer sponsored';
+      li.appendChild(a);
+      listEl.appendChild(li);
+      hasDisplayedLinks = true;
+    });
+  });
+  return hasDisplayedLinks;
+}
+
 // candidateRows source: affiliateLinksData (affiliate_links.js's existing
 // live Supabase fetch against affiliate_materials, extended to also
 // select tags/grit alongside id/name/url -- the exact same already-

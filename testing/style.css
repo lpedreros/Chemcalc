@@ -4525,6 +4525,20 @@ body,
 .mp-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
 .mp-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
 
+/* Materials-display bucket-section headings (2026-10 build, MEKP/ClothCalc/
+   Awlgrip only). New class, added only where material-selection.js's
+   renderGroupedMaterialLinks() renders it -- epifanespoly.html/alexseal.html
+   build their affiliate list independently and never emit this class, so
+   this rule can't affect their unchanged flat-list rendering. */
+.mp-affiliate-list .mp-affiliate-section-heading{
+  list-style:none;font-size:.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;color:rgba(255,255,255,.45);
+  margin:.9rem 0 .35rem;padding-top:.6rem;border-top:1px solid rgba(255,255,255,.1);
+}
+.mp-affiliate-list .mp-affiliate-section-heading:first-child{
+  margin-top:0;padding-top:0;border-top:none;
+}
+
 .mp-print-cta{margin-top:1.25rem;}
 
 .mp-print-btn{
