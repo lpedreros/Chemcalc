@@ -236,6 +236,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // role:'base' -- the one item this calculator's math actually computes
+  // (the MEKP catalyst volume/drops). The resin-kit links in job.keys
+  // below are generic "where to buy resin" suggestions -- calculateMEKP()
+  // takes resin volume as a user-entered input, it never computes which
+  // specific resin product to buy -- so those stay role:'suggestion'.
+  var MEKP_BASE_KEYS = ['mekp_catalyst_8oz_236cc'];
+  var MEKP_ALLOWED_BUCKETS = ['PPE', 'Prep & Masking', 'Filling & Fairing', 'Mixing', 'Application', 'Finishing'];
+
   function displayAffiliateLinks() {
     if (!affiliateLinksList || typeof affiliateLinksData === "undefined") return;
 
@@ -272,21 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const linksToShow = Array.from(selectMaterialKeys(getCandidateRows(), job));
 
-    linksToShow.forEach(key => {
-      const linkData = affiliateLinksData[key]; 
-      if (linkData) {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = linkData.url;
-        a.textContent = linkData.name;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer sponsored";
-        li.appendChild(a);
-        affiliateLinksList.appendChild(li);
-      } else {
-          console.warn(`Affiliate link key not found in affiliateLinksData: ${key}`);
-      }
-    });
+    renderGroupedMaterialLinks(affiliateLinksList, linksToShow, MEKP_BASE_KEYS, MEKP_ALLOWED_BUCKETS);
   }
 
   const inputsToWatch = [
