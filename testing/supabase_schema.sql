@@ -42,6 +42,21 @@ create table if not exists public.profiles (
 -- Enable Row Level Security
 alter table public.profiles enable row level security;
 
+-- Column-level grants (service_role keeps full access by default; everything
+-- else is locked down to match live privileges -- verified via
+-- information_schema.column_privileges)
+revoke all on public.profiles from anon, authenticated;
+
+grant select on public.profiles to anon, authenticated;
+
+grant update (
+  full_name, company_name, estimate_prefix, logo_url,
+  trello_api_key, trello_token, trello_board_id, trello_board_name,
+  trello_list_id, trello_list_name,
+  biz_name, biz_tagline, biz_phone, biz_email, biz_website, biz_address,
+  biz_prefix, biz_logo_url
+) on public.profiles to authenticated;
+
 -- Users can only read/update their own profile
 create policy "Users can view own profile"
   on public.profiles for select
