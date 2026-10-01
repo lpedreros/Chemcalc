@@ -400,6 +400,7 @@
     return '' +
       '<div class="acct-tab-panel" id="acctPanelTrello" style="display:none;">' +
       '  <h4 class="acct-section-title">Trello Integration <span class="pro-badge-inline">Pro</span></h4>' +
+      '  <p class="scope-hint"><a href="/trello-setup.html" target="_blank">Full setup guide &#8599;</a></p>' +
       '  <p class="modal-sub">Connect your Trello account to send estimates directly to your board.</p>' +
       '  <div class="row g-3">' +
       '    <div class="col-12">' +
