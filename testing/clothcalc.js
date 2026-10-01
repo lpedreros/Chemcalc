@@ -542,6 +542,25 @@ document.addEventListener("DOMContentLoaded", () => {
         'peel_ply_40_inch_x_400_inch'
       ]
     };
+    // role:'base' -- the catalyst/hardener quantity this calculator's math
+    // actually computes (mekpCcs for polyester/vinylester, see mekpCcs
+    // above). Epoxy has no base item: resinVolumeLiters/hardenerVolumeLiters
+    // are computed, but the hardener has two alternative product choices
+    // (fast/slow cure) the code never picks between -- same "multiple
+    // competing SKUs, none uniquely the computed one" situation as the
+    // resin-kit links below, so epoxy_resin_base_1gallon and both hardener
+    // keys stay role:'suggestion' (they land in the Materials & Supplies
+    // fallback section, not a bucket, since they carry only the 'epoxy'
+    // chemistry-identity tag).
+    const CLOTHCALC_BASE_KEYS_BY_RESIN = {
+      polyester: ['mekp_catalyst_8oz_236cc'],
+      vinylester: ['mekp_catalyst_8oz_236cc'],
+      epoxy: []
+    };
+    // ClothCalc only calculates saturation volumes -- it never has fairing
+    // compound in its selection. Excluded explicitly rather than relying
+    // on it just happening to be empty.
+    const CLOTHCALC_ALLOWED_BUCKETS = ['PPE', 'Prep & Masking', 'Mixing', 'Application', 'Finishing'];
     const job = {
       isResinJob: false,
       identityTags: [],
@@ -552,23 +571,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const linksToShowKeys = selectMaterialKeys(getCandidateRows(), job);
 
     if (linksToShowKeys.size > 0) {
-      let hasDisplayedLinks = false;
-      linksToShowKeys.forEach((key) => {
-        const linkData = affiliateLinksData[key];
-        if (linkData && linkData.url && linkData.name) {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = linkData.url;
-          a.textContent = linkData.name;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer sponsored";
-          li.appendChild(a);
-          affiliateLinksList.appendChild(li);
-          hasDisplayedLinks = true;
-        } else {
-            console.warn(`Attempted to render link for key but not found in affiliateLinksData: ${key}`);
-        }
-      });
+      const hasDisplayedLinks = renderGroupedMaterialLinks(
+        affiliateLinksList,
+        Array.from(linksToShowKeys),
+        CLOTHCALC_BASE_KEYS_BY_RESIN[resinType] || [],
+        CLOTHCALC_ALLOWED_BUCKETS
+      );
       if (hasDisplayedLinks) {
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
       } else {
