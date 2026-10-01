@@ -150,7 +150,7 @@
       if (session && session.user) {
         _cachedUser = session.user;
         var profileResult = await _sb.from('profiles')
-          .select('full_name, tier, subscription_status, company_name, beta_tester')
+          .select('full_name, tier, subscription_status, company_name, beta_tester, stripe_customer_id')
           .eq('id', session.user.id)
           .single();
         if (profileResult.data) _cachedProfile = profileResult.data;
@@ -162,7 +162,7 @@
       if (newSession && newSession.user) {
         _cachedUser = newSession.user;
         var profileResult = await _sb.from('profiles')
-          .select('full_name, tier, subscription_status, company_name, beta_tester')
+          .select('full_name, tier, subscription_status, company_name, beta_tester, stripe_customer_id')
           .eq('id', newSession.user.id)
           .single();
         if (profileResult.data) _cachedProfile = profileResult.data;
@@ -370,6 +370,9 @@
       '      <p class="modal-sub">You are on the <strong>Pro</strong> plan. Manage your billing and subscription below.</p>' +
       '      <button class="btn-modal-secondary" onclick="window.open(\'https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00\',\'_blank\')">Manage Subscription</button>' +
       '    </div>' +
+      '    <div id="subCompedBlock" style="display:none;">' +
+      '      <p class="modal-sub">You\'re on a complimentary Pro plan. Contact us if you need to make changes.</p>' +
+      '    </div>' +
       '  </div>' +
       '</div>';
   }
@@ -535,12 +538,15 @@
     // Use sessionStorage (set by global-auth.js) as reliable fallback
     var storedTier = sessionStorage.getItem('chemcalc_user_tier');
     var proActive = (storedTier === 'pro') || ((typeof isPro === 'function') ? isPro() : false);
+    var hasStripeCustomer = !!(profile && profile.stripe_customer_id);
     var tierEl = document.getElementById('subTierName');
     var upgradeBlock = document.getElementById('subUpgradeBlock');
     var manageBlock = document.getElementById('subManageBlock');
+    var compedBlock = document.getElementById('subCompedBlock');
     if (tierEl) tierEl.textContent = proActive ? 'Pro' : 'Free';
     if (upgradeBlock) upgradeBlock.style.display = proActive ? 'none' : '';
-    if (manageBlock) manageBlock.style.display = proActive ? '' : 'none';
+    if (manageBlock) manageBlock.style.display = (proActive && hasStripeCustomer) ? '' : 'none';
+    if (compedBlock) compedBlock.style.display = (proActive && !hasStripeCustomer) ? '' : 'none';
 
     // Biz Info tab (only on estimator — loadBusinessInfo already populates fields)
     if (isEstimatorPage && typeof loadBusinessInfo === 'function') {
