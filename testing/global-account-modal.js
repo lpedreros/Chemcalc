@@ -86,7 +86,7 @@
       var result = await _sb.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + window.location.pathname,
+          redirectTo: window.location.origin + window.location.pathname + window.location.search,
           queryParams: { prompt: 'select_account' }
         }
       });
