@@ -6359,12 +6359,19 @@ body,
    buttons.
    ============================================================ */
 
-/* No .kits-hero background-image/gradient rule -- Leo's call
-   (2026-10-01): this page's hero stays the plain/flat base .mp-hero
-   treatment (background:var(--chrome-ink-950), no photo, no gradient
-   overlay), unlike calc-hero/services-hero/about-hero which all layer
-   a photo. The kits-hero class itself was removed from kits.html's
-   hero div for the same reason -- nothing to modify. */
+/* ---------- Hero background (kits-hero) ----------
+   Modifier class on the shared .mp-hero div, same split as every other
+   converted page's own hero background rule (calc-hero/services-hero/
+   about-hero, none of them touched). Restored 2026-10-01 after a
+   same-day removal (Leo wants the photo back after all) -- re-added
+   into the already-fixed banner above (commas, not the stray premature
+   comment-close slash bug that banner had when this rule was first
+   written). */
+.kits-hero{
+  background:
+    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
+    url("images/IMG_20230802_190851.jpg") center 50% / cover no-repeat;
+}
 
 /* ---------- Need a Custom Solution? (2-card row) ---------- */
 .kits-custom-section{
