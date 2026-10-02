@@ -263,16 +263,21 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Per-account favorites are Pro-only (2026-10-02; previously gated on
-    // any logged-in session, free or Pro). Pro users read/write
-    // public.user_favorites (scoped by RLS) for table-backed items, and
-    // localStorage for fallback-path items (no data-material-id, i.e. the
-    // loadFallbackProductList() path) that still have no id to key a table
-    // row on. Logged-out AND free-tier visitors get no interactive star at
-    // all -- not a localStorage-backed one. This is unrelated to
-    // affiliate_materials.is_favorite (the "favorite" tag / isPreFavorite
-    // below) -- that sitewide editorial star is untouched, unconditional,
-    // same for every visitor regardless of tier.
+    // Per-account favorites: the star exists and shows for every visitor
+    // regardless of tier (2026-10-02; superseded 55db6d2's "no star at all
+    // for non-Pro" approach per Leo's visual feedback -- a mix of rows
+    // with and without a star read as broken, not tier-gated). Only the
+    // CLICK behavior forks by tier: Pro toggles and persists (table for
+    // material-id items, localStorage for fallback-path items with none);
+    // non-Pro does nothing to the star itself and instead opens the
+    // existing upgrade/login nudge (openModal('loginModal'), the same
+    // global function kits.html's own help-modal CTA already calls
+    // inline). A Pro user logging out mid-session gets their interactive
+    // stars reset to unfavorited rather than left showing a stale ★ with
+    // no session backing it. This is unrelated to affiliate_materials.
+    // is_favorite (the "favorite" tag / isPreFavorite below) -- that
+    // sitewide editorial star is untouched, unconditional, same for every
+    // visitor regardless of tier.
     let favoritesAuthListenerBound = false;
 
     async function getCurrentSession() {
@@ -359,11 +364,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Creates the interactive (non-editorial) star on one item and wires
-    // its click handler. Only ever called for Pro users (see
-    // addInteractiveStarsIfMissing()) -- the handler still re-checks
-    // isCurrentUserPro() itself before writing anywhere (defense in
-    // depth: the localStorage write path below has no server-side
-    // protection the way the user_favorites table's RLS does).
+    // its click handler. Created unconditionally for every non-editorial
+    // item regardless of tier (see initializeFavorites()) -- only the
+    // click behavior forks by tier, re-checked here at click time (not
+    // cached from init) as defense in depth: the localStorage write path
+    // below has no server-side protection the way the user_favorites
+    // table's RLS does.
     function createInteractiveStar(item) {
         const star = document.createElement("span");
         star.classList.add("star-toggle");
@@ -373,8 +379,15 @@ document.addEventListener("DOMContentLoaded", function() {
         star.addEventListener("click", async function(e) {
             e.stopPropagation(); // Prevent li click if any
 
-            const stillPro = await isCurrentUserPro();
-            if (!stillPro) return;
+            const pro = await isCurrentUserPro();
+            if (!pro) {
+                // Non-Pro: no toggle, no write -- nudge toward the
+                // existing upgrade/login flow instead. Don't touch
+                // classList/innerHTML at all, so there's no flicker of a
+                // change that's about to not happen.
+                openModal('loginModal');
+                return;
+            }
 
             const materialId = item.getAttribute("data-material-id");
             const linkElem = item.querySelector("a");
@@ -414,68 +427,68 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Removes any interactive stars (e.g. on logout, or a Pro account
-    // signing out of Pro) -- editorial .my-favorite stars are untouched,
-    // this selector explicitly excludes them.
-    function removeInteractiveStars() {
-        productListContainer.querySelectorAll(".star-toggle:not(.my-favorite)").forEach(star => star.remove());
-    }
-
-    // Adds interactive stars to every non-pre-favorite item that doesn't
-    // already have one. Idempotent (checked per item) so it's safe to
-    // call again on every auth-state change without double-creating.
-    function addInteractiveStarsIfMissing() {
-        const listItems = productListContainer.querySelectorAll(".content ul li");
-        listItems.forEach(item => {
-            const tags = item.getAttribute("data-tags") ? item.getAttribute("data-tags").toLowerCase() : "";
-            if (tags.includes("favorite")) return; // editorial item, no interactive star
-            if (item.querySelector(".star-toggle:not(.my-favorite)")) return; // already has one
-            createInteractiveStar(item);
+    // Resets every interactive star to unfavorited -- the star element
+    // itself is never removed (it always exists now, regardless of
+    // tier), only its favorited display. Used when the current user
+    // isn't Pro, including a Pro user logging out mid-session, so a
+    // previously-favorited star doesn't linger showing ★ with no
+    // session/subscription backing it. Editorial .my-favorite stars are
+    // untouched, this selector explicitly excludes them.
+    function resetInteractiveStarsToUnfavorited() {
+        productListContainer.querySelectorAll(".star-toggle:not(.my-favorite)").forEach(star => {
+            star.classList.remove("user-favorite");
+            star.innerHTML = "☆";
         });
     }
 
-    // Resolves Pro status, then adds or removes the interactive stars
-    // accordingly, and (if Pro) syncs their visual favorited state. Called
-    // once on init and again on every auth-state change -- this is the
-    // single place that decides whether the feature's UI exists at all,
-    // so the gate can't be bypassed by an auth-change re-sync forgetting
-    // to check it. Resolving Pro status BEFORE creating anything means a
-    // non-Pro visitor never sees a star flash in and then disappear.
+    // Syncs the interactive stars' VISUAL favorited state based on Pro
+    // status -- the star itself always exists for every visitor (see
+    // initializeFavorites()); only its favorited/unfavorited display (and
+    // the click behavior, in createInteractiveStar()) fork by tier. Pro:
+    // sync from localStorage then the table, same as before this rework.
+    // Not Pro: reset every interactive star to unfavorited rather than
+    // leaving a stale ★ around. Called once on init and again on every
+    // auth-state change.
     async function applyFavoritesProGate() {
         const pro = await isCurrentUserPro();
         if (!pro) {
-            removeInteractiveStars();
+            resetInteractiveStarsToUnfavorited();
             return;
         }
-        addInteractiveStarsIfMissing();
         syncFavoriteStarsFromLocalStorage();
         const session = await getCurrentSession();
         if (session) syncFavoriteStarsFromTable(session.user.id);
     }
 
     function initializeFavorites() {
-        // Editorial (.my-favorite) stars: unconditional, same for every
-        // visitor regardless of tier, exactly as before this change.
+        // Every item gets its star unconditionally, regardless of tier --
+        // visual consistency across visitors was the whole point of this
+        // rework. Editorial (.my-favorite) items get the non-interactive
+        // filled star, same as always; everything else gets the
+        // interactive one. Only the click behavior forks by tier (see
+        // createInteractiveStar()), never whether the star exists.
         const listItems = productListContainer.querySelectorAll(".content ul li");
         listItems.forEach(item => {
             const tags = item.getAttribute("data-tags") ? item.getAttribute("data-tags").toLowerCase() : "";
-            if (!tags.includes("favorite")) return;
-            const star = document.createElement("span");
-            star.classList.add("star-toggle", "my-favorite");
-            star.innerHTML = "★";
-            item.insertBefore(star, item.firstChild);
+            if (tags.includes("favorite")) {
+                const star = document.createElement("span");
+                star.classList.add("star-toggle", "my-favorite");
+                star.innerHTML = "★";
+                item.insertBefore(star, item.firstChild);
+                return;
+            }
+            createInteractiveStar(item);
         });
 
-        // Interactive stars are Pro-gated -- resolve and apply async so
-        // non-Pro visitors never get one created in the first place.
+        // Sync the interactive stars' visual favorited state for the
+        // current user (or reset them if not Pro) -- see
+        // applyFavoritesProGate()'s own comment.
         applyFavoritesProGate();
 
         if (typeof _sb !== 'undefined' && _sb !== null && !favoritesAuthListenerBound) {
             favoritesAuthListenerBound = true;
-            // Re-apply the Pro gate (not just a visual re-sync) on every
-            // login/logout, without a page reload -- a free-tier login
-            // must not leave stale interactive stars from a prior guest
-            // state, and a Pro login must add them.
+            // Re-sync visual state (never existence -- the star always
+            // exists) on every login/logout, without a page reload.
             _sb.auth.onAuthStateChange(function (event, session) {
                 applyFavoritesProGate();
             });
