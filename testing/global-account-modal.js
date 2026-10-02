@@ -45,6 +45,20 @@
       return (p && p.tier === 'pro') || (p && p.subscription_status === 'active');
     };
   }
+  // Shared synchronous auth-state getter (2026-10-02 consolidation) -- for
+  // any script that runs after resolution has already happened and needs
+  // the current value without waiting for a chemcalc:authchange event.
+  // Reads through getUser()/getProfile() rather than closing over
+  // _cachedUser/_cachedProfile directly: on estimate.html, resolveSession()
+  // below never runs (auth.js handles session resolution there instead,
+  // see isEstimatorPage), so _cachedUser/_cachedProfile would always be
+  // null there -- but getUser()/getProfile() already resolve correctly on
+  // every page regardless, via the same "if not already defined" guard
+  // that lets auth.js's own versions win on estimate.html. Without this,
+  // global-auth.js's nav pill would always show logged-out on estimate.html.
+  if (typeof window.getAuthState !== 'function') {
+    window.getAuthState = function () { return { user: getUser(), profile: getProfile() }; };
+  }
 
   // ── doLogin (email/password) ─────────────────────────────────────────────
   if (typeof window.doLogin !== 'function') {
@@ -58,7 +72,6 @@
         return;
       }
       var result = await _sb.auth.signInWithPassword({ email: email, password: password });
-      console.log('[authdiag] signInWithPassword result:', result.error ? result.error.message : 'success', result.data && result.data.session && result.data.session.user && result.data.session.user.id);
       if (result.error) {
         if (errEl) errEl.textContent = result.error.message;
       } else {
@@ -115,7 +128,6 @@
   if (typeof window.doLogout !== 'function') {
     window.doLogout = async function () {
       await _sb.auth.signOut();
-      console.log('[authdiag] signOut complete');
       _cachedUser = null;
       _cachedProfile = null;
       // Close the account modal if open
@@ -159,6 +171,17 @@
       }
     } catch (e) { /* fail silently */ }
 
+    // Broadcast the initial resolution before registering the live
+    // listener below, so any script that needs auth state (global-auth.js's
+    // nav pill, main.js's favorites Pro-gate) can read it via a
+    // chemcalc:authchange listener instead of each running its own
+    // independent getSession()/profile fetch -- that duplication (four
+    // separate places doing this) is what the login-indicator bug
+    // (diagnosed via commit 4b6f080's temporary logging) and the
+    // favorites race (fixed in commit 421da99, but only by working around
+    // the duplication rather than removing it) both trace back to.
+    window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: { user: _cachedUser, profile: _cachedProfile } }));
+
     // Listen for auth changes (login/logout from this page)
     _sb.auth.onAuthStateChange(async function (event, newSession) {
       if (newSession && newSession.user) {
@@ -172,6 +195,7 @@
         _cachedUser = null;
         _cachedProfile = null;
       }
+      window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: { user: _cachedUser, profile: _cachedProfile } }));
     });
   }
 

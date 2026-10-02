@@ -316,41 +316,30 @@ document.addEventListener("DOMContentLoaded", function() {
         return lastWrite !== undefined && lastWrite >= syncStartedAt;
     }
 
-    async function getCurrentSession() {
-        if (typeof _sb === 'undefined' || _sb === null) return null;
-        try {
-            const { data, error } = await _sb.auth.getSession();
-            if (error) {
-                console.warn("Error checking session for favorites:", error.message);
-                return null;
-            }
-            return data && data.session ? data.session : null;
-        } catch (err) {
-            console.warn("Exception checking session for favorites:", err);
-            return null;
-        }
+    // Reads the shared auth-state broadcast by global-account-modal.js
+    // (2026-10-02 consolidation) instead of running an independent
+    // getSession() call -- this file was one of four places on the page
+    // doing that independently, which the login-indicator bug (commit
+    // 4b6f080) and this file's own favorites race (commit 421da99) both
+    // trace back to. Returns a session-shaped object ({user: {...}}) so
+    // existing call sites (session.user.id) didn't need to change, even
+    // though the shared source only tracks the user object, not a full
+    // Supabase session. No longer async -- window.getAuthState() is
+    // synchronous, there's no network call left to await.
+    function getCurrentSession() {
+        if (typeof window.getAuthState !== 'function') return null;
+        const state = window.getAuthState();
+        return state.user ? { user: state.user } : null;
     }
 
-    // Per-account favorites are Pro-only (2026-10-02). Queries the real
-    // source directly -- same reason getCurrentSession() doesn't read
-    // sessionStorage.chemcalc_user_tier for login state: that value is
-    // set by global-auth.js's own async init, which can still be
-    // in-flight when this runs. Same tier/subscription_status pattern
-    // as global-auth.js's fetchProfile()/isPro.
-    async function isCurrentUserPro() {
-        const session = await getCurrentSession();
-        if (!session) return false;
-        try {
-            const { data, error } = await _sb.from('profiles')
-                .select('tier, subscription_status')
-                .eq('id', session.user.id)
-                .single();
-            if (error || !data) return false;
-            return data.tier === 'pro' || data.subscription_status === 'active';
-        } catch (err) {
-            console.warn("Exception checking Pro status for favorites:", err);
-            return false;
-        }
+    // Per-account favorites are Pro-only. Pure synchronous function over
+    // the shared profile now (no network call of its own) -- same
+    // tier/subscription_status pattern as global-auth.js's own isPro
+    // check. No longer async, for the same reason as getCurrentSession().
+    function isCurrentUserPro() {
+        if (typeof window.getAuthState !== 'function') return false;
+        const profile = window.getAuthState().profile;
+        return !!(profile && (profile.tier === 'pro' || profile.subscription_status === 'active'));
     }
 
     // Logged-out (and fallback-path-item) source of truth: localStorage,
@@ -421,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function() {
         star.addEventListener("click", async function(e) {
             e.stopPropagation(); // Prevent li click if any
 
-            const pro = await isCurrentUserPro();
+            const pro = isCurrentUserPro();
             if (!pro) {
                 // Non-Pro: no toggle, no write -- nudge toward the
                 // existing upgrade/login flow instead. Don't touch
@@ -435,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const linkElem = item.querySelector("a");
             const link = linkElem ? linkElem.href : null;
             const pendingKey = materialId || link;
-            const session = await getCurrentSession();
+            const session = getCurrentSession();
 
             if (pendingKey) favoritesPendingMaterialIds.add(pendingKey);
             try {
@@ -507,19 +496,22 @@ document.addEventListener("DOMContentLoaded", function() {
     // sync from localStorage then the table, same as before this rework.
     // Not Pro: reset every interactive star to unfavorited rather than
     // leaving a stale ★ around. Called once on init and again on every
-    // auth-state change.
-    async function applyFavoritesProGate() {
-        // Captured before anything else (even the Pro check's own await),
-        // so it's at least as early as the real network fetches this
-        // resync is about to issue -- see favoritesSyncShouldSkip().
+    // chemcalc:authchange event. No longer async: isCurrentUserPro()/
+    // getCurrentSession() are now synchronous reads of the shared auth
+    // state, and syncFavoriteStarsFromTable()'s own fetch is already
+    // fire-and-forget here (not awaited) exactly as before this change.
+    function applyFavoritesProGate() {
+        // Captured before anything else (even the Pro check), so it's at
+        // least as early as the real network fetch syncFavoriteStarsFromTable()
+        // is about to issue -- see favoritesSyncShouldSkip().
         const syncStartedAt = Date.now();
-        const pro = await isCurrentUserPro();
+        const pro = isCurrentUserPro();
         if (!pro) {
             resetInteractiveStarsToUnfavorited();
             return;
         }
         syncFavoriteStarsFromLocalStorage(syncStartedAt);
-        const session = await getCurrentSession();
+        const session = getCurrentSession();
         if (session) syncFavoriteStarsFromTable(session.user.id, syncStartedAt);
     }
 
@@ -548,16 +540,24 @@ document.addEventListener("DOMContentLoaded", function() {
         // applyFavoritesProGate()'s own comment.
         applyFavoritesProGate();
 
-        if (typeof _sb !== 'undefined' && _sb !== null && !favoritesAuthListenerBound) {
+        if (!favoritesAuthListenerBound) {
             favoritesAuthListenerBound = true;
             // Re-sync visual state (never existence -- the star always
-            // exists) on login/logout, without a page reload. Only
-            // SIGNED_IN/SIGNED_OUT actually change who's favoriting --
-            // TOKEN_REFRESHED and other events firing a full resync here
-            // needlessly widened the window for the stale-SELECT race
-            // this file's own 2026-10-02 fix addresses, for no benefit.
-            _sb.auth.onAuthStateChange(function (event, session) {
-                if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT') return;
+            // exists) on login/logout, without a page reload. Listens for
+            // the shared chemcalc:authchange event (2026-10-02
+            // consolidation) instead of registering its own independent
+            // _sb.auth.onAuthStateChange() -- this was one of four places
+            // on the page doing that independently, which this file's own
+            // favorites race (fixed in commit 421da99, but only by working
+            // around the duplication) traces back to. The previous
+            // SIGNED_IN/SIGNED_OUT-only event filter is dropped: the
+            // broadcast event's detail doesn't carry the raw Supabase
+            // event name, only {user, profile}, and the 421da99 timestamp
+            // guard (favoritesSyncShouldSkip) already prevents the race
+            // regardless of how often a resync fires -- so a resync on
+            // every chemcalc:authchange (including a token refresh) is at
+            // most a few extra queries, not a correctness regression.
+            window.addEventListener('chemcalc:authchange', function () {
                 applyFavoritesProGate();
             });
         }

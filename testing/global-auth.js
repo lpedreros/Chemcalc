@@ -30,7 +30,6 @@
 
   // ── 2. Update the indicator based on auth state ──────────────────────────
   function updateIndicator(user, profile) {
-    console.log('[authdiag] updateIndicator called, user present:', !!user, 'el found:', !!document.getElementById('navAuthIndicator'));
     var el = document.getElementById('navAuthIndicator');
     if (!el) return;
 
@@ -57,21 +56,33 @@
       .replace(/"/g, '&quot;');
   }
 
-  // ── 4. Fetch profile from Supabase (same pattern as auth.js) ─────────────
-  async function fetchProfile(userId) {
-    try {
-      var result = await _sb
-        .from('profiles')
-        .select('full_name, tier, subscription_status')
-        .eq('id', userId)
-        .single();
-      return result.data || null;
-    } catch (e) {
-      return null;
+  // ── 4. Apply a resolved (user, profile) pair sitewide ────────────────────
+  // Shared by the initial getAuthState() read and every later
+  // chemcalc:authchange event, so both paths stay identical. autofillEmailFields
+  // is only called when there's a real user -- the original logged-out
+  // branch never called it either; calling it with a null email would set
+  // matching inputs' .value to the literal string "null" (the DOM coerces
+  // el.value = null via ToString, it doesn't clear the field).
+  function applyAuthState(user, profile) {
+    updateIndicator(user, profile);
+    if (user) {
+      sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
+      autofillEmailFields(user.email);
+    } else {
+      sessionStorage.setItem('chemcalc_user_tier', 'guest');
     }
   }
 
-  // ── 5. Init: check current session, then listen for changes ──────────────
+  // ── 5. Init: read the shared auth state, then listen for changes ─────────
+  // 2026-10-02 consolidation: this file used to run its own independent
+  // getSession() + profile fetch and its own onAuthStateChange listener --
+  // one of four places on the page doing that independently, which is what
+  // the login-indicator bug (no SIGNED_IN event ever reaching this file's
+  // own listener, per commit 4b6f080's diagnostic logging) traced back to.
+  // Now reads from global-account-modal.js's shared getAuthState()/
+  // chemcalc:authchange instead -- that script loads before this one on
+  // every real page (confirmed via the actual <script> order, all 20
+  // pages, not assumed).
   async function init() {
     injectIndicator();
 
@@ -81,37 +92,13 @@
       return;
     }
 
-    // Check existing session
-    var sessionResult = await _sb.auth.getSession();
-    var session = sessionResult.data && sessionResult.data.session;
+    var initialState = (typeof window.getAuthState === 'function') ? window.getAuthState() : { user: null, profile: null };
+    applyAuthState(initialState.user, initialState.profile);
 
-    if (session && session.user) {
-      var profile = await fetchProfile(session.user.id);
-      updateIndicator(session.user, profile);
-      // Store tier in sessionStorage for chatbot and other scripts to read
-      sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
-      // Autofill email fields on calculator pages (e.g. "Email Me" box)
-      autofillEmailFields(session.user.email);
-    } else {
-      updateIndicator(null, null);
-      sessionStorage.setItem('chemcalc_user_tier', 'guest');
-    }
-
-    // Listen for login / logout events
-    _sb.auth.onAuthStateChange(async function (event, newSession) {
-      console.log('[authdiag] onAuthStateChange fired:', event, 'user:', newSession && newSession.user && newSession.user.id);
-      if (newSession && newSession.user) {
-        var profile = await fetchProfile(newSession.user.id);
-        console.log('[authdiag] profile fetch result:', profile);
-        console.log('[authdiag] calling updateIndicator, branch:', 'signed-in');
-        updateIndicator(newSession.user, profile);
-        autofillEmailFields(newSession.user.email);
-        sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
-      } else {
-        console.log('[authdiag] calling updateIndicator, branch:', 'signed-out');
-        updateIndicator(null, null);
-        sessionStorage.setItem('chemcalc_user_tier', 'guest');
-      }
+    // Live updates (login/logout without a page nav) arrive via this event
+    // instead of a page-local onAuthStateChange subscription.
+    window.addEventListener('chemcalc:authchange', function (e) {
+      applyAuthState(e.detail.user, e.detail.profile);
     });
   }
 
