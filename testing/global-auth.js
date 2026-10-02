@@ -30,6 +30,7 @@
 
   // ── 2. Update the indicator based on auth state ──────────────────────────
   function updateIndicator(user, profile) {
+    console.log('[authdiag] updateIndicator called, user present:', !!user, 'el found:', !!document.getElementById('navAuthIndicator'));
     var el = document.getElementById('navAuthIndicator');
     if (!el) return;
 
@@ -98,12 +99,16 @@
 
     // Listen for login / logout events
     _sb.auth.onAuthStateChange(async function (event, newSession) {
+      console.log('[authdiag] onAuthStateChange fired:', event, 'user:', newSession && newSession.user && newSession.user.id);
       if (newSession && newSession.user) {
         var profile = await fetchProfile(newSession.user.id);
+        console.log('[authdiag] profile fetch result:', profile);
+        console.log('[authdiag] calling updateIndicator, branch:', 'signed-in');
         updateIndicator(newSession.user, profile);
         autofillEmailFields(newSession.user.email);
         sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
       } else {
+        console.log('[authdiag] calling updateIndicator, branch:', 'signed-out');
         updateIndicator(null, null);
         sessionStorage.setItem('chemcalc_user_tier', 'guest');
       }

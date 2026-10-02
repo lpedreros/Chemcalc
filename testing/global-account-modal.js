@@ -58,6 +58,7 @@
         return;
       }
       var result = await _sb.auth.signInWithPassword({ email: email, password: password });
+      console.log('[authdiag] signInWithPassword result:', result.error ? result.error.message : 'success', result.data && result.data.session && result.data.session.user && result.data.session.user.id);
       if (result.error) {
         if (errEl) errEl.textContent = result.error.message;
       } else {
@@ -114,6 +115,7 @@
   if (typeof window.doLogout !== 'function') {
     window.doLogout = async function () {
       await _sb.auth.signOut();
+      console.log('[authdiag] signOut complete');
       _cachedUser = null;
       _cachedProfile = null;
       // Close the account modal if open
