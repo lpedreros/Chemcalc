@@ -280,6 +280,42 @@ document.addEventListener("DOMContentLoaded", function() {
     // visitor regardless of tier.
     let favoritesAuthListenerBound = false;
 
+    // Race fix (2026-10-02): an already-favorited item couldn't be
+    // un-favorited, because a resync's SELECT -- already in flight from
+    // page load or an auth event -- could resolve AFTER a fast DELETE
+    // completed and reassert the star from its now-stale snapshot.
+    //
+    // A plain "pending while the write is in flight" set isn't enough on
+    // its own: verified by a manual timing test (slow mocked SELECT,
+    // fast mocked DELETE, both run through the real functions below) that
+    // a pending-only guard still loses the race, because the DELETE
+    // finishes and clears its own pending entry well before the slower,
+    // already-in-flight SELECT ever resolves and checks it -- the key is
+    // long gone by the time the stale read needs to see it.
+    //
+    // Fix: keep favoritesPendingMaterialIds for the in-flight write
+    // itself (keyed by material_id for table-backed items, href for
+    // fallback-path items -- same priority as createInteractiveStar()'s
+    // own pendingKey), AND remember WHEN each write last completed in
+    // favoritesLastWriteCompletedAt. Every resync captures its own
+    // syncStartedAt before it does anything else (including the Pro
+    // check, so it's at least as early as the real network fetch it's
+    // about to issue) and skips any item with either an in-flight write
+    // or a completed one at/after that timestamp -- a write that
+    // completed no earlier than when this resync's snapshot was taken is
+    // strictly more recent than that snapshot, so the local DOM state
+    // wins. Confirmed via the same manual test that this closes the gap
+    // the pending-only version didn't.
+    const favoritesPendingMaterialIds = new Set();
+    const favoritesLastWriteCompletedAt = new Map();
+
+    function favoritesSyncShouldSkip(key, syncStartedAt) {
+        if (!key) return false;
+        if (favoritesPendingMaterialIds.has(key)) return true;
+        const lastWrite = favoritesLastWriteCompletedAt.get(key);
+        return lastWrite !== undefined && lastWrite >= syncStartedAt;
+    }
+
     async function getCurrentSession() {
         if (typeof _sb === 'undefined' || _sb === null) return null;
         try {
@@ -321,13 +357,17 @@ document.addEventListener("DOMContentLoaded", function() {
     // matched by href -- same read this function replaces used to do inline.
     // Also used to revert visual state on logout, so it must set BOTH
     // directions (★ and ☆), not only add stars for matches.
-    function syncFavoriteStarsFromLocalStorage() {
+    function syncFavoriteStarsFromLocalStorage(syncStartedAt) {
+        if (syncStartedAt === undefined) syncStartedAt = Date.now();
         const savedFavorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
         const listItems = productListContainer.querySelectorAll(".content ul li");
         listItems.forEach(item => {
             const star = item.querySelector(".star-toggle:not(.my-favorite)");
             if (!star) return;
             const linkElem = item.querySelector("a");
+            const materialId = item.getAttribute("data-material-id");
+            const pendingKey = materialId || (linkElem ? linkElem.href : null);
+            if (favoritesSyncShouldSkip(pendingKey, syncStartedAt)) return;
             const isFavorited = !!(linkElem && savedFavorites.includes(linkElem.href));
             star.classList.toggle("user-favorite", isFavorited);
             star.innerHTML = isFavorited ? "★" : "☆";
@@ -338,7 +378,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // user_favorites table (plain select -- RLS already scopes it to userId).
     // Items with no data-material-id (fallback-path) are left untouched here;
     // they stay governed by localStorage regardless of login state.
-    async function syncFavoriteStarsFromTable(userId) {
+    async function syncFavoriteStarsFromTable(userId, syncStartedAt) {
+        if (syncStartedAt === undefined) syncStartedAt = Date.now();
         let favoritedIds = new Set();
         try {
             const { data, error } = await _sb.from('user_favorites').select('material_id');
@@ -355,6 +396,7 @@ document.addEventListener("DOMContentLoaded", function() {
         listItems.forEach(item => {
             const materialId = item.getAttribute("data-material-id");
             if (!materialId) return; // fallback-path item: stays on localStorage
+            if (favoritesSyncShouldSkip(materialId, syncStartedAt)) return;
             const star = item.querySelector(".star-toggle:not(.my-favorite)");
             if (!star) return;
             const isFavorited = favoritedIds.has(materialId);
@@ -392,37 +434,54 @@ document.addEventListener("DOMContentLoaded", function() {
             const materialId = item.getAttribute("data-material-id");
             const linkElem = item.querySelector("a");
             const link = linkElem ? linkElem.href : null;
+            const pendingKey = materialId || link;
             const session = await getCurrentSession();
 
-            // Optimistic UI update.
-            const nowFavorited = !this.classList.contains("user-favorite");
-            this.classList.toggle("user-favorite");
-            this.innerHTML = nowFavorited ? "★" : "☆";
+            if (pendingKey) favoritesPendingMaterialIds.add(pendingKey);
+            try {
+                // Optimistic UI update.
+                const nowFavorited = !this.classList.contains("user-favorite");
+                this.classList.toggle("user-favorite");
+                this.innerHTML = nowFavorited ? "★" : "☆";
 
-            if (session && materialId) {
-                // Logged in, table-backed item.
-                const userId = session.user.id;
-                const { error } = nowFavorited
-                    ? await _sb.from('user_favorites').insert({ user_id: userId, material_id: materialId })
-                    : await _sb.from('user_favorites').delete().eq('user_id', userId).eq('material_id', materialId);
+                if (session && materialId) {
+                    // Logged in, table-backed item.
+                    const userId = session.user.id;
+                    const { error } = nowFavorited
+                        ? await _sb.from('user_favorites').insert({ user_id: userId, material_id: materialId })
+                        : await _sb.from('user_favorites').delete().eq('user_id', userId).eq('material_id', materialId);
 
-                if (error) {
-                    console.warn("Failed to save favorite:", error.message);
-                    // Revert the optimistic update.
-                    this.classList.toggle("user-favorite");
-                    this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
+                    if (error) {
+                        console.warn("Failed to save favorite:", error.message);
+                        // Revert the optimistic update.
+                        this.classList.toggle("user-favorite");
+                        this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
+                    }
+                } else if (link) {
+                    // Pro user, fallback-path item (no data-material-id, i.e.
+                    // loadFallbackProductList()): localStorage, unchanged --
+                    // there's still no id to key a table row on.
+                    let favorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
+                    if (nowFavorited) {
+                        if (!favorites.includes(link)) favorites.push(link);
+                    } else {
+                        favorites = favorites.filter(fav => fav !== link);
+                    }
+                    localStorage.setItem("userFavoritesChemCalc", JSON.stringify(favorites));
                 }
-            } else if (link) {
-                // Pro user, fallback-path item (no data-material-id, i.e.
-                // loadFallbackProductList()): localStorage, unchanged --
-                // there's still no id to key a table row on.
-                let favorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
-                if (nowFavorited) {
-                    if (!favorites.includes(link)) favorites.push(link);
-                } else {
-                    favorites = favorites.filter(fav => fav !== link);
+            } finally {
+                // Clears even on an unexpected throw, not just the normal
+                // success/revert paths above -- a pending key must never
+                // get stuck set, or every future resync for that item
+                // would be silently skipped forever. Recording the
+                // completion time (not just clearing "in flight") is what
+                // still protects against a resync that was already in
+                // flight before this write started and only resolves
+                // after it -- see favoritesSyncShouldSkip()'s own comment.
+                if (pendingKey) {
+                    favoritesPendingMaterialIds.delete(pendingKey);
+                    favoritesLastWriteCompletedAt.set(pendingKey, Date.now());
                 }
-                localStorage.setItem("userFavoritesChemCalc", JSON.stringify(favorites));
             }
         });
     }
@@ -450,14 +509,18 @@ document.addEventListener("DOMContentLoaded", function() {
     // leaving a stale ★ around. Called once on init and again on every
     // auth-state change.
     async function applyFavoritesProGate() {
+        // Captured before anything else (even the Pro check's own await),
+        // so it's at least as early as the real network fetches this
+        // resync is about to issue -- see favoritesSyncShouldSkip().
+        const syncStartedAt = Date.now();
         const pro = await isCurrentUserPro();
         if (!pro) {
             resetInteractiveStarsToUnfavorited();
             return;
         }
-        syncFavoriteStarsFromLocalStorage();
+        syncFavoriteStarsFromLocalStorage(syncStartedAt);
         const session = await getCurrentSession();
-        if (session) syncFavoriteStarsFromTable(session.user.id);
+        if (session) syncFavoriteStarsFromTable(session.user.id, syncStartedAt);
     }
 
     function initializeFavorites() {
@@ -488,8 +551,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if (typeof _sb !== 'undefined' && _sb !== null && !favoritesAuthListenerBound) {
             favoritesAuthListenerBound = true;
             // Re-sync visual state (never existence -- the star always
-            // exists) on every login/logout, without a page reload.
+            // exists) on login/logout, without a page reload. Only
+            // SIGNED_IN/SIGNED_OUT actually change who's favoriting --
+            // TOKEN_REFRESHED and other events firing a full resync here
+            // needlessly widened the window for the stale-SELECT race
+            // this file's own 2026-10-02 fix addresses, for no benefit.
             _sb.auth.onAuthStateChange(function (event, session) {
+                if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT') return;
                 applyFavoritesProGate();
             });
         }
