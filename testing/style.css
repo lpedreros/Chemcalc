@@ -6312,3 +6312,176 @@ body,
 .trello-setup-table{color:inherit;}
 .trello-setup-modal-close{color:#ffffff;}
 .trello-setup-hr{border-color:#48484a;}
+
+/* ============================================================
+   KITS PAGE-SPECIFIC STYLES (kits.html)
+   Added 2026-10-01 for the Kits page interior rebuild onto the chrome
+   design system, the same pattern already used by index.html,
+   calculators.html, services.html, and about.html. Reuses .mp-hero/
+   .mp-hero-title/.mp-hero-tagline/.mp-hero-copy verbatim for the H1
+   band. The "Need a Custom Solution?" 2-card row models
+   .services-grid/.services-card's own structure under its own
+   .kits-custom-* namespace (that rule itself untouched).
+
+   main.js's Supabase-backed product list (#product-list-container,
+   #search-input, #filter-buttons/.filter-btn, .collapsible/.content,
+   .star-toggle) keeps its exact ids/classes and DOM structure --
+   restyled in place only. #search-input and .collapsible/.content/
+   .star-toggle/.filter-btn already had pre-chrome rules higher up this
+   file (~line 1543 "Filter Buttons" through ~1653 "Search Input");
+   #search-input is an ID selector, so this section's override is also
+   written as #search-input (equal specificity, later source order
+   wins) rather than a class, which an ID would have beaten regardless
+   of source order. .filter-btn/.collapsible/.content/.star-toggle are
+   plain classes already, so same-specificity + later order is enough.
+   Those older rules are left in place, not deleted -- kits.html is the
+   only page that references any of them (confirmed via repo-wide
+   grep), so nothing else depends on their current look.
+   #custom-kit-options' id was dropped from the markup (confirmed
+   unreferenced by any JS/CSS/anchor outside its own now-superseded
+   rules at ~line 1703) in favor of a plain .kits-custom-section class,
+   so no ID-vs-class specificity fight there either.
+
+   Namespaced under .kits-* so nothing here can leak onto other pages
+   -- same discipline as .home-*/.calc-index-*/.services-*/.about-*.
+   The new interactive class .kits-custom-card-btn declares margin-top,
+   font-style, font-size, and font-weight explicitly in its base rule
+   AND replicates them across :hover/:visited/:active -- the legacy
+   sitewide anchor rule (style.css line 1454) wins on any property a
+   new class doesn't itself set, the same lesson already paid for on
+   the Home page buttons and the Calculators Index/Services/About CTA
+   buttons.
+   ============================================================ */
+
+/* ---------- Hero background (kits-hero) ----------
+   Modifier class on the shared .mp-hero div, same split as every other
+   converted page's own hero background rule (calc-hero/services-hero/
+   about-hero, none of them touched). */
+.kits-hero{
+  background:
+    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
+    url("images/IMG_20230802_190851.jpg") center 50% / cover no-repeat;
+}
+
+/* ---------- Need a Custom Solution? (2-card row) ---------- */
+.kits-custom-section{
+  max-width:1100px;margin:0 auto 2.5rem;padding:0 1.5rem;
+}
+.kits-custom-title{
+  font-family:var(--chrome-font-sans);font-size:1.4rem;font-weight:800;
+  color:var(--chrome-paper-card);margin:0 0 .6rem;
+}
+.kits-custom-intro{font-size:.92rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;}
+
+.kits-custom-grid{
+  display:grid;gap:1.25rem;grid-template-columns:1fr;
+}
+@media (min-width:768px){
+  .kits-custom-grid{grid-template-columns:1fr 1fr;}
+}
+
+.kits-custom-card{
+  display:flex;flex-direction:column;
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
+}
+.kits-custom-card-icon{
+  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
+  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
+  display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;
+}
+.kits-custom-card-title{
+  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 .6rem;
+}
+.kits-custom-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
+
+.kits-custom-card-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
+  cursor:pointer;text-decoration:none;line-height:1;margin-top:auto;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
+}
+.kits-custom-card-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
+.kits-custom-card-btn:visited{color:var(--chrome-ink-950);}
+.kits-custom-card-btn:visited,.kits-custom-card-btn:active{margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
+
+.kits-custom-footnote{font-size:.85rem;color:rgba(255,255,255,.55);text-align:center;margin:1.5rem 0 0;}
+
+/* ---------- Search + filter toolbar (sticky) ----------
+   .header is position:relative (not fixed), so top:0 needs no offset
+   for a fixed header -- confirmed via style.css:1483. */
+.kits-toolbar{
+  position:sticky;top:0;z-index:40;
+  max-width:1100px;margin:0 auto 1.5rem;padding:1rem 1.5rem;
+  background:var(--chrome-ink-950);border-radius:12px;
+  box-shadow:var(--chrome-shadow-panel);
+}
+.kits-search-container{margin-bottom:.75rem;}
+#search-input{
+  display:block;width:100%;max-width:none;
+  padding:.7rem 1rem;font-size:.92rem;font-family:var(--chrome-font-sans);
+  border:1px solid rgba(255,255,255,.15);border-radius:8px;
+  background:rgba(255,255,255,.06);color:#ffffff;
+}
+#search-input::placeholder{color:rgba(255,255,255,.45);}
+#search-input:focus{outline:none;border-color:var(--chrome-signal-400);background:rgba(255,255,255,.1);}
+
+.kits-filter-buttons{text-align:center;}
+
+.filter-btn{
+  background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);
+  border:1px solid rgba(255,255,255,.12);padding:.5em 1em;margin:.25em;
+  cursor:pointer;font-size:.85rem;font-weight:600;border-radius:999px;
+  font-family:var(--chrome-font-sans);
+  transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth),border-color .15s var(--chrome-ease-smooth);
+}
+.filter-btn:hover,
+.filter-btn.active{
+  background:var(--chrome-signal-400);color:var(--chrome-ink-950);border-color:var(--chrome-signal-400);
+}
+
+/* ---------- Product list panel ---------- */
+.kits-product-panel{
+  max-width:1100px;margin:0 auto 3rem;padding:0 1.5rem;
+}
+.kits-product-title{
+  font-family:var(--chrome-font-sans);font-size:1.4rem;font-weight:800;
+  color:var(--chrome-paper-card);text-align:center;margin:0 0 .75rem;
+}
+.kits-product-disclosure{font-size:.8rem;color:rgba(255,255,255,.5);text-align:center;margin:0 0 .5rem;}
+.kits-product-intro{font-size:.9rem;color:rgba(255,255,255,.72);text-align:center;margin:0 0 1.5rem;}
+
+.collapsible{
+  background:var(--chrome-paper-card);color:var(--chrome-ink-900);
+  border:1px solid var(--chrome-paper-line);
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:1rem;
+  box-shadow:var(--chrome-shadow-panel);
+}
+.collapsible::after{color:var(--chrome-ink-600);}
+.content{
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);border-top:none;
+}
+.content ul li a{color:var(--chrome-ink-900);}
+.content ul li a:hover{color:var(--chrome-signal-600);}
+
+.star-toggle{color:var(--chrome-ink-500);}
+.star-toggle.user-favorite,.star-toggle.my-favorite{color:#f5b400;}
+
+@media (max-width:575.98px){
+  .kits-custom-title,.kits-product-title{font-size:1.2rem;}
+  .kits-toolbar{padding:.85rem 1rem;}
+  /* First custom-services card renders high enough in the initial
+     viewport (scroll 0, 375px) that its right edge sits under the
+     fixed floating cluster's column (#chemcalc-chatbot/.fab-donate/
+     .help-float-btn, right:var(--chrome-fab-right), 56px wide) --
+     confirmed via getBoundingClientRect() on both: card right edge at
+     x:351 vs cluster's x:[315,371] band, same defect shape as the
+     Calculators Index collision. Extra right clearance on the section
+     wrapper (not the grid/card itself, so desktop/tablet 2-col layout
+     is untouched) keeps card content clear of that column. Floating
+     cluster's own CSS is not touched, same as that fix. */
+  .kits-custom-section{padding-right:5.5rem;}
+}

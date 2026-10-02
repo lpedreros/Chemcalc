@@ -241,51 +241,51 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><!-- Custom Kit Options Section -->
-<section id="custom-kit-options" class="container mb-4">
-  <h2>Need a Custom Solution?</h2>
-  <p>Beyond the DIY options below, ChemCalc offers personalized services to ensure you have exactly what you need for your marine repair project:</p>
-  <div class="row">
-    <div class="col-md-6 mb-3">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">Custom Link List</h5>
-          <p class="card-text">For a modest fee (around $50), I will create a personalized list of affiliate links tailored to your specific repair project needs.</p>
-          <a href="contact.html?subject=Custom%20Link%20List%20Request" class="btn btn-primary mt-auto">Request Custom Link List</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-3">
-      <div class="card h-100">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">Assembled Kit Service</h5>
-          <p class="card-text">For a higher fee (typically $100–$150 plus materials &amp; shipping), I can personally source and assemble a complete repair kit specifically for you.</p>
-          <a href="contact.html?subject=Assembled%20Kit%20Service%20Request" class="btn btn-primary mt-auto">Request Assembled Kit</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <p class="mt-3 text-center">Alternatively, feel free to browse the recommended materials below and purchase directly using the provided affiliate links. This supports ChemCalc at no extra cost to you.</p>
-</section>
-
-<!-- Search Input -->
-<div id="search-container" class="container text-center mb-3">
-  <input type="text" id="search-input" class="form-control" placeholder="Search recommended materials by name, description, or tag...">
+<!-- #EndLibraryItem --><div class="mp-hero kits-hero">
+  <h1 class="mp-hero-title">Marine Repair Kits &amp; Boat Building Supplies</h1>
+  <p class="mp-hero-tagline">165 hand-picked products &middot; searchable &amp; filterable</p>
+  <p class="mp-hero-copy">Curated marine repair kits, fiberglass supplies, Awlgrip paint, epoxy, and tools &mdash; every item linked directly to Amazon or the supplier. Buy DIY via the affiliate links below, or request a custom kit from ChemCalc.</p>
 </div>
 
-<!-- Filter Buttons -->
-<div id="filter-buttons" class="container filter-buttons text-center mb-4">
-  <button class="filter-btn btn btn-outline-secondary active" data-filter="all">Show All</button>
-  <!-- Filter buttons will be dynamically populated by JavaScript -->
+<!-- Custom Kit Options Section -->
+<section class="kits-custom-section">
+  <h2 class="kits-custom-title">Need a Custom Solution?</h2>
+  <p class="kits-custom-intro">Beyond the DIY options below, ChemCalc offers personalized services to ensure you have exactly what you need for your marine repair project:</p>
+  <div class="kits-custom-grid">
+    <div class="kits-custom-card">
+      <span class="kits-custom-card-icon" aria-hidden="true"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-message-circle"/></svg></span>
+      <h3 class="kits-custom-card-title">Custom Link List</h3>
+      <p class="kits-custom-card-text">For a modest fee (around $50), I will create a personalized list of affiliate links tailored to your specific repair project needs.</p>
+      <a href="contact.html?subject=Custom%20Link%20List%20Request" class="kits-custom-card-btn">Request Custom Link List</a>
+    </div>
+    <div class="kits-custom-card">
+      <span class="kits-custom-card-icon" aria-hidden="true"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-beaker"/></svg></span>
+      <h3 class="kits-custom-card-title">Assembled Kit Service</h3>
+      <p class="kits-custom-card-text">For a higher fee (typically $100&ndash;$150 plus materials &amp; shipping), I can personally source and assemble a complete repair kit specifically for you.</p>
+      <a href="contact.html?subject=Assembled%20Kit%20Service%20Request" class="kits-custom-card-btn">Request Assembled Kit</a>
+    </div>
+  </div>
+  <p class="kits-custom-footnote">Alternatively, feel free to browse the recommended materials below and purchase directly using the provided affiliate links. This supports ChemCalc at no extra cost to you.</p>
+</section>
+
+<!-- Search + Filter Toolbar -->
+<div class="kits-toolbar">
+  <div id="search-container" class="kits-search-container">
+    <input type="text" id="search-input" placeholder="Search recommended materials by name, description, or tag...">
+  </div>
+  <div id="filter-buttons" class="kits-filter-buttons">
+    <button class="filter-btn btn btn-outline-secondary active" data-filter="all">Show All</button>
+    <!-- Filter buttons will be dynamically populated by JavaScript -->
+  </div>
 </div>
 
 <!-- Repair Kits List Section -->
-<main class="container">
-  <h2 class="text-center">Recommended Repair Materials &amp; Tools (DIY Purchase)</h2>
-  <p class="text-muted small mb-3 text-center">
+<main class="kits-product-panel">
+  <h2 class="kits-product-title">Recommended Repair Materials &amp; Tools (DIY Purchase)</h2>
+  <p class="kits-product-disclosure">
     <i>Disclosure: The links below are affiliate links. If you click through and make a purchase, ChemCalc may earn a commission at no additional cost to you. This helps support the site.</i>
   </p>
-  <p class="text-center">
+  <p class="kits-product-intro">
     Below is our comprehensive list of recommended repair kits, materials, and tools. Use the search and filter buttons above to find what you need.
   </p>
 
