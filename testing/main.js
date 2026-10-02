@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const descriptionNode = item.querySelector("em");
             const description = descriptionNode ? descriptionNode.textContent.toLowerCase() : "";
 
-            const tagMatch = activeFilters.length === 0 || activeFilters.every(filter => tags.includes(filter));
+            const tagMatch = activeFilters.length === 0 || activeFilters.some(filter => tags.includes(filter));
             
             const searchMatch = searchQuery === "" || 
                                 name.includes(searchQuery) || 
