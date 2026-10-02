@@ -1610,8 +1610,14 @@ h1 {
     content: ">";
 }
 .content {
-    padding: 0 1em;
-    padding-bottom: 1em;
+    /* Padding moved onto .content > ul (see "KITS PAGE-SPECIFIC STYLES"
+       below) -- padding on .content itself stayed visible as a solid
+       band even at max-height:0 (overflow:hidden clips a box's
+       CHILDREN, not its own padding), so collapsed sections showed a
+       ~17px sliver instead of nothing. kits.html is the only page that
+       uses .content (confirmed via repo-wide grep), so this is safe to
+       change directly rather than overriding it elsewhere. */
+    padding: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
     background-color: #333;
@@ -6343,7 +6349,7 @@ body,
    so no ID-vs-class specificity fight there either.
 
    Namespaced under .kits-* so nothing here can leak onto other pages
-   -- same discipline as .home-*/.calc-index-*/.services-*/.about-*.
+   -- same discipline as .home-*, .calc-index-*, .services-*, .about-*.
    The new interactive class .kits-custom-card-btn declares margin-top,
    font-style, font-size, and font-weight explicitly in its base rule
    AND replicates them across :hover/:visited/:active -- the legacy
@@ -6353,15 +6359,12 @@ body,
    buttons.
    ============================================================ */
 
-/* ---------- Hero background (kits-hero) ----------
-   Modifier class on the shared .mp-hero div, same split as every other
-   converted page's own hero background rule (calc-hero/services-hero/
-   about-hero, none of them touched). */
-.kits-hero{
-  background:
-    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
-    url("images/IMG_20230802_190851.jpg") center 50% / cover no-repeat;
-}
+/* No .kits-hero background-image/gradient rule -- Leo's call
+   (2026-10-01): this page's hero stays the plain/flat base .mp-hero
+   treatment (background:var(--chrome-ink-950), no photo, no gradient
+   overlay), unlike calc-hero/services-hero/about-hero which all layer
+   a photo. The kits-hero class itself was removed from kits.html's
+   hero div for the same reason -- nothing to modify. */
 
 /* ---------- Need a Custom Solution? (2-card row) ---------- */
 .kits-custom-section{
@@ -6459,11 +6462,34 @@ body,
   border:1px solid var(--chrome-paper-line);
   font-family:var(--chrome-font-sans);font-weight:700;font-size:1rem;
   box-shadow:var(--chrome-shadow-panel);
+  text-transform:uppercase;
 }
-.collapsible::after{color:var(--chrome-ink-600);}
+/* Section names come straight from affiliate_materials.section (e.g.
+   "Mask Filter Kits" is stored title-case, unlike the other 6 sections'
+   all-caps values) -- fixed at the CSS layer so it can't recur with any
+   future section name, not by touching the data. text-transform is
+   inherited by ::after, so it's explicitly reset here to keep the
+   collapse/expand chevron's own content ("v"/">" ) visually unchanged --
+   text-transform:uppercase would otherwise turn its lowercase "v" into
+   "V", a different glyph shape, which nobody asked for. */
+.collapsible::after{color:var(--chrome-ink-600);text-transform:none;}
 .content{
   background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);border-top:none;
 }
+/* .content's own padding is 0 (see the ~line 1612 rule) so .content's
+   overflow:hidden actually clips this <ul> (its own padding) when
+   max-height is 0 -- padding living on .content itself stayed visible
+   as a solid band regardless of max-height, since overflow:hidden
+   clips a box's CHILDREN, not its own padding. main.js renders exactly
+   one <ul> per .content, never nested (confirmed in source), so
+   .content > ul can't double-apply. */
+.content > ul{padding:1em;margin:0;}
+/* Matches the ul's own 1em top/bottom padding exactly, so the gap
+   above the first item and below the last item are equal -- without
+   this, the legacy "Quick Wins Touch-spacing" rule's margin-bottom on
+   EVERY li (including the last) stacked on top of the ul's own
+   padding-bottom, roughly doubling the bottom gap vs. the top. */
+.content ul li:last-child{margin-bottom:0;}
 .content ul li a{color:var(--chrome-ink-900);}
 .content ul li a:hover{color:var(--chrome-signal-600);}
 

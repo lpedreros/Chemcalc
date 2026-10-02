@@ -375,6 +375,14 @@
       var el = document.getElementById(id);
       if (el) el.removeAttribute('required');
     });
+  } else if (params.get('subject') === 'Custom Link List Request') {
+    document.getElementById('repairs').value =
+      'CUSTOM LINK LIST REQUEST\n\n' +
+      'Project details: ';
+  } else if (params.get('subject') === 'Assembled Kit Service Request') {
+    document.getElementById('repairs').value =
+      'ASSEMBLED KIT SERVICE REQUEST\n\n' +
+      'Project details: ';
   }
 })();
 </script>
