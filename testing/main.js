@@ -263,12 +263,16 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Per-account favorites: logged-in users read/write public.user_favorites
-    // (scoped by RLS), logged-out users (and items with no data-material-id,
-    // i.e. the loadFallbackProductList() path) keep using localStorage exactly
-    // as before. This is unrelated to affiliate_materials.is_favorite (the
-    // "favorite" tag / isPreFavorite below) -- that sitewide editorial star
-    // is untouched.
+    // Per-account favorites are Pro-only (2026-10-02; previously gated on
+    // any logged-in session, free or Pro). Pro users read/write
+    // public.user_favorites (scoped by RLS) for table-backed items, and
+    // localStorage for fallback-path items (no data-material-id, i.e. the
+    // loadFallbackProductList() path) that still have no id to key a table
+    // row on. Logged-out AND free-tier visitors get no interactive star at
+    // all -- not a localStorage-backed one. This is unrelated to
+    // affiliate_materials.is_favorite (the "favorite" tag / isPreFavorite
+    // below) -- that sitewide editorial star is untouched, unconditional,
+    // same for every visitor regardless of tier.
     let favoritesAuthListenerBound = false;
 
     async function getCurrentSession() {
@@ -283,6 +287,28 @@ document.addEventListener("DOMContentLoaded", function() {
         } catch (err) {
             console.warn("Exception checking session for favorites:", err);
             return null;
+        }
+    }
+
+    // Per-account favorites are Pro-only (2026-10-02). Queries the real
+    // source directly -- same reason getCurrentSession() doesn't read
+    // sessionStorage.chemcalc_user_tier for login state: that value is
+    // set by global-auth.js's own async init, which can still be
+    // in-flight when this runs. Same tier/subscription_status pattern
+    // as global-auth.js's fetchProfile()/isPro.
+    async function isCurrentUserPro() {
+        const session = await getCurrentSession();
+        if (!session) return false;
+        try {
+            const { data, error } = await _sb.from('profiles')
+                .select('tier, subscription_status')
+                .eq('id', session.user.id)
+                .single();
+            if (error || !data) return false;
+            return data.tier === 'pro' || data.subscription_status === 'active';
+        } catch (err) {
+            console.warn("Exception checking Pro status for favorites:", err);
+            return false;
         }
     }
 
@@ -332,93 +358,127 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function initializeFavorites() {
-        const listItems = productListContainer.querySelectorAll(".content ul li");
-        listItems.forEach(item => {
-            const star = document.createElement("span");
-            star.classList.add("star-toggle");
-            const tags = item.getAttribute("data-tags") ? item.getAttribute("data-tags").toLowerCase() : "";
-            const isPreFavorite = tags.includes("favorite"); // Check for pre-defined favorites
+    // Creates the interactive (non-editorial) star on one item and wires
+    // its click handler. Only ever called for Pro users (see
+    // addInteractiveStarsIfMissing()) -- the handler still re-checks
+    // isCurrentUserPro() itself before writing anywhere (defense in
+    // depth: the localStorage write path below has no server-side
+    // protection the way the user_favorites table's RLS does).
+    function createInteractiveStar(item) {
+        const star = document.createElement("span");
+        star.classList.add("star-toggle");
+        star.innerHTML = "☆";
+        item.insertBefore(star, item.firstChild);
 
-            if (isPreFavorite) {
-                star.innerHTML = "★"; // Filled star for pre-defined favorites
-                star.classList.add("my-favorite"); // Indicates it's a site-defined favorite
-            } else {
-                star.innerHTML = "☆"; // Empty star for others
-            }
+        star.addEventListener("click", async function(e) {
+            e.stopPropagation(); // Prevent li click if any
 
-            // Insert star before the link/text content of the li
-            const firstChild = item.firstChild;
-            item.insertBefore(star, firstChild);
+            const stillPro = await isCurrentUserPro();
+            if (!stillPro) return;
 
-            // Add click listener only if it's not a pre-defined favorite
-            if (!isPreFavorite) {
-                star.addEventListener("click", async function(e) {
-                    e.stopPropagation(); // Prevent li click if any
+            const materialId = item.getAttribute("data-material-id");
+            const linkElem = item.querySelector("a");
+            const link = linkElem ? linkElem.href : null;
+            const session = await getCurrentSession();
 
-                    const materialId = item.getAttribute("data-material-id");
-                    const linkElem = item.querySelector("a");
-                    const link = linkElem ? linkElem.href : null;
-                    const session = await getCurrentSession();
+            // Optimistic UI update.
+            const nowFavorited = !this.classList.contains("user-favorite");
+            this.classList.toggle("user-favorite");
+            this.innerHTML = nowFavorited ? "★" : "☆";
 
-                    // Optimistic UI update.
-                    const nowFavorited = !this.classList.contains("user-favorite");
+            if (session && materialId) {
+                // Logged in, table-backed item.
+                const userId = session.user.id;
+                const { error } = nowFavorited
+                    ? await _sb.from('user_favorites').insert({ user_id: userId, material_id: materialId })
+                    : await _sb.from('user_favorites').delete().eq('user_id', userId).eq('material_id', materialId);
+
+                if (error) {
+                    console.warn("Failed to save favorite:", error.message);
+                    // Revert the optimistic update.
                     this.classList.toggle("user-favorite");
-                    this.innerHTML = nowFavorited ? "★" : "☆";
-
-                    if (session && materialId) {
-                        // Logged in, table-backed item.
-                        const userId = session.user.id;
-                        const { error } = nowFavorited
-                            ? await _sb.from('user_favorites').insert({ user_id: userId, material_id: materialId })
-                            : await _sb.from('user_favorites').delete().eq('user_id', userId).eq('material_id', materialId);
-
-                        if (error) {
-                            console.warn("Failed to save favorite:", error.message);
-                            // Revert the optimistic update.
-                            this.classList.toggle("user-favorite");
-                            this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
-                        }
-                    } else if (link) {
-                        // Logged out, or logged in with no data-material-id
-                        // (fallback-path item): localStorage, unchanged.
-                        let favorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
-                        if (nowFavorited) {
-                            if (!favorites.includes(link)) favorites.push(link);
-                        } else {
-                            favorites = favorites.filter(fav => fav !== link);
-                        }
-                        localStorage.setItem("userFavoritesChemCalc", JSON.stringify(favorites));
-                    }
-                });
+                    this.innerHTML = this.classList.contains("user-favorite") ? "★" : "☆";
+                }
+            } else if (link) {
+                // Pro user, fallback-path item (no data-material-id, i.e.
+                // loadFallbackProductList()): localStorage, unchanged --
+                // there's still no id to key a table row on.
+                let favorites = JSON.parse(localStorage.getItem("userFavoritesChemCalc")) || [];
+                if (nowFavorited) {
+                    if (!favorites.includes(link)) favorites.push(link);
+                } else {
+                    favorites = favorites.filter(fav => fav !== link);
+                }
+                localStorage.setItem("userFavoritesChemCalc", JSON.stringify(favorites));
             }
         });
+    }
 
-        // Set initial visual state: localStorage first (covers logged-out
-        // and fallback-path items), then override with the table for
-        // whichever session is currently resolved (covers data-material-id
-        // items for a logged-in user).
+    // Removes any interactive stars (e.g. on logout, or a Pro account
+    // signing out of Pro) -- editorial .my-favorite stars are untouched,
+    // this selector explicitly excludes them.
+    function removeInteractiveStars() {
+        productListContainer.querySelectorAll(".star-toggle:not(.my-favorite)").forEach(star => star.remove());
+    }
+
+    // Adds interactive stars to every non-pre-favorite item that doesn't
+    // already have one. Idempotent (checked per item) so it's safe to
+    // call again on every auth-state change without double-creating.
+    function addInteractiveStarsIfMissing() {
+        const listItems = productListContainer.querySelectorAll(".content ul li");
+        listItems.forEach(item => {
+            const tags = item.getAttribute("data-tags") ? item.getAttribute("data-tags").toLowerCase() : "";
+            if (tags.includes("favorite")) return; // editorial item, no interactive star
+            if (item.querySelector(".star-toggle:not(.my-favorite)")) return; // already has one
+            createInteractiveStar(item);
+        });
+    }
+
+    // Resolves Pro status, then adds or removes the interactive stars
+    // accordingly, and (if Pro) syncs their visual favorited state. Called
+    // once on init and again on every auth-state change -- this is the
+    // single place that decides whether the feature's UI exists at all,
+    // so the gate can't be bypassed by an auth-change re-sync forgetting
+    // to check it. Resolving Pro status BEFORE creating anything means a
+    // non-Pro visitor never sees a star flash in and then disappear.
+    async function applyFavoritesProGate() {
+        const pro = await isCurrentUserPro();
+        if (!pro) {
+            removeInteractiveStars();
+            return;
+        }
+        addInteractiveStarsIfMissing();
         syncFavoriteStarsFromLocalStorage();
+        const session = await getCurrentSession();
+        if (session) syncFavoriteStarsFromTable(session.user.id);
+    }
 
-        if (typeof _sb !== 'undefined' && _sb !== null) {
-            getCurrentSession().then(session => {
-                if (session) {
-                    syncFavoriteStarsFromTable(session.user.id);
-                }
+    function initializeFavorites() {
+        // Editorial (.my-favorite) stars: unconditional, same for every
+        // visitor regardless of tier, exactly as before this change.
+        const listItems = productListContainer.querySelectorAll(".content ul li");
+        listItems.forEach(item => {
+            const tags = item.getAttribute("data-tags") ? item.getAttribute("data-tags").toLowerCase() : "";
+            if (!tags.includes("favorite")) return;
+            const star = document.createElement("span");
+            star.classList.add("star-toggle", "my-favorite");
+            star.innerHTML = "★";
+            item.insertBefore(star, item.firstChild);
+        });
+
+        // Interactive stars are Pro-gated -- resolve and apply async so
+        // non-Pro visitors never get one created in the first place.
+        applyFavoritesProGate();
+
+        if (typeof _sb !== 'undefined' && _sb !== null && !favoritesAuthListenerBound) {
+            favoritesAuthListenerBound = true;
+            // Re-apply the Pro gate (not just a visual re-sync) on every
+            // login/logout, without a page reload -- a free-tier login
+            // must not leave stale interactive stars from a prior guest
+            // state, and a Pro login must add them.
+            _sb.auth.onAuthStateChange(function (event, session) {
+                applyFavoritesProGate();
             });
-
-            // Re-sync visual state only (no DOM rebuild, no re-binding) on
-            // login/logout, without a page reload.
-            if (!favoritesAuthListenerBound) {
-                favoritesAuthListenerBound = true;
-                _sb.auth.onAuthStateChange((event, session) => {
-                    if (session) {
-                        syncFavoriteStarsFromTable(session.user.id);
-                    } else {
-                        syncFavoriteStarsFromLocalStorage();
-                    }
-                });
-            }
         }
     }
 
