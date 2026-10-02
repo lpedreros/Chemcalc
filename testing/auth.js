@@ -117,7 +117,7 @@ async function doGoogleLogin() {
   const { error } = await _sb.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.href,
+      redirectTo: window.location.origin + window.location.pathname,
       queryParams: {
         prompt: 'select_account'
       }
