@@ -278,7 +278,7 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><main class="container alexseal-app d-print-none">
+<!-- #EndLibraryItem --><main class="container mp-calc-app d-print-none">
 
   <!-- Title band -->
   <div class="mp-hero">
@@ -289,10 +289,10 @@
 
   <div class="mp-split mp-overlap mp-grid">
     <div class="alexseal-form-col d-print-none">
-      <div class="alexseal-fields">
+      <div class="mp-fields">
 
         <!-- Measurement System -->
-        <section class="mp-card mp-card--compact mp-field-card alexseal-field-card-wide" id="unitSystemCard">
+        <section class="mp-card mp-card--compact mp-field-card mp-field-card--wide" id="unitSystemCard">
           <div class="mp-field-head">
             <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg></span>
             <div>
@@ -308,7 +308,7 @@
         </section>
 
         <!-- Product -->
-        <section class="mp-card mp-card--compact mp-field-card alexseal-field-card-wide" id="alexsealProductCard">
+        <section class="mp-card mp-card--compact mp-field-card mp-field-card--wide" id="alexsealProductCard">
           <div class="mp-field-head">
             <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/></svg></span>
             <div>
@@ -355,7 +355,7 @@
 
         <!-- Coating Area and Application Method (merged, same pattern as
              awlgrip.html's merged card) -->
-        <section class="mp-card mp-card--compact mp-field-card alexseal-field-card-wide" id="inputMethodCard">
+        <section class="mp-card mp-card--compact mp-field-card mp-field-card--wide" id="inputMethodCard">
           <div class="mp-field-head">
             <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
             <div>
@@ -364,9 +364,9 @@
             </div>
           </div>
 
-          <div class="alexseal-merged-grid">
+          <div class="mp-merged-grid">
             <div class="alexseal-merged-col">
-              <h3 class="alexseal-merged-subtitle">Coating Amount</h3>
+              <h3 class="mp-merged-subtitle">Coating Amount</h3>
               <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Coating amount input method">
                 <button type="button" class="mp-unit-btn" data-input="areaVolume" aria-pressed="true">Area / Volume</button>
                 <button type="button" class="mp-unit-btn" data-input="lengthWidth" aria-pressed="false">Length &times; Width</button>
@@ -377,13 +377,13 @@
               <!-- Direct Area/Volume Inputs -->
               <div id="areaVolumeInputs" class="mt-3">
                 <p class="mp-field-hint mb-2">Enter surface area <em>or</em> the paint volume you plan to mix.</p>
-                <div class="alexseal-input-row">
-                  <div class="alexseal-input-group">
-                    <label class="alexseal-input-label" for="inputValue">Value</label>
+                <div class="mp-input-row">
+                  <div class="mp-input-group">
+                    <label class="mp-input-label" for="inputValue">Value</label>
                     <input type="number" id="inputValue" class="mp-input" min="0" step="any" placeholder="e.g., 100 or 1">
                   </div>
-                  <div class="alexseal-input-group">
-                    <label class="alexseal-input-label" for="unitType">Input Units</label>
+                  <div class="mp-input-group">
+                    <label class="mp-input-label" for="unitType">Input Units</label>
                     <select id="unitType" class="mp-select"></select>
                   </div>
                 </div>
@@ -392,17 +392,17 @@
               <!-- Length/Width Inputs (Initially Hidden) -->
               <div id="lengthWidthInputs" class="mt-3" style="display: none;">
                 <p class="mp-field-hint mb-2">Enter the dimensions of the surface area.</p>
-                <div class="alexseal-input-row">
-                  <div class="alexseal-input-group">
-                    <label class="alexseal-input-label" for="length">Length</label>
+                <div class="mp-input-row">
+                  <div class="mp-input-group">
+                    <label class="mp-input-label" for="length">Length</label>
                     <input type="number" id="length" class="mp-input" min="0" step="any" placeholder="e.g., 10">
                   </div>
-                  <div class="alexseal-input-group">
-                    <label class="alexseal-input-label" for="width">Width</label>
+                  <div class="mp-input-group">
+                    <label class="mp-input-label" for="width">Width</label>
                     <input type="number" id="width" class="mp-input" min="0" step="any" placeholder="e.g., 10">
                   </div>
-                  <div class="alexseal-input-group alexseal-input-group-compact">
-                    <label class="alexseal-input-label" for="dimensionUnit">Dimension Units</label>
+                  <div class="mp-input-group mp-input-group--compact">
+                    <label class="mp-input-label" for="dimensionUnit">Dimension Units</label>
                     <select id="dimensionUnit" class="mp-select mp-select-compact">
                         <!-- Options will be added by JS based on system -->
                     </select>
@@ -413,15 +413,15 @@
 
               <!-- Result unit selector (shown only when area chosen) -->
               <div id="resultUnitRow" class="mt-3 d-none">
-                <div class="alexseal-input-group">
-                  <label class="alexseal-input-label" for="resultUnit">Result Units</label>
+                <div class="mp-input-group">
+                  <label class="mp-input-label" for="resultUnit">Result Units</label>
                   <select id="resultUnit" class="mp-select"></select>
                 </div>
               </div>
             </div>
 
             <div class="alexseal-merged-col">
-              <h3 class="alexseal-merged-subtitle">Application Method</h3>
+              <h3 class="mp-merged-subtitle">Application Method</h3>
               <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Application method">
                 <button type="button" class="mp-unit-btn" data-appmethod="spray" aria-pressed="true">Spray</button>
                 <button type="button" class="mp-unit-btn" data-appmethod="brush" aria-pressed="false">Brush / Roll</button>

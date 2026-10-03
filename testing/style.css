@@ -475,6 +475,72 @@
 
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- CALCULATOR PAGES (shell and form layout)
+   Added 2026-10-02. The five calculator pages (Cloth, MEKP, Awlgrip,
+   Epifanes, Alexseal) each carried their own copy of the same page shell
+   and form layout under their own prefix. This block is placed before
+   the per-calculator sections so any calculator-specific rule that still
+   needs to adjust one of these wins by source order.
+
+   .mp-calc-app: the <main> of every calculator page. It is main.mp-calc-app
+   (tag plus class), not a bare class, because the sitewide
+   .container{background-color:#2c2c2e;padding:1em} has the same
+   single-class specificity and would otherwise win on source order -- the
+   bare-class version silently rendered .container's own background and
+   padding on both mobile and desktop. All five calculators share the same
+   dark #2c2c2e background. Below 768px the page is single column and the
+   fixed bottom-right floating cluster (Donate, BoatMD chat, Help) passes
+   over the report banner while scrolling, so 17.5rem of bottom clearance
+   is measured to clear the mobile worst case; the 768-991px tablet tier
+   needs only 5rem (live-measured about 170-190px of margin at rest).
+
+   .mp-fields / .mp-field-card--wide: the grid of field cards. Two columns
+   from 576px, with --wide spanning both; --single keeps a page's cards
+   stacked in one column (Epifanes has three cards with no natural pair).
+
+   .mp-input-row / .mp-input-group (--compact) / .mp-input-label: a row of
+   two or three fields that wraps on narrow cards, and the small label
+   above each field. .mp-merged-grid / .mp-merged-subtitle: two visually
+   separated sub-sections inside one field card.
+   ============================================================ */
+main.mp-calc-app{
+  font-family:var(--chrome-font-sans);
+  color:var(--chrome-ink-900);
+  background:#2c2c2e;
+}
+@media (max-width:767.98px){
+  main.mp-calc-app{padding-bottom:17.5rem;}
+}
+@media (min-width:768px) and (max-width:991.98px){
+  main.mp-calc-app{padding-bottom:5rem;}
+}
+.mp-calc-app h1,.mp-calc-app h2,.mp-calc-app h3{font-family:var(--chrome-font-sans);}
+
+.mp-fields{display:grid;gap:1rem;}
+@media (min-width:576px){
+  .mp-fields{grid-template-columns:1fr 1fr;}
+  .mp-fields--single{grid-template-columns:none;}
+}
+.mp-field-card--wide{grid-column:1 / -1;}
+
+.mp-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
+.mp-input-group{flex:1 1 140px;min-width:0;}
+.mp-input-group--compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
+.mp-input-label{
+  display:block;font-size:.72rem;font-weight:600;
+  color:var(--chrome-ink-600);margin:0 0 .3rem;
+}
+
+.mp-merged-grid{display:grid;gap:1.5rem;}
+@media (min-width:576px){
+  .mp-merged-grid{grid-template-columns:1fr 1fr;}
+}
+.mp-merged-subtitle{
+  font-size:.85rem;font-weight:700;color:var(--chrome-ink-900);
+  margin:0 0 .75rem;
+}
+
+/* ============================================================
    CLOTHCALC PAGE-SPECIFIC STYLES
    Merged into style.css 2026-09-14 (single-file consolidation --
    Leo's non-negotiable: one CSS file for the whole site, page-specific
@@ -525,40 +591,9 @@
    (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw)
    ============================================================ */
 
-/* main.cloth-app (tag+class) rather than a bare .cloth-app -- style.css's
-   sitewide .container{background-color:#2c2c2e} (dark) has the same
-   single-class specificity and loads after this file, so it would
-   otherwise win on cascade order alone and show through as a dark block
-   wherever no card/panel covers main (most visible here since clothcalc.js
-   genuinely keeps #results display:none until a real calculation runs). */
-main.cloth-app{
-  font-family:var(--chrome-font-sans);
-  color:var(--chrome-ink-900);
-  background:#2c2c2e;
-}
-@media (max-width:767.98px){
-  /* Bottom clearance from the fixed bottom-right floating-action cluster
-     (Donate/BoatMD chat/Help) -- same fix as mekpcalc.css's .mekp-app,
-     applied here too. Live measurement showed this page's report-issue
-     banner passes through the exact same fixed cluster band while
-     scrolling at 375px (transient overlap, clean only at the very bottom
-     of the scroll range) -- the same underlying single-column-page
-     mechanic as mekpcalc.html, not something specific to that page.
-     17.5rem clears the mobile worst case with a safety margin; verified
-     by live overlap-check after applying. */
-  main.cloth-app{padding-bottom:17.5rem;}
-}
-@media (min-width:768px) and (max-width:991.98px){
-  /* Same tablet-specific reduction as mekpcalc.css's parallel tier --
-     shared mechanic, live-measured identical clearance numbers on this
-     page too (768px and 991px, with a real calculation's results
-     populated): 5rem leaves ~170-190px of margin at rest, vs. the flat
-     17.5rem this tier used to share with mobile leaving ~370px+ of dead
-     space here (Sentinel screenshot, 2026-09-08) -- visibly excessive,
-     not needed for clearance. */
-  main.cloth-app{padding-bottom:5rem;}
-}
-.cloth-app h1,.cloth-app h2,.cloth-app h3{font-family:var(--chrome-font-sans);}
+/* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
+   PAGES), including the mobile and tablet bottom clearance from the
+   floating cluster. */
 
 /* Tips & Safety list items -- 5 duplicate inline-styled paragraphs,
    extracted per the sitewide no-inline-CSS rule. */
@@ -575,11 +610,7 @@ main.cloth-app{
    Cost stay full-width via .cloth-field-card-wide (Leo, 2026-09-13).
    (.mp-field-card itself, and its icon/head/title/hint children, are
    shared -- see style.css.) */
-.cloth-fields{display:grid;gap:1rem;}
-@media (min-width:576px){
-  .cloth-fields{grid-template-columns:1fr 1fr;}
-}
-.cloth-field-card-wide{grid-column:1 / -1;}
+/* The grid is .mp-fields and the wide cards are .mp-field-card--wide. */
 
 /* Measurement System toggle sizing/centering and its flavor-copy line
    used to be defined here (#measurementSystemCard .mp-unit-toggle /
@@ -595,13 +626,8 @@ main.cloth-app{
    Temperature (resin type/epoxy ratio/temperature), and Cost
    Estimation (cost/unit). (.mp-select/.mp-input themselves are
    shared -- see style.css.) */
-.cloth-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
-.cloth-input-group{flex:1 1 140px;min-width:0;}
-.cloth-input-group-compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
-.cloth-input-label{
-  display:block;font-size:.72rem;font-weight:600;
-  color:var(--chrome-ink-600);margin:0 0 .3rem;
-}
+/* The row, group, compact group, and label are .mp-input-row,
+   .mp-input-group, .mp-input-group--compact, and .mp-input-label. */
 
 /* Project Dimensions row -- Length/Width/Units fit on one row even on
    the narrowest common phone widths (~360-375px), instead of Units
@@ -624,11 +650,11 @@ main.cloth-app{
    truncating "Centimeters" itself instead -- a functional regression
    traded for a cosmetic one. Left as-is. */
 @media (max-width: 575.98px) {
-  #dimensionsCard .cloth-input-row{flex-wrap:nowrap;}
-  #dimensionsCard .cloth-input-row > .cloth-input-group:not(.cloth-input-group-compact){
+  #dimensionsCard .mp-input-row{flex-wrap:nowrap;}
+  #dimensionsCard .mp-input-row > .mp-input-group:not(.mp-input-group--compact){
     flex:1 1 0;min-width:0;
   }
-  #dimensionsCard .cloth-input-group-compact{
+  #dimensionsCard .mp-input-group--compact{
     flex:0 0 auto;min-width:5.5rem;
   }
 }
@@ -645,7 +671,7 @@ main.cloth-app{
    invisible. Scoped to #resinTempCard only so Project Dimensions and
    Cost Estimation keep the shared .cloth-input-row wrap-when-tight
    behavior unchanged. */
-#resinTempCard .cloth-input-row > .cloth-input-group{flex:1 1 100%;}
+#resinTempCard .mp-input-row > .mp-input-group{flex:1 1 100%;}
 
 @media (min-width:576px){
   /* Ambient Temperature's group has 3 stacked children (label, input,
@@ -654,13 +680,13 @@ main.cloth-app{
      the toggle stacking under the input. Still correct/needed post-fix:
      this is about the group's OWN internal layout, not its width
      relative to its siblings. */
-  #resinTempCard .cloth-input-group:has(.mp-unit-toggle){
+  #resinTempCard .mp-input-group:has(.mp-unit-toggle){
     display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;
   }
-  #resinTempCard .cloth-input-group:has(.mp-unit-toggle) > .cloth-input-label{
+  #resinTempCard .mp-input-group:has(.mp-unit-toggle) > .mp-input-label{
     flex:1 0 100%;margin:0 0 .3rem;
   }
-  #resinTempCard .cloth-input-group:has(.mp-unit-toggle) > .mp-input{
+  #resinTempCard .mp-input-group:has(.mp-unit-toggle) > .mp-input{
     flex:1 1 0;min-width:0;
   }
   #resinTempCard .mp-unit-toggle{flex:0 0 auto;margin-top:0;}
@@ -815,62 +841,14 @@ main.cloth-app{
    (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw)
    ============================================================ */
 
-/* main.mekp-app (tag+class) rather than a bare .mekp-app -- style.css's
-   sitewide .container{background-color:#2c2c2e} (dark) has the same
-   single-class specificity and loads later in this file, so it would
-   otherwise win on cascade order alone -- confirmed live: the bare-class
-   version silently rendered .container's dark background instead of
-   this rule's own, on both mobile and desktop. Same root cause and same
-   fix as main.cloth-app above; deliberately made both pages share that
-   same dark #2c2c2e background (Leo, 2026-09-15) rather than pick a
-   winner, since MEKP's dark render was the accidental one and
-   ClothCalc's light one wasn't a deliberate design choice either. */
-main.mekp-app{
-  font-family:var(--chrome-font-sans);
-  color:var(--chrome-ink-900);
-  background:#2c2c2e;
-}
-@media (max-width:767.98px){
-  /* Bottom clearance from the fixed bottom-right floating-action cluster
-     (Donate/BoatMD chat/Help). Below the 992px desktop breakpoint this
-     page is single-column, so the cluster's fixed viewport band (measured
-     live: ~208px reserved from the viewport's bottom edge at 375px) passes
-     directly over whatever content is scrolled into that band -- concretely,
-     the report-issue banner at the bottom of the page. 17.5rem clears the
-     mobile worst case with a safety margin; verified by live overlap-check
-     (transient overlap while scrolling past, and the resting/max-scroll
-     position) after applying. main.mekp-app (tag+class, not bare .mekp-app)
-     to beat style.css's later-loaded .container{padding:1em} on cascade
-     order at equal specificity -- confirmed live: the bare-class version
-     computed to 16px (.container's own padding, not this rule) instead of
-     the intended value. */
-  main.mekp-app{padding-bottom:17.5rem;}
-}
-@media (min-width:768px) and (max-width:991.98px){
-  /* Same mechanic as the mobile tier above, but tablet has meaningfully
-     more natural clearance already (shorter page relative to viewport,
-     fewer wrapped rows) -- live-measured at both 768px and 991px, with a
-     real calculation's results populated: even padding-bottom:0 left the
-     report banner ~92px clear of the cluster at rest, vs. mobile's tighter
-     margin at the same padding. The flat 17.5rem this tier used to share
-     with mobile left ~370px+ of dead space here (Sentinel screenshot,
-     2026-09-08) -- visibly excessive, not needed for clearance. 5rem still
-     leaves ~170-190px of measured margin at rest (768px and 991px, both
-     pages, with/without results populated), comfortably more than mobile's
-     own margin at 17.5rem relative to its tighter worst case -- not a
-     bare-minimum value. */
-  main.mekp-app{padding-bottom:5rem;}
-}
-.mekp-app h1,.mekp-app h2,.mekp-app h3{font-family:var(--chrome-font-sans);}
+/* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
+   PAGES), including the mobile and tablet bottom clearance from the
+   floating cluster. */
 
 /* ---------- Field cards (page-specific layout only -- .mp-field-card
    itself, and its icon/head/title/hint children, are shared; see
    style.css) ---------- */
-.mekp-fields{display:grid;gap:1rem;}
-@media (min-width:576px){
-  .mekp-fields{grid-template-columns:1fr 1fr;}
-}
-.mekp-field-card-wide{grid-column:1 / -1;}
+/* The grid is .mp-fields and the wide cards are .mp-field-card--wide. */
 
 /* ---------- Inputs (page-specific row layout only -- .mp-select/
    .mp-input themselves are shared; see style.css) ---------- */
@@ -1045,33 +1023,9 @@ main.mekp-app{
    markup) -- this section is new, not a merge of a pre-existing file.
    ============================================================ */
 
-/* main.awlgrip-app (tag+class) rather than a bare .awlgrip-app -- same
-   cascade-order fix as main.cloth-app/main.mekp-app above: style.css's
-   sitewide .container{background-color:#2c2c2e} has the same
-   single-class specificity and loads later in this file, so it would
-   otherwise win on cascade order alone. Uses the same #2c2c2e dark
-   background both other calculator pages deliberately share (see
-   main.mekp-app's comment above). */
-main.awlgrip-app{
-  font-family:var(--chrome-font-sans);
-  color:var(--chrome-ink-900);
-  background:#2c2c2e;
-}
-@media (max-width:767.98px){
-  /* Bottom clearance from the fixed bottom-right floating-action
-     cluster -- same mechanic as main.cloth-app/main.mekp-app above
-     (single-column page, cluster's fixed viewport band passes over the
-     report banner while scrolling). Same 17.5rem value carried over on
-     the strength of the other two calculator pages sharing the same
-     single-column layout and the same report-banner-at-bottom
-     structure; re-measure if this page's real content height ever
-     diverges enough to matter. */
-  main.awlgrip-app{padding-bottom:17.5rem;}
-}
-@media (min-width:768px) and (max-width:991.98px){
-  main.awlgrip-app{padding-bottom:5rem;}
-}
-.awlgrip-app h1,.awlgrip-app h2,.awlgrip-app h3{font-family:var(--chrome-font-sans);}
+/* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
+   PAGES), including the mobile and tablet bottom clearance from the
+   floating cluster. */
 
 /* ---------- Field cards ---------- */
 /* All 3 cards (Measurement System, Product Line, the merged Coating Area
@@ -1081,33 +1035,17 @@ main.awlgrip-app{
    stacking cleanly avoids an empty half-row next to it. grid-auto-flow:
    dense kept (harmless no-op at 3-wide-of-3) in case a future compact
    card is ever added back. */
-.awlgrip-fields{display:grid;gap:1rem;grid-auto-flow:row dense;}
-@media (min-width:576px){
-  .awlgrip-fields{grid-template-columns:1fr 1fr;}
-}
-.awlgrip-field-card-wide{grid-column:1 / -1;}
+/* The grid is .mp-fields and the wide cards are .mp-field-card--wide. */
 
 /* ---------- Merged Coating Area / Application Method card -- two
    visually separated sub-sections (not interleaved) inside one card. */
-.awlgrip-merged-grid{display:grid;gap:1.5rem;}
-@media (min-width:576px){
-  .awlgrip-merged-grid{grid-template-columns:1fr 1fr;}
-}
-.awlgrip-merged-subtitle{
-  font-size:.85rem;font-weight:700;color:var(--chrome-ink-900);
-  margin:0 0 .75rem;
-}
+/* The grid and subtitle are .mp-merged-grid and .mp-merged-subtitle. */
 
 /* ---------- Input rows (Coating Amount's Value/Units and
    Length/Width/Dimension-Units groups) -- same shared row-of-fields
    pattern as clothcalc.css's .cloth-input-row/-group/-label. ---------- */
-.awlgrip-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
-.awlgrip-input-group{flex:1 1 140px;min-width:0;}
-.awlgrip-input-group-compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
-.awlgrip-input-label{
-  display:block;font-size:.72rem;font-weight:600;
-  color:var(--chrome-ink-600);margin:0 0 .3rem;
-}
+/* The row, group, compact group, and label are .mp-input-row,
+   .mp-input-group, .mp-input-group--compact, and .mp-input-label. */
 
 /* ---------- Awlcraft 2000/3000 reducer-percentage slider (MEKP's slider
    visual language, copied and renamed -- see .mekp-slider above)
@@ -1256,50 +1194,23 @@ main.awlgrip-app{
    new here.
    ============================================================ */
 
-/* main.epifanes-app (tag+class) rather than a bare .epifanes-app --
-   same cascade-order fix as main.awlgrip-app/main.cloth-app/
-   main.mekp-app above: style.css's sitewide .container{background-
-   color:#2c2c2e} has the same single-class specificity and loads
-   later in this file, so it would otherwise win on cascade order
-   alone. Uses the same #2c2c2e dark background the other three
-   calculator pages deliberately share. */
-main.epifanes-app{
-  font-family:var(--chrome-font-sans);
-  color:var(--chrome-ink-900);
-  background:#2c2c2e;
-}
-@media (max-width:767.98px){
-  /* Bottom clearance from the fixed bottom-right floating-action
-     cluster -- same mechanic as main.awlgrip-app/main.cloth-app/
-     main.mekp-app above (single-column page, cluster's fixed
-     viewport band passes over the report banner while scrolling).
-     Same values carried over on the strength of the other three
-     calculator pages sharing the same single-column, report-banner-
-     at-bottom structure; re-measure if this page's real content
-     height ever diverges enough to matter. */
-  main.epifanes-app{padding-bottom:17.5rem;}
-}
-@media (min-width:768px) and (max-width:991.98px){
-  main.epifanes-app{padding-bottom:5rem;}
-}
-.epifanes-app h1,.epifanes-app h2,.epifanes-app h3{font-family:var(--chrome-font-sans);}
+/* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
+   PAGES), including the mobile and tablet bottom clearance from the
+   floating cluster. */
 
 /* ---------- Field cards ----------
    3 cards (Product Line, Application Method, Total Volume and Units),
    no natural 2-up pairing -- same reasoning as .awlgrip-fields' own
    3-card case above: stack all full-width rather than leave an empty
    half-row next to one of them. */
-.epifanes-fields{display:grid;gap:1rem;}
+/* The grid is .mp-fields .mp-fields--single (stacked, one column). */
 
 /* Total Volume field card's own label -- same shared field-label
    pattern as clothcalc.css's .cloth-input-label/awlgrip.css's
    .awlgrip-input-label (light .mp-field-card background needs a
    darker label than .est-label's default #ccc, which is meant for
    dark surfaces). */
-.epifanes-input-label{
-  display:block;font-size:.72rem;font-weight:600;
-  color:var(--chrome-ink-600);margin:0 0 .3rem;
-}
+/* The label is .mp-input-label. */
 
 /* ---------- Product/method-driven note callouts (PU Speedcoat
    spray-only / standard-product-spray guidance) -- same visual
@@ -1329,59 +1240,25 @@ main.epifanes-app{
    new visual language.
    ============================================================ */
 
-/* main.alexseal-app (tag+class) -- same cascade-order fix as
-   main.awlgrip-app/main.epifanes-app above. */
-main.alexseal-app{
-  font-family:var(--chrome-font-sans);
-  color:var(--chrome-ink-900);
-  background:#2c2c2e;
-}
-@media (max-width:767.98px){
-  /* Bottom clearance from the fixed bottom-right floating-action
-     cluster -- same mechanic as main.awlgrip-app/main.epifanes-app
-     above (single-column page, cluster's fixed viewport band passes
-     over the report banner while scrolling). Same values carried over
-     on the strength of those pages sharing the same single-column,
-     report-banner-at-bottom structure; re-measure if this page's real
-     content height ever diverges enough to matter. */
-  main.alexseal-app{padding-bottom:17.5rem;}
-}
-@media (min-width:768px) and (max-width:991.98px){
-  main.alexseal-app{padding-bottom:5rem;}
-}
-.alexseal-app h1,.alexseal-app h2,.alexseal-app h3{font-family:var(--chrome-font-sans);}
+/* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
+   PAGES), including the mobile and tablet bottom clearance from the
+   floating cluster. */
 
 /* ---------- Field cards ---------- */
 /* All 3 cards (Measurement System, Product, the merged Coating Area and
    Application Method card) stack full-width, one per row -- same
    reasoning as .awlgrip-fields' own 3-card case. */
-.alexseal-fields{display:grid;gap:1rem;grid-auto-flow:row dense;}
-@media (min-width:576px){
-  .alexseal-fields{grid-template-columns:1fr 1fr;}
-}
-.alexseal-field-card-wide{grid-column:1 / -1;}
+/* The grid is .mp-fields and the wide cards are .mp-field-card--wide. */
 
 /* ---------- Merged Coating Area / Application Method card -- two
    visually separated sub-sections (not interleaved) inside one card. */
-.alexseal-merged-grid{display:grid;gap:1.5rem;}
-@media (min-width:576px){
-  .alexseal-merged-grid{grid-template-columns:1fr 1fr;}
-}
-.alexseal-merged-subtitle{
-  font-size:.85rem;font-weight:700;color:var(--chrome-ink-900);
-  margin:0 0 .75rem;
-}
+/* The grid and subtitle are .mp-merged-grid and .mp-merged-subtitle. */
 
 /* ---------- Input rows (Coating Amount's Value/Units and
    Length/Width/Dimension-Units groups) -- same shared row-of-fields
    pattern as awlgrip.css's .awlgrip-input-row/-group/-label. ---------- */
-.alexseal-input-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;}
-.alexseal-input-group{flex:1 1 140px;min-width:0;}
-.alexseal-input-group-compact{flex:0 0 auto;width:auto;min-width:7.5rem;}
-.alexseal-input-label{
-  display:block;font-size:.72rem;font-weight:600;
-  color:var(--chrome-ink-600);margin:0 0 .3rem;
-}
+/* The row, group, compact group, and label are .mp-input-row,
+   .mp-input-group, .mp-input-group--compact, and .mp-input-label. */
 
 #acceleratorEnabledLabel{color:var(--chrome-ink-900);}
 

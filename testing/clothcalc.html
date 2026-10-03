@@ -248,7 +248,7 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><main class="container cloth-app d-print-none">
+<!-- #EndLibraryItem --><main class="container mp-calc-app d-print-none">
 
   <!-- Title band -->
   <div class="mp-hero">
@@ -260,7 +260,7 @@
   <div class="mp-split mp-overlap mp-grid">
     <div class="cloth-form-col d-print-none">
       <form id="resin-calculator-form">
-        <div class="cloth-fields">
+        <div class="mp-fields">
 
           <!-- Measurement System -->
           <section class="mp-card mp-card--compact mp-field-card" id="measurementSystemCard">
@@ -302,9 +302,9 @@
                 <p class="mp-field-hint">Resin type and mix ratio drive cure chemistry; temperature drives cure speed.</p>
               </div>
             </div>
-            <div class="cloth-input-row">
-              <div class="cloth-input-group">
-                <label class="cloth-input-label" for="resin-type">Resin Type</label>
+            <div class="mp-input-row">
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="resin-type">Resin Type</label>
                 <select id="resin-type" class="mp-select">
                   <option value="polyester">Polyester</option>
                   <option value="vinylester">Vinylester</option>
@@ -312,8 +312,8 @@
                 </select>
               </div>
               <!-- Epoxy Mix Ratio (Hidden by default) -->
-              <div class="cloth-input-group" id="epoxy-ratio-container" style="display: none;">
-                <label class="cloth-input-label" for="epoxy-mix-ratio">Epoxy Mix Ratio (Resin:Hardener)</label>
+              <div class="mp-input-group" id="epoxy-ratio-container" style="display: none;">
+                <label class="mp-input-label" for="epoxy-mix-ratio">Epoxy Mix Ratio (Resin:Hardener)</label>
                 <select id="epoxy-mix-ratio" class="mp-select">
                   <option value="5:1v">West System 5:1 by Volume</option>
                   <option value="3:1v">West System 3:1 by Volume</option>
@@ -323,8 +323,8 @@
                   <option value="100:30w">Generic 100:30 by Weight</option>
                 </select>
               </div>
-              <div class="cloth-input-group">
-                <label class="cloth-input-label" for="temperature">Ambient Temperature (<span id="temp-unit-label">°C</span>)</label>
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="temperature">Ambient Temperature (<span id="temp-unit-label">°C</span>)</label>
                 <input type="number" class="mp-input" id="temperature" value="20" step="any">
                 <div class="mp-unit-toggle" role="group" aria-label="Temperature unit">
                   <button type="button" class="mp-unit-btn" data-tempunit="celsius" aria-pressed="true">°C</button>
@@ -338,7 +338,7 @@
           </section>
 
           <!-- Project Dimensions -->
-          <section class="mp-card mp-card--compact mp-field-card cloth-field-card-wide" id="dimensionsCard">
+          <section class="mp-card mp-card--compact mp-field-card mp-field-card--wide" id="dimensionsCard">
             <div class="mp-field-head">
               <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m14 6 2 2M11 9l2 2M8 12l2 2M5 15l2 2"/></svg></span>
               <div>
@@ -346,17 +346,17 @@
                 <p class="mp-field-hint">Measure the largest area you're laminating.</p>
               </div>
             </div>
-            <div class="cloth-input-row">
-              <div class="cloth-input-group">
-                <label class="cloth-input-label" for="length">Length</label>
+            <div class="mp-input-row">
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="length">Length</label>
                 <input type="number" class="mp-input" id="length" required min="0" step="any" placeholder="e.g., 48">
               </div>
-              <div class="cloth-input-group">
-                <label class="cloth-input-label" for="width">Width</label>
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="width">Width</label>
                 <input type="number" class="mp-input" id="width" required min="0" step="any" placeholder="e.g., 24">
               </div>
-              <div class="cloth-input-group cloth-input-group-compact">
-                <label class="cloth-input-label" for="units">Units</label>
+              <div class="mp-input-group mp-input-group--compact">
+                <label class="mp-input-label" for="units">Units</label>
                 <select id="units" class="mp-select mp-select-compact">
                   <option value="in">Inches</option>
                   <option value="ft">Feet</option>
@@ -368,7 +368,7 @@
           </section>
 
           <!-- Material Layers -->
-          <section class="mp-card mp-card--compact mp-field-card cloth-field-card-wide" id="layersCard">
+          <section class="mp-card mp-card--compact mp-field-card mp-field-card--wide" id="layersCard">
             <div class="mp-field-head">
               <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></span>
               <div>
@@ -420,7 +420,7 @@
           </section>
 
           <!-- Cost Estimation -->
-          <section class="mp-card mp-card--compact mp-field-card cloth-field-card-wide" id="costCard">
+          <section class="mp-card mp-card--compact mp-field-card mp-field-card--wide" id="costCard">
             <div class="mp-field-head">
               <span class="mp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
               <div>
@@ -428,13 +428,13 @@
                 <p class="mp-field-hint">Enter a price to get a material cost estimate.</p>
               </div>
             </div>
-            <div class="cloth-input-row">
-              <div class="cloth-input-group">
-                <label class="cloth-input-label" for="resin-cost">Resin Cost per Unit</label>
+            <div class="mp-input-row">
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="resin-cost">Resin Cost per Unit</label>
                 <input type="number" class="mp-input" id="resin-cost" min="0" step="any" placeholder="e.g., 45.50">
               </div>
-              <div class="cloth-input-group cloth-input-group-compact">
-                <label class="cloth-input-label" for="resin-cost-unit">Cost Unit</label>
+              <div class="mp-input-group mp-input-group--compact">
+                <label class="mp-input-label" for="resin-cost-unit">Cost Unit</label>
                 <select id="resin-cost-unit" class="mp-select mp-select-compact">
                   <option value="gal">per Gallon</option>
                   <option value="liter">per Liter</option>
