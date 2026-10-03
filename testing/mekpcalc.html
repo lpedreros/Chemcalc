@@ -342,7 +342,7 @@
                input/toggle row, not in the results panel. Single
                location — the approved ResultsPanel.tsx has no temp text
                at all. -->
-          <p id="tempAdvice" class="mekp-result-advisory"></p>
+          <p id="tempAdvice" class="mp-advisory"></p>
         </section>
 
         <!-- Resin Volume -->
@@ -384,17 +384,17 @@
           <!-- Shown only while the checkbox above is checked (see
                mekpcalc-ui.js) — hidden otherwise, replacing the old
                always-visible static line. -->
-          <small id="duratecHelp" class="mekp-duratec-locked-msg" style="display:none;">
+          <small id="duratecHelp" class="mp-note mekp-duratec-locked-msg" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
             <span>Locked at 2% for Duratec 904&#8209;001 &mdash; the custom percentage slider is disabled while this is active.</span>
           </small>
 
-          <div class="mekp-slider-label-row">
+          <div class="mp-slider-label-row">
             <label for="customPercentage">Custom Percentage (optional)</label>
-            <span id="customPercentageValue">1.8%</span>
+            <span id="customPercentageValue" class="mp-slider-value">1.8%</span>
           </div>
-          <input type="range" id="customPercentage" class="mekp-slider" min="1" max="3" step="0.05" value="1.8">
-          <div class="mekp-slider-scale"><span>1%</span><span>2%</span><span>3%</span></div>
+          <input type="range" id="customPercentage" class="mp-slider" min="1" max="3" step="0.05" value="1.8">
+          <div class="mp-slider-scale"><span>1%</span><span>2%</span><span>3%</span></div>
         </section>
 
       </div>
@@ -414,7 +414,7 @@
         </div>
         <div class="mp-results-body">
           <div class="mekp-result-primary">
-            <p class="mekp-result-primary-label">Add this much MEKP catalyst</p>
+            <p class="mp-result-label">Add this much MEKP catalyst</p>
             <p class="mekp-result-hero"><span id="mekpHeroValue">&mdash;</span><span class="mekp-result-hero-unit">cc</span></p>
             <p class="mekp-result-sub">&asymp; <span id="mekpHeroDrops">&mdash;</span> drops</p>
           </div>
@@ -440,7 +440,7 @@
           <p id="mekpCcs" class="sr-only">MEKP CCs:</p>
           <p id="mekpDrops" class="sr-only">MEKP Drops:</p>
 
-          <div id="mekpEmailCapture" class="mekp-email-capture"></div>
+          <div id="mekpEmailCapture" class="mp-email-capture"></div>
 
           <div class="mp-affiliate-block" id="affiliateLinksContainer">
             <h3>Related Products</h3>

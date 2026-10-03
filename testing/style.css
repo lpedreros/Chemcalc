@@ -541,6 +541,89 @@ main.mp-calc-app{
 }
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- CALCULATOR PARTS (slider, callouts, labels)
+   Added 2026-10-02. The same small parts were copied under each
+   calculator's own prefix, with only the prefix changing.
+
+   .mp-slider: the reducer or percentage slider (MEKP, Awlgrip, Alexseal)
+   with its label row, live percentage readout (.mp-slider-value), and
+   min/max scale. --slider-fill is a percentage the calculator's script
+   sets from the slider's own value, min, and max on every input; the fixed
+   50% fallback covers first paint before JS runs.
+
+   .mp-note: a light callout box for product- or method-specific guidance.
+   Awlgrip, Epifanes, and Alexseal had byte-identical copies, and MEKP's
+   "locked" message is the same box with its own layout on top.
+
+   .mp-advisory: the ambient-temperature advisory (ClothCalc and MEKP had
+   identical copies). It stays hidden until the calculator's script shows
+   it, and its color follows the data-band attribute the script sets.
+
+   .mp-result-label: the small uppercase label above a results-panel hero
+   number. The hero numbers themselves differ in size between calculators
+   on purpose and stay page-specific.
+
+   .mp-email-capture: spacing only. email-results.js injects its own
+   inline-styled box into this container, so it is left unstyled here on
+   purpose rather than fighting those inline styles.
+   ============================================================ */
+.mp-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
+.mp-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
+.mp-slider-value{
+  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
+}
+.mp-slider{
+  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
+  height:6px;border-radius:999px;
+  background:linear-gradient(
+    to right,
+    var(--chrome-sea-500) 0%,
+    var(--chrome-signal-400) var(--slider-fill,50%),
+    var(--chrome-paper-line) var(--slider-fill,50%),
+    var(--chrome-paper-line) 100%
+  );
+}
+.mp-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;border:2px solid var(--chrome-ink-800);
+  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
+}
+.mp-slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  border:2px solid var(--chrome-ink-800);cursor:pointer;
+}
+.mp-slider:disabled{opacity:.5;cursor:not-allowed;}
+.mp-slider-scale{
+  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
+  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
+}
+
+.mp-note{
+  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
+  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
+  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
+}
+
+.mp-advisory{
+  display:none;font-size:.82rem;font-weight:600;color:var(--chrome-ink-700);
+  margin:.85rem 0 0;padding:.55rem .75rem;border-radius:8px;
+  background:var(--chrome-paper-muted);
+}
+.mp-advisory[data-band="extreme-cold"],
+.mp-advisory[data-band="extreme-hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
+.mp-advisory[data-band="warm"],
+.mp-advisory[data-band="hot"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
+.mp-advisory[data-band="cool"],
+.mp-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
+
+.mp-result-label{
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:rgba(255,255,255,.55);margin:0 0 .3rem;
+}
+
+.mp-email-capture{margin-top:1rem;}
+
+/* ============================================================
    CLOTHCALC PAGE-SPECIFIC STYLES
    Merged into style.css 2026-09-14 (single-file consolidation --
    Leo's non-negotiable: one CSS file for the whole site, page-specific
@@ -695,19 +778,8 @@ main.mp-calc-app{
 /* ---------- Ambient-temperature advisory: lives in the Resin &
    Temperature field card (light background), color follows band.
    Resin-dependent (polyester/vinylester vs. epoxy) -- see clothcalc.js's
-   computeClothAdvisory(). Mirrors mekpcalc.css's .mekp-result-advisory
-   pattern exactly, reusing the same sitewide --chrome-* tokens. ---------- */
-.cloth-temp-advisory{
-  display:none;font-size:.82rem;font-weight:600;color:var(--chrome-ink-700);
-  margin:.85rem 0 0;padding:.55rem .75rem;border-radius:8px;
-  background:var(--chrome-paper-muted);
-}
-.cloth-temp-advisory[data-band="extreme-cold"],
-.cloth-temp-advisory[data-band="extreme-hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
-.cloth-temp-advisory[data-band="warm"],
-.cloth-temp-advisory[data-band="hot"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
-.cloth-temp-advisory[data-band="cool"],
-.cloth-temp-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
+   computeClothAdvisory(). The box is .mp-advisory (SHARED SITE
+   COMPONENTS -- CALCULATOR PARTS). ---------- */
 
 /* ---------- Material Layers ---------- */
 .cloth-layer{
@@ -752,10 +824,6 @@ main.mp-calc-app{
   background:#fff;
 }
 
-.cloth-result-primary-label{
-  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  color:rgba(255,255,255,.55);margin:0 0 .3rem;
-}
 .cloth-result-hero{
   font-family:var(--chrome-font-mono);font-size:2.5rem;font-weight:700;
   color:var(--chrome-signal-400);margin:0;line-height:1.1;
@@ -771,6 +839,7 @@ main.mp-calc-app{
   color:rgba(255,255,255,.55);margin:0 0 .75rem;
 }
 
+/* ClothCalc's container is .mp-email-capture plus this extra .25rem of room. */
 .cloth-email-capture{margin-top:1.25rem;}
 /* email-results.js injects its own inline-styled light box into this
    container — left unstyled here on purpose so we don't fight its
@@ -903,48 +972,16 @@ main.mp-calc-app{
 /* Locked-state message — shown only while the Duratec checkbox is
    checked (see mekpcalc-ui.js); replaces the old always-visible
    .mekp-duratec-status line. */
+/* The box is .mp-note (SHARED SITE COMPONENTS -- CALCULATOR PARTS); this adds
+   the hidden-until-shown row layout and its own spacing. */
 .mekp-duratec-locked-msg{
-  display:none;align-items:flex-start;gap:.5rem;
-  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
-  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
-  font-size:.8rem;font-weight:600;line-height:1.4;margin:0 0 1rem;
+  display:none;align-items:flex-start;gap:.5rem;margin:0 0 1rem;
 }
 .mekp-duratec-locked-msg svg{flex:none;width:1rem;height:1rem;margin-top:.1rem;color:var(--chrome-signal-500);}
 
-/* ---------- Custom percentage slider ---------- */
-.mekp-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
-.mekp-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
-#customPercentageValue{
-  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
-}
-.mekp-slider{
-  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
-  height:6px;border-radius:999px;
-  /* Live two-tone fill gradient — --slider-fill is a percentage set from
-     the slider's own value/min/max by mekpcalc-ui.js on every input; the
-     fixed fallback (50%) covers first paint before JS runs. */
-  background:linear-gradient(
-    to right,
-    var(--chrome-sea-500) 0%,
-    var(--chrome-signal-400) var(--slider-fill,50%),
-    var(--chrome-paper-line) var(--slider-fill,50%),
-    var(--chrome-paper-line) 100%
-  );
-}
-.mekp-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
-  background:#fff;border:2px solid var(--chrome-ink-800);
-  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
-}
-.mekp-slider::-moz-range-thumb{
-  width:18px;height:18px;border-radius:50%;background:#fff;
-  border:2px solid var(--chrome-ink-800);cursor:pointer;
-}
-.mekp-slider:disabled{opacity:.5;cursor:not-allowed;}
-.mekp-slider-scale{
-  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
-  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
-}
+/* The slider, its label row, readout, and scale are .mp-slider,
+   .mp-slider-label-row, .mp-slider-value, and .mp-slider-scale (SHARED SITE
+   COMPONENTS -- CALCULATOR PARTS). */
 
 /* .mekp-result-line is no longer used on-screen (its two paragraphs are
    now sr-only) but is left defined for any incidental reuse. */
@@ -975,10 +1012,6 @@ main.mp-calc-app{
 
 /* ---------- Hero cc value + drops sub-line ---------- */
 .mekp-result-primary{margin-bottom:1.1rem;}
-.mekp-result-primary-label{
-  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  color:rgba(255,255,255,.55);margin:0 0 .3rem;
-}
 .mekp-result-hero{
   font-family:var(--chrome-font-mono);font-size:2.75rem;font-weight:700;
   color:var(--chrome-signal-400);margin:0;line-height:1.05;
@@ -987,23 +1020,10 @@ main.mp-calc-app{
 .mekp-result-sub{font-family:var(--chrome-font-mono);font-size:.95rem;color:rgba(255,255,255,.75);margin:.35rem 0 0;}
 
 /* ---------- Ambient-temperature advisory: lives in the Ambient Temperature
-   field card (light background), color follows band. ---------- */
-.mekp-result-advisory{
-  display:none;font-size:.82rem;font-weight:600;color:var(--chrome-ink-700);
-  margin:.85rem 0 0;padding:.55rem .75rem;border-radius:8px;
-  background:var(--chrome-paper-muted);
-}
-.mekp-result-advisory[data-band="extreme-cold"],
-.mekp-result-advisory[data-band="extreme-hot"]{color:#B23A2E;background:rgba(224,84,64,.12);}
-.mekp-result-advisory[data-band="warm"],
-.mekp-result-advisory[data-band="hot"]{color:var(--chrome-signal-600);background:var(--chrome-signal-50);}
-.mekp-result-advisory[data-band="cool"],
-.mekp-result-advisory[data-band="ideal"]{color:var(--chrome-sea-600);background:rgba(15,122,133,.1);}
+   field card (light background), color follows band. The box is
+   .mp-advisory (SHARED SITE COMPONENTS -- CALCULATOR PARTS). ---------- */
 
-.mekp-email-capture{margin-top:1rem;}
-/* email-results.js injects its own inline-styled light box into this
-   container — left unstyled here on purpose so we don't fight its
-   inline styles; this wrapper only provides spacing. */
+/* The email-results.js container is .mp-email-capture. */
 
 /* ---------- Feedback modal ----------
    .modal-overlay/.modal-box/.modal-title (style.css) are already light and
@@ -1047,58 +1067,13 @@ main.mp-calc-app{
 /* The row, group, compact group, and label are .mp-input-row,
    .mp-input-group, .mp-input-group--compact, and .mp-input-label. */
 
-/* ---------- Awlcraft 2000/3000 reducer-percentage slider (MEKP's slider
-   visual language, copied and renamed -- see .mekp-slider above)
-   ---------- */
-.awlgrip-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
-.awlgrip-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
-#reducerPercentValue{
-  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
-}
-.awlgrip-slider{
-  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
-  height:6px;border-radius:999px;
-  /* Live two-tone fill gradient -- --slider-fill is a percentage set
-     from the slider's own value/min/max by awlgripcalc-ui.js on every
-     input; the fixed fallback (50%) covers first paint before JS
-     runs. */
-  background:linear-gradient(
-    to right,
-    var(--chrome-sea-500) 0%,
-    var(--chrome-signal-400) var(--slider-fill,50%),
-    var(--chrome-paper-line) var(--slider-fill,50%),
-    var(--chrome-paper-line) 100%
-  );
-}
-.awlgrip-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
-  background:#fff;border:2px solid var(--chrome-ink-800);
-  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
-}
-.awlgrip-slider::-moz-range-thumb{
-  width:18px;height:18px;border-radius:50%;background:#fff;
-  border:2px solid var(--chrome-ink-800);cursor:pointer;
-}
-.awlgrip-slider-scale{
-  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
-  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
-}
+/* The slider, its label row, readout, and scale are .mp-slider,
+   .mp-slider-label-row, .mp-slider-value, and .mp-slider-scale (SHARED SITE
+   COMPONENTS -- CALCULATOR PARTS). */
 
-/* ---------- Product-specific note callouts (Awlcraft SE / HDT Clear)
-   -- same visual treatment as MEKP's Duratec-locked message
-   (.mekp-duratec-locked-msg above): a light, always-visible-while-shown
-   callout box, not a Bootstrap .alert. ---------- */
-.awlgrip-note{
-  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
-  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
-  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
-}
+/* The product notes are .mp-note (SHARED SITE COMPONENTS -- CALCULATOR PARTS). */
 
-.awlgrip-email-capture{margin-top:1rem;}
-/* email-results.js injects its own inline-styled light box into this
-   container -- left unstyled here on purpose so we don't fight its
-   inline styles; this wrapper only provides spacing (same convention as
-   .mekp-email-capture/.cloth-email-capture above). */
+/* The email-results.js container is .mp-email-capture. */
 
 /* ---------- Accelerator comparison card (Pro-Cure X-98 vs X-138) --
    moved here from an inline <style> block in awlgrip.html's <head> (see
@@ -1212,20 +1187,10 @@ main.mp-calc-app{
    dark surfaces). */
 /* The label is .mp-input-label. */
 
-/* ---------- Product/method-driven note callouts (PU Speedcoat
-   spray-only / standard-product-spray guidance) -- same visual
-   treatment as awlgrip.html's .awlgrip-note: a light, always-visible-
-   while-shown callout box, not a Bootstrap .alert. ---------- */
-.epifanes-note{
-  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
-  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
-  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
-}
+/* The product and method notes are .mp-note (SHARED SITE COMPONENTS --
+   CALCULATOR PARTS). */
 
-.epifanes-email-capture{margin-top:1rem;}
-/* email-results.js injects its own inline-styled light box into this
-   container -- left unstyled here on purpose so we don't fight its
-   inline styles (same convention as .awlgrip-email-capture above). */
+/* The email-results.js container is .mp-email-capture. */
 
 /* ============================================================
    ALEXSEAL PAGE-SPECIFIC STYLES
@@ -1262,58 +1227,14 @@ main.mp-calc-app{
 
 #acceleratorEnabledLabel{color:var(--chrome-ink-900);}
 
-/* ---------- Reducer-percentage slider -- every Alexseal product uses
-   one (unlike awlgrip.html, where only Awlcraft 2000/3000 does); same
-   visual language as .awlgrip-slider, copied and renamed per this
-   project's page-scoping convention. ---------- */
-.alexseal-slider-label-row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;}
-.alexseal-slider-label-row label{font-size:.85rem;font-weight:600;color:var(--chrome-ink-900);}
-#reducerPercentValue{
-  font-family:var(--chrome-font-mono);font-size:1.25rem;font-weight:600;color:var(--chrome-ink-900);
-}
-.alexseal-slider{
-  width:100%;margin-top:.65rem;appearance:none;-webkit-appearance:none;
-  height:6px;border-radius:999px;
-  /* Live two-tone fill gradient -- --slider-fill is a percentage set
-     from the slider's own value/min/max by alexsealscript.js on every
-     input, same technique as awlgripcalc-ui.js's reducer slider. */
-  background:linear-gradient(
-    to right,
-    var(--chrome-sea-500) 0%,
-    var(--chrome-signal-400) var(--slider-fill,50%),
-    var(--chrome-paper-line) var(--slider-fill,50%),
-    var(--chrome-paper-line) 100%
-  );
-}
-.alexseal-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
-  background:#fff;border:2px solid var(--chrome-ink-800);
-  box-shadow:0 1px 3px rgba(5,22,28,.35);cursor:pointer;
-}
-.alexseal-slider::-moz-range-thumb{
-  width:18px;height:18px;border-radius:50%;background:#fff;
-  border:2px solid var(--chrome-ink-800);cursor:pointer;
-}
-.alexseal-slider-scale{
-  display:flex;justify-content:space-between;font-family:var(--chrome-font-mono);
-  font-size:.7rem;color:var(--chrome-ink-500);margin-top:.4rem;
-}
+/* The slider, its label row, readout, and scale are .mp-slider,
+   .mp-slider-label-row, .mp-slider-value, and .mp-slider-scale (SHARED SITE
+   COMPONENTS -- CALCULATOR PARTS). */
 
-/* ---------- Product-specific note callouts (Finish Primer 442's metal-
-   substrate warning) -- same visual treatment as .awlgrip-note/
-   .epifanes-note: a light, always-visible-while-shown callout box, not
-   a Bootstrap .alert. ---------- */
-.alexseal-note{
-  border:1px solid var(--chrome-signal-200);background:var(--chrome-signal-50);
-  color:var(--chrome-signal-600);border-radius:8px;padding:.6rem .75rem;
-  font-size:.8rem;font-weight:600;line-height:1.4;margin:1rem 0 0;
-}
+/* The metal-substrate note is .mp-note (SHARED SITE COMPONENTS --
+   CALCULATOR PARTS). */
 
-.alexseal-email-capture{margin-top:1rem;}
-/* email-results.js injects its own inline-styled light box into this
-   container -- left unstyled here on purpose so we don't fight its
-   inline styles (same convention as .awlgrip-email-capture/.epifanes-
-   email-capture above). */
+/* The email-results.js container is .mp-email-capture. */
 
 /* ============================================================
    END PAGE-SPECIFIC STYLES -- everything below this point was
