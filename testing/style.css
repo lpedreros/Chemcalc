@@ -6558,6 +6558,28 @@ h2.trello-setup-title{
 }
 
 /* ============================================================
+   PRINT-ONLY CONTRAST -- SERVICES AND KITS PANEL TEXT
+   Added 2026-10-03. Commit 61cd610 recolored these six selectors from
+   white to dark teal for the new light screen canvas
+   (<body class="mp-canvas">). That canvas is screen-only, so in print
+   these two pages still render the legacy dark .container background
+   (#2c2c2e), and the dark teal text fell to 1.2-3.0:1 against it. This
+   restores each selector's pre-61cd610 value (read from 88dad74) for
+   print only; screen rendering is untouched. Measured under print-media
+   emulation against that background: 13.94, 10.49, 7.99, 13.94, 7.99,
+   and 4.69:1. The six classes are used only by services.html and
+   kits.html.
+   ============================================================ */
+@media print{
+  .services-estimator-title{color:var(--chrome-paper-card);}
+  .services-estimator-lead{color:rgba(255,255,255,.85);}
+  .services-estimator-copy-text{color:rgba(255,255,255,.72);}
+  .kits-custom-title{color:var(--chrome-paper-card);}
+  .kits-custom-intro{color:rgba(255,255,255,.72);}
+  .kits-product-disclosure{color:rgba(255,255,255,.5);}
+}
+
+/* ============================================================
    LEGAL DOCUMENT PAGE STYLES (privacy.html / terms.html / cookie.html)
    Added 2026-10-02 for the Privacy Policy, Terms of Use, and Cookie
    Policy interior rebuild onto the chrome design system, the same
