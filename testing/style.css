@@ -5712,6 +5712,16 @@ body,
    with the same margin. */
 .mp-overlap{margin-top:-1.75rem;}
 
+/* .mp-measure: a readable column for short text pages -- caps the width at
+   48rem and centers it, so a few short paragraphs do not stretch across the
+   full 1200px container (the safety guideline pages). */
+.mp-measure{max-width:48rem;margin-left:auto;margin-right:auto;}
+
+/* .mp-page-back: the centered "Back to ..." action under a document. The
+   button itself is .mp-btn .mp-btn--ghost, which reads on the dark page
+   background. (legal.html used its own .legal-doc-back for this.) */
+.mp-page-back{margin-top:1.5rem;text-align:center;}
+
 .mp-prose p{
   font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .85rem;
 }
@@ -6381,7 +6391,4 @@ body,
   margin-top:0;font-style:normal;font-size:.95rem;font-weight:600;
 }
 
-/* "Back to ..." link under the document (legal.html). The button itself
-   is .mp-btn .mp-btn--ghost, which reads on the dark page background. */
-.legal-doc-back{margin-top:1.5rem;text-align:center;}
 
