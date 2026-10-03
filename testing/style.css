@@ -135,7 +135,6 @@
   body > main > form > .mb-3,
   .printable-section .row.mb-3, /* e.g., unit selectors inside results card (clothcalc) */
   #donationModal,
-  .fixed-donate-btn,
   body > footer,
   .menu-toggle,
   .d-print-none, /* Generic class to hide elements from print */
@@ -475,6 +474,45 @@
 
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- PAGE CANVAS AND CONTENT WRAPPER
+   Added 2026-10-03 to match the Magic Patterns pages (PageHero.tsx and
+   the content wrapper CalculatorShell.tsx and every other MP page use):
+   a light page, a full-bleed square-edged dark hero band, and content
+   capped at 1280px with 20px side padding (32px from 1024px) that is
+   pulled up into the hero's bottom padding.
+
+   <body class="mp-canvas"> opts a page in. The sitewide
+   body{background:#1c1c1e;margin:1em} and .container{...} rules further
+   down are legacy from before the redesign and still serve the pages
+   that have not been rebuilt (Contact, Estimator, History, Products), so
+   they are overridden only under .mp-canvas, and only on screen so
+   printing is unchanged. The header and footer drop the -1em side
+   margins that cancelled the old body margin.
+
+   .mp-canvas > main is the content wrapper. It outranks the legacy
+   .container rule (class plus tag against one class) and, being first in
+   the file, still lets main.mp-calc-app's own bottom padding win a tie on
+   source order. After a .mp-hero--overlap the wrapper is pulled up over
+   the hero by 3rem (5rem from 1024px); after a plain .mp-hero it just
+   gets 2.5rem of room, for a page whose first block is a heading on the
+   canvas and not a card.
+   ============================================================ */
+@media screen{
+  body.mp-canvas{background-color:var(--chrome-paper);margin:0;}
+  body.mp-canvas .header.site-header-dark{margin:0;}
+  body.mp-canvas .footer.site-footer-dark{margin:0;}
+  .mp-canvas > main{
+    max-width:80rem;margin:2.5rem auto 0;padding:0 1.25rem 4rem;
+    background:none;border-radius:0;box-shadow:none;
+  }
+  .mp-canvas > .mp-hero--overlap + main{margin-top:-3rem;}
+  @media (min-width:1024px){
+    .mp-canvas > main{padding-left:2rem;padding-right:2rem;}
+    .mp-canvas > .mp-hero--overlap + main{margin-top:-5rem;}
+  }
+}
+
+/* ============================================================
    SHARED SITE COMPONENTS -- CALCULATOR PAGES (shell and form layout)
    Added 2026-10-02. The five calculator pages (Cloth, MEKP, Awlgrip,
    Epifanes, Alexseal) each carried their own copy of the same page shell
@@ -484,11 +522,12 @@
 
    .mp-calc-app: the <main> of every calculator page. It is main.mp-calc-app
    (tag plus class), not a bare class, because the sitewide
-   .container{background-color:#2c2c2e;padding:1em} has the same
-   single-class specificity and would otherwise win on source order -- the
-   bare-class version silently rendered .container's own background and
-   padding on both mobile and desktop. All five calculators share the same
-   dark #2c2c2e background. Below 768px the page is single column and the
+   .container{padding:1em} has the same single-class specificity and would
+   otherwise win on source order. The page background is no longer set
+   here: calculator pages sit on the light canvas (PAGE CANVAS AND CONTENT
+   WRAPPER, above) like every MP page, and the results panel carries its
+   own dark background (.mp-results-panel), so it does not depend on the
+   page behind it. Below 768px the page is single column and the
    fixed bottom-right floating cluster (Donate, BoatMD chat, Help) passes
    over the report banner while scrolling, so 17.5rem of bottom clearance
    is measured to clear the mobile worst case; the 768-991px tablet tier
@@ -506,7 +545,6 @@
 main.mp-calc-app{
   font-family:var(--chrome-font-sans);
   color:var(--chrome-ink-900);
-  background:#2c2c2e;
 }
 @media (max-width:767.98px){
   main.mp-calc-app{padding-bottom:17.5rem;}
@@ -517,6 +555,7 @@ main.mp-calc-app{
 .mp-calc-app h1,.mp-calc-app h2,.mp-calc-app h3{font-family:var(--chrome-font-sans);}
 
 .mp-fields{display:grid;gap:1rem;}
+.mp-fields > *{min-width:0;}
 @media (min-width:576px){
   .mp-fields{grid-template-columns:1fr 1fr;}
   .mp-fields--single{grid-template-columns:none;}
@@ -1365,25 +1404,6 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
-/* Donate Button */
-.fixed-donate-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1050;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    border-radius: 4px;
-    background-color: #89CFF0;
-    color: #1c1c1e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-}
-.fixed-donate-btn:hover {
-    background-color: #70b8d0;
-}
-
 /* Collapsible Sections */
 .collapsible {
     background-color: #2c2c2e;
@@ -1528,7 +1548,6 @@ h1 {
 }
 
 /* Logos */
-.powered-by img,
 .powered-by-header img {
     height: 1.5em;
     width: auto;
@@ -1557,15 +1576,8 @@ h1 {
     margin: 0.5em 0;
     font-size: 1em;
 }
-.footer.text-center .powered-by {
-    margin-top: 0.5em;
-}
 
 /* === Calculator & Shared Styles === */
-.card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-}
 .badge-info {
     background-color: #17a2b8;
 }
@@ -1671,19 +1683,6 @@ h1 {
     color: #adb5bd;
     display: block;
     margin-top: 0.5rem;
-}
-
-/* Donation Modal Customizations */
-.modal-content-custom {
-    background-color: #2c2c2e;
-    color: #ffffff;
-    border: none;
-}
-.modal-header-custom {
-    border-bottom: 1px solid #48484a;
-}
-.modal-footer-custom {
-    border-top: 1px solid #48484a;
 }
 
 /* ============================================================
@@ -4106,40 +4105,52 @@ body,
    calculator page — including future ones.
    ============================================================ */
 
+/* The page title band, from MP's PageHero.tsx: a full-bleed, square-edged
+   dark band that is a direct child of <body class="mp-canvas">, before
+   <main>. Its text lines up with the 1280px content wrapper below (the
+   side padding is the wrapper's 20px/32px plus the centering margin past
+   1280px). .mp-hero--overlap adds the extra bottom padding the wrapper
+   is pulled up into (MP's overlap prop): 5rem, 7rem from 1024px. */
 .mp-hero{
   background:var(--chrome-ink-950);
-  margin:-1em -1em 2rem;
-  padding:2rem 1.5rem 3rem;
-  border-radius:12px 12px 0 0;
+  font-family:var(--chrome-font-sans);
+  padding:2.5rem calc(max(0px, (100% - 80rem) / 2) + 1.25rem);
 }
+.mp-hero--overlap{padding-bottom:5rem;}
 .mp-hero-title{
-  font-size:2rem;
+  max-width:48rem;
+  font-size:2.25rem;
   font-weight:800;
-  letter-spacing:-0.02em;
-  line-height:1.1;
+  letter-spacing:-0.025em;
+  line-height:1.05;
   color:#ffffff;
-  margin:0 0 .5rem;
-}
-.mp-hero-tagline{
-  font-size:1.05rem;
-  font-weight:600;
-  color:var(--chrome-signal-400);
-  margin:0 0 .85rem;
-}
-.mp-hero-copy{
-  font-size:.92rem;
-  line-height:1.55;
-  color:rgba(255,255,255,.65);
-  max-width:640px;
   margin:0;
 }
-@media (max-width:575.98px){
-  .mp-hero{padding:1.5rem 1.25rem 2.25rem;}
-  .mp-hero-title{font-size:1.6rem;}
+.mp-hero-tagline{
+  max-width:48rem;
+  font-size:1.125rem;
+  font-weight:500;
+  line-height:1.5556;
+  color:var(--chrome-signal-400);
+  margin:.75rem 0 0;
+}
+.mp-hero-copy{
+  font-size:.9375rem;
+  line-height:1.6;
+  color:rgba(255,255,255,.6);
+  max-width:42rem;
+  margin:1rem 0 0;
+}
+@media (min-width:640px){
+  .mp-hero-title{font-size:3rem;}
+}
+@media (min-width:1024px){
+  .mp-hero{padding:3.5rem calc(max(0px, (100% - 80rem) / 2) + 2rem);}
+  .mp-hero--overlap{padding-bottom:7rem;}
 }
 
-/* The calculators' main grid is .mp-split .mp-overlap (SHARED SITE
-   COMPONENTS); this sets its column ratio. */
+/* The calculators' main grid is .mp-split (SHARED SITE COMPONENTS); this
+   sets its column ratio. */
 .mp-grid{--mp-split-cols:7fr 5fr;}
 
 /* The card box is .mp-card .mp-card--compact (SHARED SITE COMPONENTS --
@@ -4261,7 +4272,15 @@ body,
      viewports under 1200px would get MORE padding than 8.5rem, not
      less. Shared by mekpcalc.html and clothcalc.html too -- one fix
      here covers all three calculator pages. */
-  .mp-results-panel{padding-right:max(0px, 8.5rem - max(0px, (100vw - 1200px) / 2));}
+  /* Re-derived 2026-10-03 for the 1280px wrapper (see PAGE CANVAS AND CONTENT
+     WRAPPER). The panel's right edge now sits the wrapper's side padding
+     (1.25rem, 2rem from 1024px) plus the centering margin past 1280px from
+     the viewport edge. The label-expanded cluster reaches about 186px in from
+     the viewport edge; 11rem keeps the panel's content clear of it with about
+     37px to spare at 1200px (measured: content ends at 977px, cluster circles
+     start at 1101px, expanded labels at about 1014px) and also covers the
+     992-1023px tier, where the side padding is smaller. */
+  .mp-results-panel{padding-right:max(0px, 11rem - max(0px, (100vw - 1280px) / 2));}
 }
 
 /* Email-capture input (email-results.js injects #captureEmailInput +
@@ -4688,10 +4707,9 @@ body,
 
    Bottom-right stack, matching FloatingActions.tsx: Help (closest to
    the edge) sits at bottom ~1.25/1.75rem, the BoatMD chat toggle sits
-   above that, Donate sits at the top of the stack. .fixed-donate-btn
-   (old blue pill, further up this file) is no longer emitted by
-   Library/Footer.lbi and is left in place unused, same minimal-diff
-   pattern as the rest of this section.
+   above that, Donate sits at the top of the stack. (The old
+   .fixed-donate-btn blue pill was removed on 2026-10-03, once no page
+   or script used it.)
    ============================================================ */
 
 /* ---------- Donate ---------- */
@@ -5595,7 +5613,7 @@ body,
 .mp-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
   font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
-  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  padding:.85rem 1.5rem;border-radius:8px;border:1px solid transparent;
   cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
   transition:background-color .15s var(--chrome-ease-smooth),
     border-color .15s var(--chrome-ease-smooth),
@@ -5655,11 +5673,6 @@ body,
    SHARED SITE COMPONENTS -- PAGE SHELL, SPLIT LAYOUT, LONG-FORM TEXT
    Added 2026-10-02.
 
-   .mp-page: the bottom spacing before the footer that .about,
-   .services-page, and .legal-doc-page each set on their <main>
-   (py-5's bottom half, after the top half was removed to fix the hero
-   gap). Usage: <main class="container mp-page">.
-
    .mp-split: a stacked grid that becomes two columns at 992px.
    .home-solutions-grid, .about-grid, and .legal-doc-layout were the
    same grid; .home-hero-inner and .services-estimator-grid were the
@@ -5681,8 +5694,6 @@ body,
    (style.css line 1454) wins on any property a new class does not
    itself set.
    ============================================================ */
-.mp-page{padding-bottom:3rem;}
-
 .mp-split{
   display:grid;gap:1.5rem;align-items:start;
   grid-template-columns:1fr;
@@ -5691,6 +5702,11 @@ body,
   .mp-split{grid-template-columns:var(--mp-split-cols,1fr 1fr);}
 }
 .mp-split--center{gap:2.5rem;align-items:center;}
+/* Grid items may shrink below their content's intrinsic width. Without this a
+   wide <select> (the Awlgrip paint-type menu) held the single phone column
+   open past the screen edge: 8px at 375px before 2026-10-03, 13px once the
+   canvas wrapper's side padding became MP's 20px. */
+.mp-split > *{min-width:0;}
 
 /* .mp-card-grid: a grid of cards -- one column, two from 768px, and three
    from 992px with --three. .services-grid and .services-showcase-grid
@@ -5707,19 +5723,14 @@ body,
   .mp-card-grid--three{grid-template-columns:1fr 1fr 1fr;}
 }
 
-/* .mp-overlap: pulls the content up into the hero's bottom padding. The
-   Calculators index grid and every calculator page's main grid did this
-   with the same margin. */
-.mp-overlap{margin-top:-1.75rem;}
-
 /* .mp-measure: a readable column for short text pages -- caps the width at
    48rem and centers it, so a few short paragraphs do not stretch across the
-   full 1200px container (the safety guideline pages). */
+   full 1280px content width (the safety guideline pages). */
 .mp-measure{max-width:48rem;margin-left:auto;margin-right:auto;}
 
 /* .mp-page-back: the centered "Back to ..." action under a document. The
-   button itself is .mp-btn .mp-btn--ghost, which reads on the dark page
-   background. (legal.html used its own .legal-doc-back for this.) */
+   button itself is .mp-btn .mp-btn--outline, which reads on the light page.
+   (legal.html used its own .legal-doc-back for this.) */
 .mp-page-back{margin-top:1.5rem;text-align:center;}
 
 .mp-prose p{
@@ -5774,8 +5785,8 @@ body,
 
    .mp-section-title / .mp-section-lead: the centered heading and lead
    paragraph that open a page section. .home-section-title and
-   .services-section-title were the same rule in two colors (--on-dark is
-   for a section on the dark page background), and .kits-product-title was
+   .services-section-title were the same rule in two colors (the dark one
+   was for a section on the old dark page, and is gone), and .kits-product-title was
    the same heading at 1.4rem (--small). On phones a section title tightens
    to 1.5rem, and --small to 1.2rem.
 
@@ -5787,7 +5798,6 @@ body,
   font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
   color:var(--chrome-ink-900);text-align:center;margin:0 0 .75rem;
 }
-.mp-section-title--on-dark{color:var(--chrome-paper-card);}
 @media (max-width:575.98px){
   .mp-section-title{font-size:1.5rem;}
 }
@@ -5799,7 +5809,6 @@ body,
   font-size:1.05rem;line-height:1.6;color:var(--chrome-ink-600);
   text-align:center;max-width:44rem;margin:0 auto 2.5rem;
 }
-.mp-section-lead--on-dark{color:rgba(255,255,255,.72);}
 
 .mp-checklist{list-style:none;margin:0;padding:0;display:grid;gap:.75rem;}
 .mp-checklist li{position:relative;padding-left:1.6rem;font-size:.95rem;line-height:1.5;color:rgba(255,255,255,.85);}
@@ -5967,8 +5976,8 @@ body,
   --mp-hero-position:center 50%;
 }
 
-/* The grid is .mp-card-grid .mp-overlap (SHARED SITE COMPONENTS); this
-   class stays as the hook for the mobile clearance rule below. */
+/* The grid is .mp-card-grid (SHARED SITE COMPONENTS); this class stays as
+   the hook for the mobile clearance rule below. */
 
 .calc-index-card-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;}
 .calc-index-card-icon svg{width:1.2rem;height:1.2rem;}
@@ -6042,9 +6051,8 @@ body,
   --mp-hero-position:center 35%;
 }
 
-/* ---------- Section heading/lead (centered, light-on-dark) ---------- */
-/* Section title and lead are .mp-section-title and .mp-section-lead (both
-   --on-dark here). */
+/* ---------- Section heading/lead (centered) ---------- */
+/* Section title and lead are .mp-section-title and .mp-section-lead. */
 
 /* ---------- Service cards grid ---------- */
 /* ---------- Project showcase grid ---------- */
@@ -6062,13 +6070,15 @@ body,
 
 .services-estimator-title{
   font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
-  color:var(--chrome-paper-card);margin:0 0 .85rem;
+  color:var(--chrome-ink-900);margin:0 0 .85rem;
 }
-.services-estimator-lead{font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0 0 1rem;}
-.services-estimator-copy-text{font-size:.95rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;}
+.services-estimator-lead{font-size:1.05rem;line-height:1.6;color:var(--chrome-ink-700);margin:0 0 1rem;}
+.services-estimator-copy-text{font-size:.95rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.5rem;}
 
-/* The list is .mp-checklist; this adds the room under it. */
+/* The list is .mp-checklist; this adds the room under it and darkens the
+   text, because this column sits on the light page and not in a panel. */
 .services-estimator-features{margin:0 0 1.75rem;}
+.services-estimator-features li{color:var(--chrome-ink-700);}
 
 /* The box is .mp-panel (SHARED SITE COMPONENTS); this class stays as the
    hook for the heading and list rules below. */
@@ -6160,7 +6170,7 @@ body,
    spacing, and colors read from the live preview.
 
    What is shared (SHARED SITE COMPONENTS above): the hero (.mp-hero), the
-   .mp-split grid with .mp-overlap, the dark box (.mp-panel), the paper
+   .mp-split grid on the light canvas, the dark box (.mp-panel), the paper
    box (.mp-card, with --roomy and --flush), the check-mark list
    (.mp-checklist), the divided list (.mp-resource-links), the step number
    badge (.mp-card-icon), the pill button (.mp-btn), and .sr-only. What is
@@ -6275,26 +6285,26 @@ h2.trello-setup-title{
 }
 .trello-setup-rail-title{
   font-family:var(--chrome-font-sans);font-size:.8125rem;font-weight:600;
-  line-height:1.5;color:#ffffff;margin:0;
+  line-height:1.5;color:var(--chrome-ink-900);margin:0;
 }
 .trello-setup-rail ol{
   list-style:none;margin:.75rem 0 0;padding:0;display:grid;gap:.25rem;
-  border-left:1px solid rgba(255,255,255,.14);
+  border-left:1px solid var(--chrome-paper-line);
 }
 .trello-setup-rail a,.trello-setup-rail a:visited,
 .trello-setup-rail a:hover,.trello-setup-rail a:active{
   display:block;margin:0 0 0 -1px;padding:.375rem 0 .375rem 1rem;
   border-left:2px solid transparent;
   font-size:.875rem;font-weight:400;font-style:normal;line-height:1.5;
-  color:rgba(255,255,255,.65);text-decoration:none;
+  color:var(--chrome-ink-600);text-decoration:none;
 }
 .trello-setup-rail a{
   transition:color .15s var(--chrome-ease-smooth),border-color .15s var(--chrome-ease-smooth);
 }
 .trello-setup-rail a:hover,.trello-setup-rail a:active{
-  color:#ffffff;border-left-color:var(--chrome-signal-400);
+  color:var(--chrome-ink-900);border-left-color:var(--chrome-signal-400);
 }
-.trello-setup-rail-num{font-family:var(--chrome-font-mono);color:rgba(255,255,255,.4);}
+.trello-setup-rail-num{font-family:var(--chrome-font-mono);color:var(--chrome-ink-500);}
 
 /* The badge is .mp-card-icon at 2.5rem; the 1px line runs behind it down the
    badge column (half the badge width, less half the line). */
@@ -6303,7 +6313,7 @@ h2.trello-setup-title{
 }
 .trello-setup-step-list::before{
   content:"";position:absolute;left:calc(1.25rem - .5px);top:1.5rem;bottom:1.5rem;
-  width:1px;background:rgba(255,255,255,.2);
+  width:1px;background:var(--chrome-paper-line);
 }
 .trello-setup-step{
   position:relative;display:flex;align-items:flex-start;gap:1.25rem;scroll-margin-top:1rem;
@@ -6445,11 +6455,11 @@ h2.trello-setup-title{
 }
 .kits-custom-title{
   font-family:var(--chrome-font-sans);font-size:1.4rem;font-weight:800;
-  color:var(--chrome-paper-card);margin:0 0 .6rem;
+  color:var(--chrome-ink-900);margin:0 0 .6rem;
 }
-.kits-custom-intro{font-size:.92rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;}
+.kits-custom-intro{font-size:.92rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.5rem;}
 
-.kits-custom-footnote{font-size:.85rem;color:rgba(255,255,255,.55);text-align:center;margin:1.5rem 0 0;}
+.kits-custom-footnote{font-size:.85rem;color:var(--chrome-ink-500);text-align:center;margin:1.5rem 0 0;}
 
 /* ---------- Search + filter toolbar (sticky) ----------
    .header is position:relative (not fixed), so top:0 needs no offset
@@ -6488,10 +6498,9 @@ h2.trello-setup-title{
 .kits-product-panel{
   max-width:1100px;margin:0 auto 3rem;padding:0 1.5rem;
 }
-/* The title is .mp-section-title .mp-section-title--on-dark
-   .mp-section-title--small. */
-.kits-product-disclosure{font-size:.8rem;color:rgba(255,255,255,.5);text-align:center;margin:0 0 .5rem;}
-.kits-product-intro{font-size:.9rem;color:rgba(255,255,255,.72);text-align:center;margin:0 0 1.5rem;}
+/* The title is .mp-section-title .mp-section-title--small. */
+.kits-product-disclosure{font-size:.8rem;color:var(--chrome-ink-500);text-align:center;margin:0 0 .5rem;}
+.kits-product-intro{font-size:.9rem;color:var(--chrome-ink-600);text-align:center;margin:0 0 1.5rem;}
 
 .collapsible{
   background:var(--chrome-paper-card);color:var(--chrome-ink-900);

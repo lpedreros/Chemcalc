@@ -127,7 +127,7 @@
 <!-- #EndLibraryItem -->
 <script src="/global-account-modal.js?v=1"></script> <!-- page-specific: fixes a dead Log In link, see head-common.lbi's own note -->
 </head>
-<body>
+<body class="mp-canvas">
   <!-- Header --><!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
      Shared icon sprite (Phase 0 design system, ChemCalc_FullSite_Blueprint.md)
      Inline SVG symbols, no icon-library dependency. Translated from the
@@ -215,12 +215,11 @@
   </div>
 </header>
 <!-- #EndLibraryItem --><!-- Main Content -->
-<main class="container mp-page">
-  <div class="mp-hero">
-    <h1 class="mp-hero-title">Privacy Policy</h1>
-    <p class="mp-hero-tagline">Effective date: September 29, 2026</p>
-  </div>
-
+<div class="mp-hero mp-hero--overlap">
+  <h1 class="mp-hero-title">Privacy Policy</h1>
+  <p class="mp-hero-tagline">Effective date: September 29, 2026</p>
+</div>
+<main class="container">
   <div class="mp-split legal-doc-layout">
     <article class="mp-card mp-card--roomy mp-prose legal-doc-article">
       <p>This Privacy Policy describes how ChemCalc ("we", "us", "our") collects, uses, and discloses your information when you visit <a href="https://chemcalc.co">chemcalc.co</a>.</p>
