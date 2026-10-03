@@ -142,7 +142,7 @@
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
 </head>
-<body><!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
+<body class="mp-canvas"><!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
      Shared icon sprite (Phase 0 design system, ChemCalc_FullSite_Blueprint.md)
      Inline SVG symbols, no icon-library dependency. Translated from the
      lucide-react icons used by the Magic Patterns MEKP Calculator artifact
@@ -201,6 +201,16 @@
   <symbol id="icon-heart-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/><path d="m12 5-3 3 3 3-2 2"/>
   </symbol>
+  <!-- Added 2026-10-03 for contact.html (Magic Patterns Contact page); translated from lucide-react the same way as the symbols above. -->
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </symbol>
+  <symbol id="icon-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+  </symbol>
+  <symbol id="icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+  </symbol>
 </svg>
 <!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="header site-header-dark d-print-none">
   <div class="site-header-inner">
@@ -229,53 +239,78 @@
   </div>
 </header>
 <!-- #EndLibraryItem --><!-- Contact Section -->
-  <!-- SEO Optimization: Added main tag -->
-  <main class="container contact">
-    <!-- SEO Optimization: Changed h2 to h1 -->
-    <h1>Contact Us</h1>
-    <!-- SEO Optimization: Slightly enhanced intro text -->
-    <p>
-      Have questions about our marine repair services, training, custom kits, or calculators? Need a quote for your boat repair project? Fill out the form below, and we’ll get back to you as soon as possible.
-    </p>
-    <form id="contactForm" action="https://formspree.io/f/xdkeobbl" method="post">
-      <div class="form-group">
-        <label for="name">First and Last Name</label>
-        <input type="text" id="name" name="name" class="form-control" placeholder="Your Full Name" required />
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" class="form-control" placeholder="Your Email" required />
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Your Phone Number" required />
-      </div>
-      <div class="form-group">
-        <label for="boatDetails">Year, Make, and Model of the Boat</label>
-        <input type="text" id="boatDetails" name="boatDetails" class="form-control" placeholder="e.g., 2010, Beneteau, Oceanis 35" required />
-      </div>
-      <div class="form-group">
-        <label for="hin">HIN Number</label>
-        <input type="text" id="hin" name="hin" class="form-control" placeholder="Your Boat's HIN Number" required />
-      </div>
-      <div class="form-group">
-        <label for="location">Boat Location Address</label>
-        <textarea id="location" name="location" class="form-control" rows="2" placeholder="Your Boat's Location" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="repairs">Short Description of the Repairs</label>
-        <textarea id="repairs" name="repairs" class="form-control" rows="5" placeholder="Describe the repairs needed" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="availability">Times Available on Fridays to Look at the Boat</label>
-        <input type="text" id="availability" name="availability" class="form-control" placeholder="e.g., 10 AM - 2 PM" required />
-      </div>
-      <button type="submit" class="btn btn-primary">Send Message</button>
-    </form>
+<!-- SEO Optimization: Changed h2 to h1 -->
+<div class="mp-hero mp-hero--overlap">
+  <h1 class="mp-hero-title">Contact Us</h1>
+  <p class="mp-hero-tagline">Quotes &middot; consultations &middot; custom builds</p>
+  <!-- SEO Optimization: Slightly enhanced intro text -->
+  <p class="mp-hero-copy">Have questions about our marine repair services, training, custom kits, or calculators? Need a quote for your boat repair project? Fill out the form below, and we’ll get back to you as soon as possible.</p>
+</div>
+<!-- SEO Optimization: Added main tag -->
+<main class="container contact">
+  <div class="mp-split mp-grid">
 
-    <!-- Facebook Section -->
-    <section class="facebook-section mt-4 text-center">
-      <h3>Follow Us on Facebook</h3>
+    <section class="mp-card mp-card--roomy">
+      <form id="contactForm" action="https://formspree.io/f/xdkeobbl" method="post">
+        <h2 class="mp-card-title">Project details</h2>
+        <p class="mp-card-text">The more you can tell us up front, the more accurate the first quote will be.</p>
+
+        <div class="mp-fields">
+          <div>
+            <label class="mp-input-label" for="name">First and Last Name <span aria-hidden="true">*</span></label>
+            <input type="text" id="name" name="name" class="mp-select" required />
+          </div>
+          <div>
+            <label class="mp-input-label" for="email">Email <span aria-hidden="true">*</span></label>
+            <input type="email" id="email" name="email" class="mp-select" required />
+          </div>
+          <div>
+            <label class="mp-input-label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
+            <input type="tel" id="phone" name="phone" class="mp-select" required />
+          </div>
+          <div>
+            <label class="mp-input-label" for="boatDetails">Year, Make, and Model of the Boat <span aria-hidden="true">*</span></label>
+            <input type="text" id="boatDetails" name="boatDetails" class="mp-select" required />
+          </div>
+          <div>
+            <label class="mp-input-label" for="hin">HIN Number <span aria-hidden="true">*</span></label>
+            <input type="text" id="hin" name="hin" class="mp-select" required />
+          </div>
+          <div>
+            <label class="mp-input-label" for="location">Boat Location Address <span aria-hidden="true">*</span></label>
+            <textarea id="location" name="location" class="mp-select" rows="2" required></textarea>
+          </div>
+          <div class="mp-field-card--wide">
+            <label class="mp-input-label" for="repairs">Short Description of the Repairs <span aria-hidden="true">*</span></label>
+            <textarea id="repairs" name="repairs" class="mp-select" rows="5" placeholder="Damage location, what you’ve already tried, and what a finished result looks like to you." required></textarea>
+          </div>
+          <div class="mp-field-card--wide">
+            <label class="mp-input-label" for="availability">Times Available on Fridays to Look at the Boat <span aria-hidden="true">*</span></label>
+            <input type="text" id="availability" name="availability" class="mp-select" placeholder="e.g. 8–11 AM, or after 3 PM" required />
+            <p class="mp-card-text mp-card-text--tight d-flex align-items-center mt-2"><svg class="flex-shrink-0 mr-2" width="14" height="14" aria-hidden="true"><use href="#icon-clock"/></svg>Fridays are reserved for on-site assessments.</p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <button type="submit" class="mp-btn mp-btn--primary mp-btn--lg"><svg width="16" height="16" aria-hidden="true"><use href="#icon-send"/></svg>Send Message</button>
+        </div>
+      </form>
+    </section>
+
+    <div>
+      <section class="mp-panel">
+        <h2 class="mp-card-title text-white">Service Area</h2>
+        <p class="d-flex align-items-start text-white-50 mt-3 mb-0"><svg class="flex-shrink-0 text-warning mr-3 mt-1" width="16" height="16" aria-hidden="true"><use href="#icon-map-pin"/></svg><span>Mobile marine repair across Central Florida — from the Cape to Ormond Beach. Travel beyond that area is available at the client’s expense.</span></p>
+        <div class="mp-compare-box d-flex justify-content-between align-items-center mt-4">
+          <span class="text-white-50 small">Assessments</span>
+          <span class="font-weight-bold small">Fridays, on site</span>
+        </div>
+      </section>
+
+      <!-- Facebook Section -->
+      <section class="facebook-section mp-card mt-3">
+        <h2 class="mp-card-title">Follow Us on Facebook</h2>
+        <p class="mp-card-text">Project photos, in-progress repairs, and material tips get posted there first.</p>
       <div id="fb-root"></div>
       <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v15.0"></script>
       <div class="fb-page"
@@ -291,8 +326,11 @@
           <a href="https://www.facebook.com/thinkandengage">Think and Engage</a>
         </blockquote>
       </div>
-    </section>
-  </main><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      </section>
+    </div>
+
+  </div>
+</main><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- Donate — top of the bottom-right floating-action cluster (with the
      BoatMD chat toggle from chatbot_styles.css and the page Help button
      from Library/HelpButton.lbi below it; see --chrome-fab-right and
