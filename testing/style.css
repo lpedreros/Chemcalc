@@ -5769,6 +5769,43 @@ body,
 }
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- SECTION HEADINGS AND CHECKLIST
+   Added 2026-10-02.
+
+   .mp-section-title / .mp-section-lead: the centered heading and lead
+   paragraph that open a page section. .home-section-title and
+   .services-section-title were the same rule in two colors (--on-dark is
+   for a section on the dark page background), and .kits-product-title was
+   the same heading at 1.4rem (--small). On phones a section title tightens
+   to 1.5rem, and --small to 1.2rem.
+
+   .mp-checklist: the check-mark list inside a dark panel.
+   .services-estimator-features and .about-expertise-list were the same
+   list with slightly drifted type values.
+   ============================================================ */
+.mp-section-title{
+  font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
+  color:var(--chrome-ink-900);text-align:center;margin:0 0 .75rem;
+}
+.mp-section-title--on-dark{color:var(--chrome-paper-card);}
+@media (max-width:575.98px){
+  .mp-section-title{font-size:1.5rem;}
+}
+.mp-section-title--small{font-size:1.4rem;}
+@media (max-width:575.98px){
+  .mp-section-title--small{font-size:1.2rem;}
+}
+.mp-section-lead{
+  font-size:1.05rem;line-height:1.6;color:var(--chrome-ink-600);
+  text-align:center;max-width:44rem;margin:0 auto 2.5rem;
+}
+.mp-section-lead--on-dark{color:rgba(255,255,255,.72);}
+
+.mp-checklist{list-style:none;margin:0;padding:0;display:grid;gap:.75rem;}
+.mp-checklist li{position:relative;padding-left:1.6rem;font-size:.95rem;line-height:1.5;color:rgba(255,255,255,.85);}
+.mp-checklist li::before{content:"\2713";position:absolute;left:0;top:0;color:var(--chrome-signal-400);font-weight:700;}
+
+/* ============================================================
    HOME PAGE-SPECIFIC STYLES (index.html)
    Added 2026-09-21 for the Home page's rebuild onto the approved
    Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
@@ -5832,14 +5869,7 @@ body,
 
 /* ---------- Solutions section ---------- */
 .home-solutions{background:var(--chrome-paper);padding:4rem 0;}
-.home-section-title{
-  font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
-  color:var(--chrome-ink-900);text-align:center;margin:0 0 .75rem;
-}
-.home-section-lead{
-  font-size:1.05rem;line-height:1.6;color:var(--chrome-ink-600);
-  text-align:center;max-width:44rem;margin:0 auto 2.5rem;
-}
+/* Section title and lead are .mp-section-title and .mp-section-lead. */
 
 .home-solutions-grid{--mp-split-cols:11fr 9fr;}
 
@@ -6013,17 +6043,8 @@ body,
 }
 
 /* ---------- Section heading/lead (centered, light-on-dark) ---------- */
-.services-section-title{
-  font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
-  color:var(--chrome-paper-card);text-align:center;margin:0 0 .75rem;
-}
-.services-section-lead{
-  font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,.72);
-  text-align:center;max-width:44rem;margin:0 auto 2.5rem;
-}
-@media (max-width:575.98px){
-  .services-section-title{font-size:1.5rem;}
-}
+/* Section title and lead are .mp-section-title and .mp-section-lead (both
+   --on-dark here). */
 
 /* ---------- Service cards grid ---------- */
 /* ---------- Project showcase grid ---------- */
@@ -6046,9 +6067,8 @@ body,
 .services-estimator-lead{font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0 0 1rem;}
 .services-estimator-copy-text{font-size:.95rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;}
 
-.services-estimator-features{list-style:none;margin:0 0 1.75rem;padding:0;display:grid;gap:.75rem;}
-.services-estimator-features li{position:relative;padding-left:1.6rem;font-size:.95rem;line-height:1.5;color:rgba(255,255,255,.85);}
-.services-estimator-features li::before{content:"\2713";position:absolute;left:0;top:0;color:var(--chrome-signal-400);font-weight:700;}
+/* The list is .mp-checklist; this adds the room under it. */
+.services-estimator-features{margin:0 0 1.75rem;}
 
 /* The box is .mp-panel (SHARED SITE COMPONENTS); this class stays as the
    hook for the heading and list rules below. */
@@ -6119,9 +6139,7 @@ body,
   font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
   color:#ffffff;margin:0 0 1.1rem;
 }
-.about-expertise-list{list-style:none;margin:0;padding:0;display:grid;gap:.75rem;}
-.about-expertise-list li{position:relative;padding-left:1.6rem;font-size:.92rem;line-height:1.5;color:rgba(255,255,255,.8);}
-.about-expertise-list li::before{content:"\2713";position:absolute;left:0;top:0;color:var(--chrome-signal-400);font-weight:700;}
+/* The list is .mp-checklist. */
 
 /* The card itself is .mp-card .mp-card--flat; this class stays only as the
    hook for the heading below. */
@@ -6248,10 +6266,8 @@ body,
 .kits-product-panel{
   max-width:1100px;margin:0 auto 3rem;padding:0 1.5rem;
 }
-.kits-product-title{
-  font-family:var(--chrome-font-sans);font-size:1.4rem;font-weight:800;
-  color:var(--chrome-paper-card);text-align:center;margin:0 0 .75rem;
-}
+/* The title is .mp-section-title .mp-section-title--on-dark
+   .mp-section-title--small. */
 .kits-product-disclosure{font-size:.8rem;color:rgba(255,255,255,.5);text-align:center;margin:0 0 .5rem;}
 .kits-product-intro{font-size:.9rem;color:rgba(255,255,255,.72);text-align:center;margin:0 0 1.5rem;}
 
@@ -6295,7 +6311,7 @@ body,
 .star-toggle.user-favorite,.star-toggle.my-favorite{color:#f5b400;}
 
 @media (max-width:575.98px){
-  .kits-custom-title,.kits-product-title{font-size:1.2rem;}
+  .kits-custom-title{font-size:1.2rem;}
   .kits-toolbar{padding:.85rem 1rem;}
   /* First custom-services card renders high enough in the initial
      viewport (scroll 0, 375px) that its right edge sits under the
