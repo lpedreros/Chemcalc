@@ -5708,6 +5708,61 @@ body,
    SHARED CHROME section above. */
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- CARDS
+   Added 2026-10-02. One definition for what used to be copied page by
+   page: the paper card (.home-calc-card, .home-support-card,
+   .calc-index-card, .services-card, .services-showcase-card,
+   .about-story-card, .about-explore-card, .kits-custom-card,
+   .legal-doc-article, and .legal-doc-sidebar were all the same box),
+   plus the icon badge, title, and body text that sat inside the
+   services and kits cards byte for byte. The page sections below keep
+   only what is genuinely page-specific.
+
+   Usage: <div class="mp-card mp-card--stack"> ... </div>. Modifiers
+   combine: --roomy for long-form document and story cards, --flat for
+   no shadow, --stack for a flex column (so a button can sit at the
+   bottom), --flush for image-led cards (no padding, clips to the
+   radius), --link when the whole card is an anchor. Parts inside a
+   card: .mp-card-icon (with --spaced for the gap under it),
+   .mp-card-title, .mp-card-text (with --tight for no bottom gap).
+
+   The --link modifier restates margin-top and font-style on every
+   state for the same reason the button classes do: the legacy sitewide
+   anchor rule (style.css line 1454) wins on any property a new class
+   does not itself set.
+   ============================================================ */
+.mp-card{
+  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
+  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
+}
+.mp-card--roomy{padding:2rem;}
+.mp-card--flat{box-shadow:none;}
+.mp-card--stack{display:flex;flex-direction:column;}
+.mp-card--flush{padding:0;overflow:hidden;}
+.mp-card--link{
+  text-decoration:none;margin-top:0;font-style:normal;
+  transition:border-color .15s var(--chrome-ease-smooth);
+}
+.mp-card--link:hover{border-color:var(--chrome-ink-500);text-decoration:none;margin-top:0;font-style:normal;}
+.mp-card--link:visited,.mp-card--link:active{margin-top:0;font-style:normal;}
+@media (max-width:575.98px){
+  .mp-card--roomy{padding:1.5rem;}
+}
+
+.mp-card-icon{
+  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
+  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
+  display:flex;align-items:center;justify-content:center;
+}
+.mp-card-icon--spaced{margin-bottom:1.25rem;}
+.mp-card-title{
+  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
+  color:var(--chrome-ink-900);margin:0 0 .6rem;
+}
+.mp-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
+.mp-card-text--tight{margin-bottom:0;}
+
+/* ============================================================
    HOME PAGE-SPECIFIC STYLES (index.html)
    Added 2026-09-21 for the Home page's rebuild onto the approved
    Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
@@ -5813,20 +5868,12 @@ body,
   .home-solutions-grid{grid-template-columns:11fr 9fr;}
 }
 
-.home-card-title{
-  display:flex;align-items:center;gap:.6rem;
-  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
-  color:var(--chrome-ink-900);margin:0 0 .6rem;
-}
+/* Icon-led card title: .mp-card-title (SHARED SITE COMPONENTS above)
+   supplies the type; this only adds the inline icon row. */
+.home-card-title{display:flex;align-items:center;gap:.6rem;}
 .home-card-title svg{width:1.15rem;height:1.15rem;flex:none;color:var(--chrome-signal-500);}
-.home-card-text{font-size:.92rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
 
-.home-calc-card,.home-support-card{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
-}
 .home-support-cards{display:flex;flex-direction:column;gap:1.5rem;}
-.home-support-card{display:flex;flex-direction:column;}
 
 .home-calc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem;}
 .home-calc-row{
@@ -5931,40 +5978,19 @@ body,
   .calc-index-grid{grid-template-columns:1fr 1fr;}
 }
 
-.calc-index-card{
-  display:flex;flex-direction:column;
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
-  text-decoration:none;margin-top:0;font-style:normal;
-  transition:border-color .15s var(--chrome-ease-smooth);
-}
-.calc-index-card:hover{border-color:var(--chrome-ink-500);text-decoration:none;margin-top:0;font-style:normal;}
-.calc-index-card:visited,.calc-index-card:active{margin-top:0;font-style:normal;}
-
 .calc-index-card-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;}
-.calc-index-card-icon{
-  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
-  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
-  display:flex;align-items:center;justify-content:center;
-}
 .calc-index-card-icon svg{width:1.2rem;height:1.2rem;}
 .calc-index-card-tag{
   background:var(--chrome-paper-muted);color:var(--chrome-ink-600);
   font-size:.75rem;font-weight:600;border-radius:6px;padding:.25rem .6rem;
 }
 
-.calc-index-card-title{
-  font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
-  color:var(--chrome-ink-900);margin:0 0 .6rem;
-}
-.calc-index-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0;}
-
 .calc-index-card-link{
   display:flex;align-items:center;gap:.4rem;margin-top:auto;padding-top:1.25rem;
   font-size:.88rem;font-weight:600;color:var(--chrome-sea-600);
 }
 .calc-index-card-arrow{width:1rem;height:1rem;transition:transform .15s var(--chrome-ease-smooth);}
-.calc-index-card:hover .calc-index-card-arrow{transform:translateX(2px);}
+.mp-card--link:hover .calc-index-card-arrow{transform:translateX(2px);}
 
 .calc-index-cta{
   margin-top:1.5rem;background:var(--chrome-ink-950);border-radius:16px;
@@ -5998,7 +6024,7 @@ body,
      the tag text. Extra clearance after the first card only, so the
      rest of the stack's spacing is untouched. Floating cluster's own
      CSS is not touched. */
-  .calc-index-card:first-child{margin-bottom:3.5rem;}
+  .calc-index-grid > .mp-card:first-child{margin-bottom:3.5rem;}
 }
 
 /* ============================================================
@@ -6072,22 +6098,6 @@ body,
   .services-grid{grid-template-columns:1fr 1fr 1fr;}
 }
 
-.services-card{
-  display:flex;flex-direction:column;
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
-}
-.services-card-icon{
-  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
-  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
-  display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;
-}
-.services-card-title{
-  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
-  color:var(--chrome-ink-900);margin:0 0 .6rem;
-}
-.services-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
-
 .services-card-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
   font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
@@ -6112,11 +6122,6 @@ body,
   .services-showcase-grid{grid-template-columns:1fr 1fr 1fr;}
 }
 
-.services-showcase-card{
-  display:flex;flex-direction:column;
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);overflow:hidden;
-}
 .services-showcase-img{width:100%;height:12rem;object-fit:cover;display:block;}
 .services-showcase-title{
   font-family:var(--chrome-font-sans);font-size:1.05rem;font-weight:700;
@@ -6244,11 +6249,8 @@ body,
   .about-grid{grid-template-columns:7fr 5fr;align-items:start;}
 }
 
-/* ---------- Story card (left column) ---------- */
-.about-story-card{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:2rem;
-}
+/* ---------- Story card (left column) ----------
+   The card itself is .mp-card .mp-card--roomy (SHARED SITE COMPONENTS). */
 .about-story-section + .about-story-section{
   border-top:1px solid var(--chrome-paper-line);
   margin-top:1.75rem;padding-top:1.75rem;
@@ -6275,10 +6277,8 @@ body,
 .about-expertise-list li{position:relative;padding-left:1.6rem;font-size:.92rem;line-height:1.5;color:rgba(255,255,255,.8);}
 .about-expertise-list li::before{content:"\2713";position:absolute;left:0;top:0;color:var(--chrome-signal-400);font-weight:700;}
 
-.about-explore-card{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;padding:1.75rem;
-}
+/* The card itself is .mp-card .mp-card--flat; this class stays only as the
+   hook for the heading below. */
 .about-explore-card h2{
   font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
   color:var(--chrome-ink-900);margin:0 0 1.1rem;
@@ -6298,8 +6298,7 @@ body,
 .about-cta-btn:visited,.about-cta-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
 
 @media (max-width:575.98px){
-  .about-story-card{padding:1.5rem;}
-  .about-expertise-card,.about-explore-card{padding:1.5rem;}
+  .about-expertise-card{padding:1.5rem;}
 }
 
 /* ============================================================
@@ -6389,22 +6388,6 @@ body,
 @media (min-width:768px){
   .kits-custom-grid{grid-template-columns:1fr 1fr;}
 }
-
-.kits-custom-card{
-  display:flex;flex-direction:column;
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
-}
-.kits-custom-card-icon{
-  flex:none;width:2.75rem;height:2.75rem;border-radius:8px;
-  background:var(--chrome-ink-900);color:var(--chrome-signal-400);
-  display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;
-}
-.kits-custom-card-title{
-  font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
-  color:var(--chrome-ink-900);margin:0 0 .6rem;
-}
-.kits-custom-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
 
 .kits-custom-card-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
@@ -6566,11 +6549,7 @@ body,
 }
 
 /* ---------- Document card (left column) ---------- */
-.legal-doc-article{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:2rem;
-  min-width:0;
-}
+.legal-doc-article{min-width:0;}
 .legal-doc-article p{
   font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .85rem;
 }
@@ -6618,10 +6597,6 @@ body,
 .legal-doc-article a:active{color:var(--chrome-ink-950);}
 
 /* ---------- Document switcher (right column) ---------- */
-.legal-doc-sidebar{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
-}
 @media (min-width:992px){
   .legal-doc-sidebar{position:sticky;top:1.5rem;}
 }
@@ -6664,6 +6639,3 @@ body,
   margin-top:0;font-style:normal;font-size:.95rem;font-weight:600;
 }
 
-@media (max-width:575.98px){
-  .legal-doc-article,.legal-doc-sidebar{padding:1.5rem;}
-}
