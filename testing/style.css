@@ -5852,6 +5852,93 @@ body,
 }
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- PAGE SHELL, SPLIT LAYOUT, LONG-FORM TEXT
+   Added 2026-10-02.
+
+   .mp-page: the bottom spacing before the footer that .about,
+   .services-page, and .legal-doc-page each set on their <main>
+   (py-5's bottom half, after the top half was removed to fix the hero
+   gap). Usage: <main class="container mp-page">.
+
+   .mp-split: a stacked grid that becomes two columns at 992px.
+   .home-solutions-grid, .about-grid, and .legal-doc-layout were the
+   same grid; .home-hero-inner and .services-estimator-grid were the
+   same grid centered with a wider gap (--center). A page sets its
+   column ratio with one custom property:
+     .about-grid{--mp-split-cols:7fr 5fr;}
+
+   .mp-prose: long-form text inside a card -- headings, paragraphs,
+   lists, and links. .about-story-section and the legal documents had
+   the same type scale (1.3rem headings, .95rem / 1.65 body). Wrap each
+   block in .mp-prose-section; consecutive sections get a divider.
+   Headings and body copy are plain elements, so the markup needs no
+   per-element classes. Body text inherits the page font, the same as
+   every other card on the site; only headings set Inter explicitly.
+
+   Links inside .mp-prose restate margin-top, font-style, font-size, and
+   font-weight on every state (plus color), for the same reason the
+   button and card-link classes do: the legacy sitewide anchor rule
+   (style.css line 1454) wins on any property a new class does not
+   itself set.
+   ============================================================ */
+.mp-page{padding-bottom:3rem;}
+
+.mp-split{
+  display:grid;gap:1.5rem;align-items:start;
+  grid-template-columns:1fr;
+}
+@media (min-width:992px){
+  .mp-split{grid-template-columns:var(--mp-split-cols,1fr 1fr);}
+}
+.mp-split--center{gap:2.5rem;align-items:center;}
+
+.mp-prose p{
+  font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .85rem;
+}
+.mp-prose > p:last-child{margin-bottom:0;}
+.mp-prose strong{color:var(--chrome-ink-900);font-weight:700;}
+
+.mp-prose-section + .mp-prose-section,
+.mp-prose > p + .mp-prose-section{
+  border-top:1px solid var(--chrome-paper-line);
+  margin-top:1.75rem;padding-top:1.75rem;
+}
+.mp-prose h2{
+  font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:700;
+  line-height:1.3;color:var(--chrome-ink-900);margin:0 0 .75rem;
+}
+.mp-prose h3{
+  font-family:var(--chrome-font-sans);font-size:1.02rem;font-weight:700;
+  line-height:1.4;color:var(--chrome-ink-900);margin:1.25rem 0 .6rem;
+}
+.mp-prose h2 + h3{margin-top:.25rem;}
+
+.mp-prose ul{margin:0 0 .85rem;padding-left:1.25rem;}
+.mp-prose li{
+  font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .5rem;
+}
+.mp-prose li:last-child{margin-bottom:0;}
+.mp-prose-section > :last-child{margin-bottom:0;}
+
+.mp-prose a{
+  color:var(--chrome-sea-600);font-size:1em;font-weight:600;font-style:normal;
+  margin-top:0;text-decoration:underline;text-underline-offset:2px;
+  transition:color .15s var(--chrome-ease-smooth);
+}
+.mp-prose a:visited{
+  color:var(--chrome-sea-600);
+  margin-top:0;font-style:normal;font-size:1em;font-weight:600;
+}
+.mp-prose a:hover{
+  color:var(--chrome-ink-950);text-decoration:underline;
+  margin-top:0;font-style:normal;font-size:1em;font-weight:600;
+}
+.mp-prose a:active{
+  color:var(--chrome-ink-950);
+  margin-top:0;font-style:normal;font-size:1em;font-weight:600;
+}
+
+/* ============================================================
    HOME PAGE-SPECIFIC STYLES (index.html)
    Added 2026-09-21 for the Home page's rebuild onto the approved
    Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
@@ -5872,13 +5959,7 @@ body,
 
 /* ---------- Hero ---------- */
 .home-hero{background:var(--chrome-ink-950);padding:3.5rem 0;}
-.home-hero-inner{
-  display:grid;gap:2.5rem;align-items:center;
-  grid-template-columns:1fr;
-}
-@media (min-width:992px){
-  .home-hero-inner{grid-template-columns:7fr 5fr;}
-}
+.home-hero-inner{--mp-split-cols:7fr 5fr;}
 .home-hero-title{
   font-family:var(--chrome-font-sans);font-size:2.5rem;font-weight:800;
   letter-spacing:-0.02em;line-height:1.1;color:#ffffff;margin:0 0 1rem;
@@ -5930,13 +6011,7 @@ body,
   text-align:center;max-width:44rem;margin:0 auto 2.5rem;
 }
 
-.home-solutions-grid{
-  display:grid;gap:1.5rem;align-items:start;
-  grid-template-columns:1fr;
-}
-@media (min-width:992px){
-  .home-solutions-grid{grid-template-columns:11fr 9fr;}
-}
+.home-solutions-grid{--mp-split-cols:11fr 9fr;}
 
 /* Icon-led card title: .mp-card-title (SHARED SITE COMPONENTS above)
    supplies the type; this only adds the inline icon row. */
@@ -6106,15 +6181,6 @@ body,
    position jump instead of no coverage at all.
    ============================================================ */
 
-/* main.services-page's own bottom spacing before the footer --
-   previously py-5's bottom half (padding-bottom:3rem, removed from
-   <main>'s class list along with its top half, which caused the
-   hero-gap round 1 patched around). Round 2: py-5 gone entirely, its
-   bottom half moves here so the footer gap stays the same as before. */
-.services-page{
-  padding-bottom:3rem;
-}
-
 /* ---------- Hero photo (services-hero) ----------
    The background itself is .mp-hero--photo (SHARED SITE COMPONENTS --
    PHOTO HERO); this page only supplies its photo and crop. */
@@ -6170,13 +6236,7 @@ body,
 .services-showcase-btn{margin-right:1.25rem;margin-bottom:1.25rem;margin-left:1.25rem;}
 
 /* ---------- Custom Estimator section ---------- */
-.services-estimator-grid{
-  display:grid;gap:2.5rem;align-items:center;
-  grid-template-columns:1fr;
-}
-@media (min-width:992px){
-  .services-estimator-grid{grid-template-columns:7fr 5fr;}
-}
+.services-estimator-grid{--mp-split-cols:7fr 5fr;}
 
 .services-estimator-title{
   font-family:var(--chrome-font-sans);font-size:1.9rem;font-weight:800;
@@ -6238,15 +6298,6 @@ body,
    separate hover/visited/active coverage.
    ============================================================ */
 
-/* main.about's own bottom spacing before the footer -- previously
-   py-5's bottom half (padding-bottom:3rem, removed from <main>'s class
-   list along with its top half, which caused the hero-gap round 1
-   patched around). Round 2: py-5 gone entirely, its bottom half moves
-   here so the footer gap stays the same as before. */
-.about{
-  padding-bottom:3rem;
-}
-
 /* ---------- Hero photo (about-hero) ----------
    The background itself is .mp-hero--photo (SHARED SITE COMPONENTS --
    PHOTO HERO); this page only supplies its photo and crop. */
@@ -6255,27 +6306,11 @@ body,
   --mp-hero-position:center 52%;
 }
 
-.about-grid{
-  display:grid;gap:1.5rem;
-  grid-template-columns:1fr;
-}
-@media (min-width:992px){
-  .about-grid{grid-template-columns:7fr 5fr;align-items:start;}
-}
+.about-grid{--mp-split-cols:7fr 5fr;}
 
 /* ---------- Story card (left column) ----------
-   The card itself is .mp-card .mp-card--roomy (SHARED SITE COMPONENTS). */
-.about-story-section + .about-story-section{
-  border-top:1px solid var(--chrome-paper-line);
-  margin-top:1.75rem;padding-top:1.75rem;
-}
-.about-story-section h2{
-  font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:700;
-  color:var(--chrome-ink-900);margin:0 0 .75rem;
-}
-.about-story-section p{
-  font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0;
-}
+   The card is .mp-card .mp-card--roomy .mp-prose and each block is an
+   .mp-prose-section (SHARED SITE COMPONENTS). */
 
 /* ---------- Sidebar (right column) ---------- */
 .about-sidebar{display:flex;flex-direction:column;gap:1.5rem;}
@@ -6518,68 +6553,12 @@ body,
    Colors are repeated on :visited for the same reason.
    ============================================================ */
 
-/* main.legal-doc-page's own bottom spacing before the footer, same
-   mechanic as .about / .services-page. */
-.legal-doc-page{
-  font-family:var(--chrome-font-sans);
-  padding-bottom:3rem;
-}
-
-.legal-doc-layout{
-  display:grid;gap:1.5rem;
-  grid-template-columns:1fr;
-}
-@media (min-width:992px){
-  .legal-doc-layout{grid-template-columns:minmax(0,1fr) 17rem;align-items:start;}
-}
-
-/* ---------- Document card (left column) ---------- */
+/* The page shell is .mp-page, the two columns are .mp-split, and the
+   document text is .mp-card .mp-card--roomy .mp-prose (SHARED SITE
+   COMPONENTS above); this page keeps only its column widths and the
+   document switcher below. */
+.legal-doc-layout{--mp-split-cols:minmax(0,1fr) 17rem;}
 .legal-doc-article{min-width:0;}
-.legal-doc-article p{
-  font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .85rem;
-}
-.legal-doc-article > p:last-child{margin-bottom:0;}
-.legal-doc-article strong{color:var(--chrome-ink-900);font-weight:700;}
-
-.legal-doc-section + .legal-doc-section,
-.legal-doc-article > p + .legal-doc-section{
-  border-top:1px solid var(--chrome-paper-line);
-  margin-top:1.75rem;padding-top:1.75rem;
-}
-.legal-doc-heading{
-  font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:700;
-  line-height:1.3;color:var(--chrome-ink-900);margin:0 0 .75rem;
-}
-.legal-doc-subheading{
-  font-family:var(--chrome-font-sans);font-size:1.02rem;font-weight:700;
-  line-height:1.4;color:var(--chrome-ink-900);margin:1.25rem 0 .6rem;
-}
-.legal-doc-heading + .legal-doc-subheading{margin-top:.25rem;}
-
-.legal-doc-list{
-  margin:0 0 .85rem;padding-left:1.25rem;
-}
-.legal-doc-list li{
-  font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .5rem;
-}
-.legal-doc-list li:last-child{margin-bottom:0;}
-.legal-doc-section > :last-child{margin-bottom:0;}
-
-/* ---------- Links inside the document card ---------- */
-.legal-doc-article a{
-  color:var(--chrome-sea-600);font-size:1em;font-weight:600;font-style:normal;
-  margin-top:0;text-decoration:underline;text-underline-offset:2px;
-  transition:color .15s var(--chrome-ease-smooth);
-}
-.legal-doc-article a:hover{
-  color:var(--chrome-ink-950);text-decoration:underline;
-  margin-top:0;font-style:normal;font-size:1em;font-weight:600;
-}
-.legal-doc-article a:visited{color:var(--chrome-sea-600);}
-.legal-doc-article a:visited,.legal-doc-article a:active{
-  margin-top:0;font-style:normal;font-size:1em;font-weight:600;
-}
-.legal-doc-article a:active{color:var(--chrome-ink-950);}
 
 /* ---------- Document switcher (right column) ---------- */
 @media (min-width:992px){
