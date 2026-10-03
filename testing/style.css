@@ -5763,6 +5763,74 @@ body,
 .mp-card-text--tight{margin-bottom:0;}
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- BUTTONS
+   Added 2026-10-02. One pill button instead of six copies:
+   .home-btn (with -primary and -ghost), .calc-index-cta-btn,
+   .services-card-btn, .services-cta-btn, .services-showcase-btn,
+   .about-cta-btn, and .kits-custom-card-btn were the same button with
+   different colors and sizes, each restating the same fourteen
+   declarations and the same hover, visited, and active overrides.
+
+   Usage: class="mp-btn mp-btn--primary". Color variants: --primary
+   (amber fill), --ghost (outline on a dark background), --outline
+   (sea-green outline on a light background). Size: --sm, --lg.
+   Placement: --stick pins the button to the bottom-left of a stacked
+   card (margin-top:auto plus align-self:flex-start).
+
+   Every variant restates margin-top, font-style, font-size, and
+   font-weight across :visited, :hover, and :active. The legacy sitewide
+   anchor rule (style.css line 1454) wins on any property a new class
+   does not itself set -- the lesson already paid for on the Home page
+   buttons -- so size and placement modifiers carry their own copies of
+   those state overrides rather than relying on the base rule.
+
+   State rules are written in link, visited, hover, active order, and
+   every color variant sets its text color on :active too. Two bugs in
+   the per-page copies this replaces: :active never set a color, so the
+   legacy anchor rule turned a pressed button's text light blue; and the
+   outline button's :visited rule came after its :hover rule at equal
+   strength, so a visited outline button showed sea-green text on its
+   own sea-green hover fill.
+   ============================================================ */
+.mp-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
+  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
+  transition:background-color .15s var(--chrome-ease-smooth),
+    border-color .15s var(--chrome-ease-smooth),
+    color .15s var(--chrome-ease-smooth),
+    transform .15s var(--chrome-ease-smooth);
+}
+.mp-btn svg{width:1.05rem;height:1.05rem;flex:none;}
+.mp-btn:visited{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+.mp-btn:hover{transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+.mp-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+
+.mp-btn--primary{background:var(--chrome-signal-200);color:var(--chrome-ink-950);}
+.mp-btn--primary:visited{color:var(--chrome-ink-950);}
+.mp-btn--primary:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
+.mp-btn--primary:active{color:var(--chrome-ink-950);}
+
+.mp-btn--ghost{background:transparent;color:#ffffff;border-color:rgba(255,255,255,.3);}
+.mp-btn--ghost:visited{color:#ffffff;}
+.mp-btn--ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);color:#ffffff;}
+.mp-btn--ghost:active{color:#ffffff;}
+
+.mp-btn--outline{background:transparent;color:var(--chrome-sea-600);border-color:var(--chrome-sea-600);}
+.mp-btn--outline:visited{color:var(--chrome-sea-600);}
+.mp-btn--outline:hover{background:var(--chrome-sea-600);color:#ffffff;transform:none;}
+.mp-btn--outline:active{background:var(--chrome-sea-600);color:#ffffff;}
+
+.mp-btn--sm{font-size:.88rem;padding:.7rem 1.4rem;}
+.mp-btn--sm:visited,.mp-btn--sm:hover,.mp-btn--sm:active{font-size:.88rem;}
+.mp-btn--lg{font-size:1.05rem;padding:1rem 2rem;}
+.mp-btn--lg:visited,.mp-btn--lg:hover,.mp-btn--lg:active{font-size:1.05rem;}
+
+.mp-btn--stick{align-self:flex-start;margin-top:auto;}
+.mp-btn--stick:visited,.mp-btn--stick:hover,.mp-btn--stick:active{margin-top:auto;}
+
+/* ============================================================
    HOME PAGE-SPECIFIC STYLES (index.html)
    Added 2026-09-21 for the Home page's rebuild onto the approved
    Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
@@ -5779,26 +5847,7 @@ body,
 /* ---------- Shared home-* primitives (button, container) ---------- */
 .home-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;}
 
-.home-btn{
-  display:inline-flex;align-items:center;gap:.5rem;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
-  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
-  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),
-    border-color .15s var(--chrome-ease-smooth),
-    color .15s var(--chrome-ease-smooth),
-    transform .15s var(--chrome-ease-smooth);
-}
-.home-btn:hover{transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
-.home-btn svg{width:1.05rem;height:1.05rem;flex:none;}
-.home-btn-primary{background:var(--chrome-signal-200);color:var(--chrome-ink-950);}
-.home-btn-primary:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);}
-.home-btn-ghost{background:transparent;color:#ffffff;border-color:rgba(255,255,255,.3);}
-.home-btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);color:#ffffff;}
-.home-btn-primary:visited{color:var(--chrome-ink-950);}
-.home-btn-ghost:visited{color:#ffffff;}
-.home-btn:visited,
-.home-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+/* Buttons on this page are .mp-btn (SHARED SITE COMPONENTS -- BUTTONS). */
 
 /* ---------- Hero ---------- */
 .home-hero{background:var(--chrome-ink-950);padding:3.5rem 0;}
@@ -6001,18 +6050,9 @@ body,
 .calc-index-cta-title{font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:800;margin:0 0 .4rem;}
 .calc-index-cta-copy{font-size:.92rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0;}
 
-.calc-index-cta-btn{
-  display:inline-flex;align-items:center;gap:.5rem;flex:none;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
-  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
-  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
-  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
-}
-.calc-index-cta-btn svg{width:1.05rem;height:1.05rem;flex:none;}
-.calc-index-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
-.calc-index-cta-btn:visited{color:var(--chrome-ink-950);}
-.calc-index-cta-btn:visited,.calc-index-cta-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
+/* The button is .mp-btn .mp-btn--primary; this only keeps it from
+   shrinking inside the CTA row. */
+.calc-index-cta-btn{flex:none;}
 
 @media (max-width:575.98px){
   .calc-index-cta{padding:1.5rem;}
@@ -6098,18 +6138,6 @@ body,
   .services-grid{grid-template-columns:1fr 1fr 1fr;}
 }
 
-.services-card-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
-  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
-  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
-  cursor:pointer;text-decoration:none;line-height:1;margin-top:auto;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
-}
-.services-card-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
-.services-card-btn:visited{color:var(--chrome-ink-950);}
-.services-card-btn:visited,.services-card-btn:active{margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
-
 /* ---------- Project showcase grid ---------- */
 .services-showcase-grid{
   display:grid;gap:1.25rem;
@@ -6127,17 +6155,9 @@ body,
   font-family:var(--chrome-font-sans);font-size:1.05rem;font-weight:700;
   color:var(--chrome-ink-900);margin:1.25rem 1.25rem .9rem;
 }
-.services-showcase-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:.88rem;
-  padding:.7rem 1.4rem;border-radius:999px;border:1px solid var(--chrome-sea-600);
-  background:transparent;color:var(--chrome-sea-600);
-  cursor:pointer;text-decoration:none;line-height:1;margin:auto 1.25rem 1.25rem;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
-}
-.services-showcase-btn:hover{background:var(--chrome-sea-600);color:#ffffff;text-decoration:none;margin-top:auto;font-style:normal;font-size:.88rem;font-weight:700;}
-.services-showcase-btn:visited{color:var(--chrome-sea-600);}
-.services-showcase-btn:visited,.services-showcase-btn:active{margin-top:auto;font-style:normal;font-size:.88rem;font-weight:700;}
+/* The button is .mp-btn .mp-btn--outline .mp-btn--sm .mp-btn--stick; this
+   only adds the inset from the image-led card's edges. */
+.services-showcase-btn{margin-right:1.25rem;margin-bottom:1.25rem;margin-left:1.25rem;}
 
 /* ---------- Custom Estimator section ---------- */
 .services-estimator-grid{
@@ -6183,17 +6203,6 @@ body,
 
 /* ---------- Final CTA ---------- */
 .services-final-cta{max-width:36rem;margin-left:auto;margin-right:auto;}
-.services-cta-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:1.05rem;
-  padding:1rem 2rem;border-radius:999px;border:1px solid transparent;
-  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
-  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
-}
-.services-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:1.05rem;font-weight:700;}
-.services-cta-btn:visited{color:var(--chrome-ink-950);}
-.services-cta-btn:visited,.services-cta-btn:active{margin-top:0;font-style:normal;font-size:1.05rem;font-weight:700;}
 
 /* ============================================================
    ABOUT PAGE-SPECIFIC STYLES (about.html)
@@ -6285,17 +6294,6 @@ body,
 }
 
 .about-cta-list{display:flex;flex-direction:column;gap:.85rem;}
-.about-cta-btn{
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
-  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
-  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
-  cursor:pointer;text-decoration:none;line-height:1;margin-top:0;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
-}
-.about-cta-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
-.about-cta-btn:visited{color:var(--chrome-ink-950);}
-.about-cta-btn:visited,.about-cta-btn:active{margin-top:0;font-style:normal;font-size:.95rem;font-weight:700;}
 
 @media (max-width:575.98px){
   .about-expertise-card{padding:1.5rem;}
@@ -6388,18 +6386,6 @@ body,
 @media (min-width:768px){
   .kits-custom-grid{grid-template-columns:1fr 1fr;}
 }
-
-.kits-custom-card-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
-  font-family:var(--chrome-font-sans);font-weight:700;font-size:.95rem;
-  padding:.85rem 1.5rem;border-radius:999px;border:1px solid transparent;
-  background:var(--chrome-signal-200);color:var(--chrome-ink-950);
-  cursor:pointer;text-decoration:none;line-height:1;margin-top:auto;font-style:normal;
-  transition:background-color .15s var(--chrome-ease-smooth),transform .15s var(--chrome-ease-smooth);
-}
-.kits-custom-card-btn:hover{background:var(--chrome-signal-400);color:var(--chrome-ink-950);transform:translateY(-1px);text-decoration:none;margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
-.kits-custom-card-btn:visited{color:var(--chrome-ink-950);}
-.kits-custom-card-btn:visited,.kits-custom-card-btn:active{margin-top:auto;font-style:normal;font-size:.95rem;font-weight:700;}
 
 .kits-custom-footnote{font-size:.85rem;color:rgba(255,255,255,.55);text-align:center;margin:1.5rem 0 0;}
 
