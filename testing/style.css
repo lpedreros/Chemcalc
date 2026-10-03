@@ -6559,24 +6559,35 @@ h2.trello-setup-title{
 
 /* ============================================================
    PRINT-ONLY CONTRAST -- SERVICES AND KITS PANEL TEXT
-   Added 2026-10-03. Commit 61cd610 recolored these six selectors from
-   white to dark teal for the new light screen canvas
-   (<body class="mp-canvas">). That canvas is screen-only, so in print
-   these two pages still render the legacy dark .container background
-   (#2c2c2e), and the dark teal text fell to 1.2-3.0:1 against it. This
-   restores each selector's pre-61cd610 value (read from 88dad74) for
-   print only; screen rendering is untouched. Measured under print-media
-   emulation against that background: 13.94, 10.49, 7.99, 13.94, 7.99,
-   and 4.69:1. The six classes are used only by services.html and
-   kits.html.
+   Added 2026-10-03, extended the same day. Commit 61cd610 recolored text
+   on services.html and kits.html from white to dark teal for the new
+   light screen canvas (<body class="mp-canvas">). That canvas is
+   screen-only, so in print these two pages still render the legacy dark
+   .container background (#2c2c2e), and the recolored text fell to
+   1.2-3.0:1 against it. This restores each element's pre-61cd610 value
+   (read from 88dad74) for print only; screen rendering is untouched.
+   Measured under print-media emulation against that background, every
+   rule below clears 4.5:1 (.kits-product-disclosure is the tightest).
+
+   .mp-section-title and .mp-section-lead are shared with the Home page
+   (a light section with dark text), so those rules are scoped to each
+   page: Services by the hero that sits right before <main>, Kits by
+   .kits-page-main. Every other selector here is used only by these two
+   pages.
    ============================================================ */
 @media print{
   .services-estimator-title{color:var(--chrome-paper-card);}
   .services-estimator-lead{color:rgba(255,255,255,.85);}
   .services-estimator-copy-text{color:rgba(255,255,255,.72);}
+  .services-estimator-features li{color:rgba(255,255,255,.85);}
+  .services-hero + main .mp-section-title{color:var(--chrome-paper-card);}
+  .services-hero + main .mp-section-lead{color:rgba(255,255,255,.72);}
   .kits-custom-title{color:var(--chrome-paper-card);}
   .kits-custom-intro{color:rgba(255,255,255,.72);}
+  .kits-custom-footnote{color:rgba(255,255,255,.55);}
+  .kits-page-main .mp-section-title{color:var(--chrome-paper-card);}
   .kits-product-disclosure{color:rgba(255,255,255,.5);}
+  .kits-product-intro{color:rgba(255,255,255,.72);}
 }
 
 /* ============================================================
