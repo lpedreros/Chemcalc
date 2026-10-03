@@ -5831,6 +5831,27 @@ body,
 .mp-btn--stick:visited,.mp-btn--stick:hover,.mp-btn--stick:active{margin-top:auto;}
 
 /* ============================================================
+   SHARED SITE COMPONENTS -- PHOTO HERO
+   Added 2026-10-02. .calc-hero, .services-hero, .about-hero, and
+   .kits-hero were the same background (a left-to-right dark gradient
+   over a photo) with only the image and its vertical crop changing,
+   each copied out in full. .mp-hero--photo is that one background; a
+   page supplies its photo with two custom properties:
+     .about-hero{--mp-hero-image:url("images/x.jpg");--mp-hero-position:center 52%;}
+   and puts both classes on the hero: class="mp-hero mp-hero--photo about-hero".
+
+   The left-to-right gradient keeps .mp-hero-title and .mp-hero-copy
+   (left-aligned) fully legible over the dark end while the photo shows
+   through on the right, where the panel would otherwise be empty. A
+   page with no photo just uses plain .mp-hero (the dark panel).
+   ============================================================ */
+.mp-hero--photo{
+  background:
+    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
+    var(--mp-hero-image) var(--mp-hero-position,center) / cover no-repeat;
+}
+
+/* ============================================================
    HOME PAGE-SPECIFIC STYLES (index.html)
    Added 2026-09-21 for the Home page's rebuild onto the approved
    Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
@@ -6006,17 +6027,12 @@ body,
    ruleset rather than depending on that page-scoped class.
    ============================================================ */
 
-/* ---------- Hero background (calc-hero) ----------
-   Modifier class on the same shared .mp-hero div -- .mp-hero itself is
-   reused verbatim by every calculator page and by the index, about,
-   and services pages, so the image/gradient layering lives here
-   instead, scoped to this page only. Same left-to-right gradient as
-   .services-hero/.about-hero (neither rule touched); only the image
-   and vertical position differ. */
+/* ---------- Hero photo (calc-hero) ----------
+   The background itself is .mp-hero--photo (SHARED SITE COMPONENTS --
+   PHOTO HERO); this page only supplies its photo and crop. */
 .calc-hero{
-  background:
-    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
-    url("images/hero-image-calculators.jpg") center 50% / cover no-repeat;
+  --mp-hero-image:url("images/hero-image-calculators.jpg");
+  --mp-hero-position:center 50%;
 }
 
 .calc-index-grid{
@@ -6099,18 +6115,12 @@ body,
   padding-bottom:3rem;
 }
 
-/* ---------- Hero background (services-hero, added 2026-09-29) ----------
-   Modifier class on the same shared .mp-hero div -- .mp-hero itself is
-   reused verbatim by Calculators Index and every calculator page, so all
-   the image/gradient layering lives here instead, scoped to this page
-   only. Left-to-right gradient (dark panel color -> transparent) keeps
-   .mp-hero-title/.mp-hero-copy (left-aligned, max-width:640px) fully
-   legible over the dark end, while the real project photo shows through
-   on the right where the panel would otherwise be empty. */
+/* ---------- Hero photo (services-hero) ----------
+   The background itself is .mp-hero--photo (SHARED SITE COMPONENTS --
+   PHOTO HERO); this page only supplies its photo and crop. */
 .services-hero{
-  background:
-    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
-    url("images/Paint repairs - cover image.jpg") center 35% / cover no-repeat;
+  --mp-hero-image:url("images/Paint repairs - cover image.jpg");
+  --mp-hero-position:center 35%;
 }
 
 /* ---------- Section heading/lead (centered, light-on-dark) ---------- */
@@ -6237,17 +6247,12 @@ body,
   padding-bottom:3rem;
 }
 
-/* ---------- Hero background (about-hero) ----------
-   Modifier class on the same shared .mp-hero div -- .mp-hero itself is
-   reused verbatim by every calculator page and the index, calculators,
-   and services pages, so the image/gradient layering lives here
-   instead, scoped to this page only. Same left-to-right gradient as
-   .services-hero (that rule untouched); only the image and vertical
-   position differ, see IMG_20230306_131440.jpg's own crop note below. */
+/* ---------- Hero photo (about-hero) ----------
+   The background itself is .mp-hero--photo (SHARED SITE COMPONENTS --
+   PHOTO HERO); this page only supplies its photo and crop. */
 .about-hero{
-  background:
-    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
-    url("images/IMG_20230306_131440.jpg") center 52% / cover no-repeat;
+  --mp-hero-image:url("images/IMG_20230306_131440.jpg");
+  --mp-hero-position:center 52%;
 }
 
 .about-grid{
@@ -6356,18 +6361,12 @@ body,
    buttons.
    ============================================================ */
 
-/* ---------- Hero background (kits-hero) ----------
-   Modifier class on the shared .mp-hero div, same split as every other
-   converted page's own hero background rule (calc-hero/services-hero/
-   about-hero, none of them touched). Restored 2026-10-01 after a
-   same-day removal (Leo wants the photo back after all) -- re-added
-   into the already-fixed banner above (commas, not the stray premature
-   comment-close slash bug that banner had when this rule was first
-   written). */
+/* ---------- Hero photo (kits-hero) ----------
+   The background itself is .mp-hero--photo (SHARED SITE COMPONENTS --
+   PHOTO HERO); this page only supplies its photo and crop. */
 .kits-hero{
-  background:
-    linear-gradient(90deg, var(--chrome-ink-950) 0%, rgba(2,6,15,.82) 40%, rgba(2,6,15,.65) 100%),
-    url("images/IMG_20230802_190851.jpg") center 50% / cover no-repeat;
+  --mp-hero-image:url("images/IMG_20230802_190851.jpg");
+  --mp-hero-position:center 50%;
 }
 
 /* ---------- Need a Custom Solution? (2-card row) ---------- */
