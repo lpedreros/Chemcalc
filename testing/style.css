@@ -752,10 +752,9 @@ main.cloth-app{
 
 /* ---------- Share this Calculator (small card, own QR — separate
    from the print QR code) ---------- */
-.cloth-share-card{
-  margin-top:1.25rem;background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;padding:1.5rem;text-align:center;
-}
+/* The card box is .mp-card .mp-card--flat; this adds only the spacing and
+   centering. */
+.cloth-share-card{margin-top:1.25rem;text-align:center;}
 .cloth-share-card h2{font-size:1rem;font-weight:700;color:var(--chrome-ink-900);margin:0 0 1rem;}
 .cloth-share-card #qrcode{display:flex;justify-content:center;}
 
@@ -4352,13 +4351,9 @@ body,
   .mp-grid{grid-template-columns:7fr 5fr;}
 }
 
-.mp-field-card{
-  background:var(--chrome-paper-card);
-  border:1px solid var(--chrome-paper-line);
-  border-radius:12px;
-  padding:1.25rem;
-  box-shadow:var(--chrome-shadow-panel);
-}
+/* The card box is .mp-card .mp-card--compact (SHARED SITE COMPONENTS --
+   CARDS); .mp-field-card stays on the element as the hook for the
+   .mp-unit-quip rule below and for each calculator's own layout. */
 .mp-field-head{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:1rem;}
 .mp-field-icon{
   flex:none;width:2rem;height:2rem;border-radius:8px;
@@ -4562,10 +4557,8 @@ body,
 @media (min-width:900px){
   .mp-resources-grid{grid-template-columns:1fr 1fr;}
 }
-.mp-resource-card{
-  background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
-  border-radius:12px;padding:1.5rem;
-}
+/* The card box is .mp-card .mp-card--flat; .mp-resource-card stays on the
+   element as the hook for its heading below. */
 .mp-resource-card h2{font-size:1.1rem;font-weight:700;color:var(--chrome-ink-900);margin:0 0 .5rem;}
 .mp-resource-desc{font-size:.85rem;color:var(--chrome-ink-600);margin:0 0 1rem;line-height:1.5;}
 .mp-resource-links{list-style:none;margin:0;padding:0;border-top:1px solid var(--chrome-paper-line);}
@@ -5719,7 +5712,8 @@ body,
    only what is genuinely page-specific.
 
    Usage: <div class="mp-card mp-card--stack"> ... </div>. Modifiers
-   combine: --roomy for long-form document and story cards, --flat for
+   combine: --roomy for long-form document and story cards, --compact for
+   dense calculator field cards, --flat for
    no shadow, --stack for a flex column (so a button can sit at the
    bottom), --flush for image-led cards (no padding, clips to the
    radius), --link when the whole card is an anchor. Parts inside a
@@ -5736,6 +5730,7 @@ body,
   border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
 }
 .mp-card--roomy{padding:2rem;}
+.mp-card--compact{padding:1.25rem;}
 .mp-card--flat{box-shadow:none;}
 .mp-card--stack{display:flex;flex-direction:column;}
 .mp-card--flush{padding:0;overflow:hidden;}
