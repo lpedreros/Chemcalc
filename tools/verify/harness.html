@@ -1,0 +1,144 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>snapshot harness</title>
+<body style="font:14px monospace">
+<div id="log">starting…</div>
+<script>
+const params = new URLSearchParams(location.search);
+const LABEL = params.get('label') || 'snap';
+const PAGES = (params.get('pages') || 'index,calculators,services,about,kits,privacy,terms,cookie,alexseal,awlgrip,clothcalc,epifanespoly,mekpcalc').split(',');
+const WIDTHS = (params.get('widths') || '375,768,1440').split(',').map(Number);
+
+const PROPS = ['display','position','boxSizing','width','height','minWidth','maxWidth','minHeight','maxHeight',
+ 'marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft',
+ 'borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','borderTopStyle','borderRightStyle','borderBottomStyle','borderLeftStyle',
+ 'borderTopColor','borderRightColor','borderBottomColor','borderLeftColor',
+ 'borderTopLeftRadius','borderTopRightRadius','borderBottomRightRadius','borderBottomLeftRadius',
+ 'backgroundColor','backgroundImage','backgroundPosition','backgroundSize','backgroundRepeat','boxShadow',
+ 'color','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','textAlign','textDecorationLine','textTransform','whiteSpace',
+ 'flexDirection','flexWrap','flexGrow','flexShrink','flexBasis','alignItems','alignSelf','justifyContent','rowGap','columnGap',
+ 'gridTemplateColumns','gridTemplateRows','overflowX','overflowY','opacity','transform',
+ 'transitionProperty','transitionDuration','transitionTimingFunction','cursor','top','left','right','bottom','zIndex',
+ 'listStyleType','verticalAlign','objectFit','aspectRatio','outlineStyle','outlineWidth','outlineColor'];
+const PSEUDO_PROPS = ['content','display','position','color','backgroundColor','width','height','left','top','right','bottom','fontSize','fontWeight','transform','borderTopLeftRadius','marginLeft','marginRight'];
+const REVEAL = params.get('reveal') === '1';
+const THUMB_PROPS = ['width','height','borderTopLeftRadius','backgroundColor','borderTopWidth','borderTopColor','borderTopStyle','boxShadow','cursor','appearance'];
+const SKIP = new Set(['SCRIPT','STYLE','LINK','META','NOSCRIPT','TEMPLATE','IFRAME','TITLE','HEAD']);
+const STATES = {hover: ':hover', active: ':active', focus: ':focus', fv: ':focus-visible', fw: ':focus-within', visited: ':visited'};
+
+function rewriteStateSelectors(doc) {
+  let n = 0;
+  const walk = (rules) => {
+    for (const r of rules) {
+      if (r.cssRules && !r.selectorText) { walk(r.cssRules); continue; }
+      if (!r.selectorText) continue;
+      let s = r.selectorText, o = s;
+      s = s.replace(/:focus-visible/g, '.__st_fv').replace(/:focus-within/g, '.__st_fw').replace(/:focus/g, '.__st_focus')
+           .replace(/:hover/g, '.__st_hover').replace(/:active/g, '.__st_active').replace(/:visited/g, '.__st_visited');
+      if (s !== o) { try { r.selectorText = s; n++; } catch (e) {} }
+    }
+  };
+  for (const sh of doc.styleSheets) {
+    let rules; try { rules = sh.cssRules; } catch (e) { continue; }
+    walk(rules);
+  }
+  return n;
+}
+
+function pathKey(el) {
+  const parts = [];
+  while (el && el.nodeType === 1 && el !== el.ownerDocument.documentElement) {
+    const p = el.parentElement; let i = 0;
+    if (p) for (const c of p.children) { if (c === el) break; i++; }
+    parts.unshift(el.tagName.toLowerCase() + ':' + i);
+    el = p;
+  }
+  return parts.join('>');
+}
+
+function inSvg(el) { for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName.toLowerCase() === 'svg') return true; return false; }
+
+function read(win, el, props, pseudo) {
+  const cs = win.getComputedStyle(el, pseudo || null), o = {};
+  for (const p of props) o[p] = cs[p];
+  return o;
+}
+
+async function snapPage(page, width) {
+  const f = document.createElement('iframe');
+  f.style.cssText = `position:absolute;left:-9999px;top:0;width:${width}px;height:1000px;border:0;`;
+  f.src = `/${page}.html?h=${Date.now()}`;
+  document.body.appendChild(f);
+  await new Promise(r => f.onload = r);
+  await new Promise(r => setTimeout(r, 1500));
+  const win = f.contentWindow, doc = f.contentDocument;
+  // Some pages fill in parts of themselves from async data after load. Wait until the
+  // element count has been unchanged for three consecutive checks (max ~10s).
+  let lastCount = -1, stable = 0;
+  for (let i = 0; i < 20 && stable < 3; i++) {
+    const n = doc.getElementsByTagName('*').length;
+    stable = (n === lastCount) ? stable + 1 : 0;
+    lastCount = n;
+    await new Promise(r => setTimeout(r, 500));
+  }
+  // reveal=1: show everything the page hides with an inline display:none until its
+  // script reveals it (result panels, product notes, advisories, slider rows...).
+  // The same fixed override is applied to every build, so before/after stay comparable.
+  if (REVEAL) {
+    doc.querySelectorAll('[style*="display"]').forEach(e => {
+      if (e.closest('.modal-overlay, .modal, [role="dialog"]')) return;   // dialogs animate in; leave them closed
+      if (e.style.display === 'none') e.style.setProperty('display', 'block', 'important');
+    });
+    await new Promise(r => setTimeout(r, 300));
+  }
+  const els = [...doc.body.querySelectorAll('*')].filter(e => !SKIP.has(e.tagName) && !inSvg(e));
+  els.unshift(doc.body);
+  const out = els.map(e => {
+    const r = e.getBoundingClientRect();
+    const rec = {k: pathKey(e), tag: e.tagName.toLowerCase(), cls: (e.getAttribute('class') || ''), rest: read(win, e, PROPS),
+      rect: [r.x, r.y, r.width, r.height].map(v => Math.round(v * 100) / 100), pb: null, pa: null, pt: null, st: {}};
+    for (const [nm, ps] of [['pb', '::before'], ['pa', '::after']]) {
+      const c = win.getComputedStyle(e, ps).content;
+      if (c && c !== 'none' && c !== 'normal') rec[nm] = read(win, e, PSEUDO_PROPS, ps);
+    }
+    if (e.tagName === 'INPUT' && e.type === 'range') {
+      rec.pt = read(win, e, THUMB_PROPS, '::-webkit-slider-thumb');
+    }
+    return rec;
+  });
+  const nrew = rewriteStateSelectors(doc);
+  // Transitions would make a freshly forced state read back its *starting* value
+  // (e.g. a hover background mid-fade), hiding real differences. The rest snapshot
+  // above already recorded the declared transition values; from here on, switch
+  // transitions off so each forced state reads its final value.
+  const kill = doc.createElement('style');
+  kill.textContent = '*,*::before,*::after{transition:none !important;animation:none !important;}';
+  doc.head.appendChild(kill);
+  const STATE_PROPS = PROPS.filter(p => !p.startsWith('transition'));
+  for (const [sn] of Object.entries(STATES)) {
+    const cls = '__st_' + sn;
+    els.forEach(e => e.classList.add(cls));
+    els.forEach((e, i) => {
+      const cur = read(win, e, STATE_PROPS), base = out[i].rest, d = {};
+      for (const p of STATE_PROPS) if (cur[p] !== base[p]) d[p] = cur[p];
+      if (Object.keys(d).length) out[i].st[sn] = d;
+    });
+    els.forEach(e => e.classList.remove(cls));
+  }
+  f.remove();
+  return {page, width, rewritten: nrew, count: out.length, elements: out};
+}
+
+(async () => {
+  const log = document.getElementById('log');
+  let done = 0;
+  for (const page of PAGES) for (const w of WIDTHS) {
+    const res = await snapPage(page, w);
+    await fetch(`/__snap/${LABEL}/${page}-${w}`, {method: 'POST', body: JSON.stringify(res)});
+    done++;
+    log.textContent = `${LABEL}: ${done}/${PAGES.length * WIDTHS.length} (${page}@${w}: ${res.count} els, ${res.rewritten} state rules)`;
+  }
+  log.textContent = `DONE ${LABEL} ${done}`;
+  window.__done = true;
+})();
+</script>

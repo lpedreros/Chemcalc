@@ -1,0 +1,70 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>functional parity</title>
+<body style="font:14px monospace">
+<div id="log">starting…</div>
+<script>
+// Drives each calculator with the same scripted inputs and records what it displays,
+// so the original tree and the refactored tree can be compared for identical behavior.
+const params = new URLSearchParams(location.search);
+const LABEL = params.get('label') || 'func';
+const PAGES = (params.get('pages') || 'clothcalc,mekpcalc,awlgrip,epifanespoly,alexseal').split(',');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function visible(e) {
+  const cs = e.ownerDocument.defaultView.getComputedStyle(e);
+  return cs.display !== 'none' && cs.visibility !== 'hidden' && e.getClientRects().length > 0;
+}
+function fire(e, types) { for (const t of types) e.dispatchEvent(new e.ownerDocument.defaultView.Event(t, {bubbles: true})); }
+
+async function scenario(doc, win, variant) {
+  const main = doc.querySelector('main');
+  const nums = [...main.querySelectorAll('input[type=number], input[type=text]')].filter(e => visible(e) && !/email/i.test(e.id + e.name + e.className));
+  const vals = ['48', '24', '12', '5', '2', '30'];
+  nums.forEach((e, i) => { e.value = vals[(i + variant) % vals.length]; fire(e, ['input', 'change']); });
+  await sleep(150);
+  for (let pass = 0; pass < 2; pass++) {
+    const sels = [...main.querySelectorAll('select')].filter(e => !e.hidden || e.closest('[class*=mp-field]'));
+    for (const s of sels) {
+      if (s.options.length > 1) {
+        const idx = Math.min(1 + variant, s.options.length - 1);
+        s.selectedIndex = idx; fire(s, ['input', 'change']);
+      }
+    }
+    await sleep(150);
+  }
+  [...main.querySelectorAll('input[type=range]')].forEach(r => {
+    const min = +r.min || 0, max = +r.max || 100;
+    r.value = String(min + (max - min) * (variant ? 0.7 : 0.4)); fire(r, ['input', 'change']);
+  });
+  [...main.querySelectorAll('input[type=checkbox]')].filter(c => /duratec|accel/i.test(c.id)).forEach(c => { if (variant) { c.checked = true; fire(c, ['input', 'change', 'click']); } });
+  await sleep(200);
+  [...main.querySelectorAll('button')].filter(b => /calc/i.test(b.id + ' ' + b.textContent) && !/email|print|close/i.test(b.id + b.textContent)).forEach(b => b.click());
+  await sleep(900);
+  const ids = [...main.querySelectorAll('[id]')].filter(visible).map(e => e.id).sort();
+  const sliders = [...main.querySelectorAll('input[type=range]')].map(r => r.id + '=' + r.value + '/' + (r.style.getPropertyValue('--slider-fill') || ''));
+  const text = main.innerText.replace(/\s+/g, ' ').trim();
+  return {text, visibleIds: ids, sliders, inputs: nums.length};
+}
+
+(async () => {
+  const log = document.getElementById('log');
+  const out = {};
+  for (const page of PAGES) {
+    for (const variant of [0, 1]) {
+      const f = document.createElement('iframe');
+      f.style.cssText = 'position:absolute;left:-9999px;top:0;width:1200px;height:1000px;border:0;';
+      f.src = `/${page}.html?fn=${Date.now()}`;
+      document.body.appendChild(f);
+      await new Promise(r => f.onload = r);
+      await sleep(4000);   // async product data
+      try { out[page + '-v' + variant] = await scenario(f.contentDocument, f.contentWindow, variant); }
+      catch (e) { out[page + '-v' + variant] = {error: String(e)}; }
+      f.remove();
+      log.textContent = `${LABEL}: ${page} v${variant} done`;
+    }
+  }
+  await fetch(`/__snap/${LABEL}/func`, {method: 'POST', body: JSON.stringify(out)});
+  log.textContent = 'DONE ' + LABEL;
+})();
+</script>
