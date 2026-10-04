@@ -348,6 +348,21 @@ async function addToTrello() {
 
     var card = await cardResp.json();
 
+    // Save the new card's id back onto the estimate row, so history.html can show its "in Trello" badge.
+    // The card already exists at this point, so a failed write here only logs a warning and never
+    // changes the alert below. (Supabase returns errors instead of throwing, hence the .error check.)
+    if (estimateUUID && card && card.id) {
+      try {
+        var linkResult = await _sb.from('estimates').update({
+          trello_card_id: card.id,
+          trello_synced_at: new Date().toISOString()
+        }).eq('id', estimateUUID);
+        if (linkResult && linkResult.error) console.warn('Failed to save Trello card id back to estimate:', linkResult.error);
+      } catch (e) {
+        console.warn('Failed to save Trello card id back to estimate:', e);
+      }
+    }
+
     setStatus('');
     alert('? Card added to Trello: "' + _trelloListName + '" on "' + _trelloBoardName + '"');
   } catch (e) {
