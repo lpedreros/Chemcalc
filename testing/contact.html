@@ -316,11 +316,15 @@
             <div class="mp-input-row mt-3">
               <div class="mp-input-group">
                 <label class="mp-input-label" for="availabilityTimeFrom">From</label>
-                <input type="time" id="availabilityTimeFrom" class="mp-select" step="600" required />
+                <select id="availabilityTimeFrom" class="mp-select" required>
+                  <option value="">Choose a time</option>
+                </select>
               </div>
               <div class="mp-input-group">
                 <label class="mp-input-label" for="availabilityTimeTo">To</label>
-                <input type="time" id="availabilityTimeTo" class="mp-select" step="600" required />
+                <select id="availabilityTimeTo" class="mp-select" required>
+                  <option value="">Choose a time</option>
+                </select>
               </div>
             </div>
             <!-- The three controls above have no name on purpose: only this combined value is sent to Formspree. -->
@@ -463,7 +467,7 @@
 })();
 </script>
 
-<!-- Availability picker: lists the next 8 Fridays and combines Date + From + To into the
+<!-- Availability picker: lists the next 8 Fridays and the 10-minute time choices, and combines Date + From + To into the
      hidden #availability field, the one value Formspree receives (format below).
      It only writes that value; it never stops or delays the form from submitting. -->
 <script>
@@ -497,21 +501,21 @@
     return ((h % 12) || 12) + ':' + p[1] + ' ' + (h < 12 ? 'AM' : 'PM');
   }
 
-  // The time fields step by 10 minutes (step="600"). A time typed off that grid is rounded UP to
-  // the next 10-minute mark: "08:14" -> "08:20"; "08:20" stays; "23:55" rolls over to "00:00".
-  function roundUp(v) {
-    if (!v) return v;
-    var p = v.split(':');
-    var mins = parseInt(p[0], 10) * 60 + parseInt(p[1], 10) + (parseInt(p[2], 10) > 0 ? 1 : 0);
-    mins = (Math.ceil(mins / 10) * 10) % 1440;
-    return pad(Math.floor(mins / 60)) + ':' + pad(mins % 60);
-  }
+  // The time choices: every 10 minutes from 8:00 AM to 4:00 PM (on-site assessment hours), the same
+  // list in From and To. They are dropdowns, so nothing outside this grid can be picked or typed.
+  var OPEN = 8 * 60, CLOSE = 16 * 60, STEP = 10;
+  [from, to].forEach(function(sel) {
+    for (var m = OPEN; m <= CLOSE; m += STEP) {
+      var o = document.createElement('option');
+      o.value = pad(Math.floor(m / 60)) + ':' + pad(m % 60);
+      o.textContent = clock(o.value);
+      sel.appendChild(o);
+    }
+  });
 
   // Result, e.g. "Friday, October 9, 2026 · 8:00 AM–11:00 AM"
-  // Works from the rounded times, so the combined value and the end-after-start check
-  // never see a raw off-grid time, even while a field still shows what was typed.
   function sync() {
-    var f = roundUp(from.value), t = roundUp(to.value);
+    var f = from.value, t = to.value;
     to.setCustomValidity(f && t && t <= f ? 'Please choose an end time after the start time.' : '');
     var parts = [];
     if (dateSel.value) {
@@ -524,22 +528,9 @@
     combined.value = parts.join(' · ');
   }
 
-  // Writes the rounded time back into the field. Done when the person leaves the field, or presses
-  // Enter in it, and not on every keystroke: typing "14" into the minutes passes through 08:01,
-  // and rewriting that would turn the 14 into 10.
-  function settle(el) {
-    var r = roundUp(el.value);
-    if (r !== el.value) el.value = r;
-    sync();
-  }
-
   [dateSel, from, to].forEach(function(el) {
     el.addEventListener('change', sync);
     el.addEventListener('input', sync);
-  });
-  [from, to].forEach(function(el) {
-    el.addEventListener('blur', function() { settle(el); });
-    el.addEventListener('keydown', function(e) { if (e.key === 'Enter') { settle(from); settle(to); } });
   });
   form.addEventListener('submit', sync);
   sync();
