@@ -6591,6 +6591,244 @@ h2.trello-setup-title{
 }
 
 /* ============================================================
+   ESTIMATE HISTORY PAGE-SPECIFIC STYLES (history.html)
+   Added 2026-10-03 for the Estimate History rebuild onto the chrome
+   design system, from Magic Patterns' pages/EstimateHistory.tsx and
+   components/history/EstimatesTable.tsx. Everything shareable is shared:
+   .mp-hero (--overlap), .mp-card (--flush), .mp-card-icon (the gate's lock
+   badge), .mp-select (the search field), .mp-btn. What is here is what only
+   this page has. Namespaced .history-*; the older .hist-* and .status-*
+   rules (the pre-redesign dark layout) are no longer used by any page and
+   are left in place for a separate cleanup.
+
+   The status control is the real native <select> (history.js still calls
+   updateStatus() on change and writes to Supabase), restyled as MP's colored
+   chip: appearance:none, a per-status color, and a chevron. Seven real
+   statuses, not MP's four: in progress, completed and invoiced follow the
+   existing palette (amber and teal steps between Sent and Approved).
+
+   Links and buttons restate margin-top, font-style, font-size, font-weight,
+   and color on :visited, :hover, and :active, because the legacy sitewide
+   anchor rule (style.css line 1454) wins on any property a new class does
+   not itself set.
+   ============================================================ */
+
+/* ---------- Hero: title + New Estimate on the left, plan pill on the right ---------- */
+.history-hero-inner{display:flex;flex-direction:column;gap:2rem;}
+@media (min-width:1024px){
+  .history-hero-inner{flex-direction:row;align-items:flex-end;justify-content:space-between;}
+}
+.history-new-btn{margin-top:1.5rem;}
+.history-plan{
+  display:flex;align-items:center;gap:.75rem;flex:none;padding:.75rem 1rem;
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;background:var(--chrome-ink-900);
+}
+.history-plan-pill{
+  flex:none;padding:.25rem .625rem;border-radius:6px;font-size:.75rem;font-weight:600;line-height:1.333;white-space:nowrap;
+  background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);
+}
+.history-plan-pill.is-pro{background:rgba(242,166,60,.15);color:var(--chrome-signal-400);}
+.history-plan-note{font-size:.8125rem;line-height:1.5;color:rgba(255,255,255,.6);}
+
+/* ---------- Log-in / Pro gates (one card, two messages) ---------- */
+.history-gate{display:grid;}
+@media (min-width:1024px){.history-gate{grid-template-columns:1.2fr 1fr;}}
+.history-gate-main{padding:1.5rem;}
+@media (min-width:1024px){.history-gate-main{padding:2.5rem;}}
+.history-gate-title{
+  margin:1.25rem 0 0;font-family:var(--chrome-font-sans);font-size:1.5rem;font-weight:700;
+  letter-spacing:-.025em;line-height:1.3333;color:var(--chrome-ink-900);
+}
+.history-gate-text{
+  max-width:32rem;margin:.75rem 0 0;font-size:.9375rem;line-height:1.8667;color:var(--chrome-ink-600);
+}
+.history-gate-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.5rem;}
+.history-gate-preview{
+  display:none;padding:2rem;border-left:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);
+}
+@media (min-width:1024px){.history-gate-preview{display:block;}}
+.history-gate-list{display:grid;gap:.625rem;opacity:.6;filter:blur(1.5px);}
+.history-gate-row{
+  display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;
+  border:1px solid var(--chrome-paper-line);border-radius:8px;background:var(--chrome-paper-card);
+}
+.history-gate-bar{height:.5rem;border-radius:999px;background:var(--chrome-paper-line);}
+.history-gate-bar--short{flex:none;width:3.5rem;}
+.history-gate-bar--grow{flex:1 1 auto;}
+
+/* ---------- Summary: total value leads, the rest support it ---------- */
+.history-summary{
+  display:grid;overflow:hidden;border-radius:12px;background:var(--chrome-ink-950);color:#ffffff;
+  box-shadow:var(--chrome-shadow-lift);
+}
+@media (min-width:768px){.history-summary{grid-template-columns:1.4fr 1fr 1fr 1fr;}}
+.history-summary-main{padding:1.25rem 1.5rem;}
+.history-stat{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.1);}
+@media (min-width:768px){
+  .history-summary-main{padding-top:1.5rem;padding-bottom:1.5rem;}
+  .history-stat{padding-top:1.5rem;padding-bottom:1.5rem;border-top:0;border-left:1px solid rgba(255,255,255,.1);}
+}
+.history-stat-label{margin:0;font-size:.8125rem;font-weight:500;line-height:1.5;color:rgba(255,255,255,.55);}
+.history-total{
+  margin:.375rem 0 0;font-family:var(--chrome-font-mono);font-size:2.25rem;font-weight:600;
+  line-height:1;letter-spacing:-.025em;color:var(--chrome-signal-400);
+}
+.history-stat-line{display:flex;align-items:baseline;gap:.5rem;margin:.375rem 0 0;}
+.history-stat-value{font-family:var(--chrome-font-mono);font-size:1.5rem;font-weight:600;line-height:1;color:#ffffff;}
+.history-stat-sub{font-family:var(--chrome-font-mono);font-size:.8125rem;color:rgba(255,255,255,.5);}
+
+/* ---------- Table card: toolbar, filters, search ---------- */
+.history-card{margin-top:1.5rem;}
+.history-toolbar{
+  display:flex;flex-direction:column;gap:.75rem;padding:1rem 1.25rem;
+  border-bottom:1px solid var(--chrome-paper-line);
+}
+@media (min-width:640px){.history-toolbar{padding:1rem 1.5rem;}}
+@media (min-width:1024px){.history-toolbar{flex-direction:row;align-items:center;justify-content:space-between;}}
+.history-filters{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;padding:.25rem;
+  border:1px solid var(--chrome-paper-line);border-radius:8px;background:var(--chrome-paper-muted);
+}
+.history-filter{
+  display:flex;align-items:center;gap:.375rem;padding:.375rem .75rem;border:0;border-radius:6px;
+  background:transparent;font-family:var(--chrome-font-sans);font-size:.8125rem;font-weight:600;line-height:1.5;
+  color:var(--chrome-ink-600);cursor:pointer;
+  transition:color .15s var(--chrome-ease-smooth),background-color .15s var(--chrome-ease-smooth);
+}
+.history-filter:hover{color:var(--chrome-ink-900);}
+.history-filter[aria-pressed="true"]{background:var(--chrome-ink-900);color:#ffffff;}
+.history-filter-count{font-family:var(--chrome-font-mono);font-size:.6875rem;color:var(--chrome-ink-500);}
+.history-filter[aria-pressed="true"] .history-filter-count{color:rgba(255,255,255,.6);}
+.history-filter:focus-visible,.history-icon-btn:focus-visible,.history-status:focus-visible,
+.history-link-btn:focus-visible{outline:2px solid rgba(242,166,60,.45);outline-offset:1px;}
+
+.history-search{position:relative;}
+@media (min-width:1024px){.history-search{width:18rem;}}
+.history-search svg{
+  position:absolute;left:.875rem;top:50%;width:1rem;height:1rem;transform:translateY(-50%);
+  color:var(--chrome-ink-500);pointer-events:none;
+}
+.history-search-input{padding:.625rem .875rem .625rem 2.5rem;font-size:.875rem;font-weight:400;}
+
+/* ---------- Desktop table (md and up) ---------- */
+/* position:relative so the buttons' absolutely-positioned .sr-only labels are clipped by the scroll area, not the page */
+.history-table-wrap{position:relative;display:none;overflow-x:auto;}
+@media (min-width:768px){.history-table-wrap{display:block;}}
+.history-table{width:100%;margin:0;border-collapse:collapse;text-align:left;}
+.history-table thead tr{border-bottom:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);}
+.history-table th{
+  padding:.75rem 1rem;white-space:nowrap;text-align:left;
+  font-size:.8125rem;font-weight:600;line-height:1.5;color:var(--chrome-ink-600);
+}
+.history-table th.history-th-num{padding-left:1.5rem;}
+.history-table th.history-th-total{text-align:right;}
+.history-table th.history-th-actions{padding-right:1.5rem;text-align:right;}
+.history-table tbody tr{transition:background-color .15s var(--chrome-ease-smooth);}
+.history-table tbody tr + tr{border-top:1px solid var(--chrome-paper-line);}
+.history-table tbody tr:hover{background:rgba(246,248,247,.7);}
+.history-table td{padding:.875rem 1rem;vertical-align:middle;font-size:.875rem;line-height:1.5;}
+.history-table td.history-td-num{padding-left:1.5rem;white-space:nowrap;}
+.history-td-client{font-weight:600;color:var(--chrome-ink-900);}
+.history-td-vessel{color:var(--chrome-ink-600);}
+.history-td-total{
+  white-space:nowrap;text-align:right;font-family:var(--chrome-font-mono);font-weight:600;color:var(--chrome-ink-900);
+}
+.history-td-date{white-space:nowrap;font-family:var(--chrome-font-mono);font-size:.8125rem;color:var(--chrome-ink-600);}
+.history-table td.history-td-actions{padding-right:1.5rem;}
+
+/* The estimate number is the "Open" action. */
+.history-est-link,.history-est-link:visited,.history-est-link:hover,.history-est-link:active{
+  margin-top:0;font-family:var(--chrome-font-mono);font-size:.875rem;font-weight:600;font-style:normal;
+  color:var(--chrome-sea-600);text-decoration:underline;text-decoration-color:rgba(10,93,102,.25);
+  text-underline-offset:2px;
+}
+.history-est-link{transition:color .15s var(--chrome-ease-smooth);}
+.history-est-link:hover,.history-est-link:active{color:var(--chrome-sea-500);}
+.history-est-link--sm,.history-est-link--sm:visited,.history-est-link--sm:hover,.history-est-link--sm:active{
+  font-size:.8125rem;text-decoration:none;
+}
+
+/* ---------- Status: the real <select>, styled as a chip ---------- */
+.history-status-cell{display:flex;align-items:center;gap:.5rem;}
+.history-status{
+  -webkit-appearance:none;appearance:none;display:inline-block;max-width:100%;
+  padding:.125rem 1.5rem .125rem .5rem;border:1px solid var(--chrome-paper-line);border-radius:6px;
+  font-family:var(--chrome-font-sans);font-size:.75rem;font-weight:600;line-height:1.5;cursor:pointer;
+  background-color:var(--chrome-paper-muted);color:var(--chrome-ink-600);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A7C88' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .45rem center;background-size:.7rem;
+}
+.history-status option{background:#ffffff;color:var(--chrome-ink-900);text-decoration:none;}
+.history-status--draft{background-color:var(--chrome-paper-muted);color:var(--chrome-ink-600);border-color:var(--chrome-paper-line);}
+/* MP uses signal-600 text here, which measures 3.78:1 on signal-50 at 12px; dark ink keeps the pale-amber chip and clears 4.5:1. */
+.history-status--sent{background-color:var(--chrome-signal-50);color:var(--chrome-ink-800);border-color:var(--chrome-signal-200);}
+.history-status--approved{background-color:rgba(15,122,133,.1);color:var(--chrome-sea-600);border-color:rgba(15,122,133,.2);}
+.history-status--in-progress{background-color:var(--chrome-signal-200);color:var(--chrome-ink-900);border-color:var(--chrome-signal-400);}
+.history-status--completed{background-color:rgba(46,154,165,.22);color:var(--chrome-sea-600);border-color:rgba(15,122,133,.45);}
+.history-status--invoiced{
+  background-color:var(--chrome-sea-600);color:#ffffff;border-color:var(--chrome-sea-600);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+.history-status--declined{background-color:#ffffff;color:var(--chrome-ink-500);border-color:var(--chrome-paper-line);text-decoration:line-through;}
+.history-trello{
+  display:inline-flex;align-items:center;gap:.25rem;font-size:.75rem;font-weight:500;line-height:1.5;
+  color:var(--chrome-ink-500);
+}
+
+/* ---------- Row actions: Duplicate and Delete (the estimate number opens it) ---------- */
+.history-actions{display:flex;align-items:center;justify-content:flex-end;gap:.375rem;}
+.history-icon-btn{
+  display:flex;align-items:center;justify-content:center;width:2rem;height:2rem;padding:0;
+  border:1px solid var(--chrome-paper-line);border-radius:8px;background:transparent;
+  color:var(--chrome-ink-600);cursor:pointer;
+  transition:border-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
+}
+.history-icon-btn:hover{border-color:var(--chrome-ink-500);color:var(--chrome-ink-900);}
+.history-icon-btn--danger:hover{border-color:#fca5a5;color:#dc2626;}
+
+/* ---------- Mobile list (below md), filled from the same rows ---------- */
+.history-list{display:block;margin:0;padding:0;list-style:none;}
+@media (min-width:768px){.history-list{display:none;}}
+.history-item{padding:1rem 1.25rem;}
+.history-item + .history-item{border-top:1px solid var(--chrome-paper-line);}
+.history-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;}
+.history-item-main{min-width:0;}
+.history-item-client,.history-item-vessel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.history-item-client{margin:.125rem 0 0;font-size:.9375rem;font-weight:600;line-height:1.5;color:var(--chrome-ink-900);}
+.history-item-vessel{margin:0;font-size:.8125rem;line-height:1.5;color:var(--chrome-ink-600);}
+.history-item-total{
+  flex:none;margin:0;font-family:var(--chrome-font-mono);font-size:.9375rem;font-weight:600;line-height:1.5;
+  color:var(--chrome-ink-900);
+}
+.history-item-bottom{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-top:.75rem;}
+.history-item-meta{display:flex;align-items:center;gap:.5rem;}
+.history-item-date{font-family:var(--chrome-font-mono);font-size:.75rem;color:var(--chrome-ink-500);}
+
+/* ---------- Empty, no-match, loading, and count ---------- */
+.history-empty{display:flex;flex-direction:column;align-items:center;padding:4rem 1.5rem;text-align:center;}
+.history-empty-icon{
+  display:flex;align-items:center;justify-content:center;width:3rem;height:3rem;border-radius:8px;
+  background:var(--chrome-paper-muted);color:var(--chrome-ink-600);
+}
+.history-empty-title{
+  margin:1rem 0 0;font-family:var(--chrome-font-sans);font-size:1.125rem;font-weight:700;
+  letter-spacing:-.025em;line-height:1.5556;color:var(--chrome-ink-900);
+}
+.history-empty-text{max-width:24rem;margin:.5rem 0 0;font-size:.875rem;line-height:1.7143;color:var(--chrome-ink-600);}
+.history-empty .mp-btn{margin-top:1.5rem;}
+.history-nomatch{padding:3.5rem 1.5rem;text-align:center;}
+.history-nomatch-text{margin:0;font-size:.9375rem;font-weight:600;color:var(--chrome-ink-900);}
+.history-link-btn{
+  margin-top:.75rem;padding:0;border:0;background:none;font-family:var(--chrome-font-sans);font-size:.875rem;
+  font-weight:600;color:var(--chrome-sea-600);text-decoration:underline;
+  text-decoration-color:rgba(10,93,102,.3);text-underline-offset:2px;cursor:pointer;
+}
+.history-loading{padding:3rem 1.5rem;text-align:center;font-size:.875rem;color:var(--chrome-ink-500);}
+.history-count{
+  margin:0;padding:.75rem 1.5rem;border-top:1px solid var(--chrome-paper-line);
+  font-family:var(--chrome-font-mono);font-size:.75rem;line-height:1.5;color:var(--chrome-ink-500);
+}
+
+/* ============================================================
    LEGAL DOCUMENT PAGE STYLES (privacy.html / terms.html / cookie.html)
    Added 2026-10-02 for the Privacy Policy, Terms of Use, and Cookie
    Policy interior rebuild onto the chrome design system, the same
