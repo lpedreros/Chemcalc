@@ -1,0 +1,68 @@
+<!-- PREVIEW ONLY — delete after Leo decides. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Preview: dark-panel titles</title>
+
+  <!-- Same stylesheets the real pages load: Bootstrap 4.5.2, the site fonts, and the one site stylesheet. -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="mp-canvas">
+<main>
+  <h1 class="mp-section-title">Dark-panel titles at the proposed style</h1>
+  <p class="mp-section-lead">Each panel below is the real box and real text from its page, with the heading switched to the proposed <code>.mp-panel-title</code>: 1.1rem, bold, amber, 1rem of space below. That is exactly the &ldquo;Industries I&rsquo;ve built for&rdquo; heading on services.html. No live page uses it yet.</p>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      <!-- 1. about.html: .about-expertise-card -->
+      <p class="text-muted small mb-2">1. about.html &mdash; Areas of Expertise (now 1.2rem, white)</p>
+      <div class="mp-panel mb-5">
+        <h2 class="mp-panel-title">Areas of Expertise</h2>
+        <ul class="mp-checklist">
+          <li>Fiberglass &amp; Composites</li>
+          <li>Divinycel, Coosa, Starboard</li>
+          <li>Nidacore &amp; Wood Construction</li>
+          <li>Advanced Chemical Calculations</li>
+          <li>Custom Fabrication</li>
+          <li>Vinyl Lettering</li>
+        </ul>
+      </div>
+
+      <!-- 2. trello-setup.html: h2.trello-setup-title in the first dark panel -->
+      <p class="text-muted small mb-2">2. trello-setup.html &mdash; What this does (now 1.25rem, white)</p>
+      <div class="mp-panel mb-5">
+        <h2 class="mp-panel-title">What this does</h2>
+        <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
+      </div>
+
+      <!-- 3. calculators.html: .calc-index-cta-title -->
+      <p class="text-muted small mb-2">3. calculators.html &mdash; Need a Different Calculator? (now 1.3rem, extra bold, white)</p>
+      <div class="mp-panel calc-index-cta mt-0 mb-5">
+        <div class="calc-index-cta-text">
+          <h2 class="mp-panel-title">Need a Different Calculator?</h2>
+          <p class="calc-index-cta-copy">Can't find the specific calculator you need for your marine project? Let us know &mdash; we might be able to develop it for you.</p>
+        </div>
+        <a class="mp-btn mp-btn--primary calc-index-cta-btn" href="contact.html?subject=Calculator%20Request">Request a Calculator</a>
+      </div>
+
+      <!-- 4. index.html: .home-pro-title -->
+      <p class="text-muted small mb-2">4. index.html &mdash; Every calculator stays free. Pro remembers the job. (now 1.75rem, extra bold, white)</p>
+      <div class="mp-panel mp-panel--roomy mb-5">
+        <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
+        <h2 class="mp-panel-title">Every calculator stays free. Pro remembers the job.</h2>
+        <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+      </div>
+
+    </div>
+  </div>
+</main>
+</body>
+</html>

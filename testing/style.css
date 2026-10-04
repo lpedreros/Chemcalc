@@ -5580,6 +5580,14 @@ body,
   .mp-panel--roomy{padding:1.75rem;}
 }
 
+/* .mp-panel-title: the heading inside a dark .mp-panel. Same values as
+   .services-estimator-panel h5. Preview only for now: used on
+   _preview-panel-titles.html and on no real page yet. */
+.mp-panel-title{
+  font-family:var(--chrome-font-sans);font-size:1.1rem;font-weight:700;
+  color:var(--chrome-signal-400);margin:0 0 1rem;
+}
+
 /* ============================================================
    SHARED SITE COMPONENTS -- BUTTONS
    Added 2026-10-02. One pill button instead of six copies:
