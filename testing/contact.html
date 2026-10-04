@@ -50,7 +50,7 @@
 <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-<script src="/global-account-modal.js?v=1"></script>
+<script src="/global-account-modal.js"></script>
 <!-- #BeginLibraryItem "/Library/head-common.lbi" -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- ============================================================
@@ -303,11 +303,30 @@
             <label class="mp-input-label" for="repairs">Short Description of the Repairs <span aria-hidden="true">*</span></label>
             <textarea id="repairs" name="repairs" class="mp-select" rows="5" placeholder="Damage location, what you’ve already tried, and what a finished result looks like to you." required></textarea>
           </div>
-          <div class="mp-field-card--wide">
-            <label class="mp-input-label" for="availability">Times Available on Fridays to Look at the Boat <span aria-hidden="true">*</span></label>
-            <input type="text" id="availability" name="availability" class="mp-select" placeholder="e.g. 8–11 AM, or after 3 PM" required />
+          <fieldset class="mp-field-card--wide">
+            <legend class="mp-input-label">Times Available on Fridays to Look at the Boat <span aria-hidden="true">*</span></legend>
+            <div class="mp-input-row">
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="availabilityDate">Date</label>
+                <select id="availabilityDate" class="mp-select" required>
+                  <option value="">Choose a Friday</option>
+                </select>
+              </div>
+            </div>
+            <div class="mp-input-row mt-3">
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="availabilityTimeFrom">From</label>
+                <input type="time" id="availabilityTimeFrom" class="mp-select" required />
+              </div>
+              <div class="mp-input-group">
+                <label class="mp-input-label" for="availabilityTimeTo">To</label>
+                <input type="time" id="availabilityTimeTo" class="mp-select" required />
+              </div>
+            </div>
+            <!-- The three controls above have no name on purpose: only this combined value is sent to Formspree. -->
+            <input type="hidden" id="availability" name="availability" />
             <p class="mp-card-text mp-card-text--tight d-flex align-items-center mt-2"><svg class="flex-shrink-0 mr-2" width="14" height="14" aria-hidden="true"><use href="#icon-clock"/></svg>Fridays are reserved for on-site assessments.</p>
-          </div>
+          </fieldset>
         </div>
 
         <div class="mt-4">
@@ -428,7 +447,7 @@
       'Issue: ';
     if (params.get('name')) document.getElementById('name').value = params.get('name');
     if (params.get('email')) document.getElementById('email').value = params.get('email');
-    ['boatDetails','hin','location','availability','phone'].forEach(function(id) {
+    ['boatDetails','hin','location','availabilityDate','availabilityTimeFrom','availabilityTimeTo','phone'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.removeAttribute('required');
     });
@@ -441,6 +460,63 @@
       'ASSEMBLED KIT SERVICE REQUEST\n\n' +
       'Project details: ';
   }
+})();
+</script>
+
+<!-- Availability picker: lists the next 8 Fridays and combines Date + From + To into the
+     hidden #availability field, the one value Formspree receives (format below).
+     It only writes that value; it never stops or delays the form from submitting. -->
+<script>
+(function() {
+  var form = document.getElementById('contactForm');
+  var dateSel = document.getElementById('availabilityDate');
+  var from = document.getElementById('availabilityTimeFrom');
+  var to = document.getElementById('availabilityTimeTo');
+  var combined = document.getElementById('availability');
+  if (!form || !dateSel || !from || !to || !combined) return;
+
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  // The next 8 Fridays strictly after today. If today is a Friday it is not offered;
+  // the first option is the following Friday. Uses the visitor's own calendar date.
+  var day = new Date();
+  day = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+  do { day.setDate(day.getDate() + 1); } while (day.getDay() !== 5);
+  for (var i = 0; i < 8; i++) {
+    var opt = document.createElement('option');
+    opt.value = day.getFullYear() + '-' + pad(day.getMonth() + 1) + '-' + pad(day.getDate());
+    opt.textContent = 'Friday, ' + MONTHS[day.getMonth()] + ' ' + day.getDate();
+    dateSel.appendChild(opt);
+    day.setDate(day.getDate() + 7);
+  }
+
+  // "15:30" -> "3:30 PM"
+  function clock(v) {
+    var p = v.split(':'), h = parseInt(p[0], 10);
+    return ((h % 12) || 12) + ':' + p[1] + ' ' + (h < 12 ? 'AM' : 'PM');
+  }
+
+  // Result, e.g. "Friday, October 9, 2026 · 8:00 AM–11:00 AM"
+  function sync() {
+    to.setCustomValidity(from.value && to.value && to.value <= from.value ? 'Please choose an end time after the start time.' : '');
+    var parts = [];
+    if (dateSel.value) {
+      var d = dateSel.value.split('-');
+      parts.push('Friday, ' + MONTHS[parseInt(d[1], 10) - 1] + ' ' + parseInt(d[2], 10) + ', ' + d[0]);
+    }
+    if (from.value && to.value) parts.push(clock(from.value) + '–' + clock(to.value));
+    else if (from.value) parts.push('from ' + clock(from.value));
+    else if (to.value) parts.push('until ' + clock(to.value));
+    combined.value = parts.join(' · ');
+  }
+
+  [dateSel, from, to].forEach(function(el) {
+    el.addEventListener('change', sync);
+    el.addEventListener('input', sync);
+  });
+  form.addEventListener('submit', sync);
+  sync();
 })();
 </script>
 
