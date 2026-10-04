@@ -16,146 +16,217 @@
 </head>
 <body class="mp-canvas">
 <main>
-  <h1 class="mp-section-title">Dark-panel titles: before and after</h1>
-  <p class="mp-section-lead">Each page shows its dark-panel title three ways, side by side, in the real box with the real text. <strong>Before</strong> is exactly how the live page renders it today. <strong>After</strong> is the proposed <code>.mp-panel-title</code>, the same as the &ldquo;Industries I&rsquo;ve built for&rdquo; heading on services.html. <strong>After, in white</strong> is the same size with the color left white, so you can judge size and color separately. The numbers under each label are read from the browser&rsquo;s computed style for that exact heading, at your current window size. No live page uses the new class yet.</p>
+  <h1 class="mp-section-title">Dark-card titles: today vs. the index.html style in amber</h1>
+  <p class="mp-section-lead">You picked the title on the index.html Pro card: large, extra bold, tightly spaced. Every dark card on the site is shown twice below, side by side, in its real box with its real text. <strong>Before</strong> is how the live page renders that card&rsquo;s title today. <strong>New</strong> is the index.html title style in the site&rsquo;s amber (#F2A63C). Card 1 is the index.html card itself, so its New differs from Before only in color. The numbers under each label are read from the browser&rsquo;s computed style for that exact heading, at your current window size. No live page uses the new class yet.</p>
 
-      <!-- ===== 1. about.html ===== -->
-      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">1. about.html &mdash; Areas of Expertise</h2>
+  <div class="row justify-content-center">
+    <div class="col-xl-10">
+
+      <!-- ===== 1. index.html - Pro card (the style you picked) ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">1. index.html &middot; Pro card (the style you picked)</h2>
       <div class="row">
-        <div class="col-lg-4 mb-4 d-flex flex-column">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
+          <div class="mp-panel mp-panel--roomy flex-grow-1">
+          <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
+          <h2 class="home-pro-title">Every calculator stays free. Pro remembers the job.</h2>
+          <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber; only the color changes)<span class="readout d-block"></span></p>
+          <div class="mp-panel mp-panel--roomy flex-grow-1">
+          <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
+          <h2 class="mp-panel-title">Every calculator stays free. Pro remembers the job.</h2>
+          <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 2. about.html - right-column card ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">2. about.html &middot; right-column card</h2>
+      <div class="row">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
           <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
           <div class="mp-panel about-expertise-card flex-grow-1">
-        <h2>Areas of Expertise</h2>
-        <ul class="mp-checklist">
-          <li>Fiberglass &amp; Composites</li>
-          <li>Divinycel, Coosa, Starboard</li>
-          <li>Nidacore &amp; Wood Construction</li>
-          <li>Advanced Chemical Calculations</li>
-          <li>Custom Fabrication</li>
-          <li>Vinyl Lettering</li>
-        </ul>
+          <h2>Areas of Expertise</h2>
+          <ul class="mp-checklist">
+            <li>Fiberglass &amp; Composites</li>
+            <li>Divinycel, Coosa, Starboard</li>
+            <li>Nidacore &amp; Wood Construction</li>
+            <li>Advanced Chemical Calculations</li>
+            <li>Custom Fabrication</li>
+            <li>Vinyl Lettering</li>
+          </ul>
           </div>
         </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After</strong> (proposed .mp-panel-title)<span class="readout d-block"></span></p>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber)<span class="readout d-block"></span></p>
           <div class="mp-panel flex-grow-1">
-        <h2 class="mp-panel-title">Areas of Expertise</h2>
-        <ul class="mp-checklist">
-          <li>Fiberglass &amp; Composites</li>
-          <li>Divinycel, Coosa, Starboard</li>
-          <li>Nidacore &amp; Wood Construction</li>
-          <li>Advanced Chemical Calculations</li>
-          <li>Custom Fabrication</li>
-          <li>Vinyl Lettering</li>
-        </ul>
-          </div>
-        </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After, in white</strong> (same size, color left white)<span class="readout d-block"></span></p>
-          <div class="mp-panel flex-grow-1">
-        <h2 class="mp-panel-title text-white">Areas of Expertise</h2>
-        <ul class="mp-checklist">
-          <li>Fiberglass &amp; Composites</li>
-          <li>Divinycel, Coosa, Starboard</li>
-          <li>Nidacore &amp; Wood Construction</li>
-          <li>Advanced Chemical Calculations</li>
-          <li>Custom Fabrication</li>
-          <li>Vinyl Lettering</li>
-        </ul>
+          <h2 class="mp-panel-title">Areas of Expertise</h2>
+          <ul class="mp-checklist">
+            <li>Fiberglass &amp; Composites</li>
+            <li>Divinycel, Coosa, Starboard</li>
+            <li>Nidacore &amp; Wood Construction</li>
+            <li>Advanced Chemical Calculations</li>
+            <li>Custom Fabrication</li>
+            <li>Vinyl Lettering</li>
+          </ul>
           </div>
         </div>
       </div>
 
-      <!-- ===== 2. trello-setup.html ===== -->
-      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">2. trello-setup.html &mdash; What this does</h2>
+      <!-- ===== 3. trello-setup.html - top card ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">3. trello-setup.html &middot; top card</h2>
       <div class="row">
-        <div class="col-lg-4 mb-4 d-flex flex-column">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
           <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
           <div class="mp-panel trello-setup-panel flex-grow-1">
-        <h2 class="trello-setup-title">What this does</h2>
-        <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
+          <h2 class="trello-setup-title">What this does</h2>
+          <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
           </div>
         </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After</strong> (proposed .mp-panel-title)<span class="readout d-block"></span></p>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber)<span class="readout d-block"></span></p>
           <div class="mp-panel flex-grow-1">
-        <h2 class="mp-panel-title">What this does</h2>
-        <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
-          </div>
-        </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After, in white</strong> (same size, color left white)<span class="readout d-block"></span></p>
-          <div class="mp-panel flex-grow-1">
-        <h2 class="mp-panel-title text-white">What this does</h2>
-        <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
+          <h2 class="mp-panel-title">What this does</h2>
+          <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
           </div>
         </div>
       </div>
 
-      <!-- ===== 3. calculators.html ===== -->
-      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">3. calculators.html &mdash; Need a Different Calculator?</h2>
+      <!-- ===== 4. trello-setup.html - bottom card ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">4. trello-setup.html &middot; bottom card</h2>
       <div class="row">
-        <div class="col-lg-4 mb-4 d-flex flex-column">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
+          <div class="mp-panel trello-setup-panel trello-setup-cta mt-0 flex-grow-1">
+          <div class="trello-setup-cta-text">
+            <h2 class="trello-setup-title">Connected? Send your first card.</h2>
+            <p class="trello-setup-panel-copy">Open the Repair Estimator, build a quote, and use Add to Trello.</p>
+          </div>
+          <a href="estimate.html" class="mp-btn mp-btn--primary">Open the Estimator</a>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber)<span class="readout d-block"></span></p>
+          <div class="mp-panel trello-setup-cta mt-0 flex-grow-1">
+          <div class="trello-setup-cta-text">
+            <h2 class="mp-panel-title">Connected? Send your first card.</h2>
+            <p class="trello-setup-panel-copy">Open the Repair Estimator, build a quote, and use Add to Trello.</p>
+          </div>
+          <a href="estimate.html" class="mp-btn mp-btn--primary">Open the Estimator</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 5. calculators.html - bottom card ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">5. calculators.html &middot; bottom card</h2>
+      <div class="row">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
           <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
           <div class="mp-panel calc-index-cta mt-0 flex-grow-1">
-        <div class="calc-index-cta-text">
-          <h2 class="calc-index-cta-title">Need a Different Calculator?</h2>
-          <p class="calc-index-cta-copy">Can't find the specific calculator you need for your marine project? Let us know &mdash; we might be able to develop it for you.</p>
-        </div>
-        <a class="mp-btn mp-btn--primary calc-index-cta-btn" href="contact.html?subject=Calculator%20Request">Request a Calculator</a>
+          <div class="calc-index-cta-text">
+            <h2 class="calc-index-cta-title">Need a Different Calculator?</h2>
+            <p class="calc-index-cta-copy">Can't find the specific calculator you need for your marine project? Let us know &mdash; we might be able to develop it for you.</p>
+          </div>
+          <a class="mp-btn mp-btn--primary calc-index-cta-btn" href="contact.html?subject=Calculator%20Request">Request a Calculator</a>
           </div>
         </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After</strong> (proposed .mp-panel-title)<span class="readout d-block"></span></p>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber)<span class="readout d-block"></span></p>
           <div class="mp-panel calc-index-cta mt-0 flex-grow-1">
-        <div class="calc-index-cta-text">
-          <h2 class="mp-panel-title">Need a Different Calculator?</h2>
-          <p class="calc-index-cta-copy">Can't find the specific calculator you need for your marine project? Let us know &mdash; we might be able to develop it for you.</p>
-        </div>
-        <a class="mp-btn mp-btn--primary calc-index-cta-btn" href="contact.html?subject=Calculator%20Request">Request a Calculator</a>
+          <div class="calc-index-cta-text">
+            <h2 class="mp-panel-title">Need a Different Calculator?</h2>
+            <p class="calc-index-cta-copy">Can't find the specific calculator you need for your marine project? Let us know &mdash; we might be able to develop it for you.</p>
           </div>
-        </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After, in white</strong> (same size, color left white)<span class="readout d-block"></span></p>
-          <div class="mp-panel calc-index-cta mt-0 flex-grow-1">
-        <div class="calc-index-cta-text">
-          <h2 class="mp-panel-title text-white">Need a Different Calculator?</h2>
-          <p class="calc-index-cta-copy">Can't find the specific calculator you need for your marine project? Let us know &mdash; we might be able to develop it for you.</p>
-        </div>
-        <a class="mp-btn mp-btn--primary calc-index-cta-btn" href="contact.html?subject=Calculator%20Request">Request a Calculator</a>
+          <a class="mp-btn mp-btn--primary calc-index-cta-btn" href="contact.html?subject=Calculator%20Request">Request a Calculator</a>
           </div>
         </div>
       </div>
 
-      <!-- ===== 4. index.html ===== -->
-      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">4. index.html &mdash; Every calculator stays free. Pro remembers the job.</h2>
+      <!-- ===== 6. services.html - estimator card ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">6. services.html &middot; estimator card</h2>
       <div class="row">
-        <div class="col-lg-4 mb-4 d-flex flex-column">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
           <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
-          <div class="mp-panel mp-panel--roomy flex-grow-1">
-        <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
-        <h2 class="home-pro-title">Every calculator stays free. Pro remembers the job.</h2>
-        <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+          <div class="mp-panel services-estimator-panel flex-grow-1">
+          <h5>Industries I&apos;ve built for (or can):</h5>
+          <div class="services-estimator-industries">
+            <div class="services-estimator-industries-col">
+              <div>Marine Repair</div>
+              <div>Auto Body &amp; Detailing</div>
+              <div>HVAC &amp; Plumbing</div>
+              <div>Landscaping &amp; Lawn Care</div>
+              <div>Roofing &amp; Construction</div>
+            </div>
+            <div class="services-estimator-industries-col">
+              <div>Event Production</div>
+              <div>IT &amp; Tech Services</div>
+              <div>Cleaning Services</div>
+              <div>Custom Fabrication</div>
+              <div>Any Trade or Service</div>
+            </div>
+          </div>
+          <hr class="services-estimator-divider">
+          <p class="services-estimator-footnote">Pricing depends on scope. Most builds start at a flat project rate with optional monthly hosting. <a href="contact.html?subject=Inquiry%%20about%%20Custom%%20Estimator">Contact me</a> for a free consultation.</p>
           </div>
         </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After</strong> (proposed .mp-panel-title)<span class="readout d-block"></span></p>
-          <div class="mp-panel mp-panel--roomy flex-grow-1">
-        <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
-        <h2 class="mp-panel-title">Every calculator stays free. Pro remembers the job.</h2>
-        <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber)<span class="readout d-block"></span></p>
+          <div class="mp-panel flex-grow-1">
+          <h5 class="mp-panel-title">Industries I&apos;ve built for (or can):</h5>
+          <div class="services-estimator-industries">
+            <div class="services-estimator-industries-col">
+              <div>Marine Repair</div>
+              <div>Auto Body &amp; Detailing</div>
+              <div>HVAC &amp; Plumbing</div>
+              <div>Landscaping &amp; Lawn Care</div>
+              <div>Roofing &amp; Construction</div>
+            </div>
+            <div class="services-estimator-industries-col">
+              <div>Event Production</div>
+              <div>IT &amp; Tech Services</div>
+              <div>Cleaning Services</div>
+              <div>Custom Fabrication</div>
+              <div>Any Trade or Service</div>
+            </div>
           </div>
-        </div>
-        <div class="col-lg-4 mb-4 d-flex flex-column">
-          <p class="text-muted small mb-2" data-readout><strong>After, in white</strong> (same size, color left white)<span class="readout d-block"></span></p>
-          <div class="mp-panel mp-panel--roomy flex-grow-1">
-        <span class="home-pro-eyebrow">Free forever &middot; Pro when you need it</span>
-        <h2 class="mp-panel-title text-white">Every calculator stays free. Pro remembers the job.</h2>
-        <p class="home-pro-copy">Run any mix calculation without signing in. Add an account when you want the numbers to follow you from the shop to the invoice.</p>
+          <hr class="services-estimator-divider">
+          <p class="services-estimator-footnote">Pricing depends on scope. Most builds start at a flat project rate with optional monthly hosting. <a href="contact.html?subject=Inquiry%%20about%%20Custom%%20Estimator">Contact me</a> for a free consultation.</p>
           </div>
         </div>
       </div>
 
+      <!-- ===== 7. contact.html - right-column card ===== -->
+      <h2 class="mp-section-title mp-section-title--small text-left mt-4 mb-3">7. contact.html &middot; right-column card</h2>
+      <div class="row">
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>Before</strong> (today, as the live page renders it)<span class="readout d-block"></span></p>
+          <div class="mp-panel flex-grow-1">
+          <h2 class="mp-card-title text-white">Service Area</h2>
+          <p class="text-white-50 mt-3 mb-0">Mobile marine repair across Central Florida &mdash; from the Cape to Ormond Beach. Travel beyond that area is available at the client&rsquo;s expense.</p>
+          <div class="mp-compare-box d-flex justify-content-between align-items-center mt-4">
+            <span class="text-white-50 small">Assessments</span>
+            <span class="font-weight-bold small">Fridays, on site</span>
+          </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4 d-flex flex-column">
+          <p class="text-muted small mb-2" data-readout><strong>New</strong> (index.html&rsquo;s title style, in amber)<span class="readout d-block"></span></p>
+          <div class="mp-panel flex-grow-1">
+          <h2 class="mp-panel-title">Service Area</h2>
+          <p class="text-white-50 mt-3 mb-0">Mobile marine repair across Central Florida &mdash; from the Cape to Ormond Beach. Travel beyond that area is available at the client&rsquo;s expense.</p>
+          <div class="mp-compare-box d-flex justify-content-between align-items-center mt-4">
+            <span class="text-white-50 small">Assessments</span>
+            <span class="font-weight-bold small">Fridays, on site</span>
+          </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </main>
 
 <!-- Fills each "readout" with the heading's computed size, weight, color and space below, read from the browser. -->
@@ -172,7 +243,7 @@
   }
   function fill() {
     document.querySelectorAll('[data-readout]').forEach(function (cap) {
-      var h = cap.nextElementSibling.querySelector('h2');
+      var h = cap.nextElementSibling.querySelector('h2, h5');
       var cs = getComputedStyle(h);
       var px = parseFloat(cs.fontSize), hx = hex(cs.color);
       cap.querySelector('.readout').innerHTML =

@@ -5580,12 +5580,16 @@ body,
   .mp-panel--roomy{padding:1.75rem;}
 }
 
-/* .mp-panel-title: the heading inside a dark .mp-panel. Same values as
-   .services-estimator-panel h5. Preview only for now: used on
-   _preview-panel-titles.html and on no real page yet. */
+/* .mp-panel-title: the heading inside a dark .mp-panel. Candidate style:
+   the index.html Pro panel title (.home-pro-title) in the site's amber.
+   Preview only for now: used on _preview-panel-titles.html and on no real
+   page yet. */
 .mp-panel-title{
-  font-family:var(--chrome-font-sans);font-size:1.1rem;font-weight:700;
-  color:var(--chrome-signal-400);margin:0 0 1rem;
+  font-family:var(--chrome-font-sans);font-size:1.75rem;font-weight:800;
+  line-height:1.2;color:var(--chrome-signal-400);margin:0 0 .75rem;max-width:38rem;
+}
+@media (max-width:575.98px){
+  .mp-panel-title{font-size:1.4rem;}
 }
 
 /* ============================================================
