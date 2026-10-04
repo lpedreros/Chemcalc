@@ -316,11 +316,11 @@
             <div class="mp-input-row mt-3">
               <div class="mp-input-group">
                 <label class="mp-input-label" for="availabilityTimeFrom">From</label>
-                <input type="time" id="availabilityTimeFrom" class="mp-select" required />
+                <input type="time" id="availabilityTimeFrom" class="mp-select" step="600" required />
               </div>
               <div class="mp-input-group">
                 <label class="mp-input-label" for="availabilityTimeTo">To</label>
-                <input type="time" id="availabilityTimeTo" class="mp-select" required />
+                <input type="time" id="availabilityTimeTo" class="mp-select" step="600" required />
               </div>
             </div>
             <!-- The three controls above have no name on purpose: only this combined value is sent to Formspree. -->
@@ -497,23 +497,49 @@
     return ((h % 12) || 12) + ':' + p[1] + ' ' + (h < 12 ? 'AM' : 'PM');
   }
 
+  // The time fields step by 10 minutes (step="600"). A time typed off that grid is rounded UP to
+  // the next 10-minute mark: "08:14" -> "08:20"; "08:20" stays; "23:55" rolls over to "00:00".
+  function roundUp(v) {
+    if (!v) return v;
+    var p = v.split(':');
+    var mins = parseInt(p[0], 10) * 60 + parseInt(p[1], 10) + (parseInt(p[2], 10) > 0 ? 1 : 0);
+    mins = (Math.ceil(mins / 10) * 10) % 1440;
+    return pad(Math.floor(mins / 60)) + ':' + pad(mins % 60);
+  }
+
   // Result, e.g. "Friday, October 9, 2026 · 8:00 AM–11:00 AM"
+  // Works from the rounded times, so the combined value and the end-after-start check
+  // never see a raw off-grid time, even while a field still shows what was typed.
   function sync() {
-    to.setCustomValidity(from.value && to.value && to.value <= from.value ? 'Please choose an end time after the start time.' : '');
+    var f = roundUp(from.value), t = roundUp(to.value);
+    to.setCustomValidity(f && t && t <= f ? 'Please choose an end time after the start time.' : '');
     var parts = [];
     if (dateSel.value) {
       var d = dateSel.value.split('-');
       parts.push('Friday, ' + MONTHS[parseInt(d[1], 10) - 1] + ' ' + parseInt(d[2], 10) + ', ' + d[0]);
     }
-    if (from.value && to.value) parts.push(clock(from.value) + '–' + clock(to.value));
-    else if (from.value) parts.push('from ' + clock(from.value));
-    else if (to.value) parts.push('until ' + clock(to.value));
+    if (f && t) parts.push(clock(f) + '–' + clock(t));
+    else if (f) parts.push('from ' + clock(f));
+    else if (t) parts.push('until ' + clock(t));
     combined.value = parts.join(' · ');
+  }
+
+  // Writes the rounded time back into the field. Done when the person leaves the field, or presses
+  // Enter in it, and not on every keystroke: typing "14" into the minutes passes through 08:01,
+  // and rewriting that would turn the 14 into 10.
+  function settle(el) {
+    var r = roundUp(el.value);
+    if (r !== el.value) el.value = r;
+    sync();
   }
 
   [dateSel, from, to].forEach(function(el) {
     el.addEventListener('change', sync);
     el.addEventListener('input', sync);
+  });
+  [from, to].forEach(function(el) {
+    el.addEventListener('blur', function() { settle(el); });
+    el.addEventListener('keydown', function(e) { if (e.key === 'Enter') { settle(from); settle(to); } });
   });
   form.addEventListener('submit', sync);
   sync();
