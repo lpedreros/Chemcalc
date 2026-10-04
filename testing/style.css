@@ -5580,10 +5580,11 @@ body,
   .mp-panel--roomy{padding:1.75rem;}
 }
 
-/* .mp-panel-title: the heading inside a dark .mp-panel. Candidate style:
-   the index.html Pro panel title (.home-pro-title) in the site's amber.
-   Preview only for now: used on _preview-panel-titles.html and on no real
-   page yet. */
+/* .mp-panel-title: the shared title for the dark .mp-panel boxes (Home Pro
+   panel, About expertise card, Calculators and Trello-setup call-to-action
+   boxes, Services estimator panel, Contact service area). Large, extra bold,
+   amber, 1.4rem under 576px. It does not depend on the heading tag; h2 and h5
+   both use it. */
 .mp-panel-title{
   font-family:var(--chrome-font-sans);font-size:1.75rem;font-weight:800;
   line-height:1.2;color:var(--chrome-signal-400);margin:0 0 .75rem;max-width:38rem;
@@ -5937,10 +5938,6 @@ body,
   color:var(--chrome-signal-400);text-transform:uppercase;letter-spacing:.04em;
   margin:0 0 .75rem;
 }
-.home-pro-title{
-  font-family:var(--chrome-font-sans);font-size:1.75rem;font-weight:800;
-  line-height:1.2;margin:0 0 .75rem;max-width:38rem;
-}
 .home-pro-copy{font-size:1rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0 0 1.5rem;max-width:38rem;}
 .home-pro-ctas{display:flex;flex-wrap:wrap;gap:.85rem;margin:0 0 1.75rem;}
 
@@ -5953,10 +5950,6 @@ body,
 }
 .home-pro-checklist li{display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:rgba(255,255,255,.85);}
 .home-pro-checklist svg{flex:none;width:1.1rem;height:1.1rem;color:var(--chrome-signal-400);margin-top:.1rem;}
-
-@media (max-width:575.98px){
-  .home-pro-title{font-size:1.4rem;}
-}
 
 /* ============================================================
    CALCULATORS INDEX PAGE-SPECIFIC STYLES (calculators.html)
@@ -6012,7 +6005,6 @@ body,
   display:flex;flex-wrap:wrap;gap:1.25rem;align-items:center;justify-content:space-between;
 }
 .calc-index-cta-text{max-width:34rem;}
-.calc-index-cta-title{font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:800;margin:0 0 .4rem;}
 .calc-index-cta-copy{font-size:.92rem;line-height:1.6;color:rgba(255,255,255,.72);margin:0;}
 
 /* The button is .mp-btn .mp-btn--primary; this only keeps it from
@@ -6021,7 +6013,6 @@ body,
 
 @media (max-width:575.98px){
   .calc-index-cta{padding:1.5rem;}
-  .calc-index-cta-title{font-size:1.15rem;}
   /* MEKP (first) card's real height ends close enough to the fixed
      floating cluster's occupied band (#chemcalc-chatbot, bottom:5.5rem,
      56px tall) that the Awlgrip card's tag pill lands inside it at
@@ -6092,12 +6083,6 @@ body,
 .services-estimator-features{margin:0 0 1.75rem;}
 .services-estimator-features li{color:var(--chrome-ink-700);}
 
-/* The box is .mp-panel (SHARED SITE COMPONENTS); this class stays as the
-   hook for the heading and list rules below. */
-.services-estimator-panel h5{
-  font-family:var(--chrome-font-sans);font-size:1.1rem;font-weight:700;
-  color:var(--chrome-signal-400);margin:0 0 1rem;
-}
 .services-estimator-industries{
   display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;
   font-size:.9rem;line-height:2;color:rgba(255,255,255,.85);
@@ -6155,12 +6140,6 @@ body,
 /* ---------- Sidebar (right column) ---------- */
 .about-sidebar{display:flex;flex-direction:column;gap:1.5rem;}
 
-/* The box is .mp-panel (SHARED SITE COMPONENTS); this class stays as the
-   hook for the heading and list rules below. */
-.about-expertise-card h2{
-  font-family:var(--chrome-font-sans);font-size:1.2rem;font-weight:700;
-  color:#ffffff;margin:0 0 1.1rem;
-}
 /* The list is .mp-checklist. */
 
 /* The card itself is .mp-card .mp-card--flat; this class stays only as the
