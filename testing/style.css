@@ -4987,14 +4987,14 @@ body,
 /* .mp-panel-title: the shared title for the dark .mp-panel boxes (Home Pro
    panel, About expertise card, Calculators and Trello-setup call-to-action
    boxes, Services estimator panel, Contact service area). Extra bold, amber,
-   1.3rem at every width. It does not depend on the heading tag; h2 and h5
-   both use it. */
+   1.3rem at every width. text-wrap:balance evens out the lines of a wrapped
+   title so it does not end on one lone word (a browser without support just
+   wraps normally). It does not depend on the heading tag; h2 and h5 both
+   use it. */
 .mp-panel-title{
   font-family:var(--chrome-font-sans);font-size:1.3rem;font-weight:800;
   line-height:1.2;color:var(--chrome-signal-400);margin:0 0 .75rem;max-width:38rem;
-}
-@media (max-width:575.98px){
-  .mp-panel-title{font-size:1.3rem;}
+  text-wrap:balance;
 }
 
 /* ============================================================
