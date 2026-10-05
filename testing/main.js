@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // inline). A Pro user logging out mid-session gets their interactive
     // stars reset to unfavorited rather than left showing a stale ★ with
     // no session backing it. This is unrelated to affiliate_materials.
-    // is_favorite (the "favorite" tag / isPreFavorite below) -- that
+    // is_favorite (the "favorite" tag / the .my-favorite star below) -- that
     // sitewide editorial star is untouched, unconditional, same for every
     // visitor regardless of tier.
     let favoritesAuthListenerBound = false;
@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Per-account favorites are Pro-only. Pure synchronous function over
     // the shared profile now (no network call of its own) -- same
-    // tier/subscription_status pattern as global-auth.js's own isPro
+    // tier/subscription_status pattern as global-auth.js's own inline Pro
     // check. No longer async, for the same reason as getCurrentSession().
     function isCurrentUserPro() {
         if (typeof window.getAuthState !== 'function') return false;
@@ -342,9 +342,10 @@ document.addEventListener("DOMContentLoaded", function() {
         return !!(profile && (profile.tier === 'pro' || profile.subscription_status === 'active'));
     }
 
-    // Logged-out (and fallback-path-item) source of truth: localStorage,
-    // matched by href -- same read this function replaces used to do inline.
-    // Also used to revert visual state on logout, so it must set BOTH
+    // Fallback-path-item source of truth: localStorage, matched by href --
+    // same read this function replaces used to do inline. Only called from
+    // applyFavoritesProGate()'s Pro branch (logout and non-Pro go through
+    // resetInteractiveStarsToUnfavorited()), but it still sets BOTH
     // directions (★ and ☆), not only add stars for matches.
     function syncFavoriteStarsFromLocalStorage(syncStartedAt) {
         if (syncStartedAt === undefined) syncStartedAt = Date.now();

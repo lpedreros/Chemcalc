@@ -1032,7 +1032,7 @@ function calcSectionCost(bodyId) {
   return total;
 }
 
-/* -- Auth (stub - replace with real backend) -- */
+/* -- Auth (real Supabase auth; see auth.js) -- */
 /* doLogin / doLogout / doSignup / doGoogleLogin are defined in auth.js */
 
 /* -- Auth tab switcher -- */

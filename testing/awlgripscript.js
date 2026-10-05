@@ -412,8 +412,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var convCC = baseCC * conv;
     var redCC = baseCC * red;
 
-    // Calculate accelerator for Awlcraft 2000 only -- Pro-Cure X-98
-    // (default) or X-138, per #acceleratorType.
+    // Calculate accelerator (shown and logged for Awlcraft 2000 only) --
+    // Pro-Cure X-98 (default) or X-138, per #acceleratorType.
     // X-98:  0.5 fl oz per 2 gallons (256 fl oz) of mixed topcoat (base + converter) -> 0.5/256 = 0.001953125
     // X-138: 1 fl oz per 2 gallons (256 fl oz) of mixed topcoat -> 1/256 = 0.00390625
     var mixedTopcoatCC = baseCC + convCC; // base + converter (before reducer)
@@ -442,10 +442,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // a specific color/tint code for Awlgrip Topcoat, Awlcraft 2000/3000,
     // or Awlcraft SE -- these are custom-tinted (Awlmix) products with no
     // single fixed part number; "no fixed code" is the
-    // correct, complete answer there, not a gap. 545 Epoxy Primer is the
-    // one product with fixed base codes (no color-tinting/Awlmix step),
-    // so both stocked colors are listed since there's no color selector
-    // in this UI to pick one.
+    // correct, complete answer there, not a gap. 545 Epoxy Primer (no
+    // color-tinting/Awlmix step) and Awlgrip HDT Clear have fixed base
+    // codes; 545 lists both stocked colors since there's no color
+    // selector in this UI to pick one.
     var baseLabel = "Paint Base";
     var convLabel = "Converter / Catalyst";
     var redLabel = "Reducer";

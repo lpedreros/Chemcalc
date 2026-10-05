@@ -2,10 +2,11 @@
 // Adds a site-wide login indicator to the nav on every page.
 // Shows "Hi, [Name]" when logged in, or "Log In / Sign Up" when not.
 // Load this AFTER supabase-client.js on every page.
-// It is self-contained — it does not depend on auth.js or estimate.js.
+// It does not depend on auth.js or estimate.js, but it does read the shared auth
+// state that global-account-modal.js publishes (getAuthState(), chemcalc:authchange).
 //
 // Usage: <script src="/global-auth.js"></script>
-//        (place after supabase-client.js, before closing </body>)
+//        (place after supabase-client.js; Library/head-common.lbi loads both in <head>)
 
 (function () {
   'use strict';
@@ -81,8 +82,9 @@
   // own listener, per commit 4b6f080's diagnostic logging) traced back to.
   // Now reads from global-account-modal.js's shared getAuthState()/
   // chemcalc:authchange instead -- that script loads before this one on
-  // every real page (confirmed via the actual <script> order, all 20
-  // pages, not assumed).
+  // 15 of the 20 pages (estimate.html, cookie.html, privacy.html, terms.html
+  // and trello-setup.html load it after), which is fine because init() below
+  // waits for DOMContentLoaded.
   async function init() {
     injectIndicator();
 
@@ -103,8 +105,9 @@
   }
 
   // ── 6. Autofill email fields for logged-in users ─────────────────────────
-  // Fills any input with id="emailInput" (the "Email Me" box in email-results.js)
-  // and id="clientEmail" (the estimator client email field).
+  // Fills any input with id="emailInput" (no element has that id now; the "Email Me"
+  // box in email-results.js is id="captureEmailInput") and id="clientEmail" (the
+  // estimator client email field).
   function autofillEmailFields(email) {
     var fields = ['emailInput', 'clientEmail'];
     fields.forEach(function (id) {

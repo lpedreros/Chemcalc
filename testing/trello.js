@@ -1,8 +1,9 @@
 /* ============================================================
    trello.js — ChemCalc Estimator Trello Integration
    Handles: OAuth token flow, board/list picker,
-            PDF generation (jsPDF), Supabase Storage upload,
-            Trello card creation with PDF attachment
+            Trello card creation (with a link back to the saved estimate).
+            Also holds PDF generation (jsPDF) and Supabase Storage upload
+            helpers, which addToTrello() does not currently call
    ============================================================ */
 
 /* -- State --------------------------------------------------- */
@@ -16,7 +17,7 @@ var _trelloListName  = '';
 var _trelloAuthWindow = null;
 
 /* -- Initialise from saved profile --------------------------
-   Called by auth.js after loadProfile() sets currentProfile.
+   Called by populateBizInfoModal() in estimate.js with the profile from getProfile().
    ----------------------------------------------------------- */
 function trelloInit(profile) {
   if (!profile) return;

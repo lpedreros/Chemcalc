@@ -93,7 +93,7 @@ let _lastLoggedSignature = null;
 // wait and log the current state right away instead — used for actions
 // that mean the user is done, not mid-exploration.
 //
-// @param {string} calculator   - Identifier: 'awlgrip' | 'mekp' | 'clothcalc' | 'epifanes'
+// @param {string} calculator   - Identifier: 'awlgrip' | 'alexseal' | 'mekp' | 'clothcalc' | 'epifanes'
 // @param {object} inputs       - Plain object of all input values at time of calculation
 // @param {object} results      - Plain object of all output values shown to the user
 // @param {boolean} [immediate] - Skip the debounce and insert right away (default false)

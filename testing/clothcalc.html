@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Fiberglass Cloth Calculator's page-scoped rules moved into
          /style.css's "CLOTHCALC PAGE-SPECIFIC STYLES" section
-         (2026-09-14 single-file consolidation) -- clothcalc.css.deprecated
-         is the pre-merge original, no longer linked. -->
+         (2026-09-14 single-file consolidation) -- the pre-merge
+         clothcalc.css is deleted (see git history), not linked. -->
     <!-- Print Styles -->
 
     <!-- Open Graph Meta Tags -->
@@ -305,7 +305,7 @@
                  "imperial"/"metric" in sync with it, so every existing
                  function that reads resultSystemSelect.value
                  (updateInputOptions, updateMaterialOptions,
-                 populateResultUnitOptions, print summary, etc.) keeps
+                 populateResultUnitOptions, calculateResin, etc.) keeps
                  working unmodified. See clothcalc.js's
                  initResultSystemToggle() for the sync logic. -->
             <div class="mp-unit-toggle mp-unit-toggle--compact" role="group" aria-label="Measurement system">
@@ -842,9 +842,10 @@
         // block's own #printQrCode target was silently valid before only
         // because that id used to be static markup inside the old
         // #clothcalcPrintLetterhead section; now that #printQrCode is
-        // built fresh by print-letterhead.js's render() (only once a
-        // calculation actually runs), this ran before that ever happened
-        // and threw on every page load -- new QRCode(null, {...}) throws
+        // built fresh by print-letterhead.js's render() (first called on page
+        // load, via clothcalc.js's calculateResin()), this ran before that
+        // ever happened and threw on every page load -- new QRCode(null,
+        // {...}) throws
         // inside the library's own constructor. Removed rather than
         // patched, since clothcalc.js's own handler already does
         // everything this one did, correctly.

@@ -1,15 +1,16 @@
 // mekpcalc-ui.js
 //
 // MEKP Calculator — Phase 1 re-platform (ChemCalc_FullSite_Blueprint.md).
-// Page-scoped presentation logic plus one small compatibility shim, all
-// built strictly on top of calculateMEKP()'s existing output. Nothing
-// here performs MEKP math, and nothing here touches mekscript.js.
+// Page-scoped presentation logic plus two small compatibility shims (the
+// temperature-unit and measurement-system toggles), all built strictly on
+// top of calculateMEKP()'s existing output. Nothing here performs MEKP
+// math, and nothing here touches mekscript.js.
 //
-// Replaces mekpcalc-enhance.js (orphaned — flagged for deletion). Same
-// behavior, re-platformed onto Phase 0's sitewide --chrome-* tokens
-// instead of that file's page-scoped --mekp-* duplicate (see
-// mekpcalc.css) — the temperature bands and on-target threshold below
-// are the real site's own (unchanged), not MP's fabricated ones.
+// Replaced mekpcalc-enhance.js (since deleted). Same behavior,
+// re-platformed onto Phase 0's sitewide --chrome-* tokens instead of that
+// file's page-scoped --mekp-* duplicate — the temperature bands and
+// on-target threshold below are the real site's own (unchanged), not MP's
+// fabricated ones.
 //
 //   1. Temperature-unit toggle shim — mekscript.js reads
 //      document.getElementById('tempUnit').value to know the current
@@ -22,13 +23,12 @@
 //      "metric"). Site owner's explicit instruction; the approved
 //      mockup itself still uses a <select> here.
 //   2. Ambient-temperature advisory — reads the temp field + unit,
-//      renders one of five fixed messages. Presentation only.
+//      renders one of six fixed messages. Presentation only.
 //   3. Results panel — hero cc value, drops sub-line, comparison grid,
 //      status pill, and on/off-recommendation color coding on the
 //      catalyst numbers themselves — all parsed from the real
 //      #mekpRecommended / #mekpPercentage / #mekpCcs / #mekpDrops
-//      strings calculateMEKP() already writes (same extraction approach
-//      as mekpcalc-print-summary.js).
+//      strings calculateMEKP() already writes.
 //   4. Slider fill gradient — a CSS custom property set from the
 //      slider's own value/min/max.
 //   5. Duratec-locked message — shown only while the checkbox is
@@ -184,7 +184,7 @@
   }
 
   // ---------- 2. Ambient-temperature advisory ----------
-  // Breakpoints are the LIVE SITE's own (60 / 65 / 75 / 85°F), not MP's
+  // Breakpoints are the LIVE SITE's own (60 / 65 / 75 / 85 / 95°F), not MP's
   // fabricated ones (60/70/80/90 in useMekpCalculator.ts) — frozen math,
   // never ported. Input is converted to °F first when the toggle is set
   // to Celsius.

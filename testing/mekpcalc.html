@@ -80,8 +80,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- MEKP Calculator's page-scoped rules moved into /style.css's
        "MEKPCALC PAGE-SPECIFIC STYLES" section (2026-09-14 single-file
-       consolidation) -- mekpcalc.css.deprecated is the pre-merge original,
-       no longer linked. -->
+       consolidation) -- the old standalone mekpcalc.css no longer exists
+       (see git history for the pre-merge original). -->
 
 <!-- Adsense
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1179454606770448"
@@ -434,8 +434,7 @@
           <!-- Inline next to the title, matching ResultsPanel.tsx exactly —
                not a separate full-width bar. Presentation only, parsed by
                mekpcalc-ui.js from the real strings calculateMEKP()
-               writes into the four sr-only elements below (same
-               extraction approach as mekpcalc-print-summary.js). No
+               writes into the four sr-only elements below. No
                calculation logic lives here. -->
           <div class="mekp-result-status" id="mekpStatusPill" aria-live="polite">On recommendation</div>
         </div>
@@ -458,8 +457,8 @@
           </div>
 
           <!-- Real calculateMEKP() output — left in the DOM verbatim so
-               mekscript.js's getElementById targets (and the print
-               letterhead's own parsing of these same strings) keep
+               mekscript.js's getElementById targets (and mekpcalc-ui.js's
+               and email-results.js's own reads of these same strings) keep
                working completely unmodified. Visually hidden but still
                announced to assistive tech in full-sentence form. -->
           <p id="mekpRecommended" class="sr-only">Recommended MEKP % (based on temperature):</p>
@@ -755,10 +754,10 @@
 <script src="print-letterhead.js"></script>
 <script src="material-selection.js"></script>
 <script src="mekscript.js"></script>
-<!-- Unit toggle shim, temp advisory, results panel restructure, slider
-     gradient, Duratec locked message, default pre-fill — see file header
-     comment. Loads after mekscript.js so its DOMContentLoaded handler
-     always fires after calculateMEKP() has run. -->
+<!-- Unit toggle shims, temp advisory, results panel restructure, slider
+     gradient, Duratec locked message, slider auto-sync, default pre-fill
+     — see file header comment. Loads after mekscript.js so its
+     DOMContentLoaded handler always fires after calculateMEKP() has run. -->
 <script src="mekpcalc-ui.js"></script>
 <script>
   // Batch-input recap for the "Email me results" button (email-results.js's

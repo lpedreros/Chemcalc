@@ -74,9 +74,9 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
                 calculatorName: calculatorName,
                 resultsHtml: recapHtml + resultsHtml,
                 sourceUrl: window.location.href,
-                // Canonical tracker identifier ("awlgrip"/"clothcalc"/"epifanes"/
-                // "mekp" -- same one calc-tracker.js/meta-pixel.js's
-                // CALCULATOR_MAP already use), NOT calculatorName above --
+                // Canonical tracker identifier ("awlgrip"/"alexseal"/"clothcalc"/
+                // "epifanes"/"mekp" -- same one calc-tracker.js's logCalculation()
+                // takes as its first argument), NOT calculatorName above --
                 // that's just the human-readable display string used for the
                 // email subject and can be reworded without meaning to change
                 // tip selection. Guarded so a missing window._ccLastCalc sends

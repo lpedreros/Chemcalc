@@ -756,7 +756,7 @@
   </div>
 </div>
 
-<!-- bizInfoModal removed — now injected by global-account-modal.js -->
+<!-- bizInfoModal removed — its fields are now the Business tab of the account modal injected by global-account-modal.js -->
 
 <!-- ===== LOG CONFIRM MODAL ===== -->
 <div class="modal-overlay" id="logModal" style="display:none;" onclick="overlayClose(event,'logModal')">
@@ -919,7 +919,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
-<!-- #EndLibraryItem --><!-- Pre-fill contact form from URL params (e.g., broken link reports) -->
+<!-- #EndLibraryItem --><!-- Leftover from contact.html: pre-fills a contact form from URL params, but this page has no #repairs field, so the block below does nothing useful here (and would throw if opened with ?subject=Broken Link Report) -->
 <script>
 (function() {
   var params = new URLSearchParams(window.location.search);

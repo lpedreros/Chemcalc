@@ -781,9 +781,9 @@
 <script src="alexsealscript.js"></script>
 <script>
   // Batch-input recap for "Email me results" -- mirrors
-  // awlgripEmailRecap()'s own reads (productType, methodType,
-  // inputMethod/inputValue/unitType or calculatedAreaDisplay, reducer%,
-  // accelerator on/off) exactly, but called AT SEND TIME via
+  // awlgripEmailRecap()'s reads (product select, methodType,
+  // inputMethod/inputValue/unitType or calculatedAreaDisplay) and adds
+  // reducer % and accelerator on/off, but called AT SEND TIME via
   // email-results.js's sendResultsEmail(), so it always reflects
   // whatever's in the form right now.
   function alexsealEmailRecap() {

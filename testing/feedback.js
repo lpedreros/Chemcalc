@@ -1,10 +1,9 @@
 // Grabs the page's <h1> — the calculator name — regardless of which
-// Bootstrap utility classes it carries. Page markup isn't consistent:
-// awlgrip.html/epifanespoly.html use h1.text-center.mb-4, clothcalc.html
-// uses h1.text-center.my-4, and the redesigned mekpcalc.html uses its
-// own h1.mekp-hero-title with no Bootstrap utility classes at all.
+// classes it carries. Every calculator page (alexseal.html, awlgrip.html,
+// clothcalc.html, epifanespoly.html, mekpcalc.html) currently uses
+// h1.mp-hero-title, but the selector below doesn't depend on that class.
 // The old selector ("h1.text-center.my-4") only matched by coincidence
-// on clothcalc.html and silently fell back to the hardcoded name above
+// on clothcalc.html and silently fell back to the hardcoded name below
 // on every other calculator page. Every calculator page has exactly one
 // <h1> — its title — so a bare "h1" selector works generically.
 function getCalculatorName() {
@@ -22,8 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (feedbackButton) {
         feedbackButton.addEventListener("click", function() {
-            // Pages with a real #feedbackModal (currently mekpcalc.html only)
-            // open it instead of falling back to mailto.
+            // Pages with a real #feedbackModal (alexseal.html, awlgrip.html,
+            // epifanespoly.html and mekpcalc.html) open it instead of falling
+            // back to mailto.
             if (feedbackModal) {
                 const msg = document.getElementById("feedbackMsg");
                 if (msg) { msg.style.display = "none"; }

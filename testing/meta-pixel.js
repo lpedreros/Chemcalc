@@ -14,7 +14,8 @@
 // - If logCalculation doesn't exist (non-calculator page), it just fires PageView
 //
 // WHERE TO LOAD:
-// - In <head>, AFTER supabase-client.js, BEFORE any calculator scripts
+// - In <head>, BEFORE any calculator scripts (Library/head-common.lbi loads it
+//   ahead of supabase-client.js; it has no dependency on that file)
 // - Or at the bottom with the other scripts — order doesn't matter for the
 //   wrapper since it uses DOMContentLoaded to set up
 //

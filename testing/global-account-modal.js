@@ -7,7 +7,7 @@
 //
 // Depends on: supabase-client.js (_sb)
 // On estimate.html, additional tabs (Biz Info, Trello, Materials Library) are shown
-// because estimate.js and materials_library.js provide the required functions.
+// because estimate.js, trello.js and materials_library.js provide the required functions.
 //
 // Usage: <script src="/global-account-modal.js"></script>
 //        Tolerates loading either before or after supabase-client.js --
@@ -27,7 +27,8 @@
   // defines them first, so they won't be overwritten there).
   // ══════════════════════════════════════════════════════════════════════════
 
-  // Internal user/profile cache (used only when auth.js is NOT loaded)
+  // Internal user/profile cache (filled by resolveSession(), which runs on every
+  // page except estimate.html)
   var _cachedUser = null;
   var _cachedProfile = null;
   var _sessionReady = null; // Promise: resolves when profile fetch completes
@@ -138,8 +139,9 @@
   // ── Internal: resolve session and cache user/profile ─────────────────────
   // This runs IMMEDIATELY at script parse time (in <head>) so the profile
   // fetch starts as early as possible. _sessionReady resolves when done.
-  // On estimate.html, auth.js handles this via authInit() — but on other pages
-  // this is the only mechanism.
+  // On estimate.html, auth.js handles this via authInit() and this never runs;
+  // on every other page it does run (history.html also loads auth.js, but
+  // still runs this).
   function resolveSession() {
     _sessionReady = _doResolveSession();
   }
@@ -201,7 +203,8 @@
 
   // ══════════════════════════════════════════════════════════════════════════
   // SELF-CONTAINED STRIPE CHECKOUT FUNCTIONS
-  // On estimate.html, stripe-checkout.js defines these first — guards prevent overwrite.
+  // On estimate.html, stripe-checkout.js loads after this script and redefines
+  // these, so its versions win there.
   // ══════════════════════════════════════════════════════════════════════════
 
   var _selectedPlan = 'monthly';
@@ -273,7 +276,7 @@
   // MODAL INFRASTRUCTURE
   // ══════════════════════════════════════════════════════════════════════════
 
-  // ── Modal open/close (global, replaces estimate.js versions) ─────────────
+  // ── Modal open/close (global; on estimate.html, estimate.js loads after this and redefines them) ─────────────
   window.openModal = function (id) {
     var el = document.getElementById(id);
     if (el) el.style.display = 'flex';
@@ -575,7 +578,8 @@
     if (manageBlock) manageBlock.style.display = (proActive && hasStripeCustomer) ? '' : 'none';
     if (compedBlock) compedBlock.style.display = (proActive && !hasStripeCustomer) ? '' : 'none';
 
-    // Biz Info tab (only on estimator — loadBusinessInfo already populates fields)
+    // Biz Info tab (only on estimator — populateBizInfoModal() in estimate.js fills
+    // the fields; loadBusinessInfo() just returns the saved values)
     if (isEstimatorPage && typeof loadBusinessInfo === 'function') {
       loadBusinessInfo();
     }
@@ -661,9 +665,10 @@
 
 // ── Global Help Modal Opener ─────────────────────────────────────────────────
 // Used by HelpButton.lbi on every page that has a #helpModal.
-// Shows the correct Free or Pro content section based on the user's tier.
-// NOTE: estimate.js also defines this function — the version here is identical
-// so there is no conflict; whichever loads last wins (same behaviour either way).
+// Shows the correct Guest, Free or Pro content section based on the user's tier.
+// NOTE: estimate.js also defines this function, but its version only has the
+// free/pro states (no guest case); on estimate.html it loads after this file, so
+// it wins there.
 // ── openHelpModal (three-state: guest / free / pro) ────────────────────────
 // Shows different help content based on auth state:
 //   - Not logged in → helpContentGuest (Sign Up / Log In)
@@ -673,7 +678,7 @@
 // as primary source. Falls back to getUser()/isPro() from resolveSession().
 // This avoids the race condition where resolveSession() hasn't finished yet.
 function openHelpModal() {
-  // Primary: sessionStorage (set by global-auth.js, which resolves first)
+  // Primary: sessionStorage (set by global-auth.js from the auth state this file resolves)
   var storedTier = sessionStorage.getItem('chemcalc_user_tier');
   // Secondary: internal cache (set by resolveSession in this file)
   var user = (typeof window.getUser === 'function') ? window.getUser() : null;

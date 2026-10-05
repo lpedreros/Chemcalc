@@ -378,9 +378,9 @@
           <!-- Awlcraft 2000/3000 Accelerator (Pro-Cure X-98 / X-138) --
                shown only when awlcraft2000 selected, same gate the
                accelerator result box already uses. Same .mp-unit-toggle
-               pattern as Application Method, synced by
-               awlgripcalc-ui.js's exact methodType-toggle-sync approach,
-               just driving the new hidden #acceleratorType select
+               pattern as Application Method, synced by awlgripcalc-ui.js's
+               simple Measurement System-style toggle (no disabled-state
+               re-sync), driving the hidden #acceleratorType select
                instead of #methodType. -->
           <div id="acceleratorTypeRow" class="mt-3" style="display:none;">
             <div class="mp-slider-label-row">
@@ -836,7 +836,8 @@
 <script src="material-selection.js"></script>
 <script src="awlgripscript.js"></script>
 <!-- Unit-toggle shims (Measurement System / Coating Amount / Application
-     Method) -- see file header comment. Loads after awlgripscript.js so
+     Method / Accelerator) -- see file header comment. Loads after
+     awlgripscript.js so
      its DOMContentLoaded handler always registers (and therefore always
      fires) after awlgripscript.js's, and so its post-calc() re-sync
      listeners see the already-updated DOM state. -->

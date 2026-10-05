@@ -2,9 +2,10 @@
 // Shared tag-driven materials-suggestion engine for MEKP, ClothCalc, and
 // Awlgrip. Replaces each calculator's own hardcoded linksToShowKeys/Set
 // construction with one selection function driven by affiliate_materials'
-// live tags[] and grit columns. Rendering (the forEach -> li/a loop) is
-// untouched on every page -- this file only decides WHICH keys to show,
-// same plain-global convention as calc-tracker.js's logCalculation()/
+// live tags[] and grit columns, and renders the chosen keys as grouped
+// sections via renderGroupedMaterialLinks() (no more per-calculator
+// forEach -> li/a loop). Same plain-global convention as
+// calc-tracker.js's logCalculation()/
 // CC_UNITS (no IIFE wrapper -- calculators call these functions directly
 // by name).
 //

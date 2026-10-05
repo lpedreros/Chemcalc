@@ -543,12 +543,14 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
     };
     // role:'base' -- the catalyst/hardener quantity this calculator's math
-    // actually computes (mekpCcs for polyester/vinylester, see mekpCcs
-    // above). Epoxy has no base item: resinVolumeLiters/hardenerVolumeLiters
+    // actually computes (mekpCcs for polyester/vinylester, set in
+    // calculateResin()). Epoxy has no base item:
+    // resinVolumeLiters/hardenerVolumeLiters
     // are computed, but the hardener has two alternative product choices
     // (fast/slow cure) the code never picks between -- same "multiple
     // competing SKUs, none uniquely the computed one" situation as the
-    // resin-kit links below, so epoxy_resin_base_1gallon and both hardener
+    // resin-kit links above (CLOTHCALC_KEYS_BY_RESIN), so
+    // epoxy_resin_base_1gallon and both hardener
     // keys stay role:'suggestion' (they land in the Materials & Supplies
     // fallback section, not a bucket, since they carry only the 'epoxy'
     // chemistry-identity tag).
@@ -1165,15 +1167,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const printButton = document.getElementById("printButton");
 
-  // #printQrCode is not looked up here: it only exists once
-  // calculateResin() has run its success path at least once (it's built
-  // fresh inside #printLetterhead on every successful calculation, per
-  // print-letterhead.js's render()), and this setup code runs before
-  // the user has entered any dimensions -- so it wouldn't be found yet.
+  // #printQrCode is not looked up here: print-letterhead.js's render()
+  // rebuilds it fresh inside #printLetterhead on every calculateResin()
+  // run (the empty-state letterhead included, so it already exists by the
+  // time this setup code runs), and that innerHTML rebuild would detach
+  // any reference captured here the moment the next calculation runs.
   // The click handler below (already guarded on lastCalculatedResults)
-  // does its own fresh lookup instead, both to sidestep that ordering
-  // issue and because render()'s innerHTML rebuild would detach any
-  // reference captured here the moment a new calculation runs anyway.
+  // does its own fresh lookup instead.
   if (printButton && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", (event) => {
       event.preventDefault();

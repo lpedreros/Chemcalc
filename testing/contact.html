@@ -438,7 +438,7 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <!-- Custom JS -->
-<!-- Pre-fill contact form from URL params (broken link reports from estimator) -->
+<!-- Pre-fill contact form from URL params (broken link reports from estimator; custom link list and assembled kit requests from kits.html) -->
 <script>
 (function() {
   var params = new URLSearchParams(window.location.search);
@@ -469,7 +469,8 @@
 
 <!-- Availability picker: lists the next 8 Fridays and the 10-minute time choices, and combines Date + From + To into the
      hidden #availability field, the one value Formspree receives (format below).
-     It only writes that value; it never stops or delays the form from submitting. -->
+     It does not delay submission; it blocks it only through setCustomValidity on
+     #availabilityTimeTo, when the To time is not after the From time. -->
 <script>
 (function() {
   var form = document.getElementById('contactForm');

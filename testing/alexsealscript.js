@@ -365,7 +365,8 @@ document.addEventListener("DOMContentLoaded", function() {
   // yet (confirmed 2026-09-27) -- they degrade gracefully (console.warn +
   // skip), same as any other missing key; no placeholder URLs inserted.
   // TIER 2 (generic tools/materials) keys are the exact same real,
-  // confirmed-live set awlgripscript.js already uses for Awlgrip Topcoat. */
+  // confirmed-live set awlgripscript.js used for Awlgrip Topcoat before it
+  // moved to material-selection.js's tag-driven selection. */
   function displayAffiliateLinks(productType, methodType) {
     if (!affiliateLinksList || !affiliateLinksContainer || typeof affiliateLinksData === "undefined") {
       console.error("Affiliate links container or data not found.");
@@ -376,7 +377,7 @@ document.addEventListener("DOMContentLoaded", function() {
     affiliateLinksList.innerHTML = "";
     var linksToShowKeys = [];
 
-    // TIER 1 -- Alexseal-branded consumables (unlinked for now, see file header)
+    // TIER 1 -- Alexseal-branded consumables (unlinked for now, see comment above this function)
     var baseKey = null, converterKey = null, reducerKey = null, acceleratorKey = null;
     if (productType === "501") {
       baseKey = "alexseal_501_base";
@@ -404,8 +405,8 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // TIER 2 -- generic tools/materials, real live keys (same set
-    // awlgripscript.js already uses for Awlgrip Topcoat -- two-part
-    // polyurethane, spray + brush/roll, same job type).
+    // awlgripscript.js used for Awlgrip Topcoat before its tag-driven
+    // selection -- two-part polyurethane, spray + brush/roll, same job type).
     linksToShowKeys.push("latex_gloves");
     linksToShowKeys.push("mixing_sticks_reusable");
     linksToShowKeys.push("disposable_paper_cups_125pack");
