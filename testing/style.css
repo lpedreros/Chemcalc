@@ -4953,12 +4953,12 @@ body,
 .mp-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
 .mp-card-text--tight{margin-bottom:0;}
 
-/* .mp-panel: the dark callout box. .home-pro-panel, .calc-index-cta,
-   .services-estimator-panel, and .about-expertise-card were the same box
-   (ink-950 fill, white text, rounded) with the radius and padding drifting
-   between 12px/16px and 1.5rem to 2.5rem. --roomy is the large Home Pro
-   panel; on phones the panel tightens by .25rem and --roomy drops to
-   1.75rem. */
+/* .mp-panel: the dark callout box (ink-950 fill, white text, rounded). The
+   Home Pro panel, the Calculators call-to-action, the Services estimator
+   panel and the About expertise card were once four copies of this box, with
+   the radius and padding drifting between 12px/16px and 1.5rem to 2.5rem;
+   they now share this rule. --roomy is the large Home Pro panel; on phones
+   the panel tightens by .25rem and --roomy drops to 1.75rem. */
 .mp-panel{
   background:var(--chrome-ink-950);border-radius:16px;padding:1.75rem;color:#ffffff;
 }
