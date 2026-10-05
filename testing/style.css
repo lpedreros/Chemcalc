@@ -6187,7 +6187,6 @@ h2.trello-setup-title{
   font-family:var(--chrome-font-sans);font-size:1.25rem;font-weight:700;
   letter-spacing:-.025em;line-height:1.4;color:var(--chrome-ink-900);margin:0;
 }
-.trello-setup-panel h2.trello-setup-title{color:#ffffff;}
 
 /* ---------- Overview row: "What this does" panel + "What you will need" ---------- */
 .trello-setup-overview{--mp-split-cols:1.3fr 1fr;align-items:stretch;}
