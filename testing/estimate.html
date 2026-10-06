@@ -138,7 +138,7 @@
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
 </head>
-<body>
+<body class="mp-canvas">
 
 <!-- ===== PRINT HEADER (only visible when printing) ===== -->
 <div class="print-header-block d-none">
@@ -289,36 +289,36 @@
     </nav>
   </div>
 </header>
-<!-- #EndLibraryItem --><!-- ===== MAIN CONTAINER ===== -->
-<div class="container est-container">
-
-  <!-- Page title -->
-  <div class="est-page-header d-print-none">
-    <h2>Marine Repair Estimator</h2>
-    <p class="est-subtitle">Build professional repair estimates in minutes</p>
-  </div>
+<!-- #EndLibraryItem --><!-- ===== HERO ===== -->
+<div class="mp-hero mp-hero--overlap d-print-none">
+  <h1 class="mp-hero-title">Marine Repair Estimator</h1>
+  <p class="mp-hero-tagline">Build professional repair estimates in minutes</p>
 
   <!-- ===== CUSTOM ESTIMATOR CALLOUT ===== -->
-  <div class="custom-est-callout d-print-none">
+  <p class="mp-hero-copy custom-est-callout">
     <span>&#128736; Need an estimator like this for your own business?</span>
     <a href="services.html#custom-estimator">I can build one for you &rarr;</a>
-  </div>
+  </p>
+</div>
+
+<!-- ===== MAIN CONTAINER ===== -->
+<main class="container est-container">
 
   <!-- ===== TIER BANNER ===== -->
-  <div class="tier-banner d-print-none" id="tierBanner">
+  <div class="tier-banner mp-card mp-card--compact d-print-none" id="tierBanner">
     <span id="tierLabel" class="tier-label">&#128274; Free Plan</span>
     <span class="tier-actions">
-      <button class="btn-tier" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
-      <button class="btn-tier" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
-      <button class="btn-tier pro-feature" id="bizInfoBtn" onclick="openAccountModal()">&#9998; My Account</button>
-      <button class="btn-tier btn-tier-upgrade" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
-      <button class="btn-tier" id="manageSubBtn" style="display:none;" onclick="window.open('https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00','_blank')">&#9881; Manage Subscription</button>
-      <button class="btn-tier" id="manageSubCompedBtn" style="display:none;" disabled title="You're on a complimentary Pro plan. Contact us if you need to make changes.">&#9881; Complimentary Plan</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="bizInfoBtn" onclick="openAccountModal()">&#9998; My Account</button>
+      <button class="btn-tier-upgrade mp-btn mp-btn--primary mp-btn--sm" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm" id="manageSubBtn" style="display:none;" onclick="window.open('https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00','_blank')">&#9881; Manage Subscription</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm" id="manageSubCompedBtn" style="display:none;" disabled title="You're on a complimentary Pro plan. Contact us if you need to make changes.">&#9881; Complimentary Plan</button>
     </span>
   </div>
 
   <!-- ===== TOP TOOLBAR (Job Preset + Customer View Toggle) ===== -->
-  <div class="est-toolbar d-print-none">
+  <div class="est-toolbar mp-card mp-card--compact d-print-none">
     <!-- Format Selector (replaces separate View + Print toggles) -->
     <div class="toolbar-group">
       <label class="est-label mb-0">Format:</label>
@@ -342,13 +342,13 @@
     </div>
     <!-- Save / Load Draft (Pro) -->
     <div class="toolbar-group">
-      <button class="btn-tier pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
-      <button class="btn-tier pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
+      <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
     </div>
   </div>
 
   <!-- ===== ESTIMATE INFO ===== -->
-  <div class="est-card" id="estimateInfoCard">
+  <div class="est-card mp-card" id="estimateInfoCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Estimate Information</span>
       <button class="help-icon" onclick="showHelp('helpEstimateInfo', this)" title="Help">?</button>
@@ -387,7 +387,7 @@
   </div>
 
   <!-- ===== CLIENT INFO ===== -->
-  <div class="est-card" id="clientInfoCard">
+  <div class="est-card mp-card" id="clientInfoCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Client Information</span>
       <button class="help-icon" onclick="showHelp('helpClientInfo', this)" title="Help">?</button>
@@ -421,7 +421,7 @@
   </div>
 
   <!-- ===== VESSEL INFO ===== -->
-  <div class="est-card" id="vesselInfoCard">
+  <div class="est-card mp-card" id="vesselInfoCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Vessel Information</span>
       <button class="help-icon" onclick="showHelp('helpVesselInfo', this)" title="Help">?</button>
@@ -454,7 +454,7 @@
   </div>
 
   <!-- ===== HARD MATERIALS ===== -->
-  <div class="est-card customer-hide" id="materialsCard">
+  <div class="est-card mp-card customer-hide" id="materialsCard">
     <div class="help-popover" id="helpMaterials">
       Add every product used on this job. Set your wholesale cost and markup -- ChemCalc calculates the retail price automatically. Items with a Buy Here link earn the developer affiliate commission when your client orders directly. Save custom items to your template so you never re-enter the same product twice.
     </div>
@@ -492,17 +492,17 @@
         </tfoot>
       </table>
     </div>
-    <button class="btn-add-row d-print-none" onclick="addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials')">+ Add Item</button>
+    <button class="btn-add-row mp-btn mp-btn--outline mp-btn--sm d-print-none" onclick="addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials')">+ Add Item</button>
   </div>
 
   <!-- ===== REPAIR TASKS (injected by JS) ===== -->
   <div id="tasksContainer"></div>
   <div class="text-center mb-4 d-print-none">
-    <button class="btn-add-task" onclick="openTaskStarter()">&#43; Add Another Repair Task</button>
+    <button class="btn-add-task mp-btn mp-btn--primary" onclick="openTaskStarter()">&#43; Add Another Repair Task</button>
   </div>
 
   <!-- ===== SCOPE OF WORK (Pro feature - always visible, locked for free) ===== -->
-  <div class="est-card pro-feature-card" id="scopeCard">
+  <div class="est-card mp-card pro-feature-card" id="scopeCard">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Scope of Work / Notes</span>
       <span class="pro-badge">BETA</span>
@@ -537,7 +537,7 @@
   </div>
 
   <!-- ===== SUMMARY ===== -->
-  <div class="est-card est-summary-card">
+  <div class="est-card est-summary-card mp-panel">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Estimate Summary</span>
       <button class="help-icon" onclick="showHelp('helpSummary', this)" title="Help">?</button>
@@ -622,7 +622,7 @@
   </div>
 
   <!-- ===== LEGAL ===== -->
-  <div class="est-card est-legal-card">
+  <div class="est-card est-legal-card mp-card">
     <div class="est-card-title d-flex justify-content-between align-items-center">
       <span>Terms &amp; Conditions</span>
       <button class="help-icon" onclick="showHelp('helpTerms', this)" title="Help">?</button>
@@ -651,15 +651,15 @@
 
   <!-- ===== ACTION BUTTONS ===== -->
   <div class="est-actions d-print-none">
-    <button class="btn-action btn-print" onclick="window.print()">&#128424; Print</button>
-    <button class="btn-action btn-pdf" onclick="exportPDF()">&#128196; Save as PDF</button>
-    <button class="btn-action btn-share" onclick="shareEstimate()">&#128279; Share</button>
-    <button class="btn-action btn-log pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
-    <button class="btn-action btn-trello pro-feature" id="addToTrelloBtn" onclick="proAddToTrello()">&#128203; Add to Trello</button>
-    <button class="btn-action btn-new" onclick="newEstimate()">&#10010; New Estimate</button>
+    <button class="mp-btn mp-btn--outline" onclick="window.print()">&#128424; Print</button>
+    <button class="mp-btn mp-btn--primary" onclick="exportPDF()">&#128196; Save as PDF</button>
+    <button class="mp-btn mp-btn--outline" onclick="shareEstimate()">&#128279; Share</button>
+    <button class="mp-btn mp-btn--outline pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
+    <button class="btn-trello mp-btn pro-feature" id="addToTrelloBtn" onclick="proAddToTrello()">&#128203; Add to Trello</button>
+    <button class="mp-btn mp-btn--outline" onclick="newEstimate()">&#10010; New Estimate</button>
   </div>
 
-</div><!-- /container -->
+</main><!-- /container -->
 
 <!-- ===== TASK STARTER MODAL ===== -->
 <div class="modal-overlay" id="taskStarterModal" style="display:none;" onclick="overlayClose(event,'taskStarterModal')">

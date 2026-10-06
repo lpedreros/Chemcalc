@@ -434,13 +434,12 @@
    capped at 1280px with 20px side padding (32px from 1024px) that is
    pulled up into the hero's bottom padding.
 
-   <body class="mp-canvas"> opts a page in. The sitewide
+   <body class="mp-canvas"> opts a page in, and every page has. The sitewide
    body{background:#1c1c1e;margin:1em} and .container{...} rules further
-   down are legacy from before the redesign and still serve the one page
-   that has not opted in (the Estimator, estimate.html), so they are
-   overridden only under .mp-canvas, and only on screen so printing is
-   unchanged. The header and footer drop the -1em side margins that
-   cancelled the old body margin.
+   down are legacy from before the redesign and are what printing still
+   uses, so they are overridden only under .mp-canvas, and only on screen so
+   printing is unchanged. The header and footer drop the -1em side margins
+   that cancelled the old body margin.
 
    .mp-canvas > main is the content wrapper. It outranks the legacy
    .container rule (class plus tag against one class) and, being first in
@@ -1084,10 +1083,8 @@ main.mp-calc-app{
    half-row next to one of them. */
 /* The grid is .mp-fields .mp-fields--single (stacked, one column). */
 
-/* Total Volume field card's own label -- the shared field-label pattern
-   (a light .mp-field-card background needs a darker label than
-   .est-label's default #ccc, which is meant for dark surfaces). */
-/* The label is .mp-input-label. */
+/* Total Volume field card's own label is the shared field-label pattern
+   (.mp-input-label). */
 
 /* The product and method notes are .mp-note (SHARED SITE COMPONENTS --
    CALCULATOR PARTS). */
@@ -1410,32 +1407,34 @@ h1 {
 
 /* ============================================================
    ESTIMATE TOOL ADDITIONS
+   estimate.html sits on the Magic Patterns design like every other page:
+   <body class="mp-canvas"> (light canvas), a .mp-hero band, and white
+   .mp-card boxes. The static parts of the page take the shared classes in
+   their markup (.mp-card, .mp-panel for the summary, .mp-btn for the
+   buttons); this section styles what the page's scripts generate (repair
+   task cards, material rows, Buy Here links) and the page-only layout. It
+   also supplies the base .est-label / .est-input / .est-table look that the
+   account, login and feedback modals reuse inside .modal-box on other
+   pages. The printed estimate does not follow any of this: the print rules
+   (ESTIMATE PRINT STYLES, further down) pin the values it had before.
    ============================================================ */
 
-/* -- Page layout -- */
-.est-container { max-width: 1200px; padding-bottom: 3rem; }
-.est-page-header { text-align: center; margin-bottom: 1.5rem; padding-top: 0.5rem; }
-.est-page-header h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
-.est-subtitle { color: #aaa; font-size: 1rem; margin: 0; }
+/* -- Page layout --
+   The wrapper width, centering and side padding are the shared
+   .mp-canvas > main rule (PAGE CANVAS AND CONTENT WRAPPER). */
+.est-container { font-family: var(--chrome-font-sans); color: var(--chrome-ink-900); }
 
-/* -- Tier banner -- */
+/* -- Tier banner (a .mp-card; the buttons are .mp-btn) --
+   .btn-tier-upgrade on the Upgrade button has no rules of its own: it is the
+   hook auth.js uses to show the button to free users and hide it for Pro. */
 .tier-banner {
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 0.5rem;
-  background: #2c2c2e; border: 1px solid #48484a; border-radius: 8px;
-  padding: 0.6rem 1rem; margin-bottom: 1rem; font-size: 0.95rem;
+  flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
 }
-.tier-label { color: #aaa; font-weight: 600; }
-.tier-label.pro { color: #89CFF0; }
-.tier-actions { display: flex; gap: 0.5rem; }
-.btn-tier {
-  background: transparent; border: 1px solid #89CFF0; color: #89CFF0;
-  border-radius: 5px; padding: 0.3rem 0.85rem; font-size: 0.88rem;
-  cursor: pointer; transition: background 0.2s;
-}
-.btn-tier:hover { background: rgba(137,207,240,0.12); }
-.btn-tier-upgrade { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
-.btn-tier-upgrade:hover { background: #70b8d0; color: #1c1c1e; }
+.tier-label { color: var(--chrome-ink-600); font-weight: 600; font-size: 0.95rem; }
+.tier-label.pro { color: var(--chrome-sea-600); }
+.tier-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.tier-actions .mp-btn[disabled] { opacity: 0.6; cursor: default; transform: none; }
 
 /* -- Beta Crew badge -- */
 .beta-crew-badge {
@@ -1464,33 +1463,32 @@ h1 {
   flex-shrink: 0;
 }
 
-/* -- Toolbar -- */
+/* -- Toolbar (a .mp-card) -- */
 .est-toolbar {
   display: flex; align-items: center; flex-wrap: nowrap; gap: 0.75rem;
-  background: #2c2c2e; border: 1px solid #48484a; border-radius: 8px;
-  padding: 0.75rem 1rem; margin-bottom: 1.25rem; overflow-x: auto;
+  margin-bottom: 1.25rem; overflow-x: auto;
 }
-.toolbar-group { display: flex; align-items: center; gap: 0.5rem; }
+.toolbar-group { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
 
-/* View toggle */
-.view-toggle-wrap { display: flex; border: 1px solid #48484a; border-radius: 6px; overflow: hidden; }
-.btn-view-toggle {
-  background: #1c1c1e; border: none; color: #aaa;
-  padding: 0.35rem 0.9rem; font-size: 0.88rem; cursor: pointer; transition: background 0.2s, color 0.2s;
+/* Format toggle: the shared segmented pill (.mp-unit-toggle / .mp-unit-btn,
+   SHARED CALCULATOR COMPONENTS). Its active state is the .active class the
+   page's script toggles, not aria-pressed. */
+.view-toggle-wrap .btn-view-toggle { font-family: var(--chrome-font-sans); font-size: 0.88rem; }
+@media (max-width: 575.98px) {
+  .view-toggle-wrap { max-width: 100%; }
+  .view-toggle-wrap .btn-view-toggle { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
 }
-.btn-view-toggle.active { background: #89CFF0; color: #1c1c1e; font-weight: 700; }
-.btn-view-toggle:hover:not(.active) { background: #2c2c2e; color: #fff; }
 
 /* Report broken link button (next to Buy Here) */
 .btn-report-link {
   display: inline;
   background: none;
   border: none;
-  color: #f5a623;
+  color: var(--chrome-signal-600);
   cursor: pointer;
   font-size: 0.75rem;
   padding: 0 4px;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 .btn-report-link:hover { opacity: 1; }
 
@@ -1498,20 +1496,20 @@ h1 {
 .col-drag { width: 24px; text-align: center; vertical-align: middle; }
 .drag-handle {
   cursor: grab;
-  color: #666;
+  color: var(--chrome-ink-500);
   font-size: 1rem;
   user-select: none;
 }
 .drag-handle:active { cursor: grabbing; }
 .drag-handle-card {
   cursor: grab;
-  color: #666;
+  color: var(--chrome-ink-500);
   font-size: 1.1rem;
   margin-right: 0.5rem;
   user-select: none;
 }
 .drag-handle-card:active { cursor: grabbing; }
-.sortable-ghost { opacity: 0.4; background: #2c2c2e; }
+.sortable-ghost { opacity: 0.4; background: var(--chrome-paper-muted); }
 
 /* Pro-feature elements: always visible, grayed/locked for free users */
 .pro-feature.pro-locked {
@@ -1521,21 +1519,19 @@ h1 {
 }
 .pro-feature.pro-locked:hover { opacity: 0.55; }
 
-/* -- Cards -- */
-.est-card {
-  background: rgba(0,0,0,0.75); border-radius: 10px;
-  padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
+/* -- Cards --
+   The white box is .mp-card (also on the script-built .repair-card, via the
+   shared card rule). .est-card keeps the spacing between cards. */
+.est-card { margin-bottom: 1.25rem; }
 .est-card-title {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 1.1rem; font-weight: 700; color: #89CFF0;
-  border-bottom: 1px solid #333; padding-bottom: 0.6rem; margin-bottom: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--chrome-ink-900);
+  border-bottom: 1px solid var(--chrome-paper-line); padding-bottom: 0.7rem; margin-bottom: 1rem;
 }
-.pro-feature-card { border-left: 3px solid #89CFF0; }
+.est-card.pro-feature-card { border-left: 3px solid var(--chrome-signal-400); }
 .pro-feature-card.pro-locked-card {
   opacity: 0.55;
   pointer-events: none;
@@ -1546,118 +1542,89 @@ h1 {
   content: '\1F512 Pro feature - upgrade to edit';
   display: block;
   font-size: 0.75rem;
-  color: #89CFF0;
+  color: var(--chrome-signal-600);
   margin-top: 0.5rem;
-  opacity: 0.8;
 }
 .pro-badge {
-  background: #89CFF0; color: #1c1c1e; font-size: 0.7rem; font-weight: 800;
+  background: var(--chrome-signal-400); color: var(--chrome-ink-950); font-size: 0.7rem; font-weight: 800;
   padding: 0.15rem 0.5rem; border-radius: 4px; letter-spacing: 0.05em;
 }
-.scope-hint { font-size: 0.78rem; color: #666; margin-top: 0.4rem; margin-bottom: 0; }
+.scope-hint { font-size: 0.78rem; color: var(--chrome-ink-500); margin-top: 0.4rem; margin-bottom: 0; }
 
 /* -- Expiry warning -- */
 .expiry-warning {
-  background: rgba(224,82,82,0.15); border: 1px solid #e05252;
-  color: #e05252; border-radius: 6px; padding: 0.5rem 0.8rem;
+  background: rgba(224,82,82,0.12); border: 1px solid #e05252;
+  color: #B23A2E; border-radius: 8px; padding: 0.5rem 0.8rem;
   margin-top: 0.75rem; font-size: 0.9rem; font-weight: 600;
 }
 
 /* -- Form inputs --
-   NOTE: .est-label/.est-input/.est-textarea/.scope-hint are shared with
-   the main Estimator page (Estimate Information, Client Information,
-   Vessel Information, Scope of Work / Notes), which still sits on the
-   page's dark #1c1c1e body background (estimate.html's <body> has no
-   mp-canvas). Left dark here to avoid breaking that; the modal system
-   gets its own light version below, scoped to .modal-box, the same
-   pattern already used for #helpModal's overrides. */
-.est-label { display: block; font-size: 0.88rem; color: #ccc; margin-bottom: 0.3rem; font-weight: 500; }
-.req-star { color: #e05252; }
+   Light by default: the modals (login, account, feedback) reuse these inside
+   .modal-box, and the page is on the light canvas. The main-page fields take
+   the shared field look (.mp-select / .mp-input) through the .est-container
+   selectors added to that rule; only the read-only tint is set here. */
+.est-label { display: block; font-size: 0.88rem; color: var(--chrome-ink-800); margin-bottom: 0.3rem; font-weight: 500; }
+.est-container .est-label { font-size: 0.8125rem; font-weight: 600; }
+.req-star { color: #B23A2E; }
 .est-input {
-  width: 100%; background: #2c2c2e; border: 1px solid #48484a;
-  border-radius: 6px; color: #fff; padding: 0.45rem 0.7rem;
+  width: 100%; background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line);
+  border-radius: 6px; color: var(--chrome-ink-900); padding: 0.45rem 0.7rem;
   font-size: 0.95rem; transition: border-color 0.2s;
 }
-.est-input:focus { outline: none; border-color: #89CFF0; background: #333; }
-.est-input[readonly] { color: #888; cursor: default; }
+.est-input:focus { outline: none; border-color: var(--chrome-ink-800); background: var(--chrome-paper-card); }
+.est-input[readonly] { color: var(--chrome-ink-500); cursor: default; }
+.est-container .est-input[readonly] { color: var(--chrome-ink-500); }
 .est-textarea {
-  width: 100%; background: #2c2c2e; border: 1px solid #48484a;
-  border-radius: 6px; color: #fff; padding: 0.6rem 0.8rem;
+  width: 100%; background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line);
+  border-radius: 6px; color: var(--chrome-ink-900); padding: 0.6rem 0.8rem;
   font-size: 0.95rem; resize: vertical;
 }
-.est-textarea:focus { outline: none; border-color: #89CFF0; }
-
-/* Modal-scoped light versions -- the login and account modals
-   (global-account-modal.js) render est-label/est-input/scope-hint fields
-   inside .modal-box; the Materials Library table in the account modal
-   (materials_library.js) uses est-input, and the calculators'
-   #feedbackModal uses est-label for its field labels. This is enough to
-   relight all of them without touching the main-page rules above. */
-.modal-box .est-label { color: var(--chrome-ink-800); }
-.modal-box .scope-hint { color: var(--chrome-ink-500); }
-.modal-box .est-input {
-  background: var(--chrome-paper-muted); border-color: var(--chrome-paper-line); color: var(--chrome-ink-900);
-}
-.modal-box .est-input:focus { border-color: var(--chrome-ink-800); background: var(--chrome-paper-card); }
-.modal-box .est-input[readonly] { color: var(--chrome-ink-500); }
-
-/* .est-table is the main page's Labor/Materials table (also dark,
-   also out of scope -- untouched above), but the account modal's
-   Materials Library table reuses it verbatim (class="est-table
-   lib-table" in global-account-modal.js). .lib-table's own rules
-   already win the plain color/background fight on source order, but
-   its input fields (.est-table input[type]) weren't overridden at all,
-   so they'd stay dark inside an otherwise-light table. Fixed here,
-   scoped to .modal-box only -- the main page's materials table is
-   unaffected. */
-.modal-box .est-table thead th { background: var(--chrome-paper-muted); color: var(--chrome-ink-600); border-bottom-color: var(--chrome-paper-line); }
-.modal-box .est-table tbody tr { border-bottom-color: var(--chrome-paper-line); }
-.modal-box .est-table input[type="text"],
-.modal-box .est-table input[type="number"] {
-  background: var(--chrome-paper-muted); border-color: var(--chrome-paper-line); color: var(--chrome-ink-900);
-}
-.modal-box .est-table input:focus { border-color: var(--chrome-ink-800); }
+.est-textarea:focus { outline: none; border-color: var(--chrome-ink-800); }
 
 /* -- Markup control -- */
 .markup-control { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
 .markup-input { width: 70px !important; text-align: center; padding: 0.3rem 0.4rem; font-size: 0.9rem; }
-.markup-hint { font-size: 0.78rem; color: #888; white-space: nowrap; }
+.markup-hint { font-size: 0.78rem; color: var(--chrome-ink-500); white-space: nowrap; }
 
 /* -- Help icons and popovers -- */
 .help-icon {
   display: inline-flex; align-items: center; justify-content: center;
   width: 1.25rem; height: 1.25rem; border-radius: 50%;
-  background: #2c2c2e; border: 1px solid #48484a;
-  color: #89CFF0; font-size: 0.7rem; font-weight: 700;
+  background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line);
+  color: var(--chrome-ink-600); font-size: 0.7rem; font-weight: 700;
   cursor: pointer; flex-shrink: 0; user-select: none;
   transition: background 0.2s, border-color 0.2s;
   line-height: 1;
 }
-.help-icon:hover { background: #3a3a3c; border-color: #89CFF0; }
+.help-icon:hover { background: var(--chrome-paper-line); border-color: var(--chrome-ink-500); }
 .help-popover {
   display: none;
   position: fixed; z-index: 9999;
   width: 280px; max-width: 90vw;
-  background: #1c1c1e; border: 1px solid #48484a; border-radius: 8px;
-  padding: 0.85rem 1rem; font-size: 0.82rem; color: #ccc; line-height: 1.5;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  background: var(--chrome-paper-card); border: 1px solid var(--chrome-paper-line); border-radius: 8px;
+  padding: 0.85rem 1rem; font-size: 0.82rem; color: var(--chrome-ink-700); line-height: 1.5;
+  box-shadow: var(--chrome-shadow-lift);
 }
 .help-popover--open { display: block; }
 @media (max-width: 600px) {
   .help-popover { right: -0.5rem; width: 260px; }
 }
 
-/* -- Tables -- */
-.est-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #eee; }
+/* -- Tables --
+   Also the account modal's Materials Library table (class="est-table
+   lib-table"), which is why the light colors are the base and not a
+   main-page override. */
+.est-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: var(--chrome-ink-800); }
 .est-table thead th {
-  background: #1c1c1e; color: #89CFF0; padding: 0.55rem 0.6rem;
+  background: var(--chrome-paper-muted); color: var(--chrome-ink-600); padding: 0.55rem 0.6rem;
   text-align: left; font-weight: 600; white-space: normal; line-height: 1.25;
-  border-bottom: 2px solid #333; vertical-align: bottom;
+  border-bottom: 2px solid var(--chrome-paper-line); vertical-align: bottom;
 }
-.est-table tbody tr { border-bottom: 1px solid #2c2c2e; transition: background 0.15s; }
+.est-table tbody tr { border-bottom: 1px solid var(--chrome-paper-line); transition: background 0.15s; }
 .est-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.est-container .est-table tbody tr:hover { background: var(--chrome-paper-muted); }
 .est-table tbody td { padding: 0.4rem 0.5rem; vertical-align: middle; }
-.est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid #333; }
+.est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid var(--chrome-paper-line); }
 /* Fixed columns — minimum useful widths so Item column gets all remaining space */
 .col-cost   { width: 72px; }
 .col-markup { width: 58px; }
@@ -1677,22 +1644,22 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .col-item   { width: auto; }
 .est-table input[type="text"],
 .est-table input[type="number"] {
-  background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
-  color: #fff; padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 40px;
+  background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line); border-radius: 4px;
+  color: var(--chrome-ink-900); padding: 0.3rem 0.4rem; font-size: 0.88rem; width: 100%; min-width: 40px;
 }
-.est-table input:focus { outline: none; border-color: #89CFF0; }
+.est-table input:focus { outline: none; border-color: var(--chrome-ink-800); }
 /* Item name input fills its column fully */
 .est-table .item-name-input { width: 100%; min-width: 0; }
-.retail-display { color: #89CFF0; font-weight: 600; white-space: nowrap; }
+.retail-display { color: var(--chrome-ink-900); font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
-.subtotal-row td { background: #1c1c1e; }
-.subtotal-label { text-align: right; font-weight: 700; color: #ccc; font-size: 0.9rem; }
-.subtotal-val { font-weight: 700; color: #89CFF0; white-space: nowrap; }
+.subtotal-row td { background: var(--chrome-paper-muted); }
+.subtotal-label { text-align: right; font-weight: 700; color: var(--chrome-ink-700); font-size: 0.9rem; }
+.subtotal-val { font-weight: 700; color: var(--chrome-ink-900); white-space: nowrap; }
 
 /* -- Buy Here links -- override global a rule -- */
 .buy-link {
-  display: inline-block !important; background: #2c2c2e; color: #89CFF0 !important;
-  border: 1px solid #89CFF0; border-radius: 4px; padding: 0.2rem 0.45rem;
+  display: inline-block !important; background: var(--chrome-paper-card); color: var(--chrome-sea-600) !important;
+  border: 1px solid var(--chrome-sea-600); border-radius: 4px; padding: 0.2rem 0.45rem;
   font-size: 0.78rem !important; text-decoration: none !important; white-space: nowrap;
   margin-top: 0 !important; vertical-align: middle;
   font-weight: normal !important;
@@ -1701,129 +1668,107 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .buy-link:hover,
 .buy-link:active,
 .buy-link:visited {
-  background: rgba(137,207,240,0.25) !important; color: #fff !important;
+  background: var(--chrome-sea-600) !important; color: #fff !important;
   transform: none !important; font-size: 0.78rem !important; margin-top: 0 !important;
   font-weight: normal !important;
 }
-.buy-link-none { color: #555; font-size: 0.78rem; }
+.buy-link-none { color: var(--chrome-ink-500); font-size: 0.78rem; }
 
 .btn-del-row {
-  background: none; border: none; color: #e05252; font-size: 1.1rem;
+  background: none; border: none; color: #B23A2E; font-size: 1.1rem;
   cursor: pointer; padding: 0.1rem 0.3rem; line-height: 1; transition: color 0.15s;
 }
-.btn-del-row:hover { color: #ff6b6b; }
-.btn-add-row {
-  background: transparent; border: 1px dashed #48484a; color: #89CFF0;
-  border-radius: 6px; padding: 0.4rem 1rem; font-size: 0.88rem;
-  cursor: pointer; margin-top: 0.5rem; transition: border-color 0.2s, background 0.2s;
-}
-.btn-add-row:hover { border-color: #89CFF0; background: rgba(137,207,240,0.07); }
+.btn-del-row:hover { color: #8F2A21; }
 
 /* -- Repair task cards -- */
-.repair-card {
-  background: rgba(0,0,0,0.75); border-radius: 10px;
-  padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4); border-left: 3px solid #89CFF0;
-}
+.est-container .repair-card { margin-bottom: 1.25rem; border-left: 3px solid var(--chrome-signal-400); }
 .repair-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
 .repair-card-actions { display: flex; gap: 0.4rem; align-items: center; }
 .repair-name-input {
-  background: transparent; border: none; border-bottom: 1px solid #48484a;
-  color: #89CFF0; font-size: 1.05rem; font-weight: 700; width: 280px; padding: 0.1rem 0.2rem;
+  background: transparent; border: none; border-bottom: 1px solid var(--chrome-paper-line);
+  color: var(--chrome-ink-900); font-size: 1.05rem; font-weight: 700; width: 280px; padding: 0.1rem 0.2rem;
 }
-.repair-name-input:focus { outline: none; border-bottom-color: #89CFF0; }
-.btn-del-task { background: none; border: none; color: #e05252; font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.4rem; }
-.btn-del-task:hover { color: #ff6b6b; }
+.repair-name-input:focus { outline: none; border-bottom-color: var(--chrome-sea-600); }
+.btn-del-task { background: none; border: none; color: #B23A2E; font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.4rem; }
+.btn-del-task:hover { color: #8F2A21; }
 .btn-dup-task {
-  background: none; border: 1px solid #48484a; color: #89CFF0;
+  background: none; border: 1px solid var(--chrome-paper-line); color: var(--chrome-ink-700);
   font-size: 0.8rem; border-radius: 4px; cursor: pointer; padding: 0.2rem 0.5rem;
   transition: background 0.15s;
 }
-.btn-dup-task:hover { background: rgba(137,207,240,0.1); }
+.btn-dup-task:hover { background: var(--chrome-paper-muted); }
 .repair-scope-wrap { margin-top: 0.75rem; }
 .repair-scope-toggle {
-  background: none; border: none; color: #888; font-size: 0.82rem;
+  background: none; border: none; color: var(--chrome-ink-600); font-size: 0.82rem;
   cursor: pointer; padding: 0; text-decoration: underline;
 }
-.repair-scope-toggle:hover { color: #aaa; }
+.repair-scope-toggle:hover { color: var(--chrome-ink-900); }
 .repair-scope-textarea {
-  width: 100%; background: #1c1c1e; border: 1px solid #48484a; border-radius: 5px;
-  color: #ccc; padding: 0.5rem 0.7rem; font-size: 0.88rem; resize: vertical;
+  width: 100%; background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line); border-radius: 5px;
+  color: var(--chrome-ink-800); padding: 0.5rem 0.7rem; font-size: 0.88rem; resize: vertical;
   margin-top: 0.4rem; display: none;
 }
-.repair-scope-textarea:focus { outline: none; border-color: #89CFF0; }
-.repair-task-table { font-size: 0.88rem; width: 100%; border-collapse: collapse; color: #eee; }
+.repair-scope-textarea:focus { outline: none; border-color: var(--chrome-ink-800); }
+.repair-task-table { font-size: 0.88rem; width: 100%; border-collapse: collapse; color: var(--chrome-ink-800); }
 .repair-task-table thead th {
-  background: #1c1c1e; color: #89CFF0; padding: 0.45rem 0.5rem;
-  border-bottom: 2px solid #333; white-space: nowrap; text-align: left;
+  background: var(--chrome-paper-muted); color: var(--chrome-ink-600); padding: 0.45rem 0.5rem;
+  border-bottom: 2px solid var(--chrome-paper-line); white-space: nowrap; text-align: left;
 }
-.repair-task-table tbody tr { border-bottom: 1px solid #2c2c2e; }
+.repair-task-table tbody tr { border-bottom: 1px solid var(--chrome-paper-line); }
 .repair-task-table tbody td { padding: 0.35rem 0.45rem; vertical-align: middle; }
-.repair-task-table tfoot td { padding: 0.45rem 0.5rem; border-top: 2px solid #333; }
+.repair-task-table tfoot td { padding: 0.45rem 0.5rem; border-top: 2px solid var(--chrome-paper-line); }
 .repair-task-table input[type="number"],
 .repair-task-table input[type="text"] {
-  background: #2c2c2e; border: 1px solid #48484a; border-radius: 4px;
-  color: #fff; padding: 0.28rem 0.4rem; font-size: 0.85rem;
+  background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line); border-radius: 4px;
+  color: var(--chrome-ink-900); padding: 0.28rem 0.4rem; font-size: 0.85rem;
 }
 .repair-task-table input[type="number"] { width: 80px; }
 .repair-task-table input[type="text"] { width: 100%; min-width: 140px; }
-.repair-task-table input:focus { outline: none; border-color: #89CFF0; }
-.task-price-display { color: #89CFF0; font-weight: 600; }
-.repair-subtotal-row td { background: #1c1c1e; }
-.repair-subtotal-label { text-align: right; font-weight: 700; color: #ccc; }
-.repair-subtotal-val { font-weight: 700; color: #89CFF0; }
+.repair-task-table input:focus { outline: none; border-color: var(--chrome-ink-800); }
+.task-price-display { color: var(--chrome-ink-900); font-weight: 600; }
+.repair-subtotal-row td { background: var(--chrome-paper-muted); }
+.repair-subtotal-label { text-align: right; font-weight: 700; color: var(--chrome-ink-700); }
+.repair-subtotal-val { font-weight: 700; color: var(--chrome-ink-900); }
 .btn-add-task-row {
-  background: transparent; border: 1px dashed #48484a; color: #89CFF0;
+  background: transparent; border: 1px dashed var(--chrome-ink-500); color: var(--chrome-ink-700);
   border-radius: 5px; padding: 0.3rem 0.8rem; font-size: 0.85rem;
-  cursor: pointer; margin-top: 0.4rem; transition: border-color 0.2s, background 0.2s;
+  cursor: pointer; margin-top: 0.4rem; transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
-.btn-add-task-row:hover { border-color: #89CFF0; background: rgba(137,207,240,0.07); }
-.btn-add-task {
-  background: #89CFF0; color: #1c1c1e; border: none; border-radius: 8px;
-  padding: 0.65rem 1.6rem; font-size: 1rem; font-weight: 700;
-  cursor: pointer; transition: background 0.2s; margin-bottom: 0.5rem;
-}
-.btn-add-task:hover { background: #70b8d0; }
+.btn-add-task-row:hover { border-color: var(--chrome-sea-600); background: var(--chrome-paper-muted); color: var(--chrome-sea-600); }
+.btn-add-task { margin-bottom: 0.5rem; }
 
-/* -- Summary -- */
-.est-summary-card { border-left: 3px solid #89CFF0; }
+/* -- Summary --
+   A dark .mp-panel: the title, rows and total follow the Magic Patterns
+   summary panel (white figures, amber total in the mono font). */
+.est-summary-card .est-card-title { color: var(--chrome-signal-400); font-size: 1.3rem; font-weight: 800; border-bottom-color: rgba(255,255,255,0.14); }
+.est-summary-card .help-icon { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+.est-summary-card .help-icon:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.5); }
 .summary-grid { display: flex; flex-direction: column; gap: 0.5rem; }
 .summary-row {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 1rem; color: #ddd; padding: 0.2rem 0;
+  font-size: 1rem; color: rgba(255,255,255,0.75); padding: 0.2rem 0;
 }
-.summary-row span:last-child { font-weight: 600; color: #89CFF0; }
-.summary-divider { border-top: 1px solid #333; margin: 0.4rem 0; }
-.summary-grand { font-size: 1.25rem; font-weight: 700; color: #fff !important; padding-top: 0.4rem; }
-.summary-grand span:last-child { color: #fff !important; font-size: 1.3rem; }
-.internal-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #48484a; }
-.internal-label { font-size: 0.82rem; color: #e05252; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
+.summary-row span:last-child { font-family: var(--chrome-font-mono); font-weight: 600; color: #ffffff; }
+.summary-divider { border-top: 1px solid rgba(255,255,255,0.14); margin: 0.4rem 0; }
+.summary-grand { font-size: 1.1rem; font-weight: 700; color: #ffffff; padding-top: 0.4rem; }
+.summary-grand span:last-child { color: var(--chrome-signal-400); font-size: 2rem; }
+.internal-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.28); }
+.internal-label { font-size: 0.82rem; color: #ff8f80; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
 
 /* -- Legal -- */
-.est-legal-card { border-left: 3px solid #555; }
-.legal-text { font-size: 0.82rem; color: #aaa; line-height: 1.6; margin-bottom: 1.25rem; }
+.est-card.est-legal-card { border-left: 3px solid var(--chrome-paper-line); }
+.legal-text { font-size: 0.82rem; color: var(--chrome-ink-600); line-height: 1.6; margin-bottom: 1.25rem; }
 .sig-block-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
 .sig-block { flex: 1; min-width: 160px; }
 .sig-block-short { flex: 0 0 140px; }
-.sig-line { border-bottom: 1px solid #555; height: 2rem; margin-bottom: 0.3rem; }
-.sig-caption { font-size: 0.78rem; color: #888; }
+.sig-line { border-bottom: 1px solid var(--chrome-ink-500); height: 2rem; margin-bottom: 0.3rem; }
+.sig-caption { font-size: 0.78rem; color: var(--chrome-ink-500); }
 
-/* -- Action buttons -- */
+/* -- Action buttons (.mp-btn in the markup) -- */
 .est-actions {
   display: flex; flex-wrap: wrap; gap: 0.75rem;
   justify-content: center; margin: 1.5rem 0 2rem;
 }
-.btn-action {
-  border: none; border-radius: 8px; padding: 0.65rem 1.4rem;
-  font-size: 0.95rem; font-weight: 600; cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-}
-.btn-action:hover { opacity: 0.88; transform: translateY(-1px); }
-.btn-print { background: #2c2c2e; color: #89CFF0; border: 1px solid #89CFF0; }
-.btn-pdf   { background: #89CFF0; color: #1c1c1e; }
-.btn-share { background: #2c2c2e; color: #89CFF0; border: 1px solid #89CFF0; }
-.btn-log   { background: #48484a; color: #fff; border: 1px solid #89CFF0; }
-.btn-new   { background: #48484a; color: #fff; }
 
 /* -- Modals --
    Light-body/dark-accent pattern (ChemCalc_FullSite_Blueprint.md),
@@ -2058,11 +2003,10 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .btn-plan-pro:hover { background: var(--chrome-signal-200); }
 
 /* -- Footer --
-   NOTE: .est-footer is estimate.html's own page footer, not part of the
-   modal system. The Estimator page has no body.mp-canvas yet and still sits
-   on the dark #1c1c1e body background, so the footer stays dark. */
-.est-footer { text-align: center; margin-top: 2rem; padding: 1rem; color: #aaa; font-size: 0.85rem; }
-.est-footer a { color: #89CFF0; font-size: 0.85rem !important; margin-top: 0 !important; font-weight: normal !important; }
+   .est-footer is estimate.html's own page footer (the privacy, terms and
+   cookie links and the copyright line), on the light canvas. */
+.est-footer { text-align: center; margin-top: 2rem; padding: 1rem; color: var(--chrome-ink-600); font-size: 0.85rem; }
+.est-footer a { color: var(--chrome-sea-600); font-size: 0.85rem !important; margin-top: 0 !important; font-weight: normal !important; }
 
 /* -- Customer view: hide itemized sections -- */
 body.customer-view .customer-hide { display: none !important; }
@@ -2133,7 +2077,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .header, .tier-banner, .est-toolbar, .est-actions, .btn-add-row, .btn-add-task,
   .btn-del-row, .btn-del-task, .btn-dup-task, .btn-add-task-row, .est-footer,
   .modal-overlay, nav, .menu-toggle, .d-print-none, .repair-scope-toggle,
-  .est-page-header, .expiry-warning, .pro-badge, .scope-hint,
+  .expiry-warning, .pro-badge, .scope-hint,
   .markup-control, .markup-hint, .buy-link, .buy-link-none,
   .internal-summary, #internalSummary,
   .help-icon, .help-popover { display: none !important; }
@@ -2416,6 +2360,26 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   }
   .summary-grand span:last-child { color: #111 !important; font-size: 13pt !important; }
 
+  /* -- Pre-reskin print values --
+     On screen the estimator follows the Magic Patterns design (Inter, ink
+     text, light table footers, a dark summary panel with mono figures). The
+     printed estimate is a separate fixed design and did not change, so the
+     rules below pin it to what it was before that restyle, defects included
+     (the dark subtotal bars, and the pale summary and deposit labels). Changing
+     how the printed estimate looks is its own decision. */
+  .est-container { font-family: inherit !important; color: inherit !important; }
+  .est-container .est-label { font-weight: 500 !important; }
+  .est-container .est-input, .est-container .est-textarea { font-family: inherit !important; border-radius: 6px !important; }
+  .req-star { color: #e05252 !important; }
+  .drag-handle-card { color: #666 !important; }
+  .subtotal-row td, .repair-subtotal-row td { background: #1c1c1e !important; }
+  .est-summary-card { color: inherit !important; }
+  .summary-row { color: #ddd !important; }
+  .summary-grand { color: #fff !important; }
+  .summary-row span:last-child { font-family: inherit !important; }
+  .deposit-line span:first-child,
+  .deposit-balance-line span:first-child { color: #89CFF0 !important; }
+
   /* -- Scope of work (pro) -- */
   .repair-scope-textarea {
     display: block !important;
@@ -2590,7 +2554,6 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .sig-block-row { flex-direction: column; gap: 1rem; }
   .plan-row { flex-direction: column; }
   .est-actions { flex-direction: column; align-items: stretch; }
-  .btn-action { text-align: center; }
   .markup-control { justify-content: flex-start; }
   .est-toolbar { flex-direction: column; align-items: flex-start; }
 }
@@ -2668,43 +2631,32 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 .trello-status.trello-ok    { color: #2E9A5C; }
 .trello-status.trello-error { color: #e05252; }
 
-/* Add to Trello action button */
-.btn-trello {
-  background: #0079BF; color: #fff; border: 1px solid #0079BF;
-}
-.btn-trello:hover { background: #026AA7; border-color: #026AA7; }
+/* Add to Trello action button: Trello's brand blue (a .mp-btn in the markup) */
+.btn-trello { background: #0079BF; color: #fff; }
+.btn-trello:hover { background: #026AA7; color: #fff; }
 .btn-trello.pro-locked {
-  background: #48484a; border-color: #555; color: #888;
+  background: var(--chrome-paper-line); color: var(--chrome-ink-500);
   opacity: 0.55; cursor: not-allowed;
 }
 
-/* -- Custom Estimator Callout (estimate.html) --------------- */
-.custom-est-callout {
-  background: linear-gradient(90deg, #1a3a5c 0%, #2c2c2e 100%);
-  border: 1px solid #2a5a8c;
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  margin-bottom: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  font-size: 0.85rem;
-  color: #ccc;
-}
-
-.custom-est-callout a {
-  color: #89CFF0;
+/* -- Custom Estimator Callout (estimate.html) ---------------
+   A line of .mp-hero-copy in the hero band; only its link is styled here.
+   The link restates its sizing on every state because the sitewide anchor
+   rule (a, a:visited, a:hover, a:active) wins on any property it does not. */
+.custom-est-callout a,
+.custom-est-callout a:visited,
+.custom-est-callout a:hover,
+.custom-est-callout a:active {
+  color: var(--chrome-signal-400);
   font-weight: 600;
+  font-size: 1em;
+  font-style: normal;
+  margin-top: 0;
+  margin-left: 0.25rem;
   white-space: nowrap;
   text-decoration: none;
-  font-size: 0.85rem;
 }
-
-.custom-est-callout a:hover {
-  text-decoration: underline;
-}
+.custom-est-callout a:hover { text-decoration: underline; }
 
 /* ============================================================
    Materials Library
@@ -2714,13 +2666,13 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 .btn-save-lib {
   background: none;
   border: none;
-  color: #888;
+  color: var(--chrome-ink-500);
   font-size: 1rem;
   cursor: pointer;
   padding: 2px 4px;
   transition: color 0.2s;
 }
-.btn-save-lib:hover { color: #f5c518; }
+.btn-save-lib:hover { color: var(--chrome-signal-500); }
 
 /* Typeahead dropdown */
 .lib-typeahead-dropdown {
@@ -2882,6 +2834,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
 /* ============================================================
    DEPOSIT CALCULATOR
+   Sits inside the dark summary panel (.est-summary-card.mp-panel).
    ============================================================ */
 .deposit-calc-block {
   padding: 0.5rem 0 0;
@@ -2899,7 +2852,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  color: #e0e0e0;
+  color: rgba(255,255,255,0.9);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -2910,41 +2863,34 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: #89CFF0;
+  accent-color: var(--chrome-signal-400);
 }
 
-.deposit-select {
-  background: #2c2c2e;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #fff;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.deposit-select:focus { outline: none; border-color: #89CFF0; }
-
+.deposit-select,
 .deposit-custom-input {
-  background: #2c2c2e;
-  border: 1px solid #444;
-  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
   color: #fff;
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
-  width: 70px;
 }
 
-.deposit-custom-input:focus { outline: none; border-color: #89CFF0; }
+.deposit-select { cursor: pointer; }
+.deposit-select option { background: var(--chrome-ink-950); color: #fff; }
+.deposit-custom-input { width: 70px; }
+
+.deposit-select:focus,
+.deposit-custom-input:focus { outline: none; border-color: var(--chrome-signal-400); }
 
 .deposit-line span:first-child,
 .deposit-balance-line span:first-child {
-  color: #89CFF0;
+  color: var(--chrome-signal-400);
   font-weight: 600;
 }
 
 .deposit-balance-line span:last-child {
-  color: #7ed47e;
+  color: var(--chrome-on-500);
   font-weight: 700;
 }
 
@@ -2957,10 +2903,10 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 }
 
 .scope-snippet-select {
-  background: #2c2c2e;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #89CFF0;
+  background: var(--chrome-paper-muted);
+  border: 1px solid var(--chrome-paper-line);
+  border-radius: 8px;
+  color: var(--chrome-ink-800);
   padding: 0.4rem 0.75rem;
   font-size: 0.85rem;
   cursor: pointer;
@@ -2968,29 +2914,32 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   max-width: 320px;
 }
 
-.scope-snippet-select:focus { outline: none; border-color: #89CFF0; }
+.scope-snippet-select:focus { outline: none; border-color: var(--chrome-ink-800); }
 
 /* ============================================================
    FEEDBACK BUTTON
+   Sits in the Donate slot of the bottom-right floating cluster (this page
+   has no Donate button), above the BoatMD chat toggle, so it no longer
+   covers the Help button.
    ============================================================ */
 .feedback-btn {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: 9.5rem;
+  right: var(--chrome-fab-right, 1.25rem);
   z-index: 9999;
 }
 
 .feedback-link {
   display: inline-flex;
   align-items: center;
-  background: #89CFF0;
-  color: #000;
+  background: var(--chrome-signal-400);
+  color: var(--chrome-ink-950);
   font-weight: 700;
   font-size: 0.85rem;
   padding: 0.5rem 0.65rem;
   border-radius: 20px;
   text-decoration: none;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 12px rgba(4,20,26,0.35);
   transition: background 0.2s, padding 0.25s ease;
   overflow: hidden;
   white-space: nowrap;
@@ -3008,8 +2957,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   font-size: 0.85rem;
 }
 .feedback-link:hover {
-  background: #6bb8e0;
-  color: #000;
+  background: var(--chrome-signal-200);
+  color: var(--chrome-ink-950);
   padding: 0.5rem 1rem;
 }
 .feedback-link:hover .feedback-label {
@@ -3062,12 +3011,15 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
    FLOATING ACTION PANEL (FAP)
    Desktop: fixed right-side vertical strip
    Mobile:  fixed bottom bar
+   Dark ink glass, the same family as the sitewide floating-action cluster
+   (FLOATING-ACTION CLUSTER -- SHARED CHROME), with amber marking the active
+   format.
    ============================================================ */
 
 /* -- Emoji font fix - ensure emoji render everywhere -- */
 body,
 .fap-btn, .fap-icon, .ts-card-icon,
-.feedback-icon, .btn-action, .btn-tier,
+.feedback-icon,
 .btn-view-toggle, .est-label, .modal-title,
 .tier-label {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -3095,11 +3047,11 @@ body,
   display: flex;
   align-items: center;
   gap: 0;
-  background: rgba(28, 28, 30, 0.92);
-  border: 1px solid #48484a;
+  background: rgba(4, 20, 26, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-right: none;
   border-radius: 8px 0 0 8px;
-  color: #ccc;
+  color: rgba(255, 255, 255, 0.82);
   padding: 0.55rem 0.7rem;
   font-size: 0.82rem;
   font-weight: 600;
@@ -3109,14 +3061,14 @@ body,
   transition: background 0.18s, color 0.18s, padding 0.22s ease, gap 0.22s ease, border-color 0.18s;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  box-shadow: -2px 2px 10px rgba(0,0,0,0.45);
+  box-shadow: -2px 2px 10px rgba(4, 20, 26, 0.3);
   max-width: 2.6rem; /* icon-only width at rest */
 }
 
 .fap-btn:hover {
-  background: rgba(44, 44, 46, 0.98);
+  background: var(--chrome-ink-800);
   color: #fff;
-  border-color: #89CFF0;
+  border-color: var(--chrome-signal-400);
   gap: 0.45rem;
   padding: 0.55rem 0.9rem 0.55rem 0.7rem;
   max-width: 10rem;
@@ -3144,15 +3096,15 @@ body,
 
 /* Active format button */
 .fap-btn.fap-fmt-active {
-  background: rgba(137, 207, 240, 0.15);
-  border-color: #89CFF0;
-  color: #89CFF0;
+  background: rgba(242, 166, 60, 0.16);
+  border-color: var(--chrome-signal-400);
+  color: var(--chrome-signal-400);
 }
-.fap-btn.fap-fmt-active .fap-icon { color: #89CFF0; }
+.fap-btn.fap-fmt-active .fap-icon { color: var(--chrome-signal-400); }
 
 /* Danger (New Estimate) */
-.fap-btn.fap-danger { border-color: #5a3a3a; color: #e07070; }
-.fap-btn.fap-danger:hover { border-color: #e05252; color: #ff8080; background: rgba(80,20,20,0.85); }
+.fap-btn.fap-danger { border-color: rgba(224, 112, 112, 0.45); color: #f09a9a; }
+.fap-btn.fap-danger:hover { border-color: #e05252; color: #ffb0b0; background: rgba(80,20,20,0.9); }
 
 /* Format group - tighter spacing */
 .fap-group {
@@ -3165,7 +3117,7 @@ body,
 .fap-divider {
   width: 1.6rem;
   height: 1px;
-  background: #48484a;
+  background: rgba(255, 255, 255, 0.2);
   margin: 0.2rem 0.5rem 0.2rem 0;
   align-self: flex-end;
 }
@@ -3182,11 +3134,11 @@ body,
     align-items: stretch;
     justify-content: space-around;
     padding: 0;
-    background: rgba(28, 28, 30, 0.97);
-    border-top: 1px solid #48484a;
+    background: rgba(4, 20, 26, 0.97);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 0;
     gap: 0;
-    box-shadow: 0 -2px 16px rgba(0,0,0,0.5);
+    box-shadow: 0 -2px 16px rgba(4, 20, 26, 0.4);
   }
 
   /* Flatten the format group inline */
@@ -3203,7 +3155,7 @@ body,
     align-items: center;
     justify-content: center;
     border: none;
-    border-right: 1px solid #3a3a3c;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0;
     max-width: none;
     padding: 0.5rem 0.25rem 0.45rem;
@@ -3211,16 +3163,16 @@ body,
     background: transparent;
     box-shadow: none;
     font-size: 0.7rem;
-    color: #aaa;
+    color: rgba(255, 255, 255, 0.72);
   }
 
   .fap-btn:last-child { border-right: none; }
 
   .fap-btn:hover,
   .fap-btn:active {
-    background: rgba(137, 207, 240, 0.1);
-    color: #89CFF0;
-    border-color: #3a3a3c;
+    background: rgba(242, 166, 60, 0.1);
+    color: var(--chrome-signal-400);
+    border-color: rgba(255, 255, 255, 0.1);
     padding: 0.5rem 0.25rem 0.45rem;
     gap: 0.2rem;
     max-width: none;
@@ -3238,15 +3190,12 @@ body,
   .fap-btn:hover .fap-label { max-width: none; opacity: 1; }
 
   .fap-btn.fap-fmt-active {
-    color: #89CFF0;
-    background: rgba(137, 207, 240, 0.12);
+    color: var(--chrome-signal-400);
+    background: rgba(242, 166, 60, 0.14);
   }
 
   /* Push page content above bottom bar */
   .est-container { padding-bottom: 5rem !important; }
-
-  /* Move feedback button above bottom bar */
-  .feedback-btn { bottom: 4.5rem; }
 }
 
 /* Hide FAP from print */
@@ -3601,7 +3550,8 @@ body,
 .mp-field-title{font-size:.95rem;font-weight:600;margin:0;color:var(--chrome-ink-900);}
 .mp-field-hint{font-size:.8rem;color:var(--chrome-ink-600);margin:.2rem 0 0;}
 
-.mp-select,.mp-input{
+.mp-select,.mp-input,
+.est-container .est-input,.est-container .est-textarea{
   width:100%;border:1px solid var(--chrome-paper-line);
   background:var(--chrome-paper-muted);border-radius:8px;
   padding:.6rem .8rem;font-size:.95rem;font-weight:500;
@@ -3609,29 +3559,38 @@ body,
   transition:border-color .15s var(--chrome-ease-smooth);
 }
 .mp-input{font-family:var(--chrome-font-mono);}
-.mp-select:hover,.mp-input:hover{border-color:var(--chrome-ink-500);}
-.mp-select:focus,.mp-input:focus{
+.mp-select:hover,.mp-input:hover,
+.est-container .est-input:hover,.est-container .est-textarea:hover{border-color:var(--chrome-ink-500);}
+.mp-select:focus,.mp-input:focus,
+.est-container .est-input:focus,.est-container .est-textarea:focus{
   outline:2px solid rgba(242,166,60,.45);outline-offset:1px;border-color:var(--chrome-ink-800);
 }
 .mp-select-compact{flex:0 0 auto;width:auto;min-width:5.5rem;}
 
 /* ---------- Segmented pill-button toggle: canonical site-wide
    toggle style (Leo, 2026-09-07). Any control that flips between
-   states/units uses this, not a checkbox switch. ---------- */
-.mp-unit-toggle{
+   states/units uses this, not a checkbox switch. estimate.html's Format
+   toggle (.view-toggle-wrap / .btn-view-toggle) is the same control; its
+   script marks the active button with .active, not aria-pressed. ---------- */
+.mp-unit-toggle,
+.view-toggle-wrap{
   display:flex;flex:none;gap:.15rem;padding:.2rem;
   background:var(--chrome-paper-muted);border:1px solid var(--chrome-paper-line);
   border-radius:999px;
 }
-.mp-unit-btn{
+.mp-unit-btn,
+.btn-view-toggle{
   border:none;background:transparent;color:var(--chrome-ink-600);
   font-family:var(--chrome-font-mono);font-size:.82rem;font-weight:600;
   padding:.45rem .9rem;border-radius:999px;cursor:pointer;
   transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth);
 }
-.mp-unit-btn[aria-pressed="true"]{background:var(--chrome-ink-900);color:#fff;}
-.mp-unit-btn:hover:not([aria-pressed="true"]){color:var(--chrome-ink-900);}
-.mp-unit-btn:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
+.mp-unit-btn[aria-pressed="true"],
+.btn-view-toggle.active{background:var(--chrome-ink-900);color:#fff;}
+.mp-unit-btn:hover:not([aria-pressed="true"]),
+.btn-view-toggle:hover:not(.active){color:var(--chrome-ink-900);}
+.mp-unit-btn:focus-visible,
+.btn-view-toggle:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
 .mp-unit-btn:disabled{opacity:.4;cursor:not-allowed;}
 
 /* Modifier for a toggle that's the ONLY content in its field card (e.g.
@@ -4921,7 +4880,10 @@ body,
    anchor rule (a, a:visited, a:hover, a:active in the base styles) wins
    on any property a new class does not itself set.
    ============================================================ */
-.mp-card{
+/* .repair-card is estimate.html's script-built task card. A script, not the
+   markup, creates it, so it cannot carry .mp-card and takes the same box here. */
+.mp-card,
+.repair-card{
   background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);
   border-radius:12px;box-shadow:var(--chrome-shadow-panel);padding:1.5rem;
 }
