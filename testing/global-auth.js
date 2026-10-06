@@ -84,7 +84,12 @@
   // chemcalc:authchange instead -- that script loads before this one on
   // 15 of the 20 pages (estimate.html, cookie.html, privacy.html, terms.html
   // and trello-setup.html load it after), which is fine because init() below
-  // waits for DOMContentLoaded.
+  // waits for DOMContentLoaded. estimate.html is the exception in a different
+  // way: global-account-modal.js skips its own session check there (auth.js
+  // does the session work, see isEstimatorPage), so nothing from that script
+  // ever fires chemcalc:authchange, and getAuthState() is read here before
+  // auth.js has resolved. estimate.js's setUserTier() therefore publishes the
+  // event itself after every session change; the load order has no effect.
   async function init() {
     injectIndicator();
 

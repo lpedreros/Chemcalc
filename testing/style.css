@@ -1652,7 +1652,8 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .retail-display { color: var(--chrome-ink-900); font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
 .subtotal-row td { background: var(--chrome-paper-muted); }
-.subtotal-label { text-align: right; font-weight: 700; color: var(--chrome-ink-700); font-size: 0.9rem; }
+.subtotal-label,
+.repair-subtotal-label { text-align: right; font-weight: 700; color: var(--chrome-ink-700); font-size: 0.9rem; }
 .subtotal-val { font-weight: 700; color: var(--chrome-ink-900); white-space: nowrap; }
 
 /* -- Buy Here links -- override global a rule -- */
@@ -1726,7 +1727,6 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .repair-task-table input:focus { outline: none; border-color: var(--chrome-ink-800); }
 .task-price-display { color: var(--chrome-ink-900); font-weight: 600; }
 .repair-subtotal-row td { background: var(--chrome-paper-muted); }
-.repair-subtotal-label { text-align: right; font-weight: 700; color: var(--chrome-ink-700); }
 .repair-subtotal-val { font-weight: 700; color: var(--chrome-ink-900); }
 .btn-add-task-row {
   background: transparent; border: 1px dashed var(--chrome-ink-500); color: var(--chrome-ink-700);
@@ -1772,22 +1772,17 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 /* -- Summary rail and page grid --
    <aside class="est-rail"> holds the format toggle + Save/Load Draft, the
    summary and the action buttons, as MP's sticky right column. Below 1024px
-   and in print it has no box of its own (display: contents), so the three
-   blocks stack as they always did: toolbar first, summary where it sits in
-   the page, buttons last. On screen the page is a grid so that stacked order
-   can be kept with `order` while the rail's three blocks are one DOM block.
-   From 1024px the page is MP's 12-column grid: cards 7 columns (8 from
-   1280px), the rail 5 (4 from 1280px) and sticky. All of it is screen-only:
-   a landscape sheet is 1056px wide, and print must not turn into columns. */
+   and in print it has no box of its own (display: contents) and the page is
+   plain block flow, so the three blocks sit where they are in the document
+   (after the Scope card, before Terms) and Tab order is the order on screen:
+   no `order` overrides, which would move them on screen but not for the
+   keyboard. From 1024px the page is MP's 12-column grid: cards 7 columns (8
+   from 1280px), the rail 5 (4 from 1280px) and sticky. All of it is
+   screen-only: a landscape sheet is 1056px wide, and print must not turn
+   into columns. */
 .est-rail { display: contents; }
-@media screen {
-  .est-container { display: grid; grid-template-columns: minmax(0, 1fr); }
-  .est-toolbar { order: -1; }
-  .est-history { order: 1; }
-  .est-actions { order: 2; margin-top: 0.25rem; }
-}
 @media screen and (min-width: 1024px) {
-  .est-container { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; align-items: start; }
+  .est-container { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; align-items: start; }
   .est-container > * { grid-column: 1 / span 7; }
   .est-container > .est-rail {
     display: block; grid-column: 8 / span 5; grid-row: 1 / span 30;
@@ -1822,7 +1817,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   /* Actions: Save as PDF full width, the rest two across */
   .est-rail .est-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin: 0; padding: 0 1.5rem 1.5rem; }
   .est-rail .est-actions .mp-btn { width: 100%; padding: 0.7rem 0.5rem; font-size: 0.875rem; }
-  .est-rail .est-actions .mp-btn--primary { order: -1; grid-column: 1 / -1; padding: 0.85rem 1rem; font-size: 0.95rem; }
+  .est-rail .est-actions .mp-btn--primary { grid-column: 1 / -1; padding: 0.85rem 1rem; font-size: 0.95rem; }
 
   /* The outline buttons sit on the dark rail here: the same colors as .mp-btn--ghost */
   .est-rail .mp-btn--outline { background: transparent; color: #ffffff; border-color: rgba(255, 255, 255, 0.15); }
@@ -3010,52 +3005,31 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
 /* ============================================================
    FEEDBACK BUTTON
-   Sits in the Donate slot of the bottom-right floating cluster (this page
-   has no Donate button), above the BoatMD chat toggle, so it no longer
-   covers the Help button.
+   estimate.html's Feedback button sits in the Donate slot of the
+   bottom-right floating cluster (this page has no Donate button) and is the
+   same control: its position, round shape, icon-only rest state and pill
+   expansion are the .fab-donate rules in FLOATING-ACTION CLUSTER -- SHARED
+   CHROME, which list .feedback-btn / .feedback-link alongside .fab-donate.
+   Only its icon and amber colors are here.
    ============================================================ */
-.feedback-btn {
-  position: fixed;
-  bottom: 9.5rem;
-  right: var(--chrome-fab-right, 1.25rem);
-  z-index: 9999;
-}
-
-.feedback-link {
-  display: inline-flex;
-  align-items: center;
-  background: var(--chrome-signal-400);
-  color: var(--chrome-ink-950);
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.5rem 0.65rem;
-  border-radius: 20px;
-  text-decoration: none;
-  box-shadow: 0 2px 12px rgba(4,20,26,0.35);
-  transition: background 0.2s, padding 0.25s ease;
-  overflow: hidden;
-  white-space: nowrap;
-}
 .feedback-icon {
   font-size: 1.1rem;
   line-height: 1;
   flex-shrink: 0;
 }
-.feedback-label {
-  max-width: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-width 0.25s ease, opacity 0.2s ease;
-  font-size: 0.85rem;
+/* An <a>: each state restates margin-top, font-style, font-size, font-weight
+   and color, or the sitewide anchor rule (a, a:visited, a:hover, a:active)
+   wins on them -- a visited link would turn light blue and 1.25em. */
+.feedback-link,
+.feedback-link:visited,
+.feedback-link:active {
+  margin-top: 0; font-style: normal; font-size: 0.8rem; font-weight: 600;
+  background: var(--chrome-signal-400); color: var(--chrome-ink-950); text-decoration: none;
 }
-.feedback-link:hover {
-  background: var(--chrome-signal-200);
-  color: var(--chrome-ink-950);
-  padding: 0.5rem 1rem;
-}
-.feedback-link:hover .feedback-label {
-  max-width: 80px;
-  opacity: 1;
+.feedback-link:hover,
+.feedback-link:focus-visible {
+  margin-top: 0; font-style: normal; font-size: 0.8rem; font-weight: 600;
+  background: var(--chrome-signal-200); color: var(--chrome-ink-950); text-decoration: none;
 }
 
 /* ============================================================
@@ -4186,12 +4160,20 @@ body,
    above that, Donate sits at the top of the stack.
    ============================================================ */
 
-/* ---------- Donate ---------- */
-.fab-donate {
+/* ---------- Donate (and Feedback, estimate.html's button in the same slot) ----------
+   .feedback-btn is the fixed wrapper, .feedback-link the round control inside
+   it; they take the same rules as .fab-donate. Each keeps its own colors.
+   (background-color is in the shared transition for Feedback's hover fill;
+   Donate's own background never changes.) */
+.fab-donate,
+.feedback-btn {
   position: fixed;
   right: var(--chrome-fab-right, 1.25rem);
   bottom: 9.5rem;
   z-index: 1050;
+}
+.fab-donate,
+.feedback-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4200,15 +4182,18 @@ body,
   height: 3.5rem;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: var(--chrome-ink-900);
-  color: #ffffff;
+  border: 1px solid transparent;
   font-size: 0.8rem;
   font-weight: 600;
   font-family: var(--chrome-font-sans);
   box-shadow: var(--chrome-shadow-lift);
   cursor: pointer;
-  transition: border-color 150ms var(--chrome-ease-smooth), color 150ms var(--chrome-ease-smooth), width 200ms var(--chrome-ease-smooth), padding 200ms var(--chrome-ease-smooth), border-radius 200ms var(--chrome-ease-smooth);
+  transition: background-color 150ms var(--chrome-ease-smooth), border-color 150ms var(--chrome-ease-smooth), color 150ms var(--chrome-ease-smooth), width 200ms var(--chrome-ease-smooth), padding 200ms var(--chrome-ease-smooth), border-radius 200ms var(--chrome-ease-smooth);
+}
+.fab-donate {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--chrome-ink-900);
+  color: #ffffff;
 }
 /* Icon-only at rest, at every viewport width -- expands into the labeled
    pill on hover/focus instead of only doing so >=768px. Keeps the full
@@ -4216,16 +4201,22 @@ body,
    readers, hidden visually via clip (NOT display:none, which would strip
    the button's accessible name since it has no aria-label of its own). */
 .fab-donate:hover,
-.fab-donate:focus-visible {
-  border-color: var(--chrome-signal-400);
-  color: var(--chrome-signal-400);
+.fab-donate:focus-visible,
+.feedback-link:hover,
+.feedback-link:focus-visible {
   width: auto;
   height: auto;
   padding: 0.6rem 1.15rem;
   border-radius: 999px;
   flex-direction: row-reverse;
 }
-.fab-donate-label {
+.fab-donate:hover,
+.fab-donate:focus-visible {
+  border-color: var(--chrome-signal-400);
+  color: var(--chrome-signal-400);
+}
+.fab-donate-label,
+.feedback-label {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -4237,7 +4228,9 @@ body,
   border: 0;
 }
 .fab-donate:hover .fab-donate-label,
-.fab-donate:focus-visible .fab-donate-label {
+.fab-donate:focus-visible .fab-donate-label,
+.feedback-link:hover .feedback-label,
+.feedback-link:focus-visible .feedback-label {
   position: static;
   width: auto;
   height: auto;
@@ -4250,7 +4243,8 @@ body,
 }
 .fab-donate svg { width: 1rem; height: 1rem; flex: none; }
 @media (min-width: 992px) {
-  .fab-donate { bottom: 10.25rem; }
+  .fab-donate,
+  .feedback-btn { bottom: 10.25rem; }
 }
 @media print {
   .fab-donate { display: none !important; }

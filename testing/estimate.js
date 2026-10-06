@@ -13,8 +13,6 @@ var grandTotalValue = 0;
 /* setUserTier - called by auth.js after session loads */
 function setUserTier(tier) {
   var isPro = tier === 'pro';
-  var loggedIn = false;
-  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch(e) {}
 
   // Pro-feature elements: always visible, but locked (grayed) for free users
   document.querySelectorAll('.pro-feature').forEach(function (el) {
@@ -31,9 +29,8 @@ function setUserTier(tier) {
   var btnFmtInternal = document.getElementById('btnFmtInternal');
   if (btnFmtInternal) btnFmtInternal.innerHTML = 'Internal Copy';
 
-  // Internal summary (logged-in only)
-  var internalSummary = document.getElementById('internalSummary');
-  if (internalSummary) internalSummary.classList.toggle('d-none', !loggedIn);
+  // Internal summary (logged in, Internal Copy format only)
+  updateInternalSummary();
 
   // Body class for print CSS
   document.body.classList.toggle('free-user', !isPro);
@@ -67,6 +64,20 @@ function setUserTier(tier) {
 
   // Populate print header with current data
   populatePrintHeader();
+
+  // Publish the resolved auth state the way every other page does. The nav
+  // pill and the saved tier in global-auth.js listen for chemcalc:authchange,
+  // which global-account-modal.js fires from its own session check; that check
+  // is skipped on this page (auth.js does the session work here), so without
+  // this the pill reads the state once, before it has resolved, and stays on
+  // "Log In / Sign Up" for a signed-in user. auth.js calls this function after
+  // every session change, so this fires on login and logout too.
+  try {
+    window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: {
+      user: (typeof getUser === 'function') ? getUser() : null,
+      profile: (typeof getProfile === 'function') ? getProfile() : null
+    } }));
+  } catch (e) { /* never block the page on this */ }
 }
 
 /* -- Print Style Toggle -- */
@@ -102,6 +113,18 @@ function proSetPrintItemized() {
   if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
 }
 
+/* The internal cost block (your cost, gross profit, margin) is for the
+   contractor only: it shows for a logged-in user on the Internal Copy format
+   and on no other. Applied when the tier is set and again on every format
+   change, so Summary and Itemized never carry it. */
+function updateInternalSummary() {
+  var el = document.getElementById('internalSummary');
+  if (!el) return;
+  var loggedIn = false;
+  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch(e) {}
+  el.classList.toggle('d-none', !(loggedIn && currentFormat === 'internal'));
+}
+
 /* -- Consolidated format selector -- */
 function setFormat(fmt) {
   currentFormat = fmt;
@@ -128,6 +151,7 @@ function setFormat(fmt) {
     setView('internal');
     setPrintStyle('internal');
   }
+  updateInternalSummary();
 }
 function proSetFormat(fmt) {
   if (_checkPro()) { setFormat(fmt); } else { openModal('upgradeModal'); }
