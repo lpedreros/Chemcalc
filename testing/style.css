@@ -1021,8 +1021,8 @@ main.mp-calc-app{
    right edge entirely. Confirmed overlap amounts: 39px at
    375/410/430px, 23px at 576px, 74px at 768/900px (measured when the
    Donate button still gained a permanent text label above 767px,
-   which made it wider; all three buttons are now icon-only 3.5rem
-   circles at rest, see FLOATING-ACTION CLUSTER -- SHARED CHROME).
+   which made it wider; all three buttons are now icon-only circles
+   at rest, see FLOATING-ACTION CLUSTER -- SHARED CHROME).
    991.98px matches this project's own established tablet-ceiling
    breakpoint (see main.mp-calc-app's tablet tier in SHARED SITE
    COMPONENTS -- CALCULATOR PAGES) and lines up exactly with where
@@ -1050,7 +1050,7 @@ main.mp-calc-app{
    total clears that deficit over the base rule's 96px (109.2px needed)
    with ~11px to spare. The floating-action cluster has since changed
    (see FLOATING-ACTION CLUSTER -- SHARED CHROME): all three buttons are
-   now icon-only 3.5rem circles at rest at every width and only expand
+   now icon-only circles at rest at every width and only expand
    into labeled pills on hover/focus, so the permanent label that drove
    this number is gone and the rule now simply gives extra clearance.
    375/410/430/576px remain clean under the base 6rem rule alone; 992px+
@@ -3012,7 +3012,11 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
    CHROME, which list .feedback-btn / .feedback-link alongside .fab-donate.
    Only its icon and amber colors are here.
    ============================================================ */
+.feedback-link { --fab-icon: 1.5rem; }
 .feedback-icon {
+  display: inline-block;
+  width: var(--fab-icon);
+  text-align: center;
   font-size: 1.1rem;
   line-height: 1;
   flex-shrink: 0;
@@ -3540,9 +3544,20 @@ body,
      all three buttons' chrome (including their use of this token) now
      lives together. */
   --chrome-fab-right: 1.25rem;
+
+  /* The same cluster's vertical layout. Every button is a --chrome-fab-size
+     circle and the stack's gap is --chrome-fab-gap. Help's offset from the
+     bottom edge is the one hand-set position; BoatMD chat sits one size + gap
+     above Help and Donate/Feedback one size + gap above that, so a size or gap
+     change is one edit here and the spacing stays even at both tiers. */
+  --chrome-fab-size: 3.125rem;
+  --chrome-fab-gap: 0.75rem;
+  --chrome-fab-bottom-help: 1.25rem;
+  --chrome-fab-bottom-chat: calc(var(--chrome-fab-bottom-help) + var(--chrome-fab-size) + var(--chrome-fab-gap));
+  --chrome-fab-bottom-donate: calc(var(--chrome-fab-bottom-chat) + var(--chrome-fab-size) + var(--chrome-fab-gap));
 }
 @media (min-width: 992px) {
-  :root { --chrome-fab-right: 1.75rem; }
+  :root { --chrome-fab-right: 1.75rem; --chrome-fab-bottom-help: 1.75rem; }
 }
 
 /* ============================================================
@@ -4156,8 +4171,14 @@ body,
    SITEWIDE DESIGN TOKENS section).
 
    Bottom-right stack, matching FloatingActions.tsx: Help (closest to
-   the edge) sits at bottom ~1.25/1.75rem, the BoatMD chat toggle sits
-   above that, Donate sits at the top of the stack.
+   the edge) sits at --chrome-fab-bottom-help (1.25rem, 1.75rem from
+   992px), the BoatMD chat toggle one --chrome-fab-size + --chrome-fab-gap
+   above that, Donate (or Feedback) the same step above the chat toggle.
+   All three are --chrome-fab-size circles at rest, and on hover/focus they
+   grow only in width, toward the left (each is anchored by a fixed right):
+   the height is never changed and there is no lift, and the right padding
+   is set so the icon keeps the exact spot it has in the circle. Each
+   button's --fab-icon is its icon's width, which that padding needs.
    ============================================================ */
 
 /* ---------- Donate (and Feedback, estimate.html's button in the same slot) ----------
@@ -4169,7 +4190,7 @@ body,
 .feedback-btn {
   position: fixed;
   right: var(--chrome-fab-right, 1.25rem);
-  bottom: 9.5rem;
+  bottom: var(--chrome-fab-bottom-donate);
   z-index: 1050;
 }
 .fab-donate,
@@ -4178,8 +4199,8 @@ body,
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--chrome-fab-size);
+  height: var(--chrome-fab-size);
   padding: 0;
   border-radius: 50%;
   border: 1px solid transparent;
@@ -4191,6 +4212,7 @@ body,
   transition: background-color 150ms var(--chrome-ease-smooth), border-color 150ms var(--chrome-ease-smooth), color 150ms var(--chrome-ease-smooth), width 200ms var(--chrome-ease-smooth), padding 200ms var(--chrome-ease-smooth), border-radius 200ms var(--chrome-ease-smooth);
 }
 .fab-donate {
+  --fab-icon: 1rem;
   border-color: rgba(255, 255, 255, 0.15);
   background: var(--chrome-ink-900);
   color: #ffffff;
@@ -4205,8 +4227,7 @@ body,
 .feedback-link:hover,
 .feedback-link:focus-visible {
   width: auto;
-  height: auto;
-  padding: 0.6rem 1.15rem;
+  padding: 0 calc((var(--chrome-fab-size) - var(--fab-icon)) / 2 - 1px) 0 1.15rem;
   border-radius: 999px;
   flex-direction: row-reverse;
 }
@@ -4242,10 +4263,6 @@ body,
   border: 0;
 }
 .fab-donate svg { width: 1rem; height: 1rem; flex: none; }
-@media (min-width: 992px) {
-  .fab-donate,
-  .feedback-btn { bottom: 10.25rem; }
-}
 @media print {
   .fab-donate { display: none !important; }
 }
@@ -4262,11 +4279,12 @@ body,
      pill on hover/focus instead of a permanent label -- same hover-expand
      technique as .fab-donate above and .chatbot-toggle below. */
   position: fixed;
-  bottom: 1.25rem;
+  bottom: var(--chrome-fab-bottom-help);
   right: var(--chrome-fab-right, 1.25rem);
   z-index: 9998;
-  width: 3.5rem;
-  height: 3.5rem;
+  --fab-icon: 1.5rem;
+  width: var(--chrome-fab-size);
+  height: var(--chrome-fab-size);
   padding: 0;
   border-radius: 50%;
   background: var(--chrome-ink-900, #082029);
@@ -4281,9 +4299,11 @@ body,
   justify-content: center;
   gap: 0.5rem;
   box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
-  transition: transform 150ms var(--chrome-ease-smooth, ease), background 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
+  transition: background 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
   line-height: 1;
 }
+/* The "?" in a --fab-icon wide box, so its position on hover is exact */
+.help-float-btn > span:first-child { display: block; width: var(--fab-icon); text-align: center; flex: none; }
 /* Accessible label, clipped at rest (NOT display:none, which would strip
    the button's accessible name since it has no aria-label of its own) --
    same clip technique as .fab-donate-label above. Revealed on hover/focus
@@ -4305,9 +4325,8 @@ body,
 .help-float-btn:hover,
 .help-float-btn:focus-visible {
   background: var(--chrome-ink-800, #0E2E3A);
-  transform: translateY(-2px);
   width: auto;
-  padding: 0.6rem 1.15rem;
+  padding: 0 calc((var(--chrome-fab-size) - var(--fab-icon)) / 2) 0 1.15rem;
   border-radius: 999px;
   flex-direction: row-reverse;
 }
@@ -4323,9 +4342,6 @@ body,
   white-space: nowrap;
   border: 0;
 }
-@media (min-width: 992px) {
-  .help-float-btn { bottom: 1.75rem; }
-}
 @media print {
   .help-float-btn { display: none !important; }
 }
@@ -4337,13 +4353,10 @@ body,
    the chat window/panel content and this section's own merge history. */
 #chemcalc-chatbot {
     position: fixed;
-    bottom: 5.5rem;
+    bottom: var(--chrome-fab-bottom-chat);
     right: var(--chrome-fab-right, 1.25rem);
     z-index: 1040;
     font-family: var(--chrome-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
-}
-@media (min-width: 992px) {
-    #chemcalc-chatbot { bottom: 6.25rem; }
 }
 /* Toggle Button -- icon-only circle at rest, at every viewport width;
    expands into the pill shape with icon + "Ask BoatMD" label on
@@ -4354,8 +4367,9 @@ body,
     padding: 0.75rem;
     border-radius: 50%;
     min-height: 0;
-    width: 3.5rem;
-    height: 3.5rem;
+    --fab-icon: 20px;
+    width: var(--chrome-fab-size);
+    height: var(--chrome-fab-size);
     background-color: var(--chrome-sea-500, #0F7A85);
     color: #ffffff;
     border: none;
@@ -4365,7 +4379,7 @@ body,
     gap: 0.5rem;
     cursor: pointer;
     box-shadow: var(--chrome-shadow-lift, 0 18px 44px -20px rgba(4,20,26,0.45));
-    transition: transform 150ms var(--chrome-ease-smooth, ease), background-color 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
+    transition: background-color 150ms var(--chrome-ease-smooth, ease), width 200ms var(--chrome-ease-smooth, ease), padding 200ms var(--chrome-ease-smooth, ease), border-radius 200ms var(--chrome-ease-smooth, ease);
 }
 .chatbot-toggle::after {
     content: "Ask BoatMD";
@@ -4381,11 +4395,8 @@ body,
 .chatbot-toggle:hover,
 .chatbot-toggle:focus-visible {
     background-color: var(--chrome-sea-600, #0A5D66);
-    transform: translateY(-2px);
     width: auto;
-    height: auto;
-    min-height: 3rem;
-    padding: 0.65rem 1rem 0.65rem 1.15rem;
+    padding: 0 calc((var(--chrome-fab-size) - var(--fab-icon)) / 2) 0 1.15rem;
     border-radius: 999px;
     flex-direction: row-reverse;
 }
@@ -4617,7 +4628,7 @@ body,
 /* Chat Window */
 .chatbot-window {
     position: fixed;
-    bottom: 5.5rem;
+    bottom: var(--chrome-fab-bottom-chat);
     right: var(--chrome-fab-right, 1.25rem);
     width: 380px;
     max-width: calc(100vw - 40px);
@@ -4629,9 +4640,6 @@ body,
     display: flex;
     flex-direction: column;
     overflow: hidden;
-}
-@media (min-width: 992px) {
-    .chatbot-window { bottom: 6.25rem; }
 }
 
 /* Open-only fade + scale/translate transition (~220ms, matching MP's
@@ -4947,7 +4955,7 @@ body,
     .chatbot-window {
         width: calc(100vw - 20px);
         height: calc(100vh - 100px);
-        bottom: 4.75rem;
+        bottom: calc(var(--chrome-fab-bottom-help) + var(--chrome-fab-size));
         right: 10px;
     }
 
@@ -5461,8 +5469,9 @@ body,
 @media (max-width:575.98px){
   .calc-index-cta{padding:1.5rem;}
   /* MEKP (first) card's real height ends close enough to the fixed
-     floating cluster's occupied band (#chemcalc-chatbot, bottom:5.5rem,
-     56px tall) that the Awlgrip card's tag pill lands inside it at
+     floating cluster's occupied band (#chemcalc-chatbot, at
+     --chrome-fab-bottom-chat and --chrome-fab-size tall; 5.5rem and 56px
+     when this was measured) that the Awlgrip card's tag pill lands inside it at
      initial paint, scroll 0 -- confirmed via Range.getClientRects() on
      the tag text. Extra clearance after the first card only, so the
      rest of the stack's spacing is untouched. Floating cluster's own
@@ -5975,11 +5984,12 @@ h2.trello-setup-title{
   /* First custom-services card renders high enough in the initial
      viewport (scroll 0, 375px) that its right edge sits under the
      fixed floating cluster's column (#chemcalc-chatbot/.fab-donate/
-     .help-float-btn, right:var(--chrome-fab-right), 56px wide) --
+     .help-float-btn, right:var(--chrome-fab-right), --chrome-fab-size wide) --
      confirmed via getBoundingClientRect() on both: without this rule
      the card's right edge is flush with the cluster's right edge, so
-     the cluster's full 56px column covers it; with the 5.5rem the card
-     ends 32px short of that column. Same defect shape as the
+     the cluster's full column covers it; with the 5.5rem the card
+     ends 38px short of that column (32px when the buttons were 56px
+     wide). Same defect shape as the
      Calculators Index collision. Extra right clearance on the section
      wrapper (not the grid/card itself, so desktop/tablet 2-col layout
      is untouched) keeps card content clear of that column. Floating
