@@ -1424,15 +1424,14 @@ h1 {
    .mp-canvas > main rule (PAGE CANVAS AND CONTENT WRAPPER). */
 .est-container { font-family: var(--chrome-font-sans); color: var(--chrome-ink-900); }
 
-/* -- Tier banner (a .mp-card; the buttons are .mp-btn) --
+/* -- Tier banner (the .mp-hero-aside box in the hero; the buttons are .mp-btn --ghost) --
+   The plan label on top, the account buttons under it. auth.js writes the
+   label and shows or hides each button; it shows the box to everyone.
    .btn-tier-upgrade on the Upgrade button has no rules of its own: it is the
    hook auth.js uses to show the button to free users and hide it for Pro. */
-.tier-banner {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
-}
-.tier-label { color: var(--chrome-ink-600); font-weight: 600; font-size: 0.95rem; }
-.tier-label.pro { color: var(--chrome-sea-600); }
+.tier-banner { display: flex; flex-direction: column; gap: 0.75rem; }
+.tier-label { color: var(--chrome-signal-400); font-weight: 600; font-size: 0.8125rem; line-height: 1.5; }
+.tier-label.pro { color: var(--chrome-sea-400); }
 .tier-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .tier-actions .mp-btn[disabled] { opacity: 0.6; cursor: default; transform: none; }
 
@@ -1769,6 +1768,99 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   display: flex; flex-wrap: wrap; gap: 0.75rem;
   justify-content: center; margin: 1.5rem 0 2rem;
 }
+
+/* -- Summary rail and page grid --
+   <aside class="est-rail"> holds the format toggle + Save/Load Draft, the
+   summary and the action buttons, as MP's sticky right column. Below 1024px
+   and in print it has no box of its own (display: contents), so the three
+   blocks stack as they always did: toolbar first, summary where it sits in
+   the page, buttons last. On screen the page is a grid so that stacked order
+   can be kept with `order` while the rail's three blocks are one DOM block.
+   From 1024px the page is MP's 12-column grid: cards 7 columns (8 from
+   1280px), the rail 5 (4 from 1280px) and sticky. All of it is screen-only:
+   a landscape sheet is 1056px wide, and print must not turn into columns. */
+.est-rail { display: contents; }
+@media screen {
+  .est-container { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .est-toolbar { order: -1; }
+  .est-history { order: 1; }
+  .est-actions { order: 2; margin-top: 0.25rem; }
+}
+@media screen and (min-width: 1024px) {
+  .est-container { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; align-items: start; }
+  .est-container > * { grid-column: 1 / span 7; }
+  .est-container > .est-rail {
+    display: block; grid-column: 8 / span 5; grid-row: 1 / span 30;
+    position: sticky; top: 6rem; max-height: calc(100vh - 7.5rem); overflow-y: auto;
+    background: var(--chrome-ink-950); color: #ffffff;
+    border-radius: 12px; box-shadow: var(--chrome-shadow-lift);
+  }
+
+  /* Format toggle: MP's equal-width row, then Save/Load Draft under it */
+  .est-rail .est-toolbar {
+    display: block; margin: 0; padding: 0.5rem; overflow: visible;
+    background: transparent; border: 0; border-radius: 0; box-shadow: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .est-rail .toolbar-group { display: block; }
+  .est-rail .toolbar-group + .toolbar-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.5rem; }
+  .est-rail .est-toolbar .est-label {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .est-rail .view-toggle-wrap { width: 100%; gap: 0.25rem; padding: 0; background: transparent; border: 0; border-radius: 0; }
+  .est-rail .btn-view-toggle {
+    flex: 1 1 auto; padding: 0.5rem 0.75rem; border-radius: 6px; white-space: nowrap;
+    font-size: 0.8125rem; color: rgba(255, 255, 255, 0.55);
+  }
+  .est-rail .btn-view-toggle:hover:not(.active) { color: #ffffff; }
+  .est-rail .btn-view-toggle.active { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+
+  /* Summary: the rail is the dark panel, so the card inside gives up its own */
+  .est-rail .est-summary-card { margin: 0; padding: 1.5rem; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+
+  /* Actions: Save as PDF full width, the rest two across */
+  .est-rail .est-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin: 0; padding: 0 1.5rem 1.5rem; }
+  .est-rail .est-actions .mp-btn { width: 100%; padding: 0.7rem 0.5rem; font-size: 0.875rem; }
+  .est-rail .est-actions .mp-btn--primary { order: -1; grid-column: 1 / -1; padding: 0.85rem 1rem; font-size: 0.95rem; }
+
+  /* The outline buttons sit on the dark rail here: the same colors as .mp-btn--ghost */
+  .est-rail .mp-btn--outline { background: transparent; color: #ffffff; border-color: rgba(255, 255, 255, 0.15); }
+  .est-rail .mp-btn--outline:visited { color: #ffffff; }
+  .est-rail .mp-btn--outline:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.4); color: #ffffff; }
+  .est-rail .mp-btn--outline:active { background: rgba(255, 255, 255, 0.08); color: #ffffff; }
+}
+@media screen and (min-width: 1280px) {
+  .est-container > * { grid-column: 1 / span 8; }
+  .est-container > .est-rail { grid-column: 9 / span 4; }
+}
+
+/* -- Estimate History preview (last card of the left column) --
+   MP's History card: icon badge, title, View all, then divided rows of
+   estimate number, client, total and status. The number is .history-est-link
+   and the status is the History page's own .history-status select. Its
+   signed-out, free and empty states reuse .history-empty. */
+.est-history-head { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--chrome-paper-line); }
+.est-history-title { margin: 0; font-family: var(--chrome-font-sans); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; color: var(--chrome-ink-900); }
+.est-history-all,
+.est-history-all:visited,
+.est-history-all:hover,
+.est-history-all:active {
+  margin: 0 0 0 auto; font-family: var(--chrome-font-sans); font-size: 0.8125rem; font-weight: 600; font-style: normal;
+  color: var(--chrome-sea-600); text-decoration: underline; text-decoration-color: rgba(10, 93, 102, 0.3); text-underline-offset: 2px;
+}
+.est-history-all:hover,
+.est-history-all:active { color: var(--chrome-sea-500); }
+.est-history-list { margin: 0; padding: 0; list-style: none; }
+.est-history-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1rem; padding: 0.875rem 1.5rem; }
+.est-history-row + .est-history-row { border-top: 1px solid var(--chrome-paper-line); }
+.est-history-client {
+  flex: 1 1 8rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 0.875rem; color: var(--chrome-ink-700);
+}
+.est-history-total { font-family: var(--chrome-font-mono); font-size: 0.875rem; font-weight: 600; color: var(--chrome-ink-900); }
+.est-history .history-empty { padding: 2.5rem 1.5rem; }
+.est-history .history-loading { padding: 2rem 1.5rem; }
 
 /* -- Modals --
    Light-body/dark-accent pattern (ChemCalc_FullSite_Blueprint.md),
@@ -3532,6 +3624,20 @@ body,
   .mp-hero--overlap{padding-bottom:7rem;}
 }
 
+/* A hero with a box beside its copy (MP's PageHero aside): put the copy in
+   the first child of .mp-hero-split and the box (.mp-hero-aside) in the
+   second. The box stacks under the copy and sits to its right from 1024px,
+   bottom-aligned with it. */
+.mp-hero-split{display:flex;flex-direction:column;gap:2rem;}
+.mp-hero-aside{
+  padding:1rem 1.25rem;border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  background:var(--chrome-ink-900);color:#ffffff;
+}
+@media (min-width:1024px){
+  .mp-hero-split{flex-direction:row;align-items:flex-end;justify-content:space-between;}
+  .mp-hero-aside{flex:none;width:22.625rem;}
+}
+
 /* The calculators' main grid is .mp-split (SHARED SITE COMPONENTS); this
    sets its column ratio. */
 .mp-grid{--mp-split-cols:7fr 5fr;}
@@ -4908,6 +5014,7 @@ body,
   display:flex;align-items:center;justify-content:center;
 }
 .mp-card-icon--spaced{margin-bottom:1.25rem;}
+.mp-card-icon--sm{width:2rem;height:2rem;}
 .mp-card-title{
   font-family:var(--chrome-font-sans);font-size:1.15rem;font-weight:700;
   color:var(--chrome-ink-900);margin:0 0 .6rem;

@@ -62,6 +62,9 @@ function setUserTier(tier) {
   // Deposit calculator - Pro only
   showDepositCalc(isPro);
 
+  // Estimate History preview: signed out / free / Pro
+  renderHistoryPreview(tier);
+
   // Populate print header with current data
   populatePrintHeader();
 }
@@ -913,6 +916,7 @@ function saveDraft() {
       alert('Save failed: ' + result.error.message);
     } else {
       alert('Estimate saved: ' + data.estimateNumber);
+      renderHistoryPreview('pro');
     }
   });
 }
@@ -953,9 +957,83 @@ function openLoadDraftModal() {
 
 function deleteSavedEstimate(id) {
   if (confirm('Delete this saved estimate?')) {
-    window.deleteEstimateById(id).then(function() { openLoadDraftModal(); });
+    window.deleteEstimateById(id).then(function() { openLoadDraftModal(); renderHistoryPreview('pro'); });
   }
 }
+
+/* ============================================================
+   ESTIMATE HISTORY PREVIEW (left column, last card)
+   The newest saved estimates, from the same loader the Load Draft modal and
+   history.html use (loadEstimatesFromSupabase, auth.js). Gated the way
+   history.html is: signed out -> log in, free -> Pro feature, Pro -> the
+   list. The status on each row is the shared status select
+   (estimate-status.js), so changing it here saves exactly as it does on the
+   History page. Rows open in place, like Load Draft.
+   ============================================================ */
+var HISTORY_PREVIEW_COUNT = 5;
+var _histPreviewSeq = 0;     // a newer refresh makes an older, slower one drop its result
+var _histPreviewRows = [];
+
+function renderHistoryPreview(tier) {
+  if (!document.getElementById('historyPreview')) return;
+  var loggedIn = false;
+  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch (e) {}
+  var seq = ++_histPreviewSeq;
+
+  function show(which) {
+    ['histPrevAuth', 'histPrevPro', 'histPrevEmpty', 'histPrevLoading', 'histPrevList'].forEach(function (id) {
+      document.getElementById(id).classList.toggle('d-none', id !== which);
+    });
+  }
+
+  // Logged out or free: never leave the last user's estimates on screen.
+  if (!loggedIn) { _histPreviewRows = []; show('histPrevAuth'); return; }
+  if (tier !== 'pro') { _histPreviewRows = []; show('histPrevPro'); return; }
+
+  show('histPrevLoading');
+  window.loadEstimatesFromSupabase().then(function (rows) {
+    if (seq !== _histPreviewSeq) return;
+    _histPreviewRows = (rows || []).slice(0, HISTORY_PREVIEW_COUNT);
+    if (!_histPreviewRows.length) { show('histPrevEmpty'); return; }
+    var list = document.getElementById('histPrevList');
+    list.innerHTML = '';
+    _histPreviewRows.forEach(function (est) {
+      var clientName = ((est.customer_first || '') + ' ' + (est.customer_last || '')).trim() || '\u2014';
+      var vessel = [est.boat_make, est.boat_model].filter(Boolean).join(' ');
+      var num = escHtml(est.estimate_number || '\u2014');
+      var li = document.createElement('li');
+      li.className = 'est-history-row';
+      li.setAttribute('data-id', est.id);
+      li.innerHTML =
+        '<a href="estimate.html?draft=' + est.id + '" class="history-est-link history-est-link--sm est-history-ref" data-id="' + est.id + '">' + num + '</a>' +
+        '<span class="est-history-client" title="' + escHtml(clientName + (vessel ? ' \u2014 ' + vessel : '')) + '">' + escHtml(clientName) + '</span>' +
+        '<span class="est-history-total">' + fmtCurrency(est.grand_total) + '</span>' +
+        estimateStatusSelectHtml(est.id, est.status || 'draft', num, 'updatePreviewStatus');
+      list.appendChild(li);
+    });
+    show('histPrevList');
+  });
+}
+
+/* A status chosen in the preview: the shared save, then keep the preview's own copy in step. */
+async function updatePreviewStatus(id, selectEl) {
+  var newStatus = await saveEstimateStatus(id, selectEl);
+  var row = _histPreviewRows.find(function (r) { return r.id === id; });
+  if (row) row.status = newStatus;
+}
+
+/* An estimate number opens that estimate here, the way Load Draft does (a modified click still opens the link). */
+document.addEventListener('click', function (e) {
+  var link = e.target.closest ? e.target.closest('.est-history-ref') : null;
+  if (!link || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  window.loadEstimateById(link.getAttribute('data-id')).then(function (data) {
+    if (!data) return;
+    loadDraft(data);
+    var top = document.getElementById('estimateInfoCard');
+    if (top && top.scrollIntoView) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
 
 function loadDraft(data) {
   // Restore header fields

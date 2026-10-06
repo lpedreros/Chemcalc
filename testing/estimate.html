@@ -291,61 +291,35 @@
 </header>
 <!-- #EndLibraryItem --><!-- ===== HERO ===== -->
 <div class="mp-hero mp-hero--overlap d-print-none">
-  <h1 class="mp-hero-title">Marine Repair Estimator</h1>
-  <p class="mp-hero-tagline">Build professional repair estimates in minutes</p>
+  <div class="mp-hero-split">
+    <div>
+      <h1 class="mp-hero-title">Marine Repair Estimator</h1>
+      <p class="mp-hero-tagline">Build professional repair estimates in minutes</p>
 
-  <!-- ===== CUSTOM ESTIMATOR CALLOUT ===== -->
-  <p class="mp-hero-copy custom-est-callout">
-    <span>&#128736; Need an estimator like this for your own business?</span>
-    <a href="services.html#custom-estimator">I can build one for you &rarr;</a>
-  </p>
+      <!-- ===== CUSTOM ESTIMATOR CALLOUT ===== -->
+      <p class="mp-hero-copy custom-est-callout">
+        <span>&#128736; Need an estimator like this for your own business?</span>
+        <a href="services.html#custom-estimator">I can build one for you &rarr;</a>
+      </p>
+    </div>
+
+    <!-- ===== TIER BANNER: plan + account buttons (auth.js fills in the label and shows or hides each button) ===== -->
+    <div class="mp-hero-aside tier-banner" id="tierBanner">
+      <span id="tierLabel" class="tier-label">&#128274; Free Plan</span>
+      <span class="tier-actions">
+        <button class="mp-btn mp-btn--ghost mp-btn--sm" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
+        <button class="mp-btn mp-btn--ghost mp-btn--sm" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
+        <button class="mp-btn mp-btn--ghost mp-btn--sm pro-feature" id="bizInfoBtn" onclick="openAccountModal()">&#9998; My Account</button>
+        <button class="btn-tier-upgrade mp-btn mp-btn--primary mp-btn--sm" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
+        <button class="mp-btn mp-btn--ghost mp-btn--sm" id="manageSubBtn" style="display:none;" onclick="window.open('https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00','_blank')">&#9881; Manage Subscription</button>
+        <button class="mp-btn mp-btn--ghost mp-btn--sm" id="manageSubCompedBtn" style="display:none;" disabled title="You're on a complimentary Pro plan. Contact us if you need to make changes.">&#9881; Complimentary Plan</button>
+      </span>
+    </div>
+  </div>
 </div>
 
 <!-- ===== MAIN CONTAINER ===== -->
 <main class="container est-container">
-
-  <!-- ===== TIER BANNER ===== -->
-  <div class="tier-banner mp-card mp-card--compact d-print-none" id="tierBanner">
-    <span id="tierLabel" class="tier-label">&#128274; Free Plan</span>
-    <span class="tier-actions">
-      <button class="mp-btn mp-btn--outline mp-btn--sm" id="loginBtn" onclick="openModal('loginModal')">Log In</button>
-      <button class="mp-btn mp-btn--outline mp-btn--sm" id="logoutBtn" style="display:none;" onclick="doLogout()">Log Out</button>
-      <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="bizInfoBtn" onclick="openAccountModal()">&#9998; My Account</button>
-      <button class="btn-tier-upgrade mp-btn mp-btn--primary mp-btn--sm" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
-      <button class="mp-btn mp-btn--outline mp-btn--sm" id="manageSubBtn" style="display:none;" onclick="window.open('https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00','_blank')">&#9881; Manage Subscription</button>
-      <button class="mp-btn mp-btn--outline mp-btn--sm" id="manageSubCompedBtn" style="display:none;" disabled title="You're on a complimentary Pro plan. Contact us if you need to make changes.">&#9881; Complimentary Plan</button>
-    </span>
-  </div>
-
-  <!-- ===== TOP TOOLBAR (Job Preset + Customer View Toggle) ===== -->
-  <div class="est-toolbar mp-card mp-card--compact d-print-none">
-    <!-- Format Selector (replaces separate View + Print toggles) -->
-    <div class="toolbar-group">
-      <label class="est-label mb-0">Format:</label>
-      <div class="view-toggle-wrap" id="formatToggleWrap">
-        <button id="btnFmtSummary" class="btn-view-toggle"
-          onclick="setFormat('summary')"
-          title="Best for quick, small jobs or picky clients. Shows only the final category totals. Keeps the focus on the bottom line so clients don't try to haggle over individual material costs.">
-          Summary
-        </button>
-        <button id="btnFmtItemized" class="btn-view-toggle pro-feature"
-          onclick="proSetFormat('itemized')"
-          title="Best for large insurance claims or transparent corporate accounts. Fully breaks down retail pricing for labor, materials, and paint so the client sees exactly where their money is going.">
-          Itemized
-        </button>
-        <button id="btnFmtInternal" class="btn-view-toggle active"
-          onclick="setFormat('internal')"
-          title="For your eyes only! Displays your raw wholesale costs, precise material markups, and total gross profit margins. Use this on the dock to make sure you are actually making money on the job before handing it to the client.">
-          Internal Copy
-        </button>
-      </div>
-    </div>
-    <!-- Save / Load Draft (Pro) -->
-    <div class="toolbar-group">
-      <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
-      <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
-    </div>
-  </div>
 
   <!-- ===== ESTIMATE INFO ===== -->
   <div class="est-card mp-card" id="estimateInfoCard">
@@ -536,90 +510,135 @@
     <p class="scope-hint d-print-none">Optional. Appears on all printed/exported estimates for Beta users.</p>
   </div>
 
-  <!-- ===== SUMMARY ===== -->
-  <div class="est-card est-summary-card mp-panel">
-    <div class="est-card-title d-flex justify-content-between align-items-center">
-      <span>Estimate Summary</span>
-      <button class="help-icon" onclick="showHelp('helpSummary', this)" title="Help">?</button>
-    </div>
-    <div class="help-popover" id="helpSummary">
-      A live total of all materials and labor. The internal view (visible only to you) shows your actual cost, gross profit, and margin. The customer view shows only the total. Use the Deposit Calculator to set a required deposit amount.
-    </div>
-
-    <!-- Customer view: repair totals only -->
-    <div id="customerSummary" class="summary-grid d-none">
-      <div id="customerRepairRows"></div>
-      <div class="summary-divider"></div>
-      <div class="summary-row summary-grand">
-        <span>ESTIMATE TOTAL</span>
-        <span id="grandTotalCustomer">$0.00</span>
-      </div>
-    </div>
-
-    <!-- Internal view: full breakdown -->
-    <div id="internalSummaryFull" class="summary-grid">
-      <div class="summary-row">
-        <span>Materials</span>
-        <span id="sumMaterials">$0.00</span>
-      </div>
-      <div id="laborSummaryRows"></div>
-      <div class="summary-divider"></div>
-      <div class="summary-row summary-grand">
-        <span>ESTIMATE TOTAL</span>
-        <span id="grandTotal">$0.00</span>
-      </div>
-    </div>
-
-    <!-- Deposit Calculator (Pro) -->
-    <div id="depositCalcBlock" class="deposit-calc-block d-print-none d-none">
-      <div class="summary-divider"></div>
-      <div class="deposit-row">
-        <label class="deposit-label" for="depositToggle">
-          <input type="checkbox" id="depositToggle" onchange="updateDeposit()" />
-          Require Deposit
-        </label>
-        <select id="depositPct" class="deposit-select" onchange="updateDeposit()">
-          <option value="50">50%</option>
-          <option value="33">33%</option>
-          <option value="25">25%</option>
-          <option value="custom">Custom</option>
-        </select>
-        <input type="number" id="depositCustomPct" class="deposit-custom-input d-none" min="1" max="100" step="1" placeholder="%" oninput="updateDeposit()" />
-      </div>
-    </div>
-
-    <!-- Deposit breakdown - shown on screen and in print when deposit is active -->
-    <div id="depositSummaryBlock" class="d-none">
-      <div class="summary-divider"></div>
-      <div class="summary-row deposit-line">
-        <span id="depositLabel">Deposit Required (50%)</span>
-        <span id="depositAmount">$0.00</span>
-      </div>
-      <div class="summary-row deposit-balance-line">
-        <span>Balance Due on Completion</span>
-        <span id="depositBalance">$0.00</span>
-      </div>
-    </div>
-
-    <!-- Internal cost breakdown (logged-in users only) -->
-    <div id="internalSummary" class="internal-summary d-none">
-      <div class="internal-label">&#128274; Internal - Not visible to customer</div>
-      <div class="summary-grid mt-2">
-        <div class="summary-row">
-          <span>Your Cost (Materials)</span>
-          <span id="sumCostMaterials">$0.00</span>
-        </div>
-        <div class="summary-row">
-          <span>Gross Profit</span>
-          <span id="grossProfit">$0.00</span>
-        </div>
-        <div class="summary-row">
-          <span>Margin</span>
-          <span id="marginPct">-</span>
+  <!-- ===== SUMMARY RAIL: format toggle, summary and actions =====
+       One block so it can sit in the sticky right column from 1024px. Below that, and in print,
+       it dissolves (display: contents) and its three parts stack as they always have. -->
+  <aside class="est-rail" aria-label="Estimate format, summary and actions">
+    <!-- ===== FORMAT TOGGLE + SAVE / LOAD DRAFT ===== -->
+    <div class="est-toolbar mp-card mp-card--compact d-print-none">
+      <!-- Format Selector (replaces separate View + Print toggles) -->
+      <div class="toolbar-group">
+        <label class="est-label mb-0">Format:</label>
+        <div class="view-toggle-wrap" id="formatToggleWrap">
+          <button id="btnFmtSummary" class="btn-view-toggle"
+            onclick="setFormat('summary')"
+            title="Best for quick, small jobs or picky clients. Shows only the final category totals. Keeps the focus on the bottom line so clients don't try to haggle over individual material costs.">
+            Summary
+          </button>
+          <button id="btnFmtItemized" class="btn-view-toggle pro-feature"
+            onclick="proSetFormat('itemized')"
+            title="Best for large insurance claims or transparent corporate accounts. Fully breaks down retail pricing for labor, materials, and paint so the client sees exactly where their money is going.">
+            Itemized
+          </button>
+          <button id="btnFmtInternal" class="btn-view-toggle active"
+            onclick="setFormat('internal')"
+            title="For your eyes only! Displays your raw wholesale costs, precise material markups, and total gross profit margins. Use this on the dock to make sure you are actually making money on the job before handing it to the client.">
+            Internal Copy
+          </button>
         </div>
       </div>
+      <!-- Save / Load Draft (Pro) -->
+      <div class="toolbar-group">
+        <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
+        <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+      </div>
     </div>
-  </div>
+
+    <!-- ===== SUMMARY ===== -->
+    <div class="est-card est-summary-card mp-panel">
+      <div class="est-card-title d-flex justify-content-between align-items-center">
+        <span>Estimate Summary</span>
+        <button class="help-icon" onclick="showHelp('helpSummary', this)" title="Help">?</button>
+      </div>
+      <div class="help-popover" id="helpSummary">
+        A live total of all materials and labor. The internal view (visible only to you) shows your actual cost, gross profit, and margin. The customer view shows only the total. Use the Deposit Calculator to set a required deposit amount.
+      </div>
+
+      <!-- Customer view: repair totals only -->
+      <div id="customerSummary" class="summary-grid d-none">
+        <div id="customerRepairRows"></div>
+        <div class="summary-divider"></div>
+        <div class="summary-row summary-grand">
+          <span>ESTIMATE TOTAL</span>
+          <span id="grandTotalCustomer">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Internal view: full breakdown -->
+      <div id="internalSummaryFull" class="summary-grid">
+        <div class="summary-row">
+          <span>Materials</span>
+          <span id="sumMaterials">$0.00</span>
+        </div>
+        <div id="laborSummaryRows"></div>
+        <div class="summary-divider"></div>
+        <div class="summary-row summary-grand">
+          <span>ESTIMATE TOTAL</span>
+          <span id="grandTotal">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Deposit Calculator (Pro) -->
+      <div id="depositCalcBlock" class="deposit-calc-block d-print-none d-none">
+        <div class="summary-divider"></div>
+        <div class="deposit-row">
+          <label class="deposit-label" for="depositToggle">
+            <input type="checkbox" id="depositToggle" onchange="updateDeposit()" />
+            Require Deposit
+          </label>
+          <select id="depositPct" class="deposit-select" onchange="updateDeposit()">
+            <option value="50">50%</option>
+            <option value="33">33%</option>
+            <option value="25">25%</option>
+            <option value="custom">Custom</option>
+          </select>
+          <input type="number" id="depositCustomPct" class="deposit-custom-input d-none" min="1" max="100" step="1" placeholder="%" oninput="updateDeposit()" />
+        </div>
+      </div>
+
+      <!-- Deposit breakdown - shown on screen and in print when deposit is active -->
+      <div id="depositSummaryBlock" class="d-none">
+        <div class="summary-divider"></div>
+        <div class="summary-row deposit-line">
+          <span id="depositLabel">Deposit Required (50%)</span>
+          <span id="depositAmount">$0.00</span>
+        </div>
+        <div class="summary-row deposit-balance-line">
+          <span>Balance Due on Completion</span>
+          <span id="depositBalance">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Internal cost breakdown (logged-in users only) -->
+      <div id="internalSummary" class="internal-summary d-none">
+        <div class="internal-label">&#128274; Internal - Not visible to customer</div>
+        <div class="summary-grid mt-2">
+          <div class="summary-row">
+            <span>Your Cost (Materials)</span>
+            <span id="sumCostMaterials">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Gross Profit</span>
+            <span id="grossProfit">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Margin</span>
+            <span id="marginPct">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ACTION BUTTONS ===== -->
+    <div class="est-actions d-print-none">
+      <button class="mp-btn mp-btn--outline" onclick="window.print()">&#128424; Print</button>
+      <button class="mp-btn mp-btn--primary" onclick="exportPDF()">&#128196; Save as PDF</button>
+      <button class="mp-btn mp-btn--outline" onclick="shareEstimate()">&#128279; Share</button>
+      <button class="mp-btn mp-btn--outline pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
+      <button class="btn-trello mp-btn pro-feature" id="addToTrelloBtn" onclick="proAddToTrello()">&#128203; Add to Trello</button>
+      <button class="mp-btn mp-btn--outline" onclick="newEstimate()">&#10010; New Estimate</button>
+    </div>
+  </aside>
 
   <!-- ===== LEGAL ===== -->
   <div class="est-card est-legal-card mp-card">
@@ -649,15 +668,38 @@
     </div>
   </div>
 
-  <!-- ===== ACTION BUTTONS ===== -->
-  <div class="est-actions d-print-none">
-    <button class="mp-btn mp-btn--outline" onclick="window.print()">&#128424; Print</button>
-    <button class="mp-btn mp-btn--primary" onclick="exportPDF()">&#128196; Save as PDF</button>
-    <button class="mp-btn mp-btn--outline" onclick="shareEstimate()">&#128279; Share</button>
-    <button class="mp-btn mp-btn--outline pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
-    <button class="btn-trello mp-btn pro-feature" id="addToTrelloBtn" onclick="proAddToTrello()">&#128203; Add to Trello</button>
-    <button class="mp-btn mp-btn--outline" onclick="newEstimate()">&#10010; New Estimate</button>
-  </div>
+  <!-- ===== ESTIMATE HISTORY (the newest saved estimates; estimate.js fills it) =====
+       Same rules as history.html: signed-out, free (Pro feature) and Pro states. -->
+  <section class="est-card mp-card mp-card--flush est-history d-print-none" id="historyPreview" aria-labelledby="historyPreviewTitle">
+    <div class="est-history-head">
+      <span class="mp-card-icon mp-card-icon--sm" aria-hidden="true"><svg width="16" height="16" aria-hidden="true"><use href="#icon-clock"/></svg></span>
+      <h2 class="est-history-title" id="historyPreviewTitle">Estimate History</h2>
+      <a href="history.html" class="est-history-all">View all</a>
+    </div>
+
+    <!-- Signed out (also what shows until the session loads) -->
+    <div class="history-empty est-history-note" id="histPrevAuth">
+      <span class="history-empty-icon" aria-hidden="true"><svg width="24" height="24" aria-hidden="true"><use href="#icon-lock"/></svg></span>
+      <h3 class="history-empty-title">Log in to view your estimate history</h3>
+      <p class="history-empty-text">Every estimate you save from the Repair Estimator lands here, with its total and status.</p>
+      <button type="button" class="mp-btn mp-btn--primary mp-btn--sm" onclick="openModal('loginModal')">Log In</button>
+    </div>
+    <!-- Free plan -->
+    <div class="history-empty est-history-note d-none" id="histPrevPro">
+      <span class="history-empty-icon" aria-hidden="true"><svg width="24" height="24" aria-hidden="true"><use href="#icon-lock"/></svg></span>
+      <h3 class="history-empty-title">Estimate history is a Pro feature</h3>
+      <p class="history-empty-text">Upgrade to Pro to access your full estimate log.</p>
+      <button type="button" class="mp-btn mp-btn--primary mp-btn--sm" onclick="openModal('upgradeModal')">Upgrade to Pro</button>
+    </div>
+    <!-- Pro, nothing saved yet -->
+    <div class="history-empty est-history-note d-none" id="histPrevEmpty">
+      <span class="history-empty-icon" aria-hidden="true"><svg width="24" height="24" aria-hidden="true"><use href="#icon-file-text"/></svg></span>
+      <h3 class="history-empty-title">No estimates yet</h3>
+      <p class="history-empty-text">Build your first quote in the Repair Estimator and save it &mdash; it will show up here with its total and status.</p>
+    </div>
+    <div class="history-loading d-none" id="histPrevLoading">Loading estimates&hellip;</div>
+    <ul class="est-history-list d-none" id="histPrevList"></ul>
+  </section>
 
 </main><!-- /container -->
 
@@ -786,6 +828,7 @@
 <script src="affiliate_links.js"></script>
 <script src="auth.js"></script>
 <script src="/global-account-modal.js"></script>
+<script src="estimate-status.js"></script>
 <script src="estimate.js"></script>
 <script src="trello.js"></script>
 <script src="/materials_library.js"></script>

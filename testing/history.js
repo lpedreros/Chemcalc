@@ -7,15 +7,8 @@ var _allEstimates = [];
 var _pendingDeleteId = null;
 var _historyWired = false;
 
-var STATUS_LABELS = {
-  draft:       { label: 'Draft',       cls: 'history-status--draft' },
-  sent:        { label: 'Sent',        cls: 'history-status--sent' },
-  approved:    { label: 'Approved',    cls: 'history-status--approved' },
-  in_progress: { label: 'In Progress', cls: 'history-status--in-progress' },
-  completed:   { label: 'Completed',   cls: 'history-status--completed' },
-  invoiced:    { label: 'Invoiced',    cls: 'history-status--invoiced' },
-  declined:    { label: 'Declined',    cls: 'history-status--declined' }
-};
+/* The statuses (STATUS_LABELS), the status select and the status save are in
+   estimate-status.js, shared with the Estimate History preview on estimate.html. */
 
 function fmtMoney(v) {
   var n = parseFloat(v) || 0;
@@ -203,12 +196,7 @@ function renderTable(rows) {
     var status = est.status || 'draft';
     var num = _esc(est.estimate_number || '—');
     var openHref = 'estimate.html?draft=' + est.id;
-    var statusSelect =
-      '<select class="history-status ' + (STATUS_LABELS[status] || { cls: 'history-status--draft' }).cls + '" ' +
-        'data-status-for="' + est.id + '" aria-label="Status for ' + num + '" ' +
-        'onchange="updateStatus(\'' + est.id + '\', this)">' +
-        _statusOptions(status) +
-      '</select>';
+    var statusSelect = estimateStatusSelectHtml(est.id, status, num, 'updateStatus');
     var trello = est.trello_card_id
       ? '<span class="history-trello" title="Card created in Trello">' +
           '<svg width="12" height="12" aria-hidden="true"><use href="#icon-external-link"/></svg>Trello</span>'
@@ -259,13 +247,6 @@ function renderTable(rows) {
   _syncFilters();
 }
 
-function _statusOptions(current) {
-  return Object.keys(STATUS_LABELS).map(function(k) {
-    var s = STATUS_LABELS[k];
-    return '<option value="' + k + '"' + (k === current ? ' selected' : '') + '>' + s.label + '</option>';
-  }).join('');
-}
-
 function _esc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -290,27 +271,8 @@ function applyFilters() {
 
 /* ── Update status ─────────────────────────────────────────── */
 async function updateStatus(id, selectEl) {
-  var newStatus = selectEl.value;
-  var statusInfo = STATUS_LABELS[newStatus] || { cls: 'history-status--draft' };
-
-  // Update class on select for color
-  Object.values(STATUS_LABELS).forEach(function(s) { selectEl.classList.remove(s.cls); });
-  selectEl.classList.add(statusInfo.cls);
-
-  // The same estimate is rendered twice (desktop table + mobile list): keep the other copy in step.
-  Array.prototype.forEach.call(document.querySelectorAll('select[data-status-for="' + id + '"]'), function(other) {
-    if (other === selectEl) return;
-    other.value = newStatus;
-    Object.values(STATUS_LABELS).forEach(function(s) { other.classList.remove(s.cls); });
-    other.classList.add(statusInfo.cls);
-  });
-
-  // Update in Supabase
-  if (typeof _sb !== 'undefined') {
-    await _sb.from('estimates')
-      .update({ status: newStatus })
-      .eq('id', id);
-  }
+  // Recolors both copies of the select (desktop table + mobile list) and saves it.
+  var newStatus = await saveEstimateStatus(id, selectEl);
 
   // Update local cache
   var est = _allEstimates.find(function(e){ return e.id === id; });
