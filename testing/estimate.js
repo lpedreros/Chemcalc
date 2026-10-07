@@ -838,22 +838,28 @@ function updateSummary() {
    TASK_PRESETS (task_presets.js, from Supabase task_presets.scope_steps), the
    same rows tsApplyPreset() puts in a task's own scope note, so the content
    exists once and the two lists cannot drift apart. */
-function insertScopeSnippet(sel) {
-  var name = sel.value;
-  if (!name) return;
+/* Appends a preset's scope ("Name:" then its numbered steps) to the one Scope of Work box.
+   Used by the template dropdown and by Task Starter, so both write exactly the same text. */
+function appendPresetScope(preset) {
   var ta = document.getElementById('scopeNotes');
-  if (!ta) return;
-  var preset = (typeof TASK_PRESETS !== 'undefined')
-    ? TASK_PRESETS.find(function(p) { return p.name === name; })
-    : null;
-  if (!preset || !preset.scopeSteps || !preset.scopeSteps.length) { sel.value = ''; return; }
+  if (!ta || !preset || !preset.scopeSteps || !preset.scopeSteps.length) return false;
   var text = preset.name + ':\n' + preset.scopeSteps.map(function(s, i) {
     return (i + 1) + '. ' + s;
   }).join('\n');
   ta.value += (ta.value ? '\n\n' : '') + text;
   syncPrintMirror(ta);
+  return true;
+}
+
+function insertScopeSnippet(sel) {
+  var name = sel.value;
+  if (!name) return;
+  var preset = (typeof TASK_PRESETS !== 'undefined')
+    ? TASK_PRESETS.find(function(p) { return p.name === name; })
+    : null;
+  var added = appendPresetScope(preset);
   sel.value = ''; // reset dropdown
-  ta.focus();
+  if (added) document.getElementById('scopeNotes').focus();
 }
 
 function populateScopeSnippetOptions(sel, _attempt) {
@@ -1429,23 +1435,9 @@ function tsApplyPreset(idx) {
   closeModal('taskStarterModal');
   addRepairTask(preset.name, preset.taskRows);
   mergePresetMaterials(preset);
-  // Populate scope textarea with steps
-  if (preset.scopeSteps && preset.scopeSteps.length) {
-    var taskId = taskCounter; // addRepairTask already incremented it
-    var scopeEl = document.getElementById('repairScope' + taskId);
-    if (scopeEl) {
-      scopeEl.value = preset.scopeSteps.map(function(s, i) {
-        return (i + 1) + '. ' + s;
-      }).join('\n');
-      syncPrintMirror(scopeEl);
-      // Show the scope textarea
-      var toggle = scopeEl.previousElementSibling;
-      if (toggle && toggle.classList.contains('repair-scope-toggle')) {
-        scopeEl.style.display = 'block';
-        toggle.textContent = '- Hide scope note';
-      }
-    }
-  }
+  // The preset's scope steps go into the one Scope of Work box at the bottom of the page, the same text the
+  // template dropdown inserts. The task's own "+ Add scope of work note" stays empty unless the user adds one.
+  appendPresetScope(preset);
 }
 
 /* -- Merge preset materials into existing sections -------- */

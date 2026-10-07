@@ -1621,6 +1621,9 @@ h1 {
   text-align: left; font-weight: 600; white-space: normal; line-height: 1.25;
   border-bottom: 2px solid var(--chrome-paper-line); vertical-align: bottom;
 }
+/* The header sits over right-aligned figures (.col-total), so it is right-aligned too; the rule above
+   would otherwise win by specificity and leave "Line Total" left of its numbers. */
+.est-table thead th.col-total { text-align: right; }
 .est-table tbody tr { border-bottom: 1px solid var(--chrome-paper-line); transition: background 0.15s; }
 .est-table tbody tr:hover { background: rgba(255,255,255,0.03); }
 .est-container .est-table tbody tr:hover { background: var(--chrome-paper-muted); }
@@ -1630,12 +1633,13 @@ h1 {
    These widths are only hints to the table layout: a column can shrink to its
    input's min-width plus the cell padding, whatever is set here. Your Cost and
    Qty therefore set that minimum on their inputs (below), and the two widths
-   here are that minimum plus the cell's .5rem padding on each side. */
+   here are that minimum plus the cell's .5rem padding on each side. Line Total
+   is right-aligned, header and figures alike (see the thead rule below). */
 .col-cost   { width: 102px; }
 .col-markup { width: 58px; }
 .col-retail { width: 68px; }
-.col-qty    { width: 96px; }
-.col-total  { width: 68px; }
+.col-qty    { width: 76px; }
+.col-total  { width: 90px; text-align: right; }
 /* Actions header — stacked label, centered, fits the short Buy link and 3 narrow icon buttons.
    Its width is what the Actions cell needs; "Buy" (not "Buy Here") is what pays for the wider Your Cost and Qty. */
 .col-actions { width: 116px; text-align: center; white-space: normal; line-height: 1.2; }
@@ -1658,9 +1662,10 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .est-table .item-name-input { width: 100%; min-width: 0; }
 /* Your Cost and Qty show their whole value next to the browser's spin buttons
    (they take about 17px). 86px fits 12345.67 and 80px fits 1000.00 at this
-   font size, one digit more than 1234.56 / 999.99. */
+   font size, one digit more than 1234.56 / 999.99. Qty is shorter: 60px shows
+   four characters (12.5, 100, 2.25) with room to spare; 48px would clip those. */
 .est-table input.cost-input { min-width: 86px; }
-.est-table input.qty-input  { min-width: 80px; }
+.est-table input.qty-input  { min-width: 60px; }
 .retail-display { color: var(--chrome-ink-900); font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
 .subtotal-row td { background: var(--chrome-paper-muted); }
@@ -2883,7 +2888,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
    PAGE-SPECIFIC STYLES further down. The .hist-* and .status-* rules
    in this block are not used by any page. Still live here: .modal-sm,
    .modal-actions and .btn-danger (history.html delete modal), and
-   .col-total / .col-actions (also used by estimate.html tables).
+   .col-actions (also used by estimate.html tables).
    ============================================================ */
 
 /* -- Page layout ------------------------------------------- */
@@ -2897,7 +2902,6 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 /* -- Table ------------------------------------------------- */
 
 /* Column widths */
-.col-total    { min-width: 90px; text-align: right; }
 .col-actions  { min-width: 60px; white-space: nowrap; }
 
 /* Estimate # link */

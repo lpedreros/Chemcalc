@@ -399,6 +399,15 @@ async function _generateEstimatePDF(printStyle) {
   function checkPage(needed) {
     if (y + needed > PH - 36) { pdf.addPage(); y = MT; }
   }
+  // One line at a time, with a page check before each: a single pdf.text(lines) call cannot break across
+  // pages, so any block taller than the space left drew its tail off the bottom edge and lost it.
+  function drawParagraph(lines, lineHeight) {
+    lines.forEach(function (line) {
+      checkPage(lineHeight);
+      pdf.text(line, ML, y);
+      y += lineHeight;
+    });
+  }
   function hline(lw, color) {
     pdf.setLineWidth(lw || 0.5);
     pdf.setDrawColor(color || '#cccccc');
@@ -662,8 +671,8 @@ async function _generateEstimatePDF(printStyle) {
         checkPage(16);
         pdf.setFontSize(8); pdf.setFont('helvetica', 'italic'); pdf.setTextColor(85, 85, 85);
         var scopeLines = pdf.splitTextToSize(task.scope, CW);
-        pdf.text(scopeLines, ML, y);
-        y += scopeLines.length * 10 + 4;
+        drawParagraph(scopeLines, 10);
+        y += 4;
       }
       y += 4;
     });
@@ -671,12 +680,12 @@ async function _generateEstimatePDF(printStyle) {
 
   // -- SCOPE OF WORK -----------------------------------------
   if (isPro && d.scopeNotes) { // scope always shown for pro regardless of print style
+    checkPage(51); // the title and at least three lines stay together
     sectionTitle('Scope of Work / Notes');
     pdf.setFontSize(8.5); pdf.setFont('helvetica', 'italic'); pdf.setTextColor(51, 51, 51);
     var scopeLines2 = pdf.splitTextToSize(d.scopeNotes, CW);
-    checkPage(scopeLines2.length * 11 + 10);
-    pdf.text(scopeLines2, ML, y);
-    y += scopeLines2.length * 11 + 8;
+    drawParagraph(scopeLines2, 11);
+    y += 8;
   }
 
   // -- SUMMARY -----------------------------------------------
@@ -736,9 +745,9 @@ async function _generateEstimatePDF(printStyle) {
   pdf.setFontSize(6.5); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(102, 102, 102);
   var legalText = 'THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think & Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work.';
   var legalLines = pdf.splitTextToSize(legalText, CW);
-  checkPage(legalLines.length * 8 + 50);
-  pdf.text(legalLines, ML, y);
-  y += legalLines.length * 8 + 10;
+  checkPage(legalLines.length * 8 + 50); // keeps the terms and the signature lines on one page when they fit
+  drawParagraph(legalLines, 8);
+  y += 10;
 
   // -- SIGNATURE LINES ---------------------------------------
   checkPage(40);

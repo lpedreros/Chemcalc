@@ -111,10 +111,11 @@
 
   // ── 6. Autofill email fields for logged-in users ─────────────────────────
   // Fills any input with id="emailInput" (no element has that id now; the "Email Me"
-  // box in email-results.js is id="captureEmailInput") and id="clientEmail" (the
-  // estimator client email field).
+  // box in email-results.js is id="captureEmailInput"). The estimator's
+  // id="clientEmail" is deliberately not here: that box holds the customer's address,
+  // so it must load blank, not with the contractor's own email.
   function autofillEmailFields(email) {
-    var fields = ['emailInput', 'clientEmail'];
+    var fields = ['emailInput'];
     fields.forEach(function (id) {
       var el = document.getElementById(id);
       if (el && !el.value) {
