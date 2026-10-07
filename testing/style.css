@@ -1412,7 +1412,7 @@ h1 {
    .mp-card boxes. The static parts of the page take the shared classes in
    their markup (.mp-card, .mp-panel for the summary, .mp-btn for the
    buttons); this section styles what the page's scripts generate (repair
-   task cards, material rows, Buy Here links) and the page-only layout. It
+   task cards, material rows, Buy links) and the page-only layout. It
    also supplies the base .est-label / .est-input / .est-table look that the
    account, login and feedback modals reuse inside .modal-box on other
    pages. The printed estimate does not follow any of this: the print rules
@@ -1478,7 +1478,7 @@ h1 {
   .view-toggle-wrap .btn-view-toggle { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
 }
 
-/* Report broken link button (next to Buy Here) */
+/* Report broken link button (next to Buy) */
 .btn-report-link {
   display: inline;
   background: none;
@@ -1626,14 +1626,19 @@ h1 {
 .est-container .est-table tbody tr:hover { background: var(--chrome-paper-muted); }
 .est-table tbody td { padding: 0.4rem 0.5rem; vertical-align: middle; }
 .est-table tfoot td { padding: 0.5rem 0.6rem; border-top: 2px solid var(--chrome-paper-line); }
-/* Fixed columns — minimum useful widths so Item column gets all remaining space */
-.col-cost   { width: 72px; }
+/* Fixed columns — minimum useful widths so Item column gets all remaining space.
+   These widths are only hints to the table layout: a column can shrink to its
+   input's min-width plus the cell padding, whatever is set here. Your Cost and
+   Qty therefore set that minimum on their inputs (below), and the two widths
+   here are that minimum plus the cell's .5rem padding on each side. */
+.col-cost   { width: 102px; }
 .col-markup { width: 58px; }
 .col-retail { width: 68px; }
-.col-qty    { width: 46px; }
+.col-qty    { width: 96px; }
 .col-total  { width: 68px; }
-/* Actions header — stacked label, centered, fits 3 narrow icon buttons */
-.col-actions { width: 130px; text-align: center; white-space: normal; line-height: 1.2; }
+/* Actions header — stacked label, centered, fits the short Buy link and 3 narrow icon buttons.
+   Its width is what the Actions cell needs; "Buy" (not "Buy Here") is what pays for the wider Your Cost and Qty. */
+.col-actions { width: 116px; text-align: center; white-space: normal; line-height: 1.2; }
 /* Actions cell — stack buy link on top, then icon buttons side by side */
 td.col-actions { display: table-cell; }
 td.col-actions .buy-link,
@@ -1651,6 +1656,11 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .est-table input:focus { outline: none; border-color: var(--chrome-ink-800); }
 /* Item name input fills its column fully */
 .est-table .item-name-input { width: 100%; min-width: 0; }
+/* Your Cost and Qty show their whole value next to the browser's spin buttons
+   (they take about 17px). 86px fits 12345.67 and 80px fits 1000.00 at this
+   font size, one digit more than 1234.56 / 999.99. */
+.est-table input.cost-input { min-width: 86px; }
+.est-table input.qty-input  { min-width: 80px; }
 .retail-display { color: var(--chrome-ink-900); font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
 .subtotal-row td { background: var(--chrome-paper-muted); }
@@ -1658,7 +1668,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .repair-subtotal-label { text-align: right; font-weight: 700; color: var(--chrome-ink-700); font-size: 0.9rem; }
 .subtotal-val { font-weight: 700; color: var(--chrome-ink-900); white-space: nowrap; }
 
-/* -- Buy Here links -- override global a rule -- */
+/* -- Buy links -- override global a rule -- */
 .buy-link {
   display: inline-block !important; background: var(--chrome-paper-card); color: var(--chrome-sea-600) !important;
   border: 1px solid var(--chrome-sea-600); border-radius: 4px; padding: 0.2rem 0.45rem;

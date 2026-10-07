@@ -487,7 +487,7 @@ function buildBuyLink(affKey, source) {
   var url = affKey ? getAffiliateLink(affKey) : null;
   if (url) {
     var reportBtn = '<button class="btn-report-link" onclick="reportBrokenLink(\'' + escHtml(affKey) + '\')" title="Report missing or broken link">&#9888;</button>';
-    return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>' + reportBtn;
+    return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy</a>' + reportBtn;
   }
   return '<span class="buy-link-none">-</span>';
 }

@@ -248,10 +248,10 @@ function fillRowFromLibrary(nameInput, item) {
                     tr.querySelector('.buy-link-none')?.closest('td');
   if (costInput)   costInput.value   = item.cost;
   if (markupInput) markupInput.value = item.markup;
-  // Populate Buy Here link if the item has a URL
+  // Populate the Buy link if the item has a URL
   if (buyCell) {
     if (item.url) {
-      buyCell.innerHTML = '<a href="' + _libEscHtml(item.url) + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>';
+      buyCell.innerHTML = '<a href="' + _libEscHtml(item.url) + '" target="_blank" rel="noopener" class="buy-link">Buy</a>';
     } else {
       buyCell.innerHTML = '<span class="buy-link-none">&mdash;</span>';
     }
