@@ -751,9 +751,10 @@ async function _generateEstimatePDF(printStyle) {
   pdf.setLineWidth(0.5); pdf.setDrawColor('#dddddd');
   pdf.line(ML, y, ML + CW, y); y += 6;
   pdf.setFontSize(6.5); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(102, 102, 102);
-  var legalText = 'THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think & Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work.';
+  var legalText = (biz && biz.customTerms) ? biz.customTerms : 'THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think & Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work.';
   var legalLines = pdf.splitTextToSize(legalText, CW);
-  checkPage(legalLines.length * 8 + 50); // keeps the terms and the signature lines on one page when they fit
+  // Short terms stay on one page with the signature lines; long ones (a business's own text) flow, drawParagraph pages them
+  checkPage((legalLines.length <= 12 ? legalLines.length : 4) * 8 + 50);
   drawParagraph(legalLines, 8);
   y += 10;
 

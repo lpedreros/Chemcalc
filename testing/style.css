@@ -1770,6 +1770,8 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 /* -- Legal -- */
 .est-card.est-legal-card { border-left: 3px solid var(--chrome-paper-line); }
 .legal-text { font-size: 0.82rem; color: var(--chrome-ink-600); line-height: 1.6; margin-bottom: 1.25rem; }
+/* A business's own terms (Business Info): one clause per line, as typed. Not on the standard paragraph, whose source has line breaks. */
+.legal-text--custom { white-space: pre-line; }
 .sig-block-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
 .sig-block { flex: 1; min-width: 160px; }
 .sig-block-short { flex: 0 0 140px; }
@@ -2314,8 +2316,9 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
     break-after: avoid !important;
     page-break-after: avoid !important;
   }
-  /* Summary and legal cards: keep together, never break inside */
-  .est-summary-card, .est-legal-card {
+  /* Summary card: keep together, never break inside. The legal card is not here: a business's own terms can run
+     longer than a page, so its text flows (see "Legal & signature" below). */
+  .est-summary-card {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }
@@ -2515,17 +2518,26 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   }
 
   /* -- Legal & signature -- */
-  .est-legal-card { border-top: 1pt solid #ddd !important; border-left: none !important; }
+  /* The legal card may break across pages (the generic .est-card keep-together above does not apply to it); the
+     last lines of the text stay with the signature row, and the title stays with the first lines. */
+  .est-legal-card {
+    border-top: 1pt solid #ddd !important; border-left: none !important;
+    break-inside: auto !important; page-break-inside: auto !important;
+  }
+  .est-legal-card .est-card-title { break-after: avoid !important; page-break-after: avoid !important; }
   .legal-text {
     font-size: 7pt !important;
     color: #666 !important;
     line-height: 1.3 !important;
     margin-bottom: 3pt !important;
+    orphans: 3; widows: 3;
+    break-after: avoid !important; page-break-after: avoid !important;
   }
   .sig-block-row {
     display: flex !important;
     gap: 20pt !important;
     margin-top: 3pt !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
   }
   .sig-block { flex: 1 !important; }
   .sig-block-short { flex: 0 0 100pt !important; }

@@ -167,7 +167,8 @@ function saveBusinessInfo() {
     website: document.getElementById('bizWebsite').value.trim(),
     address: document.getElementById('bizAddress').value.trim(),
     prefix:  document.getElementById('bizPrefix').value.trim().toUpperCase(),
-    logoUrl: document.getElementById('bizLogoUrl').value.trim()
+    logoUrl: document.getElementById('bizLogoUrl').value.trim(),
+    customTerms: document.getElementById('bizCustomTerms').value.trim()
   };
   // Always save to localStorage as fast local cache
   localStorage.setItem('chemcalc_biz_info', JSON.stringify(biz));
@@ -183,8 +184,10 @@ function saveBusinessInfo() {
       biz_website:  biz.website,
       biz_address:  biz.address,
       biz_prefix:   biz.prefix,
-      biz_logo_url: biz.logoUrl
+      biz_logo_url: biz.logoUrl,
+      biz_custom_terms: biz.customTerms
     };
+    var bizColumns = Object.assign({}, profileUpdate); // the Business Info columns only, before Trello settings are merged in
     // Merge Trello settings if available
     if (typeof trelloCollectSettings === 'function') {
       var trelloSettings = trelloCollectSettings();
@@ -192,7 +195,11 @@ function saveBusinessInfo() {
     }
     _sb.from('profiles').update(profileUpdate).eq('id', user.id)
       .then(function(res) {
-        if (res.error) console.warn('Profile save error:', res.error.message);
+        if (res.error) { console.warn('Profile save error:', res.error.message); return; }
+        // loadBusinessInfo() prefers the profile held in memory, which a save does not refresh: bring it up to date
+        // so the printed header and terms show what was just saved without a reload
+        var live = (typeof getProfile === 'function') ? getProfile() : null;
+        if (live) { Object.assign(live, bizColumns); populatePrintHeader(); }
       });
   } else if (typeof trelloCollectSettings === 'function') {
     // Not logged in - at least update in-memory Trello state
@@ -221,7 +228,7 @@ function saveBusinessInfo() {
 function loadBusinessInfo() {
   // Prefer Supabase profile data (already loaded into currentProfile by auth.js)
   var profile = (typeof getProfile === 'function') ? getProfile() : null;
-  if (profile && profile.biz_name) {
+  if (profile && (profile.biz_name || profile.biz_custom_terms)) {
     return {
       name:    profile.biz_name    || '',
       tagline: profile.biz_tagline || '',
@@ -230,7 +237,8 @@ function loadBusinessInfo() {
       website: profile.biz_website || '',
       address: profile.biz_address || '',
       prefix:  profile.biz_prefix  || '',
-      logoUrl: profile.biz_logo_url || ''
+      logoUrl: profile.biz_logo_url || '',
+      customTerms: profile.biz_custom_terms || ''
     };
   }
   // Fallback to localStorage (for users who saved before this update)
@@ -246,7 +254,7 @@ function populateBizInfoModal() {
   var fields = {
     bizName: biz.name, bizTagline: biz.tagline, bizPhone: biz.phone,
     bizEmail: biz.email, bizWebsite: biz.website, bizAddress: biz.address,
-    bizPrefix: biz.prefix, bizLogoUrl: biz.logoUrl
+    bizPrefix: biz.prefix, bizLogoUrl: biz.logoUrl, bizCustomTerms: biz.customTerms
   };
   Object.keys(fields).forEach(function (id) {
     var el = document.getElementById(id);
@@ -294,6 +302,16 @@ function populatePrintHeader() {
       logoEl.src = biz.logoUrl;
       logoEl.style.display = '';
     }
+  }
+
+  // Terms & Conditions: a Pro user's own text replaces the standard paragraph (textContent, so it is plain text; the
+  // .legal-text--custom class keeps its line breaks). With none, or not Pro, the standard paragraph from the page is back.
+  var legalEl = document.getElementById('legalText');
+  if (legalEl) {
+    if (legalEl.getAttribute('data-default-text') === null) legalEl.setAttribute('data-default-text', legalEl.textContent);
+    var customTerms = (biz && biz.customTerms) ? biz.customTerms : '';
+    legalEl.textContent = customTerms || legalEl.getAttribute('data-default-text');
+    legalEl.classList.toggle('legal-text--custom', !!customTerms);
   }
 }
 

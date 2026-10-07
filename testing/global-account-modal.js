@@ -419,6 +419,7 @@
       '    <div class="col-md-6"><label class="est-label">Address</label><input type="text" id="bizAddress" class="est-input" placeholder="123 Marina Blvd, Daytona Beach, FL" /></div>' +
       '    <div class="col-md-6"><label class="est-label">Estimate # Prefix</label><input type="text" id="bizPrefix" class="est-input" placeholder="e.g. DMG or TE" maxlength="6" /><p class="scope-hint">Estimates will be numbered DMG-20260629-1234</p></div>' +
       '    <div class="col-md-6"><label class="est-label">Logo URL <span class="scope-hint">(link to your logo image)</span></label><input type="url" id="bizLogoUrl" class="est-input" placeholder="https://yoursite.com/logo.png" /></div>' +
+      '    <div class="col-md-12"><label class="est-label">Custom Terms &amp; Conditions <span class="scope-hint">(replaces the standard terms on your printed estimates &mdash; leave blank to keep the default)</span></label><textarea id="bizCustomTerms" class="est-textarea" rows="8" placeholder="Paste your own Terms &amp; Conditions text here. Each clause on its own paragraph."></textarea></div>' +
       '  </div>' +
       '  <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">Save Business Info</button>' +
       '  <p class="modal-footer-link" id="bizSaveStatus"></p>' +
