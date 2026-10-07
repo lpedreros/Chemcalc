@@ -106,9 +106,6 @@ function proSaveDraft() {
 function proLoadDraft() {
   if (_checkPro()) { openLoadDraftModal(); } else { openModal('upgradeModal'); }
 }
-function proLogEstimate() {
-  if (_checkPro()) { logEstimate(); } else { openModal('upgradeModal'); }
-}
 function proSetPrintItemized() {
   if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
 }
@@ -1197,52 +1194,6 @@ function collectEstimateData() {
     tier: (typeof getProfile === 'function' && getProfile()) ? (getProfile().tier || 'free') : 'free',
     loggedAt: new Date().toISOString()
   };
-}
-
-/* -- Database logging (stub - wire to backend API) -- */
-function logEstimate() {
-  if (typeof isPro !== 'function' || !isPro()) {
-    openModal('upgradeModal'); return;
-  }
-  var data = collectEstimateData();
-  var preview = document.getElementById('logPreview');
-  preview.innerHTML =
-    '<strong>Estimate #:</strong> ' + escHtml(data.estimateNumber) + '<br/>' +
-    '<strong>Client:</strong> ' + escHtml(data.clientFirst + ' ' + data.clientLast) + '<br/>' +
-    '<strong>Vessel:</strong> ' + escHtml(data.boatYear + ' ' + data.boatMake + ' ' + data.boatModel) + '<br/>' +
-    '<strong>Total:</strong> ' + fmtCurrency(data.grandTotal) + '<br/>' +
-    '<strong>Company:</strong> ' + escHtml(data.company);
-  document.getElementById('logStatus').textContent = '';
-  openModal('logModal');
-}
-
-function confirmLog() {
-  var data = collectEstimateData();
-  var statusEl = document.getElementById('logStatus');
-  statusEl.textContent = 'Logging...';
-
-  /* -- BACKEND STUB --
-     Replace this fetch with your real Hostinger API endpoint.
-     The endpoint should:
-       1. Save the estimate JSON to your database
-       2. Create a Trello card in the correct board based on data.company
-          - Think & Engage LLC -> TE board, "Estimate Sent" column
-          - Daytona Marine Group -> DMG board, "Estimate Sent" column
-     Example:
-       fetch('https://chemcalc.co/api/log-estimate.php', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(data)
-       }).then(r => r.json()).then(res => { ... });
-  -- END STUB -- */
-
-  // Simulate success for now
-  setTimeout(function () {
-    statusEl.textContent = 'OK Logged successfully! Trello card will be created when backend is connected.';
-    statusEl.style.color = '#7ed47e';
-    // Also save to localStorage as backup
-    localStorage.setItem('est_log_' + data.estimateNumber, JSON.stringify(data));
-  }, 800);
 }
 
 /* -- Export / Share -- */

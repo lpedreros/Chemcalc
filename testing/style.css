@@ -1956,11 +1956,6 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .btn-modal-primary:hover { background: var(--chrome-signal-200); }
 .modal-footer-link { text-align: center; margin-top: 0.9rem; font-size: 0.88rem; color: var(--chrome-ink-600); }
 .modal-footer-link a { color: var(--chrome-sea-600) !important; font-size: 0.88rem !important; margin-top: 0 !important; font-weight: normal !important; }
-.log-preview {
-  background: var(--chrome-paper-muted); border: 1px solid var(--chrome-paper-line); border-radius: 6px; padding: 0.75rem 1rem;
-  font-size: 0.88rem; color: var(--chrome-ink-700); line-height: 1.7; margin-bottom: 0.5rem;
-}
-.log-preview strong { color: var(--chrome-ink-900); }
 .saved-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
 .saved-item {
   display: flex; justify-content: space-between; align-items: center;

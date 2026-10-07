@@ -538,9 +538,9 @@
           </button>
         </div>
       </div>
-      <!-- Save / Load Draft (Pro) -->
+      <!-- Save Estimate / Load Draft (Pro) -->
       <div class="toolbar-group">
-        <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Draft</button>
+        <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Estimate</button>
         <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
       </div>
     </div>
@@ -635,7 +635,6 @@
       <button class="mp-btn mp-btn--primary" onclick="exportPDF()">&#128196; Save as PDF</button>
       <button class="mp-btn mp-btn--outline" onclick="window.print()">&#128424; Print</button>
       <button class="mp-btn mp-btn--outline" onclick="shareEstimate()">&#128279; Share</button>
-      <button class="mp-btn mp-btn--outline pro-feature" id="logEstimateBtn" onclick="proLogEstimate()">&#128204; Log Estimate</button>
       <button class="btn-trello mp-btn pro-feature" id="addToTrelloBtn" onclick="proAddToTrello()">&#128203; Add to Trello</button>
       <button class="mp-btn mp-btn--outline" onclick="newEstimate()">&#10010; New Estimate</button>
     </div>
@@ -801,19 +800,6 @@
 
 <!-- bizInfoModal removed — its fields are now the Business tab of the account modal injected by global-account-modal.js -->
 
-<!-- ===== LOG CONFIRM MODAL ===== -->
-<div class="modal-overlay" id="logModal" style="display:none;" onclick="overlayClose(event,'logModal')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-
-    <button class="modal-close" onclick="closeModal('logModal')">&#10005;</button>
-    <h3 class="modal-title">&#128204; Log Estimate</h3>
-    <p class="modal-sub">This will save the estimate to the database and create a Trello card in the "Estimate Sent" column.</p>
-    <div id="logPreview" class="log-preview"></div>
-    <button class="btn-modal-primary mt-3" onclick="confirmLog()">&#10003; Confirm &amp; Log</button>
-    <p class="modal-footer-link" id="logStatus"></p>
-  </div>
-</div>
-
 <!-- ===== FOOTER ===== -->
 <footer class="est-footer d-print-none">
   <a href="/privacy.html">Privacy Policy</a> |
@@ -856,9 +842,9 @@
   <div class="fap-divider"></div>
 
   <!-- Action buttons -->
-  <button class="fap-btn pro-feature" onclick="proSaveDraft()" title="Save draft">
+  <button class="fap-btn pro-feature" onclick="proSaveDraft()" title="Save estimate">
     <span class="fap-icon">&#128190;</span>
-    <span class="fap-label">Save Draft</span>
+    <span class="fap-label">Save</span>
   </button>
   <button class="fap-btn pro-feature" onclick="proLoadDraft()" title="Load draft">
     <span class="fap-icon">&#128193;</span>
