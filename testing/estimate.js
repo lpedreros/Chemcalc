@@ -677,6 +677,7 @@ function addRepairTask(taskName, taskList) {
     '<div class="repair-scope-wrap">' +
       '<button class="repair-scope-toggle d-print-none" onclick="toggleScope(this)">+ Add scope of work note</button>' +
       '<textarea class="repair-scope-textarea" id="repairScope' + id + '" rows="3" placeholder="Optional: describe the work for this repair..."></textarea>' +
+      '<div class="print-mirror"></div>' +
     '</div>';
 
   document.getElementById('tasksContainer').appendChild(card);
@@ -853,9 +854,32 @@ function insertScopeSnippet(sel) {
   if (!ta) return;
   var text = _scopeSnippets[key] || '';
   ta.value += (ta.value ? '\n\n' : '') + text;
+  syncPrintMirror(ta);
   sel.value = ''; // reset dropdown
   ta.focus();
 }
+
+/* -- Print mirrors of the scope textareas ---------------
+   A <textarea> cannot print all of its text (Chromium sizes it from its rows
+   attribute and treats overflow: visible as auto), so a long note printed as a
+   clipped, scrollable box. The scope textareas therefore print through a plain
+   .print-mirror element placed right after each one: style.css shows only that
+   element in print and only the textarea on screen. Typing keeps it current
+   through the input listener below; code that sets a scope textarea's value
+   directly must call syncPrintMirror(textarea) afterwards. The textarea stays
+   the source of truth (collectEstimateData and the Trello PDF read it). */
+function syncPrintMirror(ta) {
+  var mirror = ta && ta.nextElementSibling;
+  if (mirror && mirror.classList.contains('print-mirror')) mirror.textContent = ta.value;
+}
+function syncAllPrintMirrors() {
+  document.querySelectorAll('.print-mirror').forEach(function (m) { syncPrintMirror(m.previousElementSibling); });
+}
+document.addEventListener('input', function (e) {
+  if (e.target.matches && e.target.matches('#scopeNotes, .repair-scope-textarea')) syncPrintMirror(e.target);
+});
+// A reload or back navigation can restore a textarea's text without firing input
+window.addEventListener('pageshow', syncAllPrintMirrors);
 
 /* -- Deposit Calculator --------------------------------- */
 function updateDeposit() {
@@ -1077,6 +1101,7 @@ function loadDraft(data) {
   document.getElementById('boatYear').value = data.boatYear || '';
   document.getElementById('boatHIN').value = data.boatHIN || '';
   document.getElementById('scopeNotes').value = data.scopeNotes || '';
+  syncPrintMirror(document.getElementById('scopeNotes'));
   document.getElementById('materialsMarkup').value = data.materialsMarkup || 40;
   // Restore materials
   document.getElementById('materialsBody').innerHTML = '';
@@ -1094,6 +1119,7 @@ function loadDraft(data) {
       var scopeEl = document.getElementById('repairScope' + taskCounter);
       if (scopeEl) {
         scopeEl.value = t.scope;
+        syncPrintMirror(scopeEl);
         scopeEl.style.display = 'block';
         var toggleBtn = scopeEl.closest('.repair-scope-wrap') && scopeEl.closest('.repair-scope-wrap').querySelector('.repair-scope-toggle');
         if (toggleBtn) toggleBtn.textContent = '\u2212 Hide scope note';
@@ -1247,11 +1273,13 @@ function exportPDF() {
         .join(', ');
     }
   });
+  syncAllPrintMirrors(); // what prints is the mirror, so it must carry the flattened text
 
   function afterPrint() {
     document.title = prevTitle;
     // Restore original scope text
     scopeOriginals.forEach(function(o) { o.el.value = o.val; });
+    syncAllPrintMirrors();
     window.removeEventListener('afterprint', afterPrint);
   }
   window.addEventListener('afterprint', afterPrint);
@@ -1314,6 +1342,7 @@ function newEstimate() {
     document.getElementById('boatYear').value = '';
     document.getElementById('boatHIN').value = '';
     document.getElementById('scopeNotes').value = '';
+    syncPrintMirror(document.getElementById('scopeNotes'));
     document.getElementById('materialsBody').innerHTML = '';
     document.getElementById('tasksContainer').innerHTML = '';
     taskCounter = 0;
@@ -1424,6 +1453,7 @@ function tsApplyPreset(idx) {
       scopeEl.value = preset.scopeSteps.map(function(s, i) {
         return (i + 1) + '. ' + s;
       }).join('\n');
+      syncPrintMirror(scopeEl);
       // Show the scope textarea
       var toggle = scopeEl.previousElementSibling;
       if (toggle && toggle.classList.contains('repair-scope-toggle')) {
@@ -1525,6 +1555,7 @@ function tsApplyUserTemplate(id) {
     var scopeEl = document.getElementById('repairScope' + taskId);
     if (scopeEl) {
       scopeEl.value = t.scope_steps;
+      syncPrintMirror(scopeEl);
       var toggle = scopeEl.previousElementSibling;
       if (toggle && toggle.classList.contains('repair-scope-toggle')) {
         scopeEl.style.display = 'block';

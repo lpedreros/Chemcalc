@@ -1579,6 +1579,8 @@ h1 {
   font-size: 0.95rem; resize: vertical;
 }
 .est-textarea:focus { outline: none; border-color: var(--chrome-ink-800); }
+/* The print-only copy of a scope textarea's text; see "Scope of work (pro)" in the print rules. Never shown on screen. */
+.print-mirror { display: none; }
 
 /* -- Markup control -- */
 .markup-control { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
@@ -2329,7 +2331,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
   /* -- Form inputs: transparent, value-only -- */
   .est-label { font-size: 7pt !important; color: #888 !important; margin-bottom: 1pt !important; }
-  .est-input, .est-textarea {
+  .est-input {
     color: #111 !important; background: transparent !important;
     border: none !important; padding: 0 !important;
     font-size: 9pt !important; font-weight: 500 !important;
@@ -2456,7 +2458,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
      how the printed estimate looks is its own decision. */
   .est-container { font-family: inherit !important; color: inherit !important; }
   .est-container .est-label { font-weight: 500 !important; }
-  .est-container .est-input, .est-container .est-textarea { font-family: inherit !important; border-radius: 6px !important; }
+  .est-container .est-input { font-family: inherit !important; border-radius: 6px !important; }
   .req-star { color: #e05252 !important; }
   .drag-handle-card { color: #666 !important; }
   .subtotal-row td, .repair-subtotal-row td { background: #1c1c1e !important; }
@@ -2467,21 +2469,31 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .deposit-line span:first-child,
   .deposit-balance-line span:first-child { color: #89CFF0 !important; }
 
-  /* -- Scope of work (pro) -- */
-  .repair-scope-textarea {
-    display: block !important;
-    border: none !important; background: transparent !important;
-    color: #333 !important; padding: 0 !important;
-    font-size: 8.5pt !important; line-height: 1.45 !important;
-    font-style: italic;
-    resize: none !important;
-    overflow: hidden !important;
-  }
-  /* Hide scope block entirely when textarea is empty (placeholder only) */
-  .repair-scope-textarea:placeholder-shown,
-  .est-textarea:placeholder-shown {
+  /* -- Scope of work (pro) --
+     A <textarea> cannot print all of its text: Chromium sizes it from its rows
+     attribute (height: auto does not mean "fit the content") and computes
+     overflow: visible as auto, so a long note printed as a clipped, scrollable
+     box. Both scope textareas therefore print through a .print-mirror, a plain
+     element right after each one that estimate.js keeps in step with it
+     (syncPrintMirror). The textarea shows on screen only, the mirror in print only. */
+  .repair-scope-textarea,
+  #scopeCard .est-textarea {
     display: none !important;
   }
+  .print-mirror {
+    display: block !important;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+  .repair-scope-wrap .print-mirror {
+    margin-top: 0.4rem;
+    color: #333;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    font-style: italic;
+  }
+  /* Hide the scope text entirely when its textarea is empty (placeholder only):
+     the mirror is the element right after the textarea */
   .repair-scope-textarea:placeholder-shown + *,
   .est-textarea:placeholder-shown + * {
     display: none !important;
@@ -2623,12 +2635,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   /* ============================================================
      SECTION 6 - SHARED SCOPE + TEXTAREA (all modes)
   ============================================================ */
-  #scopeCard .est-textarea {
-    border: none !important; background: transparent !important;
-    resize: none !important; color: #000 !important;
-    font-size: 9pt !important; line-height: 1.5 !important;
-    padding: 0 !important; height: auto !important;
-    overflow: visible !important; white-space: pre-wrap !important;
+  #scopeCard .print-mirror {
+    color: #000; font-size: 9pt; font-weight: 500; line-height: 1.5;
   }
   #scopeCard .est-card-title { color: #000 !important; font-size: 10pt !important; }
   #scopeCard .pro-badge { display: none !important; }
