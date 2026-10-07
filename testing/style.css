@@ -1147,7 +1147,6 @@ body {
 a, a:visited, a:hover, a:active {
     margin-top: 0.5em;
     font-style: normal;
-    font-size: 1.25em;
     font-weight: bold;
     color: #89CFF0;
 }
@@ -1345,9 +1344,6 @@ h1 {
     }
     .container {
         margin-top: 0;
-    }
-    a {
-        font-size: 1.25em;
     }
     /* Full-width form controls on small screens */
     .form-control { width: 100% !important; }

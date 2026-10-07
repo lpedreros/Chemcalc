@@ -1251,25 +1251,12 @@ function exportPDF() {
   var prevTitle = document.title;
   document.title = clientName + ' - ' + modePrefix + 'Estimate ' + estNum + ' - ' + today;
 
-  // Flatten numbered scope lines to comma-separated for print
-  var scopeOriginals = [];
-  document.querySelectorAll('.repair-scope-textarea, #scopeNotes').forEach(function(ta) {
-    scopeOriginals.push({ el: ta, val: ta.value });
-    if (ta.value.trim()) {
-      ta.value = ta.value
-        .split('\n')
-        .map(function(line) { return line.replace(/^\d+\.\s*/, '').trim(); })
-        .filter(function(line) { return line.length > 0; })
-        .join(', ');
-    }
-  });
-  syncAllPrintMirrors(); // what prints is the mirror, so it must carry the flattened text
+  // The scope notes print exactly as typed (numbered lines stay numbered lines); what prints is the
+  // mirror, so make sure it matches the textareas right now.
+  syncAllPrintMirrors();
 
   function afterPrint() {
     document.title = prevTitle;
-    // Restore original scope text
-    scopeOriginals.forEach(function(o) { o.el.value = o.val; });
-    syncAllPrintMirrors();
     window.removeEventListener('afterprint', afterPrint);
   }
   window.addEventListener('afterprint', afterPrint);
