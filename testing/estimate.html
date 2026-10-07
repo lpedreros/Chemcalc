@@ -486,24 +486,8 @@
       Write a detailed description of the work to be performed. Use the template dropdown to insert pre-written scope language for common repairs. This section appears on the printed estimate and protects you legally by documenting exactly what was agreed to.
     </div>
     <div class="scope-snippet-row d-print-none">
-      <select id="scopeSnippet" class="scope-snippet-select" onchange="insertScopeSnippet(this)">
+      <select id="scopeSnippet" class="scope-snippet-select" onchange="insertScopeSnippet(this)" onfocus="populateScopeSnippetOptions(this)">
         <option value="">&#128203; Insert Scope Template&hellip;</option>
-        <optgroup label="Cosmetic Repairs">
-          <option value="gelcoat">Gelcoat Repair</option>
-          <option value="spider">Spider Cracks (Stress Cracks)</option>
-          <option value="paint">Full Paint Job (Awlcraft 2000)</option>
-          <option value="buff">Hull Buff &amp; Wax (Oxidation Removal)</option>
-        </optgroup>
-        <optgroup label="Structural Repairs">
-          <option value="fiberglass">Fiberglass Repair</option>
-          <option value="keel">Keel Repair</option>
-          <option value="transom">Transom Core Replacement</option>
-          <option value="stringer">Stringer / Bulkhead Repair</option>
-        </optgroup>
-        <optgroup label="Hardware &amp; Trim">
-          <option value="rubrail">Rub Rail Replacement</option>
-          <option value="thruhull">Thru-Hull / Seacock Replacement</option>
-        </optgroup>
       </select>
     </div>
     <textarea id="scopeNotes" class="est-textarea" rows="5" placeholder="Optionally describe the work to be performed, any special conditions, exclusions, etc. This will appear on the printed estimate for Pro users."></textarea>

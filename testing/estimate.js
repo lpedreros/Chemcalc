@@ -408,6 +408,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Load materials library immediately on page load (will no-op if not logged in)
   if (typeof loadMaterialsLibrary === 'function') loadMaterialsLibrary();
+
+  // Fill the Scope of Work template dropdown as soon as task_presets.js has its rows (retries briefly)
+  if (typeof populateScopeSnippetOptions === 'function') populateScopeSnippetOptions();
 });
 
 function initEstimate() {
@@ -830,30 +833,60 @@ function updateSummary() {
 }
 
 
-/* -- Scope of Work Snippets ---------------------------- */
-var _scopeSnippets = {
-  gelcoat:   'Gelcoat Repair:\nGrind out damaged gelcoat to sound fiberglass laminate. Thoroughly clean and prep the area using styrene/acetone solvent. Apply color-matched marine gelcoat mixed with appropriate catalyst and PVA curing agent. Block sand repaired area progressively from 400-grit up to 2000-grit compound. Machine buff and polish to match the factory gloss and profile of the surrounding hull.',
-  spider:    'Spider Cracks (Stress Cracks):\nV-groove cracks down to the laminate to relieve stress points. Fill with reinforced compound, sand flush, apply color-matched gelcoat, and buff to blend with the surrounding surface.',
-  paint:     'Full Paint Job (Awlcraft 2000):\nDe-wax and chemically clean all surfaces. Machine sand existing coating to create a mechanical bond profile. Repair minor surface imperfections using marine fairing compound. Apply multiple coats of high-build epoxy primer, followed by block sanding to ensure a perfectly flat surface. Apply 3 cross-coats of Awlcraft 2000 acrylic urethane topcoat via professional spray equipment under controlled environmental conditions to achieve a high-gloss, durable marine finish.',
-  buff:      'Hull Buff & Wax (Oxidation Removal):\nMachine compound hull surfaces using heavy-cut wool pads to remove oxidation. Follow with a fine finishing polish to restore depth, and seal with premium marine paste wax or ceramic coating.',
-  fiberglass:'Fiberglass Repair:\nGrind back fractured laminate to a 12:1 bevel ratio to ensure structural bonding. Wipe down area with chemical solvent to remove contaminants. Lay up alternating layers of marine-grade biaxial fiberglass cloth saturated with high-strength resin system. Allow full cure cycle before rough-fairing the surface with structural epoxy compound to restore original hull lines and strength profiles.',
-  keel:      'Keel Repair:\nGrind back damaged or gouged keel area to clean structure. Rebuild the keel line with high-strength biaxial cloth and vinyl ester/epoxy resin. Fair, barrier coat, and touch up bottom paint or gelcoat.',
-  transom:   'Transom Core Replacement:\nRemove top skin or outer skin to access rotted wood core. Excavate degraded material, clean the inner skin, and laminate a new high-density foam or marine plywood core. Re-glass with heavy structural laminate.',
-  stringer:  'Stringer / Bulkhead Repair:\nGrind away fractured or delaminated fiberglass tabbing around structural members. Prep surfaces, inject structural adhesive or replace rotted wood, and re-tab to the hull using heavy biaxial glass.',
-  rubrail:   'Rub Rail Replacement:\nRemove old rub rail and scrape away old sealant. Seal old fastener holes, bed the new track in marine polyurethane sealant (3M 5200/4200), and insert the new vinyl insert or stainless steel track.',
-  thruhull:  'Thru-Hull / Seacock Replacement:\nRemove corroded or damaged fitting. Sand and clean the fiberglass backing area. Install a new marine-grade thru-hull valve bedded in marine polyurethane sealant, tightening to factory safety torque specs.'
-};
-
+/* -- Scope of Work templates ------------------------------
+   The "Insert Scope Template" dropdown at the bottom of the page reads
+   TASK_PRESETS (task_presets.js, from Supabase task_presets.scope_steps), the
+   same rows tsApplyPreset() puts in a task's own scope note, so the content
+   exists once and the two lists cannot drift apart. */
 function insertScopeSnippet(sel) {
-  var key = sel.value;
-  if (!key) return;
+  var name = sel.value;
+  if (!name) return;
   var ta = document.getElementById('scopeNotes');
   if (!ta) return;
-  var text = _scopeSnippets[key] || '';
+  var preset = (typeof TASK_PRESETS !== 'undefined')
+    ? TASK_PRESETS.find(function(p) { return p.name === name; })
+    : null;
+  if (!preset || !preset.scopeSteps || !preset.scopeSteps.length) { sel.value = ''; return; }
+  var text = preset.name + ':\n' + preset.scopeSteps.map(function(s, i) {
+    return (i + 1) + '. ' + s;
+  }).join('\n');
   ta.value += (ta.value ? '\n\n' : '') + text;
   syncPrintMirror(ta);
   sel.value = ''; // reset dropdown
   ta.focus();
+}
+
+function populateScopeSnippetOptions(sel, _attempt) {
+  sel = sel || document.getElementById('scopeSnippet');
+  if (!sel) return;
+  _attempt = _attempt || 0;
+  if (typeof TASK_PRESETS === 'undefined' || !TASK_PRESETS.length) {
+    // task_presets.js fetch may not have resolved yet - retry briefly, then give up.
+    if (_attempt < 10) setTimeout(function() { populateScopeSnippetOptions(sel, _attempt + 1); }, 500);
+    return;
+  }
+  // Keep the placeholder option (the first child), rebuild everything after it. Remove child nodes,
+  // not options: sel.remove(i) takes an <option> out of its <optgroup> and leaves the empty group behind.
+  while (sel.children.length > 1) sel.removeChild(sel.lastChild);
+  var byCategory = {};
+  var order = [];
+  TASK_PRESETS.forEach(function(p) {
+    if (!p.scopeSteps || !p.scopeSteps.length) return; // nothing to insert for this preset
+    var cat = p.category || 'General';
+    if (!byCategory[cat]) { byCategory[cat] = []; order.push(cat); }
+    byCategory[cat].push(p);
+  });
+  order.forEach(function(cat) {
+    var group = document.createElement('optgroup');
+    group.label = cat;
+    byCategory[cat].forEach(function(p) {
+      var opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = p.name;
+      group.appendChild(opt);
+    });
+    sel.appendChild(group);
+  });
 }
 
 /* -- Print mirrors of the scope textareas ---------------
