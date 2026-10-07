@@ -369,11 +369,14 @@
     <div class="help-popover" id="helpClientInfo">
       Enter your client's contact details. These appear on all printed and exported estimates. You can use a first and last name, or a company name -- or both. Company name takes priority on the PDF and filename when provided.
     </div>
+    <!-- Company Name has its own row: in print the row is a no-wrap flex line, where a full-width column squeezed First/Last/Phone/Email to nothing -->
     <div class="row g-3">
       <div class="col-md-12">
         <label class="est-label">Company Name</label>
         <input type="text" id="clientCompany" class="est-input" placeholder="Optional -- overrides first/last name on PDF" />
       </div>
+    </div>
+    <div class="row g-3 mt-0">
       <div class="col-md-6">
         <label class="est-label">First Name</label>
         <input type="text" id="clientFirst" class="est-input" placeholder="First name" />

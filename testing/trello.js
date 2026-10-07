@@ -505,6 +505,14 @@ async function _generateEstimatePDF(printStyle) {
   sectionTitle('Client Information');
   var clientName = ((d.clientFirst || '') + ' ' + (d.clientLast || '')).trim() || '—';
   var cols2 = CW / 2;
+  // Company Name first, as on the page (optional: no company, no line). Wrapped, so a long name stays inside the margins.
+  if ((d.clientCompany || '').trim()) {
+    pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(136, 136, 136);
+    pdf.text('Company Name', ML, y);
+    y += 9;
+    pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(17, 17, 17);
+    drawParagraph(pdf.splitTextToSize(d.clientCompany.trim(), CW), 9);
+  }
   pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(136, 136, 136);
   pdf.text('Name',  ML,         y);
   pdf.text('Phone', ML + cols2, y);
