@@ -515,7 +515,7 @@
        One block so it can sit in the sticky right column from 1024px. Below that, and in print,
        it dissolves (display: contents) and its three parts stack as they always have. -->
   <aside class="est-rail" aria-label="Estimate format, summary and actions">
-    <!-- ===== FORMAT TOGGLE + SAVE / LOAD DRAFT ===== -->
+    <!-- ===== FORMAT TOGGLE + SAVE / LOAD ESTIMATE ===== -->
     <div class="est-toolbar mp-card mp-card--compact d-print-none">
       <!-- Format Selector (replaces separate View + Print toggles) -->
       <div class="toolbar-group">
@@ -538,10 +538,10 @@
           </button>
         </div>
       </div>
-      <!-- Save Estimate / Load Draft (Pro) -->
+      <!-- Save Estimate / Load Estimate (Pro) -->
       <div class="toolbar-group">
         <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="saveDraftBtn" onclick="proSaveDraft()" title="Save estimate (Pro)">&#128190; Save Estimate</button>
-        <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Draft</button>
+        <button class="mp-btn mp-btn--outline mp-btn--sm pro-feature" id="loadDraftBtn" onclick="proLoadDraft()" title="Load saved estimate (Pro)">&#128193; Load Estimate</button>
       </div>
     </div>
 
@@ -846,9 +846,9 @@
     <span class="fap-icon">&#128190;</span>
     <span class="fap-label">Save</span>
   </button>
-  <button class="fap-btn pro-feature" onclick="proLoadDraft()" title="Load draft">
+  <button class="fap-btn pro-feature" onclick="proLoadDraft()" title="Load estimate">
     <span class="fap-icon">&#128193;</span>
-    <span class="fap-label">Load Draft</span>
+    <span class="fap-label">Load</span>
   </button>
   <button class="fap-btn" onclick="openTaskStarter()" title="Add task">
     <span class="fap-icon">&#10133;</span>
@@ -900,7 +900,7 @@
       <p class="modal-sub">Your Pro tools:</p>
       <ul class="help-modal-bullets">
         <li><strong>Save your materials</strong> &mdash; Click the &#9733; icon on any material row to save it to your personal library. Start typing a name next time and it auto-fills your exact cost and markup.</li>
-        <li><strong>Save your estimates</strong> &mdash; Use the &ldquo;Save Draft&rdquo; button in the toolbar to store your work. Load it later from any device.</li>
+        <li><strong>Save your estimates</strong> &mdash; Use the &ldquo;Save Estimate&rdquo; button in the toolbar to store your work. Load it later from any device.</li>
         <li><strong>Control what the client sees</strong> &mdash; Use the Format buttons at the top. <strong>Summary</strong> hides all material details to prevent haggling. <strong>Itemized</strong> breaks everything down for insurance claims or corporate accounts.</li>
         <li><strong>Create custom templates</strong> &mdash; Once you build a repair task you do often, click &ldquo;Save as Template&rdquo; on the task header to reuse it on future estimates.</li>
         <li><strong>Manage your materials library</strong> &mdash; Click <strong>&#9998; My Account</strong> in the toolbar to view, edit, add, or remove items from your personal materials library.</li>

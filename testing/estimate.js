@@ -1008,12 +1008,12 @@ function deleteSavedEstimate(id) {
 
 /* ============================================================
    ESTIMATE HISTORY PREVIEW (left column, last card)
-   The newest saved estimates, from the same loader the Load Draft modal and
+   The newest saved estimates, from the same loader the Load Estimate modal and
    history.html use (loadEstimatesFromSupabase, auth.js). Gated the way
    history.html is: signed out -> log in, free -> Pro feature, Pro -> the
    list. The status on each row is the shared status select
    (estimate-status.js), so changing it here saves exactly as it does on the
-   History page. Rows open in place, like Load Draft.
+   History page. Rows open in place, like Load Estimate.
    ============================================================ */
 var HISTORY_PREVIEW_COUNT = 5;
 var _histPreviewSeq = 0;     // a newer refresh makes an older, slower one drop its result
@@ -1067,7 +1067,7 @@ async function updatePreviewStatus(id, selectEl) {
   if (row) row.status = newStatus;
 }
 
-/* An estimate number opens that estimate here, the way Load Draft does (a modified click still opens the link). */
+/* An estimate number opens that estimate here, the way Load Estimate does (a modified click still opens the link). */
 document.addEventListener('click', function (e) {
   var link = e.target.closest ? e.target.closest('.est-history-ref') : null;
   if (!link || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
