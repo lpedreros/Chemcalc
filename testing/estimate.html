@@ -385,6 +385,9 @@
         <label class="est-label">Last Name</label>
         <input type="text" id="clientLast" class="est-input" placeholder="Last name" />
       </div>
+    </div>
+    <!-- Phone and Email in their own row: the print rule makes each row one no-wrap flex line, so four col-md-6 fields in one row each got a quarter of the width and a long email was cut off -->
+    <div class="row g-3 mt-0">
       <div class="col-md-6">
         <label class="est-label">Phone <span class="req-star">*</span></label>
         <input type="tel" id="clientPhone" class="est-input" placeholder="(555) 555-5555" oninput="fmtPhone(this)" maxlength="14" />
