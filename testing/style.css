@@ -1681,11 +1681,14 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   /* Forces a hard break after Item — an item with a 100% basis takes a line to itself, so without it flexbox
      would pull Cost and the rest up onto line 1 as well */
   #materialsTable tbody tr::after { content: ""; flex-basis: 100%; order: 3; }
-  /* Line 2: Cost, Markup, Qty — labeled, since <thead> is hidden at this width. Cost keeps its existing 86px
-     minimum so it still can't clip (same reasoning as .cost-input's sitewide min-width); Markup and Qty share the rest. */
-  #materialsTable tbody tr td.col-cost { flex: 0 0 86px; order: 4; align-self: flex-start; }
-  #materialsTable tbody tr td.col-markup { flex: 1 1 0; order: 5; align-self: flex-start; }
-  #materialsTable tbody tr td.col-qty { flex: 1 1 0; order: 6; align-self: flex-start; }
+  /* Line 2: Cost, Markup, Qty — labeled, since <thead> is hidden at this width. Sized by how long each value gets:
+     Markup is 3 digits at most (the field stops at 500), so it is a narrow fixed column. Cost runs longest (12345.67)
+     and takes the biggest share of what is left, Qty (100.25) the rest. Cost keeps its existing 86px minimum so it
+     still can't clip (same reasoning as .cost-input's sitewide min-width), and Qty never drops below 76px, enough for
+     1000.25. All three minimums plus Markup still fit a 320px phone (86 + 64 + 76 = 226 of 230px). */
+  #materialsTable tbody tr td.col-cost { flex: 3 1 0; min-width: 86px; order: 4; align-self: flex-start; }
+  #materialsTable tbody tr td.col-markup { flex: 0 0 64px; order: 5; align-self: flex-start; }
+  #materialsTable tbody tr td.col-qty { flex: 2 1 0; min-width: 76px; order: 6; align-self: flex-start; }
   #materialsTable tbody tr td.col-cost input.cost-input {
     min-width: 0; width: 100%;
     -moz-appearance: textfield;
