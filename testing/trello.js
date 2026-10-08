@@ -1,5 +1,5 @@
 /* ============================================================
-   trello.js — ChemCalc Estimator Trello Integration
+   trello.js â€” ChemCalc Estimator Trello Integration
    Handles: OAuth token flow, board/list picker (all Trello calls go through the `trello` Edge Function),
             Trello card creation (with a link back to the saved estimate).
             Also holds PDF generation (jsPDF) and Supabase Storage upload
@@ -82,7 +82,7 @@ function trelloAuthorize() {
     '&callback_method=fragment' +
     '&return_url=' + returnUrl;
 
-  // Open popup — token will arrive via URL hash on the return page
+  // Open popup â€” token will arrive via URL hash on the return page
   var w = 600, h = 700;
   var left = Math.round((screen.width  - w) / 2);
   var top  = Math.round((screen.height - h) / 2);
@@ -103,7 +103,7 @@ function trelloAuthorize() {
         _trelloOnTokenReceived(token);
       }
     } catch (e) {
-      // Cross-origin — popup is still on trello.com, keep polling
+      // Cross-origin â€” popup is still on trello.com, keep polling
     }
     if (_trelloAuthWindow && _trelloAuthWindow.closed) {
       clearInterval(poll);
@@ -546,7 +546,7 @@ async function _generateEstimatePDF(printStyle) {
     pdf.text('Valid Until: ' + d.estimateValidUntil, metaX - mw3 / 2, metaY);
   }
 
-  // Right: chemcalc.co (free) — pro side already done on left
+  // Right: chemcalc.co (free) â€” pro side already done on left
   if (!isPro || !biz || !biz.name) {
     pdf.setFontSize(9); pdf.setFont('helvetica', 'italic');
     pdf.setTextColor(85, 85, 85);
