@@ -158,7 +158,11 @@ function proAddToTrello() {
 }
 
 /* -- Business Info (Pro): save/load from localStorage -- */
-function saveBusinessInfo() {
+async function saveBusinessInfo() {
+  var statusEl = document.getElementById('bizSaveStatus');
+  var saveBtn = document.querySelector('#acctPanelBizInfo .btn-modal-primary');
+  var say = function (kind, msg, ms) { if (typeof window.setSaveStatus === 'function') window.setSaveStatus(statusEl, kind, msg, ms); };
+
   var biz = {
     name:    document.getElementById('bizName').value.trim(),
     tagline: document.getElementById('bizTagline').value.trim(),
@@ -173,39 +177,6 @@ function saveBusinessInfo() {
   // Always save to localStorage as fast local cache
   localStorage.setItem('chemcalc_biz_info', JSON.stringify(biz));
 
-  // Save biz info + Trello settings to Supabase so it travels with the user
-  var user = (typeof getUser === 'function') ? getUser() : null;
-  if (user && _sb) {
-    var profileUpdate = {
-      biz_name:     biz.name,
-      biz_tagline:  biz.tagline,
-      biz_phone:    biz.phone,
-      biz_email:    biz.email,
-      biz_website:  biz.website,
-      biz_address:  biz.address,
-      biz_prefix:   biz.prefix,
-      biz_logo_url: biz.logoUrl,
-      biz_custom_terms: biz.customTerms
-    };
-    var bizColumns = Object.assign({}, profileUpdate); // the Business Info columns only, before Trello settings are merged in
-    // Merge Trello settings if available
-    if (typeof trelloCollectSettings === 'function') {
-      var trelloSettings = trelloCollectSettings();
-      Object.assign(profileUpdate, trelloSettings);
-    }
-    _sb.from('profiles').update(profileUpdate).eq('id', user.id)
-      .then(function(res) {
-        if (res.error) { console.warn('Profile save error:', res.error.message); return; }
-        // loadBusinessInfo() prefers the profile held in memory, which a save does not refresh: bring it up to date
-        // so the printed header and terms show what was just saved without a reload
-        var live = (typeof getProfile === 'function') ? getProfile() : null;
-        if (live) { Object.assign(live, bizColumns); populatePrintHeader(); }
-      });
-  } else if (typeof trelloCollectSettings === 'function') {
-    // Not logged in - at least update in-memory Trello state
-    trelloCollectSettings();
-  }
-
   // Apply prefix to current estimate number
   if (biz.prefix) {
     var estNum = document.getElementById('estimateNumber').value;
@@ -217,12 +188,53 @@ function saveBusinessInfo() {
 
   populatePrintHeader();
 
-  var status = document.getElementById('bizSaveStatus');
-  if (status) {
-    status.textContent = '\u2713 Saved!';
-    status.style.color = '#7ed47e';
-    setTimeout(function () { status.textContent = ''; }, 2500);
+  // Save biz info + Trello settings to Supabase so it travels with the user
+  var user = (typeof getUser === 'function') ? getUser() : null;
+  if (!(user && _sb)) {
+    // Not logged in - at least update in-memory Trello state
+    if (typeof trelloCollectSettings === 'function') trelloCollectSettings();
+    say('info', 'Saved on this device only. Sign in to keep it with your account.', 6000);
+    return;
   }
+
+  var profileUpdate = {
+    biz_name:     biz.name,
+    biz_tagline:  biz.tagline,
+    biz_phone:    biz.phone,
+    biz_email:    biz.email,
+    biz_website:  biz.website,
+    biz_address:  biz.address,
+    biz_prefix:   biz.prefix,
+    biz_logo_url: biz.logoUrl,
+    biz_custom_terms: biz.customTerms
+  };
+  var bizColumns = Object.assign({}, profileUpdate); // the Business Info columns only, before Trello settings are merged in
+  // Merge Trello settings if available
+  if (typeof trelloCollectSettings === 'function') Object.assign(profileUpdate, trelloCollectSettings());
+
+  // Wait for the database and say what happened: a rejected save used to show "Saved!" anyway
+  say('pending', 'Saving\u2026');
+  if (saveBtn) saveBtn.disabled = true;
+  var failure = '';
+  try {
+    var res = await _sb.from('profiles').update(profileUpdate).eq('id', user.id);
+    if (res.error) failure = res.error.message || 'unknown error';
+  } catch (e) {
+    failure = (e && e.message) || 'network error';
+  }
+  if (saveBtn) saveBtn.disabled = false;
+
+  if (failure) {
+    console.warn('Profile save error:', failure);
+    say('error', 'Couldn\u2019t save your changes (' + failure + '). Please try again.');
+    return;
+  }
+
+  // loadBusinessInfo() prefers the profile held in memory, which a save does not refresh: bring it up to date
+  // so the printed header and terms show what was just saved without a reload
+  var live = (typeof getProfile === 'function') ? getProfile() : null;
+  if (live) { Object.assign(live, bizColumns); populatePrintHeader(); }
+  say('ok', '\u2713 Saved to your account', 5000);
 }
 
 function loadBusinessInfo() {

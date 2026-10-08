@@ -66,11 +66,12 @@ async function updateLibraryItem(id, fields) {
     .eq('id', id)
     .select()
     .single();
-  if (error) { console.warn('Library update error:', error.message); return; }
+  if (error) { console.warn('Library update error:', error.message); return null; }
   var idx = _matLib.findIndex(i => i.id === id);
   if (idx > -1) _matLib[idx] = data;
   _matLib.sort((a, b) => a.name.localeCompare(b.name));
   renderLibraryTable();
+  return data;
 }
 /* ── Render the library manager table ────────────────────── */
 function renderLibraryTable() {
@@ -110,8 +111,9 @@ async function commitLibEdit(id) {
   fields.cost   = parseFloat(fields.cost)   || 0;
   fields.markup = parseFloat(fields.markup) || 40;
   fields.url    = fields.url ? fields.url.trim() : null;
-  await updateLibraryItem(id, fields);
-  showLibStatus('Saved.', 'ok');
+  var saved = await updateLibraryItem(id, fields);
+  if (saved) showLibStatus('Saved.', 'ok');
+  else showLibStatus('Couldn’t save your change. Please try again.', 'error');
 }
 /* ── Confirm + delete ────────────────────────────────────── */
 function confirmDeleteLib(id, name) {
@@ -169,10 +171,12 @@ async function saveRowToLibrary(btn) {
   var existing = _matLib.find(i => i.name.toLowerCase() === name.toLowerCase());
   if (existing) {
     if (!confirm('"' + name + '" is already in your library. Update it?')) return;
-    await updateLibraryItem(existing.id, { cost: parseFloat(cost)||0, markup: parseFloat(markup)||40, url: buyUrl });
+    var updated = await updateLibraryItem(existing.id, { cost: parseFloat(cost)||0, markup: parseFloat(markup)||40, url: buyUrl });
+    if (!updated) { alert('Couldn’t save to your library. Please try again.'); return; }
     btn.title = 'Updated in library!';
   } else {
-    await saveLibraryItem({ name, cost, markup, unit: 'each', url: buyUrl, affiliate_id: affiliateId });
+    var created = await saveLibraryItem({ name, cost, markup, unit: 'each', url: buyUrl, affiliate_id: affiliateId });
+    if (!created) { alert('Couldn’t save to your library. Please try again.'); return; }
     btn.title = 'Saved to library!';
   }
   btn.style.color = '#7ed47e';

@@ -1959,6 +1959,12 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .btn-modal-primary:hover { background: var(--chrome-signal-200); }
 .modal-footer-link { text-align: center; margin-top: 0.9rem; font-size: 0.88rem; color: var(--chrome-ink-600); }
 .modal-footer-link a { color: var(--chrome-sea-600) !important; font-size: 0.88rem !important; margin-top: 0 !important; font-weight: normal !important; }
+/* Result of a save in the account modal (setSaveStatus in global-account-modal.js sets one of these on the status line) */
+#bizSaveStatus, #profileSaveStatus { min-height: 1.4em; }
+.save-status--pending { color: var(--chrome-ink-600); }
+.save-status--ok { color: #1a7f37; font-weight: 600; }
+.save-status--error { color: #b42318; font-weight: 600; }
+.save-status--info { color: var(--chrome-ink-700); }
 .saved-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
 .saved-item {
   display: flex; justify-content: space-between; align-items: center;

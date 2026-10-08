@@ -375,7 +375,7 @@
       '    </div>' +
       '  </div>' +
       '  <button class="btn-modal-primary mt-4" onclick="saveProfile()">Save Profile</button>' +
-      '  <p class="modal-footer-link" id="profileSaveStatus"></p>' +
+      '  <p class="modal-footer-link" id="profileSaveStatus" role="status" aria-live="polite"></p>' +
       '  <hr class="trello-divider" />' +
       '  <button class="btn-logout-sm" onclick="doLogout()">Log Out</button>' +
       '</div>';
@@ -422,7 +422,7 @@
       '    <div class="col-md-12"><label class="est-label">Custom Terms &amp; Conditions <span class="scope-hint">(replaces the standard terms on your printed estimates &mdash; leave blank to keep the default)</span></label><textarea id="bizCustomTerms" class="est-textarea" rows="8" placeholder="Paste your own Terms &amp; Conditions text here. Each clause on its own paragraph."></textarea></div>' +
       '  </div>' +
       '  <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">Save Business Info</button>' +
-      '  <p class="modal-footer-link" id="bizSaveStatus"></p>' +
+      '  <p class="modal-footer-link" id="bizSaveStatus" role="status" aria-live="polite"></p>' +
       '</div>';
   }
 
@@ -595,37 +595,61 @@
     var newPw = document.getElementById('profileNewPassword').value;
     var confirmPw = document.getElementById('profileConfirmPassword').value;
     var statusEl = document.getElementById('profileSaveStatus');
+    window.setSaveStatus(statusEl, 'pending', 'Saving\u2026');
 
     // Update name in profiles table
     if (newName) {
-      await _sb.from('profiles').update({ full_name: newName }).eq('id', user.id);
+      var nameFailure = '';
+      try {
+        var nameRes = await _sb.from('profiles').update({ full_name: newName }).eq('id', user.id);
+        if (nameRes.error) nameFailure = nameRes.error.message || 'unknown error';
+      } catch (e) {
+        nameFailure = (e && e.message) || 'network error';
+      }
+      if (nameFailure) {
+        console.warn('Profile name save error:', nameFailure);
+        window.setSaveStatus(statusEl, 'error', 'Couldn\u2019t save your name (' + nameFailure + '). Please try again.');
+        return;
+      }
     }
 
     // Update password if provided
     if (newPw) {
       if (newPw.length < 8) {
-        if (statusEl) { statusEl.textContent = 'Password must be at least 8 characters.'; statusEl.style.color = '#ff6b6b'; }
+        window.setSaveStatus(statusEl, 'error', 'Password must be at least 8 characters.');
         return;
       }
       if (newPw !== confirmPw) {
-        if (statusEl) { statusEl.textContent = 'Passwords do not match.'; statusEl.style.color = '#ff6b6b'; }
+        window.setSaveStatus(statusEl, 'error', 'Passwords do not match.');
         return;
       }
       var result = await _sb.auth.updateUser({ password: newPw });
       if (result.error) {
-        if (statusEl) { statusEl.textContent = 'Password update failed: ' + result.error.message; statusEl.style.color = '#ff6b6b'; }
+        window.setSaveStatus(statusEl, 'error', 'Password update failed: ' + result.error.message);
         return;
       }
     }
 
-    if (statusEl) {
-      statusEl.textContent = '\u2713 Saved!';
-      statusEl.style.color = '#7ed47e';
-      setTimeout(function () { statusEl.textContent = ''; }, 2500);
-    }
+    window.setSaveStatus(statusEl, 'ok', '\u2713 Saved', 5000);
 
     // Refresh the nav indicator name
     if (typeof globalAuthRefresh === 'function') globalAuthRefresh();
+  };
+
+  // One way to show the result of a save in the account modal. kind: 'pending' | 'ok' | 'error' | 'info'; the colors
+  // are the .save-status--* rules in style.css. autoClearMs clears the message later (errors are left until the next save).
+  window.setSaveStatus = function (el, kind, message, autoClearMs) {
+    if (!el) return;
+    clearTimeout(el._saveStatusTimer);
+    ['pending', 'ok', 'error', 'info'].forEach(function (k) { el.classList.remove('save-status--' + k); });
+    if (kind) el.classList.add('save-status--' + kind);
+    el.textContent = message || '';
+    if (autoClearMs) {
+      el._saveStatusTimer = setTimeout(function () {
+        el.textContent = '';
+        ['pending', 'ok', 'error', 'info'].forEach(function (k) { el.classList.remove('save-status--' + k); });
+      }, autoClearMs);
+    }
   };
 
   // ── Inject modals into the page ──────────────────────────────────────────
