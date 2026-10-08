@@ -1662,6 +1662,68 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
    four characters (12.5, 100, 2.25) with room to spare; 48px would clip those. */
 .est-table input.cost-input { min-width: 86px; }
 .est-table input.qty-input  { min-width: 60px; }
+
+/* -- Materials/Paint table on mobile — stack to 3 lines, #materialsTable only -- */
+@media (max-width: 600px) {
+  #materialsTable thead { display: none; }
+  #materialsTable,
+  #materialsTable tbody { display: block; width: 100%; }
+  #materialsTable tbody tr {
+    display: flex; flex-wrap: wrap; align-items: center;
+    padding: 0.5rem 0; border-bottom: 1px solid var(--chrome-paper-line);
+  }
+  #materialsTable tbody tr td {
+    display: block; min-width: 0; box-sizing: border-box; padding: 0.2rem 0.25rem;
+  }
+  /* Line 1: drag handle, Item, Your Cost. Your Cost keeps its existing 86px minimum so it
+     still can't clip (same reasoning as .cost-input's sitewide min-width); Item fills the rest. */
+  #materialsTable tbody tr td.col-drag { flex: 0 0 24px; padding-left: 0; order: 1; }
+  #materialsTable tbody tr td:nth-child(2) { flex: 1 1 0; min-width: 0; order: 2; } /* Item — this <td> has no column class */
+  #materialsTable tbody tr td.col-cost { flex: 0 0 86px; order: 3; }
+  #materialsTable tbody tr td.col-cost input.cost-input {
+    min-width: 0; width: 100%;
+    -moz-appearance: textfield;
+  }
+  #materialsTable tbody tr td.col-cost input.cost-input::-webkit-outer-spin-button,
+  #materialsTable tbody tr td.col-cost input.cost-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  /* Forces a hard break before Markup — without it flexbox lets Markup squeeze onto line 1 too */
+  #materialsTable tbody tr::after { content: ""; flex-basis: 100%; order: 4; }
+  /* Line 2: Markup, Retail, Qty — labeled, since <thead> is hidden at this width */
+  #materialsTable tbody tr td.col-markup { flex: 0 0 33%; order: 5; }
+  #materialsTable tbody tr td.col-retail { flex: 0 0 33%; order: 6; }
+  #materialsTable tbody tr td.col-qty { flex: 0 0 33%; order: 7; }
+  #materialsTable tbody tr td.col-markup::before {
+    content: "Markup:"; display: block; font-size: 0.72rem; color: var(--chrome-ink-500);
+  }
+  #materialsTable tbody tr td.col-qty::before {
+    content: "Qty:"; display: block; font-size: 0.72rem; color: var(--chrome-ink-500);
+  }
+  #materialsTable tbody tr td.col-retail .retail-display::before {
+    content: "Retail: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
+  }
+  /* Line 3: Line Total, Actions (Buy link, report/save/delete icons) */
+  #materialsTable tbody tr td.col-total { flex: 0 0 50%; order: 8; }
+  #materialsTable tbody tr td.col-actions { flex: 0 0 50%; text-align: right; order: 9; }
+  #materialsTable tbody tr td.col-total .line-total-display::before {
+    content: "Total: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
+  }
+  /* Inputs are content-box sitewide, so width:100% plus their own padding and border spilled about 15px out of every
+     cell, running the Item field into Cost and the Markup field under the Retail label. border-box makes each input
+     fill its cell exactly. */
+  #materialsTable tbody tr td input { box-sizing: border-box; }
+  /* The Subtotal row is in <tfoot>, which stays a table while the table above goes block, so it sized itself and ran
+     about 19px past the card edge. Make it one row of label + amount; the two empty cells only exist to line up the
+     desktop columns. */
+  #materialsTable tfoot { display: block; width: 100%; }
+  #materialsTable tfoot tr { display: flex; align-items: center; }
+  #materialsTable tfoot td { display: block; box-sizing: border-box; width: auto; }
+  #materialsTable tfoot td.col-drag,
+  #materialsTable tfoot td.col-actions { display: none; }
+  #materialsTable tfoot td.subtotal-label { flex: 1 1 auto; min-width: 0; }
+}
+
 .retail-display { color: var(--chrome-ink-900); font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
 .subtotal-row td { background: var(--chrome-paper-muted); }
