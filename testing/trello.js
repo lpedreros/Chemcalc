@@ -328,12 +328,20 @@ async function trelloSaveBoardList() {
   }
   if (boardSel) boardSel.disabled = false;
   if (listSel)  listSel.disabled  = false;
+  var live = (typeof getProfile === 'function') ? getProfile() : null;
   if (failure) {
     console.warn('Trello board/list save error:', failure);
-    _trelloSetStatus('Couldn\u2019t save board and list (' + failure + '). Please try again.', true);
+    // Nothing was saved, so fall back to what is saved: Add to Trello reads these four values, and it must not use a choice that
+    // never reached the account. The list picker goes back to its placeholder because choosing the same list again fires no
+    // change event, so "try again" would otherwise do nothing; picking the list again saves it.
+    _trelloBoardId   = (live && live.trello_board_id)   || '';
+    _trelloBoardName = (live && live.trello_board_name) || '';
+    _trelloListId    = (live && live.trello_list_id)    || '';
+    _trelloListName  = (live && live.trello_list_name)  || '';
+    if (listSel) listSel.value = '';
+    _trelloSetStatus('Couldn\u2019t save board and list (' + failure + '). Choose the list again to retry.', true);
     return;
   }
-  var live = (typeof getProfile === 'function') ? getProfile() : null;
   if (live) Object.assign(live, settings); // so reopening the modal still shows the saved choice
   _trelloSetStatus('Board and list saved.', false);
 }
