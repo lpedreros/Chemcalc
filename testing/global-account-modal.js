@@ -433,7 +433,7 @@
       '  <p class="scope-hint"><a href="/trello-setup.html" target="_blank">Full setup guide &#8599;</a></p>' +
       '  <p class="modal-sub">Connect your Trello account to send estimates directly to your board.</p>' +
       '  <div class="row g-3">' +
-      '    <div class="col-12">' +
+      '    <div class="col-12" id="trelloConnectRow">' +
       '      <label class="est-label">Trello API Key</label>' +
       '      <div class="trello-key-row">' +
       '        <input type="text" id="trelloApiKey" class="est-input" placeholder="Paste your Trello API key here" />' +
@@ -441,9 +441,11 @@
       '      </div>' +
       '      <p class="scope-hint">Get your API key at <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a></p>' +
       '    </div>' +
-      '    <div class="col-12" id="trelloTokenRow" style="display:none;">' +
-      '      <label class="est-label">Trello Token <span class="scope-hint">(auto-filled after authorization)</span></label>' +
-      '      <input type="text" id="trelloToken" class="est-input" placeholder="Token will appear here after you authorize" readonly />' +
+      '    <div class="col-12" id="trelloConnectedRow" style="display:none;">' +
+      '      <div class="trello-connected-row">' +
+      '        <p class="trello-connected-line">&#10003; Trello is connected.</p>' +
+      '        <button class="btn-trello-disconnect" id="trelloDisconnectBtn" onclick="trelloDisconnect()">Disconnect Trello</button>' +
+      '      </div>' +
       '    </div>' +
       '    <div class="col-12" id="trelloBoardRow" style="display:none;">' +
       '      <label class="est-label">Default Board &amp; List</label>' +

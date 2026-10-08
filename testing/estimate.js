@@ -208,7 +208,6 @@ async function saveBusinessInfo() {
     biz_logo_url: biz.logoUrl,
     biz_custom_terms: biz.customTerms
   };
-  var bizColumns = Object.assign({}, profileUpdate); // the Business Info columns only, before Trello settings are merged in
   // Merge Trello settings if available
   if (typeof trelloCollectSettings === 'function') Object.assign(profileUpdate, trelloCollectSettings());
 
@@ -230,10 +229,11 @@ async function saveBusinessInfo() {
     return;
   }
 
-  // loadBusinessInfo() prefers the profile held in memory, which a save does not refresh: bring it up to date
-  // so the printed header and terms show what was just saved without a reload
+  // loadBusinessInfo() and trelloInit() read the profile held in memory, which a save does not refresh: bring it up to date
+  // (Business Info AND Trello columns) so the printed header shows what was just saved and reopening the account modal
+  // does not reset the Trello connection to its old values, which the next save would then write back
   var live = (typeof getProfile === 'function') ? getProfile() : null;
-  if (live) { Object.assign(live, bizColumns); populatePrintHeader(); }
+  if (live) { Object.assign(live, profileUpdate); populatePrintHeader(); }
   say('ok', '\u2713 Saved to your account', 5000);
 }
 

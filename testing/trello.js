@@ -30,35 +30,29 @@ function trelloInit(profile) {
   _trelloRestoreUI();
 }
 
-/* -- Restore UI state when modal opens ------------------------ */
+/* -- Restore UI state when modal opens ------------------------
+   Connected = a key AND a token are held. Connected shows a plain "Trello is connected" line with a Disconnect button
+   and the board/list picker; the key and token are never put back into the page. Not connected shows the key box. */
 function _trelloRestoreUI() {
-  var keyEl   = document.getElementById('trelloApiKey');
-  var tokenEl = document.getElementById('trelloToken');
-  if (keyEl)   keyEl.value   = _trelloKey;
-  if (tokenEl) tokenEl.value = _trelloToken;
+  var connected = !!(_trelloKey && _trelloToken);
+  var keyEl = document.getElementById('trelloApiKey');
+  if (keyEl) keyEl.value = connected ? '' : _trelloKey;
+  _trelloShowConnectedUI(connected);
 
-  if (_trelloKey && _trelloToken) {
-    _trelloShowBoardRow();
+  if (connected && _trelloBoardId) {
     // Restore saved board/list selection
-    if (_trelloBoardId) {
-      _trelloSetBoardOption(_trelloBoardId, _trelloBoardName);
-      if (_trelloListId) {
-        _trelloSetListOption(_trelloListId, _trelloListName);
-      }
+    _trelloSetBoardOption(_trelloBoardId, _trelloBoardName);
+    if (_trelloListId) {
+      _trelloSetListOption(_trelloListId, _trelloListName);
     }
   }
 }
 
-function _trelloShowTokenRow() {
-  var r = document.getElementById('trelloTokenRow');
-  if (r) r.style.display = '';
-}
-
-function _trelloShowBoardRow() {
-  var r = document.getElementById('trelloTokenRow');
-  var b = document.getElementById('trelloBoardRow');
-  if (r) r.style.display = '';
-  if (b) b.style.display = '';
+function _trelloShowConnectedUI(connected) {
+  var show = function (id, on) { var el = document.getElementById(id); if (el) el.style.display = on ? '' : 'none'; };
+  show('trelloConnectRow', !connected);
+  show('trelloConnectedRow', connected);
+  show('trelloBoardRow', connected);
 }
 
 function _trelloSetStatus(msg, isError) {
@@ -122,10 +116,10 @@ function trelloAuthorize() {
 /* -- Step 2: Token received -------------------------------- */
 function _trelloOnTokenReceived(token) {
   _trelloToken = token;
-  var tokenEl = document.getElementById('trelloToken');
-  if (tokenEl) tokenEl.value = token;
-  _trelloShowBoardRow();
-  _trelloSetStatus('? Trello authorized! Now select your board and list below.', false);
+  var keyEl = document.getElementById('trelloApiKey');
+  if (keyEl) keyEl.value = ''; // the key is held in _trelloKey now; the page does not show it once connected
+  _trelloShowConnectedUI(true);
+  _trelloSetStatus('? Trello authorized! Now select your board and list below, then click Save Business Info.', false);
   trelloLoadBoards();
 }
 
@@ -230,16 +224,16 @@ function _trelloSetListOption(id, name) {
 /* -- Collect Trello settings from modal (called by saveBusinessInfo) */
 function trelloCollectSettings() {
   var keyEl    = document.getElementById('trelloApiKey');
-  var tokenEl  = document.getElementById('trelloToken');
   var boardSel = document.getElementById('trelloBoardSelect');
   var listSel  = document.getElementById('trelloListSelect');
 
-  _trelloKey       = keyEl    ? keyEl.value.trim()                          : _trelloKey;
-  _trelloToken     = tokenEl  ? tokenEl.value.trim()                        : _trelloToken;
+  // Once connected the key box is empty on purpose (the secret is not shown), so the key and token come from memory;
+  // reading the empty box would overwrite the stored key. The box is only read while not connected.
+  if (!(_trelloKey && _trelloToken) && keyEl) _trelloKey = keyEl.value.trim();
   _trelloBoardId   = boardSel ? boardSel.value                              : _trelloBoardId;
-  _trelloBoardName = boardSel ? (boardSel.options[boardSel.selectedIndex] ? boardSel.options[boardSel.selectedIndex].text : '') : _trelloBoardName;
+  _trelloBoardName = boardSel ? ((boardSel.value && boardSel.options[boardSel.selectedIndex]) ? boardSel.options[boardSel.selectedIndex].text : '') : _trelloBoardName;
   _trelloListId    = listSel  ? listSel.value                               : _trelloListId;
-  _trelloListName  = listSel  ? (listSel.options[listSel.selectedIndex]  ? listSel.options[listSel.selectedIndex].text  : '') : _trelloListName;
+  _trelloListName  = listSel  ? ((listSel.value && listSel.options[listSel.selectedIndex])  ? listSel.options[listSel.selectedIndex].text  : '') : _trelloListName;
 
   return {
     trello_api_key:   _trelloKey,
@@ -249,6 +243,46 @@ function trelloCollectSettings() {
     trello_list_id:   _trelloListId,
     trello_list_name: _trelloListName
   };
+}
+
+/* -- Disconnect Trello ----------------------------------------
+   Clears the six Trello columns on the user's own profile row, and only when that write succeeds clears the page state
+   and returns to the "not connected" look. A failed write leaves everything as it was and says so. */
+async function trelloDisconnect() {
+  if (!confirm('Disconnect Trello? Your Trello key and token will be removed from your account. You can connect again at any time.')) return;
+  var btn = document.getElementById('trelloDisconnectBtn');
+  var cleared = { trello_api_key: null, trello_token: null, trello_board_id: null, trello_board_name: null, trello_list_id: null, trello_list_name: null };
+  var user = (typeof getUser === 'function') ? getUser() : null;
+
+  if (user && typeof _sb !== 'undefined' && _sb) {
+    _trelloSetStatus('Disconnecting\u2026', false);
+    if (btn) btn.disabled = true;
+    var failure = '';
+    try {
+      var res = await _sb.from('profiles').update(cleared).eq('id', user.id);
+      if (res.error) failure = res.error.message || 'unknown error';
+    } catch (e) {
+      failure = (e && e.message) || 'network error';
+    }
+    if (btn) btn.disabled = false;
+    if (failure) {
+      console.warn('Trello disconnect error:', failure);
+      _trelloSetStatus('Couldn\u2019t disconnect Trello (' + failure + '). Please try again.', true);
+      return;
+    }
+    var live = (typeof getProfile === 'function') ? getProfile() : null;
+    if (live) Object.assign(live, cleared); // so reopening the modal shows the disconnected state
+  }
+
+  _trelloKey = _trelloToken = _trelloBoardId = _trelloBoardName = _trelloListId = _trelloListName = '';
+  var keyEl = document.getElementById('trelloApiKey');
+  if (keyEl) keyEl.value = '';
+  var boardSel = document.getElementById('trelloBoardSelect');
+  if (boardSel) boardSel.innerHTML = '<option value="">- Select a board -</option>';
+  var listSel = document.getElementById('trelloListSelect');
+  if (listSel) listSel.innerHTML = '<option value="">- Select a list -</option>';
+  _trelloShowConnectedUI(false);
+  _trelloSetStatus('Trello disconnected.', false);
 }
 
 /* -- Main: Add to Trello ----------------------------------- */
@@ -525,8 +559,8 @@ async function _generateEstimatePDF(printStyle) {
   pdf.text('Email', ML, y);
   y += 9;
   pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(17, 17, 17);
-  pdf.text(d.clientEmail || '—', ML, y);
-  y += 12;
+  drawParagraph(pdf.splitTextToSize(d.clientEmail || '—', CW), 9);
+  y += 3;
 
   // -- VESSEL INFO -------------------------------------------
   sectionTitle('Vessel Information');
