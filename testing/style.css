@@ -1675,11 +1675,17 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   #materialsTable tbody tr td {
     display: block; min-width: 0; box-sizing: border-box; padding: 0.2rem 0.25rem;
   }
-  /* Line 1: drag handle, Item, Your Cost. Your Cost keeps its existing 86px minimum so it
-     still can't clip (same reasoning as .cost-input's sitewide min-width); Item fills the rest. */
+  /* Line 1: drag handle + Item. Item gets the rest of the line, so a long product name shows as much as the screen allows. */
   #materialsTable tbody tr td.col-drag { flex: 0 0 24px; padding-left: 0; order: 1; }
   #materialsTable tbody tr td:nth-child(2) { flex: 1 1 0; min-width: 0; order: 2; } /* Item — this <td> has no column class */
-  #materialsTable tbody tr td.col-cost { flex: 0 0 86px; order: 3; }
+  /* Forces a hard break after Item — an item with a 100% basis takes a line to itself, so without it flexbox
+     would pull Cost and the rest up onto line 1 as well */
+  #materialsTable tbody tr::after { content: ""; flex-basis: 100%; order: 3; }
+  /* Line 2: Cost, Markup, Qty — labeled, since <thead> is hidden at this width. Cost keeps its existing 86px
+     minimum so it still can't clip (same reasoning as .cost-input's sitewide min-width); Markup and Qty share the rest. */
+  #materialsTable tbody tr td.col-cost { flex: 0 0 86px; order: 4; align-self: flex-start; }
+  #materialsTable tbody tr td.col-markup { flex: 1 1 0; order: 5; align-self: flex-start; }
+  #materialsTable tbody tr td.col-qty { flex: 1 1 0; order: 6; align-self: flex-start; }
   #materialsTable tbody tr td.col-cost input.cost-input {
     min-width: 0; width: 100%;
     -moz-appearance: textfield;
@@ -1688,24 +1694,26 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   #materialsTable tbody tr td.col-cost input.cost-input::-webkit-inner-spin-button {
     -webkit-appearance: none; margin: 0;
   }
-  /* Forces a hard break before Markup — without it flexbox lets Markup squeeze onto line 1 too */
-  #materialsTable tbody tr::after { content: ""; flex-basis: 100%; order: 4; }
-  /* Line 2: Markup, Retail, Qty — labeled, since <thead> is hidden at this width */
-  #materialsTable tbody tr td.col-markup { flex: 0 0 33%; order: 5; }
-  #materialsTable tbody tr td.col-retail { flex: 0 0 33%; order: 6; }
-  #materialsTable tbody tr td.col-qty { flex: 0 0 33%; order: 7; }
-  #materialsTable tbody tr td.col-markup::before {
-    content: "Markup:"; display: block; font-size: 0.72rem; color: var(--chrome-ink-500);
-  }
+  #materialsTable tbody tr td.col-cost::before,
+  #materialsTable tbody tr td.col-markup::before,
   #materialsTable tbody tr td.col-qty::before {
-    content: "Qty:"; display: block; font-size: 0.72rem; color: var(--chrome-ink-500);
+    display: block; font-size: 0.72rem; color: var(--chrome-ink-500);
   }
+  #materialsTable tbody tr td.col-cost::before { content: "Cost ($):"; }
+  #materialsTable tbody tr td.col-markup::before { content: "Markup:"; }
+  #materialsTable tbody tr td.col-qty::before { content: "Qty:"; }
+  /* Second hard break, after Qty: Markup and Qty have no fixed width, so without it flexbox would pull Retail, Total
+     and Actions up onto line 2 as well */
+  #materialsTable tbody tr::before { content: ""; flex-basis: 100%; order: 7; }
+  /* Line 3: Retail, Total, Actions at their natural width (width:auto overrides the 68px / 90px table-column hints on
+     .col-retail / .col-total, which would otherwise cap a $10,000+ price). Actions drops to a line of its own only when
+     the numbers are too wide to share the line, and wraps inside its cell if it has to (plain inline-block, not flex). */
+  #materialsTable tbody tr td.col-retail { flex: 0 0 auto; width: auto; order: 8; padding-right: 0.9rem; }
+  #materialsTable tbody tr td.col-total { flex: 0 0 auto; width: auto; order: 9; text-align: left; }
+  #materialsTable tbody tr td.col-actions { flex: 1 1 auto; order: 10; text-align: right; }
   #materialsTable tbody tr td.col-retail .retail-display::before {
     content: "Retail: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
   }
-  /* Line 3: Line Total, Actions (Buy link, report/save/delete icons) */
-  #materialsTable tbody tr td.col-total { flex: 0 0 50%; order: 8; }
-  #materialsTable tbody tr td.col-actions { flex: 0 0 50%; text-align: right; order: 9; }
   #materialsTable tbody tr td.col-total .line-total-display::before {
     content: "Total: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
   }
@@ -1826,6 +1834,13 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .summary-divider { border-top: 1px solid rgba(255,255,255,0.14); margin: 0.4rem 0; }
 .summary-grand { font-size: 1.1rem; font-weight: 700; color: #ffffff; padding-top: 0.4rem; }
 .summary-grand span:last-child { color: var(--chrome-signal-400); font-size: 2rem; }
+@media (max-width: 600px) {
+  /* The estimate total is 2rem monospace beside its label in a row that cannot wrap, so a large total (about $28,000
+     and up on a 320px phone, or seven figures on a 375px one) pushed the page wider than the screen. Now the amount
+     drops under its label, right-aligned, when the two do not fit on one line. */
+  .summary-grand { flex-wrap: wrap; }
+  .summary-grand span:last-child { margin-left: auto; }
+}
 .internal-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.28); }
 .internal-label { font-size: 0.82rem; color: #ff8f80; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
 
