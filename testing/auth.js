@@ -36,13 +36,31 @@ async function authInit() {
 }
 
 /* ── Load profile from Supabase ──────────────────────────── */
+// Every profiles column the browser may read. NOT select('*'): the database hides trello_api_key and trello_token from the
+// browser (only the `trello` Edge Function reads them) and refuses any select that includes a hidden column. A new profiles
+// column the page needs must be added here AND get its own GRANT SELECT (column) in the migration that adds it.
+const PROFILE_COLUMNS = 'id, created_at, email, full_name, company_name, estimate_prefix, logo_url, tier, ' +
+  'stripe_customer_id, stripe_subscription_id, subscription_status, ' +
+  'trello_board_id, trello_board_name, trello_list_id, trello_list_name, ' +
+  'biz_name, biz_tagline, biz_phone, biz_email, biz_website, biz_address, biz_prefix, biz_logo_url, ' +
+  'beta_tester, biz_custom_terms, trello_connected';
+
 async function loadProfile() {
   if (!currentUser) return;
-  const { data, error } = await _sb
+  let { data, error } = await _sb
     .from('profiles')
-    .select('*')
+    .select(PROFILE_COLUMNS)
     .eq('id', currentUser.id)
     .single();
+  // TRANSITIONAL: until migration add_profiles_trello_connected is applied, that column does not exist (42703) and the whole
+  // select fails, which would make every Pro user look like a free user. Retry without it. Delete this once the migration is live.
+  if (error && error.code === '42703') {
+    ({ data, error } = await _sb
+      .from('profiles')
+      .select(PROFILE_COLUMNS.replace(', trello_connected', ''))
+      .eq('id', currentUser.id)
+      .single());
+  }
   if (!error && data) currentProfile = data;
 }
 

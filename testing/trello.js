@@ -1,14 +1,14 @@
 /* ============================================================
    trello.js — ChemCalc Estimator Trello Integration
-   Handles: OAuth token flow, board/list picker,
+   Handles: OAuth token flow, board/list picker (all Trello calls go through the `trello` Edge Function),
             Trello card creation (with a link back to the saved estimate).
             Also holds PDF generation (jsPDF) and Supabase Storage upload
             helpers, which addToTrello() does not currently call
    ============================================================ */
 
 /* -- State --------------------------------------------------- */
-var _trelloKey   = '';
-var _trelloToken = '';
+var _trelloConnected = false; // the browser never holds the Trello key or token, only whether a connection exists
+var _trelloKey   = '';        // only while connecting: the key typed into the box, until the token comes back (then cleared)
 var _trelloBoardId   = '';
 var _trelloBoardName = '';
 var _trelloListId    = '';
@@ -21,8 +21,8 @@ var _trelloAuthWindow = null;
    ----------------------------------------------------------- */
 function trelloInit(profile) {
   if (!profile) return;
-  _trelloKey       = profile.trello_api_key   || '';
-  _trelloToken     = profile.trello_token      || '';
+  _trelloConnected = profile.trello_connected === true; // computed by the database; the key and token are not readable here
+  _trelloKey       = '';
   _trelloBoardId   = profile.trello_board_id   || '';
   _trelloBoardName = profile.trello_board_name || '';
   _trelloListId    = profile.trello_list_id    || '';
@@ -31,12 +31,12 @@ function trelloInit(profile) {
 }
 
 /* -- Restore UI state when modal opens ------------------------
-   Connected = a key AND a token are held. Connected shows a plain "Trello is connected" line with a Disconnect button
-   and the board/list picker; the key and token are never put back into the page. Not connected shows the key box. */
+   Connected shows a plain "Trello is connected" line with a Disconnect button and the board/list picker; the key and
+   token are never in the page. Not connected shows the key box (left as typed). */
 function _trelloRestoreUI() {
-  var connected = !!(_trelloKey && _trelloToken);
+  var connected = _trelloConnected;
   var keyEl = document.getElementById('trelloApiKey');
-  if (keyEl) keyEl.value = connected ? '' : _trelloKey;
+  if (keyEl && connected) keyEl.value = '';
   _trelloShowConnectedUI(connected);
 
   if (connected && _trelloBoardId) {
@@ -114,34 +114,58 @@ function trelloAuthorize() {
 }
 
 /* -- Step 2: Token received -------------------------------- */
-function _trelloOnTokenReceived(token) {
-  _trelloToken = token;
+async function _trelloOnTokenReceived(token) {
+  // Hand the key and the new token to the server in one call. It checks them with Trello and stores them for this user;
+  // from then on the browser holds neither (they are dropped below).
+  _trelloSetStatus('Connecting Trello...', false);
+  try {
+    await _trelloCall({ action: 'connect', apiKey: _trelloKey, token: token });
+  } catch (e) {
+    _trelloSetStatus('Could not connect Trello: ' + e.message, true);
+    return;
+  }
+  token = '';
+  _trelloKey = '';
+  _trelloConnected = true;
+  var live = (typeof getProfile === 'function') ? getProfile() : null;
+  if (live) live.trello_connected = true; // so reopening the modal still shows it connected
   var keyEl = document.getElementById('trelloApiKey');
-  if (keyEl) keyEl.value = ''; // the key is held in _trelloKey now; the page does not show it once connected
+  if (keyEl) keyEl.value = '';
   _trelloShowConnectedUI(true);
-  _trelloSetStatus('? Trello authorized! Now select your board and list below, then click Save Business Info.', false);
+  _trelloSetStatus('? Trello connected! Now select your board and list below, then click Save Business Info.', false);
   trelloLoadBoards();
+}
+
+/* -- Server calls -----------------------------------------------
+   Every Trello request goes through the `trello` Edge Function (supabase/functions/trello), which looks up the signed-in
+   user's own credentials itself. Resolves with the parsed answer; rejects with an Error whose message is safe to show. */
+async function _trelloCall(body) {
+  if (typeof _sb === 'undefined' || !_sb) throw new Error('not signed in');
+  var res = await _sb.functions.invoke('trello', { body: body });
+  if (res.error) {
+    var detail = null;
+    try { detail = await res.error.context.json(); } catch (e) { /* no JSON body: a network or gateway failure */ }
+    var err = new Error((detail && detail.error) || res.error.message || 'request failed');
+    err.code = detail && detail.code;
+    if (err.code === 'not_connected') { // the server says there is no connection (e.g. disconnected in another tab)
+      _trelloConnected = false;
+      _trelloShowConnectedUI(false);
+    }
+    throw err;
+  }
+  return res.data || {};
 }
 
 /* -- Step 3: Load boards ----------------------------------- */
 function trelloLoadBoards() {
-  if (!_trelloKey || !_trelloToken) {
+  if (!_trelloConnected) {
     _trelloSetStatus('Authorize Trello first.', true);
     return;
   }
   _trelloSetStatus('Loading your boards…', false);
-  var url = 'https://api.trello.com/1/members/me/boards' +
-    '?fields=id,name,closed' +
-    '&filter=open' +
-    '&key=' + encodeURIComponent(_trelloKey) +
-    '&token=' + encodeURIComponent(_trelloToken);
-
-  fetch(url)
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function (boards) {
+  _trelloCall({ action: 'boards' })
+    .then(function (res) {
+      var boards = res.boards || [];
       var sel = document.getElementById('trelloBoardSelect');
       if (!sel) return;
       sel.innerHTML = '<option value="">— Select a board —</option>';
@@ -167,18 +191,9 @@ function trelloLoadLists() {
   _trelloBoardId   = sel.value;
   _trelloBoardName = sel.options[sel.selectedIndex].text;
 
-  var url = 'https://api.trello.com/1/boards/' + _trelloBoardId + '/lists' +
-    '?filter=open' +
-    '&fields=id,name' +
-    '&key=' + encodeURIComponent(_trelloKey) +
-    '&token=' + encodeURIComponent(_trelloToken);
-
-  fetch(url)
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function (lists) {
+  _trelloCall({ action: 'lists', boardId: _trelloBoardId })
+    .then(function (res) {
+      var lists = res.lists || [];
       var listSel = document.getElementById('trelloListSelect');
       if (!listSel) return;
       listSel.innerHTML = '<option value="">— Select a list —</option>';
@@ -223,21 +238,17 @@ function _trelloSetListOption(id, name) {
 
 /* -- Collect Trello settings from modal (called by saveBusinessInfo) */
 function trelloCollectSettings() {
-  var keyEl    = document.getElementById('trelloApiKey');
+  // Only the board/list choice. The key and token are written by the server when Trello is connected; the database does not
+  // let the browser read or write them, so they are never part of a profile save.
   var boardSel = document.getElementById('trelloBoardSelect');
   var listSel  = document.getElementById('trelloListSelect');
 
-  // Once connected the key box is empty on purpose (the secret is not shown), so the key and token come from memory;
-  // reading the empty box would overwrite the stored key. The box is only read while not connected.
-  if (!(_trelloKey && _trelloToken) && keyEl) _trelloKey = keyEl.value.trim();
   _trelloBoardId   = boardSel ? boardSel.value                              : _trelloBoardId;
   _trelloBoardName = boardSel ? ((boardSel.value && boardSel.options[boardSel.selectedIndex]) ? boardSel.options[boardSel.selectedIndex].text : '') : _trelloBoardName;
   _trelloListId    = listSel  ? listSel.value                               : _trelloListId;
   _trelloListName  = listSel  ? ((listSel.value && listSel.options[listSel.selectedIndex])  ? listSel.options[listSel.selectedIndex].text  : '') : _trelloListName;
 
   return {
-    trello_api_key:   _trelloKey,
-    trello_token:     _trelloToken,
     trello_board_id:  _trelloBoardId,
     trello_board_name: _trelloBoardName,
     trello_list_id:   _trelloListId,
@@ -246,12 +257,14 @@ function trelloCollectSettings() {
 }
 
 /* -- Disconnect Trello ----------------------------------------
-   Clears the six Trello columns on the user's own profile row, and only when that write succeeds clears the page state
-   and returns to the "not connected" look. A failed write leaves everything as it was and says so. */
+   The server clears the six Trello columns on the user's own profile row (the browser may no longer write the key and token)
+   and revokes the token at Trello. Only when that succeeds is the page state cleared and the "not connected" look shown.
+   A failure leaves everything as it was and says so. */
 async function trelloDisconnect() {
   if (!confirm('Disconnect Trello? Your Trello key and token will be removed from your account. You can connect again at any time.')) return;
   var btn = document.getElementById('trelloDisconnectBtn');
-  var cleared = { trello_api_key: null, trello_token: null, trello_board_id: null, trello_board_name: null, trello_list_id: null, trello_list_name: null };
+  var cleared = { trello_connected: false, trello_board_id: null, trello_board_name: null, trello_list_id: null, trello_list_name: null };
+  var revoked = null;
   var user = (typeof getUser === 'function') ? getUser() : null;
 
   if (user && typeof _sb !== 'undefined' && _sb) {
@@ -259,8 +272,8 @@ async function trelloDisconnect() {
     if (btn) btn.disabled = true;
     var failure = '';
     try {
-      var res = await _sb.from('profiles').update(cleared).eq('id', user.id);
-      if (res.error) failure = res.error.message || 'unknown error';
+      var res = await _trelloCall({ action: 'disconnect' });
+      revoked = res.revoked;
     } catch (e) {
       failure = (e && e.message) || 'network error';
     }
@@ -274,7 +287,8 @@ async function trelloDisconnect() {
     if (live) Object.assign(live, cleared); // so reopening the modal shows the disconnected state
   }
 
-  _trelloKey = _trelloToken = _trelloBoardId = _trelloBoardName = _trelloListId = _trelloListName = '';
+  _trelloConnected = false;
+  _trelloKey = _trelloBoardId = _trelloBoardName = _trelloListId = _trelloListName = '';
   var keyEl = document.getElementById('trelloApiKey');
   if (keyEl) keyEl.value = '';
   var boardSel = document.getElementById('trelloBoardSelect');
@@ -282,12 +296,12 @@ async function trelloDisconnect() {
   var listSel = document.getElementById('trelloListSelect');
   if (listSel) listSel.innerHTML = '<option value="">- Select a list -</option>';
   _trelloShowConnectedUI(false);
-  _trelloSetStatus('Trello disconnected.', false);
+  _trelloSetStatus('Trello disconnected.' + (revoked === false ? ' Trello could not be told to revoke the old access, so you may also remove "ChemCalc Estimator" in your Trello account settings.' : ''), false);
 }
 
 /* -- Main: Add to Trello ----------------------------------- */
 async function addToTrello() {
-  if (!_trelloKey || !_trelloToken) {
+  if (!_trelloConnected) {
     alert('Please set up your Trello connection in My Business Info first.');
     return;
   }
@@ -360,28 +374,8 @@ async function addToTrello() {
   // 3. Create Trello card
   setStatus('Creating Trello card…');
   try {
-    var cardUrl = 'https://api.trello.com/1/cards' +
-      '?key=' + encodeURIComponent(_trelloKey) +
-      '&token=' + encodeURIComponent(_trelloToken);
-
-    var cardBody = new URLSearchParams({
-      idList: _trelloListId,
-      name:   cardName,
-      desc:   desc
-    });
-
-    var cardResp = await fetch(cardUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: cardBody.toString()
-    });
-
-    if (!cardResp.ok) {
-      var errText = await cardResp.text();
-      throw new Error('Trello API error: ' + errText);
-    }
-
-    var card = await cardResp.json();
+    var cardRes = await _trelloCall({ action: 'card', idList: _trelloListId, name: cardName, desc: desc });
+    var card = cardRes.card;
 
     // Save the new card's id back onto the estimate row, so history.html can show its "in Trello" badge.
     // The card already exists at this point, so a failed write here only logs a warning and never

@@ -58,3 +58,9 @@ Open `/__func.html?label=before` on the baseline server and `/__func.html?label=
 - Capture the baseline with the same harness version as the "after"; a newer probe (e.g. the slider thumb) otherwise shows up as a difference.
 - The harness waits for each page's element count to stop changing (some pages fill in data after load), switches transitions off before reading forced states (otherwise a fading hover reads its starting value), and strips the server port from URLs.
 - Not covered: print layouts, real `:visited` rendering (browsers hide it from scripts), other browsers, and JS states the scripts do not drive.
+
+## Trello Edge Function (supabase/functions/trello)
+
+- `node --test tools/verify/trello_handler.test.mjs`: 31 unit tests of `handler.ts` against a fake Auth + PostgREST + Trello world (`trello_fakes.mjs`). Node 22.18+/24 runs the .ts directly; no Deno needed. Covers identity (anon key, garbage, spoofed body ids), CORS, validation, secret-free responses and logs, connect/disconnect.
+- `node tools/verify/trello_fn_server.mjs PORT ALLOWED_ORIGIN...`: the same real handler behind a local HTTP server, for the browser test `forge-harness/cdp_trello_server.py` (real preflight and CORS). Stop it when done.
+- The fakes copy what the real services answered on 2026-10-08 (Auth: 403 `bad_jwt` for the anon key and for garbage; PostgREST: `PATCH ...&select=id` with `Prefer: return=representation` answers `[{id}]` for your row and `[]` otherwise). Re-check them if Supabase behaviour changes.
