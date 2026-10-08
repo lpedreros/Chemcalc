@@ -313,6 +313,14 @@ function populatePrintHeader() {
     legalEl.textContent = customTerms || legalEl.getAttribute('data-default-text');
     legalEl.classList.toggle('legal-text--custom', !!customTerms);
   }
+
+  // Signature caption: a Pro user's own business name replaces "Think & Engage LLC"; falls back to the
+  // default for free tier or a Pro user who hasn't set a business name.
+  var sigRepEl = document.getElementById('sigRepCaption');
+  if (sigRepEl) {
+    if (sigRepEl.getAttribute('data-default-text') === null) sigRepEl.setAttribute('data-default-text', sigRepEl.textContent);
+    sigRepEl.textContent = (biz && biz.name) ? ('Authorized Representative, ' + biz.name) : sigRepEl.getAttribute('data-default-text');
+  }
 }
 
 function setText(id, val) {

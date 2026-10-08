@@ -751,7 +751,7 @@ async function _generateEstimatePDF(printStyle) {
   pdf.setLineWidth(0.5); pdf.setDrawColor('#dddddd');
   pdf.line(ML, y, ML + CW, y); y += 6;
   pdf.setFontSize(6.5); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(102, 102, 102);
-  var legalText = (biz && biz.customTerms) ? biz.customTerms : 'THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think & Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work.';
+  var legalText = (isPro && biz && biz.customTerms) ? biz.customTerms : 'THIS PROPOSAL INCLUDES THE CONDITIONS NOTED BELOW. Perfect color match is not guaranteed on repairs. This estimate is valid for 10 days from the date of issue. Actual costs may vary based on conditions discovered during the repair process. Any changes to the scope of work require written approval before proceeding. Client is responsible for material costs, which may be billed separately and upfront. A signed estimate constitutes authorization to proceed with the described work. Think & Engage, LLC is not liable for pre-existing damage, hidden defects, or conditions not visible at the time of estimate. For contracts exceeding $1,000, a 50% deposit is required prior to commencement of work (material costs are separate and billed at cost). The remaining balance is due upon completion of work.';
   var legalLines = pdf.splitTextToSize(legalText, CW);
   // Short terms stay on one page with the signature lines; long ones (a business's own text) flow, drawParagraph pages them
   checkPage((legalLines.length <= 12 ? legalLines.length : 4) * 8 + 50);
@@ -761,7 +761,7 @@ async function _generateEstimatePDF(printStyle) {
   // -- SIGNATURE LINES ---------------------------------------
   checkPage(40);
   var sigW = (CW - 40) / 3;
-  var sigLabels = ['Client Signature', 'Date', 'Authorized Representative, Think & Engage LLC'];
+  var sigLabels = ['Client Signature', 'Date', (isPro && biz && biz.name) ? ('Authorized Representative, ' + biz.name) : 'Authorized Representative, Think & Engage LLC'];
   var sigX = ML;
   pdf.setLineWidth(0.8); pdf.setDrawColor('#333333');
   sigLabels.forEach(function (lbl, i) {
