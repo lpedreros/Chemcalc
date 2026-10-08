@@ -110,7 +110,7 @@ function trelloAuthorize() {
     }
   }, 500);
 
-  _trelloSetStatus('Waiting for Trello authorization…', false);
+  _trelloSetStatus('Waiting for Trello authorization\u2026', false);
 }
 
 /* -- Step 2: Token received -------------------------------- */
@@ -132,7 +132,7 @@ async function _trelloOnTokenReceived(token) {
   var keyEl = document.getElementById('trelloApiKey');
   if (keyEl) keyEl.value = '';
   _trelloShowConnectedUI(true);
-  _trelloSetStatus('? Trello connected! Now select your board and list below, then click Save Business Info.', false);
+  _trelloSetStatus('Trello connected! Now select your board and list below.', false);
   trelloLoadBoards();
 }
 
@@ -162,13 +162,13 @@ function trelloLoadBoards() {
     _trelloSetStatus('Authorize Trello first.', true);
     return;
   }
-  _trelloSetStatus('Loading your boards…', false);
+  _trelloSetStatus('Loading your boards\u2026', false);
   _trelloCall({ action: 'boards' })
     .then(function (res) {
       var boards = res.boards || [];
       var sel = document.getElementById('trelloBoardSelect');
       if (!sel) return;
-      sel.innerHTML = '<option value="">— Select a board —</option>';
+      sel.innerHTML = '<option value="">- Select a board -</option>';
       boards.forEach(function (b) {
         var opt = document.createElement('option');
         opt.value = b.id;
@@ -176,7 +176,7 @@ function trelloLoadBoards() {
         if (b.id === _trelloBoardId) opt.selected = true;
         sel.appendChild(opt);
       });
-      _trelloSetStatus('? Boards loaded. Select a board.', false);
+      _trelloSetStatus('Boards loaded. Select a board.', false);
       if (_trelloBoardId) trelloLoadLists();
     })
     .catch(function (err) {
@@ -196,7 +196,7 @@ function trelloLoadLists() {
       var lists = res.lists || [];
       var listSel = document.getElementById('trelloListSelect');
       if (!listSel) return;
-      listSel.innerHTML = '<option value="">— Select a list —</option>';
+      listSel.innerHTML = '<option value="">- Select a list -</option>';
       lists.forEach(function (l) {
         var opt = document.createElement('option');
         opt.value = l.id;
@@ -204,7 +204,7 @@ function trelloLoadLists() {
         if (l.id === _trelloListId) opt.selected = true;
         listSel.appendChild(opt);
       });
-      _trelloSetStatus('? Lists loaded. Select a list.', false);
+      _trelloSetStatus('Lists loaded. Select a list.', false);
     })
     .catch(function (err) {
       _trelloSetStatus('Could not load lists: ' + err.message, true);
@@ -299,6 +299,45 @@ async function trelloDisconnect() {
   _trelloSetStatus('Trello disconnected.' + (revoked === false ? ' Trello could not be told to revoke the old access, so you may also remove "ChemCalc Estimator" in your Trello account settings.' : ''), false);
 }
 
+/* -- Auto-save the board/list choice ---------------------------
+   Fires from the list picker's onchange, once a board AND a list are both chosen, and writes the four board/list columns
+   straight to the user's own profile row (the browser may still write these; the key and token are server-only). Changing
+   only the board does not save: the old list belongs to the old board, so saving would store a mismatched pair. The board
+   change just loads that board's lists ("Select a list."), and the pair is saved when a list is picked. Business > Save
+   Business Info still merges trelloCollectSettings() and does the same write, so the two never disagree. */
+async function trelloSaveBoardList() {
+  var boardSel = document.getElementById('trelloBoardSelect');
+  var listSel  = document.getElementById('trelloListSelect');
+  var settings = trelloCollectSettings();
+  if (!settings.trello_board_id || !settings.trello_list_id) return; // wait for both
+  var user = (typeof getUser === 'function') ? getUser() : null;
+  if (!(user && typeof _sb !== 'undefined' && _sb)) {
+    _trelloSetStatus('Sign in to save your board and list.', true);
+    return;
+  }
+
+  _trelloSetStatus('Saving board and list\u2026', false);
+  if (boardSel) boardSel.disabled = true;
+  if (listSel)  listSel.disabled  = true;
+  var failure = '';
+  try {
+    var res = await _sb.from('profiles').update(settings).eq('id', user.id);
+    if (res && res.error) failure = res.error.message || 'save failed';
+  } catch (e) {
+    failure = (e && e.message) || 'network error';
+  }
+  if (boardSel) boardSel.disabled = false;
+  if (listSel)  listSel.disabled  = false;
+  if (failure) {
+    console.warn('Trello board/list save error:', failure);
+    _trelloSetStatus('Couldn\u2019t save board and list (' + failure + '). Please try again.', true);
+    return;
+  }
+  var live = (typeof getProfile === 'function') ? getProfile() : null;
+  if (live) Object.assign(live, settings); // so reopening the modal still shows the saved choice
+  _trelloSetStatus('Board and list saved.', false);
+}
+
 /* -- Main: Add to Trello ----------------------------------- */
 async function addToTrello() {
   if (!_trelloConnected) {
@@ -313,7 +352,7 @@ async function addToTrello() {
   var statusEl = document.getElementById('trelloSendStatus');
   function setStatus(msg) { if (statusEl) statusEl.textContent = msg; }
 
-  setStatus('Saving estimate…');
+  setStatus('Saving estimate\u2026');
 
   // 0. Auto-save estimate to Supabase to get a shareable UUID
   var estimateUUID = null;
@@ -332,7 +371,7 @@ async function addToTrello() {
   var data = (typeof collectEstimateData === 'function') ? collectEstimateData() : {};
   var clientName = ((data.clientFirst || '') + ' ' + (data.clientLast || '')).trim() || 'Unknown Client';
   var vessel = [data.boatYear, data.boatMake, data.boatModel].filter(Boolean).join(' ') || 'Unknown Vessel';
-  var cardName = (data.estimateNumber || 'EST') + ' — ' + clientName + ' | ' + vessel;
+  var cardName = (data.estimateNumber || 'EST') + ' - ' + clientName + ' | ' + vessel;
 
   var descLines = [
     '**Estimate:** ' + (data.estimateNumber || ''),
@@ -367,12 +406,12 @@ async function addToTrello() {
     ? 'https://chemcalc.co/estimate.html?draft=' + estimateUUID
     : 'https://chemcalc.co/estimate.html';
   descLines.push('');
-  descLines.push('[?? View Estimate on ChemCalc](' + estimateLink + ')');
+  descLines.push('[View Estimate on ChemCalc](' + estimateLink + ')');
 
   var desc = descLines.join('\n');
 
   // 3. Create Trello card
-  setStatus('Creating Trello card…');
+  setStatus('Creating Trello card\u2026');
   try {
     var cardRes = await _trelloCall({ action: 'card', idList: _trelloListId, name: cardName, desc: desc });
     var card = cardRes.card;
@@ -393,7 +432,7 @@ async function addToTrello() {
     }
 
     setStatus('');
-    alert('? Card added to Trello: "' + _trelloListName + '" on "' + _trelloBoardName + '"');
+    alert('Card added to Trello: "' + _trelloListName + '" on "' + _trelloBoardName + '"');
   } catch (e) {
     setStatus('');
     alert('Failed to create Trello card: ' + e.message);
@@ -523,15 +562,15 @@ async function _generateEstimatePDF(printStyle) {
   pdf.text('Hourly Rate', ML + cols4 * 3,  y);
   y += 9;
   pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(17, 17, 17);
-  pdf.text(d.estimateNumber   || '—', ML,             y);
-  pdf.text(d.estimateDate     || '—', ML + cols4,     y);
-  pdf.text(d.estimateValidUntil || '—', ML + cols4*2, y);
+  pdf.text(d.estimateNumber   || '-', ML,             y);
+  pdf.text(d.estimateDate     || '-', ML + cols4,     y);
+  pdf.text(d.estimateValidUntil || '-', ML + cols4*2, y);
   pdf.text('$' + (d.hourlyRate || '0') + '/hr', ML + cols4*3, y);
   y += 12;
 
   // -- CLIENT INFO -------------------------------------------
   sectionTitle('Client Information');
-  var clientName = ((d.clientFirst || '') + ' ' + (d.clientLast || '')).trim() || '—';
+  var clientName = ((d.clientFirst || '') + ' ' + (d.clientLast || '')).trim() || '-';
   var cols2 = CW / 2;
   // Company Name first, as on the page (optional: no company, no line). Wrapped, so a long name stays inside the margins.
   if ((d.clientCompany || '').trim()) {
@@ -547,18 +586,18 @@ async function _generateEstimatePDF(printStyle) {
   y += 9;
   pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(17, 17, 17);
   pdf.text(clientName,         ML,         y);
-  pdf.text(d.clientPhone || '—', ML + cols2, y);
+  pdf.text(d.clientPhone || '-', ML + cols2, y);
   y += 9;
   pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(136, 136, 136);
   pdf.text('Email', ML, y);
   y += 9;
   pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(17, 17, 17);
-  drawParagraph(pdf.splitTextToSize(d.clientEmail || '—', CW), 9);
+  drawParagraph(pdf.splitTextToSize(d.clientEmail || '-', CW), 9);
   y += 3;
 
   // -- VESSEL INFO -------------------------------------------
   sectionTitle('Vessel Information');
-  var vessel = [d.boatYear, d.boatMake, d.boatModel].filter(Boolean).join(' ') || '—';
+  var vessel = [d.boatYear, d.boatMake, d.boatModel].filter(Boolean).join(' ') || '-';
   var cols3 = CW / 3;
   pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(136, 136, 136);
   pdf.text('Vessel',     ML,          y);
@@ -567,8 +606,8 @@ async function _generateEstimatePDF(printStyle) {
   y += 9;
   pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(17, 17, 17);
   pdf.text(vessel,              ML,           y);
-  pdf.text(d.boatName  || '—',  ML + cols3,   y);
-  pdf.text(d.boatHIN   || '—',  ML + cols3*2, y);
+  pdf.text(d.boatName  || '-',  ML + cols3,   y);
+  pdf.text(d.boatHIN   || '-',  ML + cols3*2, y);
   y += 14;
 
   // -- TABLE HELPER ------------------------------------------
@@ -698,7 +737,7 @@ async function _generateEstimatePDF(printStyle) {
         var rate2 = parseFloat(d.hourlyRate) || 100;
         var totalHrs = (task.rows || []).reduce(function(s, r){ return s + (r.hours || 0); }, 0);
         pdf.setFontSize(9); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(68, 68, 68);
-        pdf.text(totalHrs.toFixed(1) + ' hrs  ×  $' + rate2 + '/hr  =  ' + fmt(totalHrs * rate2), ML, y);
+        pdf.text(totalHrs.toFixed(1) + ' hrs  x  $' + rate2 + '/hr  =  ' + fmt(totalHrs * rate2), ML, y);
         y += 14;
       }
 
@@ -803,7 +842,7 @@ async function _generateEstimatePDF(printStyle) {
 
   // -- FOOTER ------------------------------------------------
   pdf.setFontSize(7); pdf.setFont('helvetica', 'italic'); pdf.setTextColor(170, 170, 170);
-  pdf.text('Generated by ChemCalc Marine Repair Estimator  ·  chemcalc.co', ML + CW / 2 - 90, PH - 18);
+  pdf.text('Generated by ChemCalc Marine Repair Estimator  |  chemcalc.co', ML + CW / 2 - 90, PH - 18);
 
   return pdf.output('blob');
 }
