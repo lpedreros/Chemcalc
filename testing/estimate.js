@@ -157,7 +157,7 @@ function proAddToTrello() {
   if (_checkPro()) { addToTrello(); } else { openModal('upgradeModal'); }
 }
 
-/* -- Business Info (Pro): save/load from localStorage -- */
+/* -- Business Info (Pro): saved to and loaded from the Supabase profile -- */
 async function saveBusinessInfo() {
   var statusEl = document.getElementById('bizSaveStatus');
   var saveBtn = document.querySelector('#acctPanelBizInfo .btn-modal-primary');
@@ -238,7 +238,8 @@ async function saveBusinessInfo() {
 }
 
 function loadBusinessInfo() {
-  // Prefer Supabase profile data (already loaded into currentProfile by auth.js)
+  // The Supabase profile (already loaded into currentProfile by auth.js) is the only source. With no business name and
+  // no custom terms there is no business info, and this returns null.
   var profile = (typeof getProfile === 'function') ? getProfile() : null;
   if (profile && (profile.biz_name || profile.biz_custom_terms)) {
     return {
@@ -253,11 +254,7 @@ function loadBusinessInfo() {
       customTerms: profile.biz_custom_terms || ''
     };
   }
-  // Fallback to localStorage (for users who saved before this update)
-  try {
-    var raw = localStorage.getItem('chemcalc_biz_info');
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
+  return null;
 }
 
 function populateBizInfoModal() {
