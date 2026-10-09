@@ -1005,8 +1005,8 @@ main.mp-calc-app{
 /* Right-side clearance from the fixed bottom-right floating-action
    cluster (Donate/BoatMD chat/Help -- see --chrome-fab-right and
    .fab-donate/.help-float-btn/#chemcalc-chatbot in style.css). Same
-   "tune padding, don't touch the cluster" approach as the existing
-   .mp-results-panel desktop fix in style.css.
+   "tune padding, don't touch the cluster" approach the .mp-results-panel
+   desktop fix used until it was removed (see .mp-results-panel).
 
    QA (Sentinel) flagged this as broken at ~375-410px and clean at
    430px+; live bounding-rect testing here (full scroll-range sweep,
@@ -3876,47 +3876,31 @@ body,
 }
 @media (min-width:992px){
   .mp-results-panel{position:sticky;top:1.5rem;}
-  /* Right-side clearance from the fixed bottom-right floating-action
-     cluster (Donate/BoatMD chat/Help -- see .fab-donate/#chemcalc-chatbot/
-     .help-float-btn). At >=992px this panel sits sticky in the right-hand
-     grid column, close enough to the viewport's right edge that the
-     cluster visually sits on top of its own content (compare-box cards,
-     hero value, print button) regardless of scroll position. The class is
-     shared by every calculator page, so one rule covers them all. The
-     padding also decides how wide the Email Me input (.email-capture-box,
-     injected by email-results.js) can be; see #captureEmailInput below
-     for the floor that keeps its placeholder from truncating. */
-  /* The padding scales down above 1280px, where the wrapper's auto-centering
-     margin already provides real clearance from the cluster on its own.
-     The inner max(0px, ...) floors the viewport-width term at zero below
-     1280px; without it, narrower viewports would get MORE padding than
-     11rem, not less. */
-  /* Re-derived 2026-10-03 for the 1280px wrapper (see PAGE CANVAS AND CONTENT
-     WRAPPER). The panel's right edge now sits the wrapper's side padding
-     (1.25rem, 2rem from 1024px) plus the centering margin past 1280px from
-     the viewport edge. The label-expanded cluster reaches about 186px in from
-     the viewport edge; 11rem keeps the panel's content clear of it with about
-     37px to spare at 1200px (measured: content ends at 977px, cluster circles
-     start at 1101px, expanded labels at about 1014px) and also covers the
-     992-1023px tier, where the side padding is smaller. */
-  .mp-results-panel{padding-right:max(0px, 11rem - max(0px, (100vw - 1280px) / 2));}
+  /* No right-side padding here, on purpose. This panel used to carry up to
+     11rem of padding-right to keep its content clear of the fixed
+     bottom-right floating-action cluster (Donate/BoatMD chat/Help). That
+     squeezed every calculator's results into the left half of the dark box:
+     the tiles wrapped, the divider under the title stopped short, and the
+     Email Me field stuck out past its own card. Removed 2026-10-09 at the
+     owner's request: the cluster floats over the panel, as it does over
+     every other page, and the content fills the box with the same inset on
+     both sides. The class is shared by every calculator page, so this
+     covers them all. */
 }
 
 /* Email-capture input (email-results.js injects #captureEmailInput +
    #btnEmailResults as a Bootstrap .input-group into each calculator page's
    .mp-email-capture container, identically on every page -- this file is
    the only place that can style it without touching that JS). Bare, it has
-   no min-width, so it freely shrinks to whatever the .mp-results-panel's
-   padding-right above leaves it (as little as 129px at 1200px with the old
-   9.5rem clearance,
+   no min-width, so it shrinks to whatever room its container leaves it,
    well under the ~153px its own placeholder needs at 16px Inter --
-   canvas-measured live). Bootstrap's .input-group already has
+   canvas-measured live. Bootstrap's .input-group already has
    flex-wrap:wrap, so giving the input a floor here just makes it wrap
    the Email Me button onto its own line once the row gets tight, instead
-   of silently shrinking below a readable width -- confirmed live this
-   doesn't reopen the cluster-clearance fix above (input-group sits well
-   inside the panel's own right edge in both the wrapped and unwrapped
-   states). 10rem clears the ~153px minimum with room to spare. */
+   of silently shrinking below a readable width. 10rem clears the ~153px
+   minimum with room to spare. The results panel no longer has right
+   padding (see above), so the row now gets the panel's full width and
+   this floor is only a safety net. */
 #captureEmailInput{min-width:10rem;}
 .mp-results-head{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
