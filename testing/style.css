@@ -15,17 +15,15 @@
    !important on the same selector (body, a), the later block wins, so
    moving this section below it would flip that tie.
 
-   DO NOT wrap this section in an outer @media print: its two bare rules
-   (.no-print, .d-print-block below) are deliberately OUTSIDE any @media
-   print block, because they hide print-only elements on SCREEN. Inside
-   @media print they would show the QR-code/letterhead sections on every
-   page, all the time.
+   DO NOT wrap this section in an outer @media print: its one bare rule
+   (.d-print-block below) is deliberately OUTSIDE any @media print block,
+   because it hides print-only elements on SCREEN. Inside @media print it
+   would show the QR-code/letterhead sections on every page, all the time.
 
    These rules load on every page that links style.css, not only the
-   calculator pages. Everything except the two bare rules is scoped inside
-   @media print. No markup uses .no-print/.weight-result/.ratio-value, and
-   every .d-print-block usage pairs with Bootstrap's .d-none, which alone
-   hides it on screen.
+   calculator pages. Everything except the bare rule is scoped inside
+   @media print. Every .d-print-block usage pairs with Bootstrap's
+   .d-none, which alone hides it on screen.
    ============================================================ */
 
 /* ------------------------------------------------------------
@@ -814,9 +812,7 @@ main.mp-calc-app{
    .mp-slider-label-row, .mp-slider-value, and .mp-slider-scale (SHARED SITE
    COMPONENTS -- CALCULATOR PARTS). */
 
-/* .mekp-result-line is not used by any page (the result lines in
-   mekpcalc.html are sr-only elements without it); it stays defined for
-   incidental reuse. */
+
 
 /* ---------- Status pill ---------- */
 .mekp-result-status{
@@ -1266,9 +1262,9 @@ h1 {
 
 /* ============================================================
    Print Styles -- see the "PRINT STYLES" section at the top of this file.
-   The generic print block (.no-print, .d-print-block, body margin reset,
-   h1/h2/p/li sizing, .weight-result/.ratio-value) lives there, alongside
-   the calculator-page print-hide convention.
+   The generic print block (.d-print-block, body margin reset, h1/h2/p/li
+   sizing) lives there, alongside the calculator-page print-hide
+   convention.
    ============================================================ */
 
 /* ============================================================
@@ -2061,8 +2057,7 @@ body.customer-view .btn-add-task-row { display: none !important; }
 body.customer-view #internalSummaryFull { display: none !important; }
 body.customer-view #customerSummary { display: flex !important; }
 /* Hide the materials and scope-of-work cards (#materialsCard,
-   .pro-feature-card) and all cost/markup/retail columns in customer view. The
-   #paintCard rule is dead: estimate.html has no such card. */
+   .pro-feature-card) and all cost/markup/retail columns in customer view. */
 body.customer-view #materialsCard { display: none !important; }
 body.customer-view .pro-feature-card { display: none !important; }
 body.customer-view .col-cost { display: none !important; }
@@ -2071,7 +2066,7 @@ body.customer-view .col-retail { display: none !important; }
 body.customer-view .markup-control { display: none !important; }
 
 /* -- Itemized screen view: restore the materials and scope-of-work cards and
-   task rows (overrides customer-view; there is no #paintCard) -- */
+   task rows (overrides customer-view) -- */
 body.customer-view.fmt-itemized #materialsCard { display: block !important; }
 body.customer-view.fmt-itemized .pro-feature-card { display: block !important; }
 body.customer-view.fmt-itemized .repair-task-table tbody { display: table-row-group !important; }
@@ -2651,7 +2646,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   content: ''; flex: 1; height: 1px; background: var(--chrome-paper-line);
 }
 
-/* -- pro-user body class: .internal-col (unused: no element in estimate.html or estimate.js has this class) -- */
+
 
 /* -- Auth error -- */
 .auth-error { color: #e05252; font-size: 0.85rem; min-height: 1.2em; margin: 0.3rem 0 0; }
@@ -2853,8 +2848,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 /* ============================================================
    ESTIMATE HISTORY -- LEGACY (dark layout)
    history.html uses the .history-* rules in ESTIMATE HISTORY
-   PAGE-SPECIFIC STYLES further down. The .hist-* and .status-* rules
-   in this block are not used by any page. Still live here: .modal-sm,
+   PAGE-SPECIFIC STYLES further down. Still live here: .modal-sm,
    .modal-actions and .btn-danger (history.html delete modal), and
    .col-actions (also used by estimate.html tables).
    ============================================================ */
@@ -3024,9 +3018,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 /* ============================================================
    UPGRADE MODAL PRICING NOTE
    .plan-beta-note is the small centered footnote under the plan cards
-   in estimate.html's upgrade modal. .plan-price-strike and
-   .plan-price-free (a struck-through price and a big green free price)
-   are not used by any page.
+   in estimate.html's upgrade modal.
    ============================================================ */
 
 .plan-beta-note {
@@ -3094,7 +3086,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .modal-box  { padding: 1rem; }
 }
 
-/* -- .float-save-btn: floating Save Draft pill. No page uses this class; Save Draft lives in the toolbar (#saveDraftBtn) and as a .fap-btn in the floating action panel. -- */
+
 
 /* ============================================================
    FLOATING ACTION PANEL (FAP)
@@ -5938,8 +5930,7 @@ h2.trello-setup-title{
    Everything shareable is shared: .mp-hero (--overlap), .mp-card
    (--flush), .mp-card-icon (the gate's lock badge), .mp-select (the
    search field), .mp-btn. What is here is what only this page has.
-   Namespaced .history-*; the older .hist-* and .status-* rules (see
-   ESTIMATE HISTORY -- LEGACY above) are not used by any page.
+   Namespaced .history-*.
 
    The status control is the real native <select> (history.js still calls
    updateStatus() on change and writes to Supabase), styled as a colored
