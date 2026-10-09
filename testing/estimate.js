@@ -258,8 +258,9 @@ function loadBusinessInfo() {
 }
 
 function populateBizInfoModal() {
-  var biz = loadBusinessInfo();
-  if (!biz) return;
+  // With no business info there is nothing to fill in, but the Trello state below still has to be restored: a Business
+  // Info save writes the Trello board and list back to the profile, so unrestored they would be saved blank.
+  var biz = loadBusinessInfo() || {};
   var fields = {
     bizName: biz.name, bizTagline: biz.tagline, bizPhone: biz.phone,
     bizEmail: biz.email, bizWebsite: biz.website, bizAddress: biz.address,
