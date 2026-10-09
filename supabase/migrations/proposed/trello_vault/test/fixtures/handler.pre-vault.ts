@@ -1,25 +1,18 @@
 /* ============================================================
-   PROPOSED, NOT APPLIED, NOT DEPLOYED. Vault version of supabase/functions/trello/handler.ts.
-   Deploy only AFTER 20261009120000_trello_credentials_to_vault.sql has been applied (it calls the three
-   trello_*_credentials functions that migration creates). To adopt: copy this file over handler.ts.
-   ============================================================
-
    trello/handler.ts — request handling for the `trello` Edge Function
 
    WHY THIS EXISTS: the browser used to hold the user's Trello API key and token (read from
    public.profiles) and call api.trello.com directly. That put the credentials in every page
    load and let any signed-in user read them with the Supabase client. Now the credentials
-   live only in Supabase Vault (encrypted at rest), reached through three SECURITY DEFINER SQL functions that
-   only service_role may execute (trello_store_credentials / trello_read_credentials / trello_clear_credentials,
-   called as PostgREST RPCs below), and this function makes the Trello calls on the user's behalf.
-   The browser never receives them.
+   live only in profiles.trello_api_key / trello_token, readable by service_role only, and this
+   function makes the Trello calls on the user's behalf. The browser never receives them.
 
    ONE FUNCTION, FIVE ACTIONS (POST, JSON body { action, ... }):
      connect     { apiKey, token }      verify the pair against Trello, then store it for the caller
      boards      {}                     GET  /1/members/me/boards
      lists       { boardId }            GET  /1/boards/{id}/lists
      card        { idList, name, desc } POST /1/cards
-     disconnect  {}                     delete the caller's Vault secrets, clear the four board/list columns, then revoke the token at Trello
+     disconnect  {}                     clear the caller's six trello_* columns, then revoke the token at Trello
 
    IDENTITY: the caller is whoever Supabase Auth says owns the Bearer token (GET /auth/v1/user).
    Nothing in the request body is ever used to choose whose credentials are read or written.
@@ -136,46 +129,25 @@ function rest(d: Deps, path: string, init: RequestInit = {}): Promise<Response> 
 
 interface Creds { key: string; token: string }
 
-// Calls one of the Vault SQL functions through PostgREST as service_role. The result is whatever the function
-// returns (JSON); failures never include the request body, which carries the credentials.
-async function rpc(d: Deps, fn: string, args: Record<string, unknown>, failMessage: string): Promise<unknown> {
+async function readCreds(d: Deps, uid: string): Promise<Creds | null> {
   let res: Response;
   try {
-    res = await rest(d, `rpc/${fn}`, { method: 'POST', body: JSON.stringify(args) });
+    res = await rest(d, `profiles?id=eq.${uid}&select=trello_api_key,trello_token&limit=1`);
   } catch (e) {
-    console.error(`trello: ${fn} failed:`, (e as Error).name);
+    console.error('trello: profile read failed:', (e as Error).name);
     throw new HttpError(503, 'db_unavailable', 'Could not reach your account data. Please try again.');
   }
   if (!res.ok) {
-    // PostgREST error bodies hold a code and message from the function; none of them contains a credential.
-    console.error(`trello: ${fn} status`, res.status, scrub(await res.text().catch(() => '')));
-    throw new HttpError(500, 'db_error', failMessage);
+    console.error('trello: profile read status', res.status);
+    throw new HttpError(500, 'db_error', 'Could not read your Trello connection. Please try again.');
   }
-  const text = await res.text().catch(() => '');
-  if (!text) return null;
-  try { return JSON.parse(text); } catch { return null; }
+  const rows = await res.json().catch(() => null) as Array<{ trello_api_key?: unknown; trello_token?: unknown }> | null;
+  const row = Array.isArray(rows) ? rows[0] : null;
+  if (!row || typeof row.trello_api_key !== 'string' || typeof row.trello_token !== 'string' || !row.trello_api_key || !row.trello_token) return null;
+  return { key: row.trello_api_key, token: row.trello_token };
 }
 
-async function readCreds(d: Deps, uid: string): Promise<Creds | null> {
-  const out = await rpc(d, 'trello_read_credentials', { p_user_id: uid }, 'Could not read your Trello connection. Please try again.');
-  // A table-returning function answers an array of rows; a single object is accepted too.
-  const row = (Array.isArray(out) ? out[0] : out) as { api_key?: unknown; token?: unknown } | null | undefined;
-  if (!row || typeof row.api_key !== 'string' || typeof row.token !== 'string' || !row.api_key || !row.token) return null;
-  return { key: row.api_key, token: row.token };
-}
-
-async function storeCreds(d: Deps, uid: string, apiKey: string, token: string): Promise<void> {
-  const out = await rpc(d, 'trello_store_credentials', { p_user_id: uid, p_api_key: apiKey, p_token: token }, 'Could not save your Trello connection. Please try again.');
-  if (out !== true) throw new HttpError(404, 'no_profile', 'Your account profile was not found.');
-}
-
-async function clearCreds(d: Deps, uid: string): Promise<void> {
-  const out = await rpc(d, 'trello_clear_credentials', { p_user_id: uid }, 'Could not save your Trello connection. Please try again.');
-  if (out !== true) throw new HttpError(404, 'no_profile', 'Your account profile was not found.');
-}
-
-// Plain profile columns (board and list choices); the credentials never go through here.
-async function patchProfile(d: Deps, uid: string, columns: Record<string, string | null>): Promise<void> {
+async function patchProfile(d: Deps, uid: string, columns: Record<string, string | null>, secrets: string[]): Promise<void> {
   let res: Response;
   try {
     // return=representation + select=id so that "no such profile row" is visible (a bare PATCH answers 204 either way)
@@ -185,7 +157,7 @@ async function patchProfile(d: Deps, uid: string, columns: Record<string, string
     throw new HttpError(503, 'db_unavailable', 'Could not reach your account data. Please try again.');
   }
   if (!res.ok) {
-    console.error('trello: profile write status', res.status, scrub(await res.text().catch(() => '')));
+    console.error('trello: profile write status', res.status, scrub(await res.text().catch(() => ''), secrets));
     throw new HttpError(500, 'db_error', 'Could not save your Trello connection. Please try again.');
   }
   const rows = await res.json().catch(() => null);
@@ -247,7 +219,7 @@ async function actionConnect(d: Deps, uid: string, body: Record<string, unknown>
     }
     throw e;
   }
-  await storeCreds(d, uid, apiKey, token);
+  await patchProfile(d, uid, { trello_api_key: apiKey, trello_token: token }, [apiKey, token]);
   return { ok: true };
 }
 
@@ -285,16 +257,11 @@ async function actionCard(d: Deps, uid: string, body: Record<string, unknown>): 
 }
 
 async function actionDisconnect(d: Deps, uid: string): Promise<unknown> {
-  // read first: after the clear below there is nothing left to revoke. A stored connection that cannot be decrypted
-  // (db_error from the read) must still be disconnectable, otherwise the user is stuck: treat it as nothing to revoke.
-  let creds: Creds | null = null;
-  try {
-    creds = await readCreds(d, uid);
-  } catch (e) {
-    if (!(e instanceof HttpError) || e.code !== 'db_error') throw e;
-  }
-  await clearCreds(d, uid);
-  await patchProfile(d, uid, { trello_board_id: null, trello_board_name: null, trello_list_id: null, trello_list_name: null });
+  const creds = await readCreds(d, uid);   // read first: after the clear below there is nothing left to revoke
+  await patchProfile(d, uid, {
+    trello_api_key: null, trello_token: null,
+    trello_board_id: null, trello_board_name: null, trello_list_id: null, trello_list_name: null,
+  }, creds ? [creds.key, creds.token] : []);
   // Best effort, after the user's intent is done: also revoke the "never expires" token at Trello.
   // revoked: true / false = attempted, null = there was nothing connected.
   let revoked: boolean | null = null;

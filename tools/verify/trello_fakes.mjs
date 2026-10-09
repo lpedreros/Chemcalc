@@ -53,6 +53,21 @@ export function createWorld() {
       return json(200, { id: uid, email: 'x@example.test', is_anonymous: false });
     }
 
+    // The three Vault SQL functions (supabase/migrations/20261009212435_trello_credentials_to_vault.sql), emulated over the same
+    // in-memory profiles. Same contract: read -> [{api_key, token}] (nulls when not connected), store/clear -> true, or false for no such profile.
+    const rpc = /^\/rest\/v1\/rpc\/(trello_(?:read|store|clear)_credentials)$/.exec(u.pathname);
+    if (rpc) {
+      if (headers.apikey !== SERVICE_KEY) return json(401, { message: 'Invalid API key' });
+      if (w.fail.restStatus) return json(w.fail.restStatus, { message: 'boom' });
+      const args = JSON.parse(init.body);
+      const row = w.profiles.get(args.p_user_id);
+      if (rpc[1] === 'trello_read_credentials') return json(200, [row && row.trello_api_key && row.trello_token ? { api_key: row.trello_api_key, token: row.trello_token } : { api_key: null, token: null }]);
+      if (!row) return json(200, false);
+      if (rpc[1] === 'trello_store_credentials') { row.trello_api_key = args.p_api_key; row.trello_token = args.p_token; }
+      else { row.trello_api_key = null; row.trello_token = null; }
+      return json(200, true);
+    }
+
     if (url.startsWith(SUPABASE_URL + '/rest/v1/profiles')) {
       if (headers.apikey !== SERVICE_KEY) return json(401, { message: 'Invalid API key' });
       if (w.fail.restStatus) return json(w.fail.restStatus, { message: 'boom' });

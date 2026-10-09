@@ -21,6 +21,7 @@ const call = (body, { token = 'tokA', origin = 'https://testing.chemcalc.co', me
 const noSecrets = (text, label) => { for (const s of SECRETS) assert.ok(!text.includes(s), `${label} leaked a credential`); };
 const upstream = () => w.calls.filter((c) => c.url.includes('api.trello.com'));
 const rows = () => w.calls.filter((c) => c.url.includes('/rest/v1/'));
+const rpcCalls = (fn) => rows().filter((c) => c.url.endsWith('/rpc/' + fn));   // the Vault SQL functions the handler calls (credentials never ride a profiles request)
 
 /* ---------- CORS ---------- */
 test('CORS: preflight answers both site origins, echoes the origin, and allows the headers supabase-js sends', async () => {
@@ -72,7 +73,7 @@ test('Auth unreachable -> 503, not a crash and not a pass', async () => {
 test('a user id sent in the body is ignored: the verified session decides whose credentials are used', async () => {
   const r = await call({ action: 'boards', userId: UID_B, id: UID_B, user_id: UID_B });
   assert.equal(r.status, 200);
-  assert.ok(rows()[0].url.includes(`id=eq.${UID_A}`) && !rows()[0].url.includes(UID_B));
+  assert.equal(JSON.parse(rows()[0].body).p_user_id, UID_A);   // the verified session's id went to the database, not the body's
   assert.ok(upstream()[0].url.includes(KEY_A) && !upstream()[0].url.includes(KEY_B));
   assert.deepEqual((await r.json()).boards.map((b) => b.id), ['boardA001', 'boardA002']);
 });
@@ -178,7 +179,7 @@ test('database error -> 500 db_error, no secrets in log or response', async () =
 });
 
 /* ---------- connect ---------- */
-test('connect: verifies the pair at Trello first, then stores exactly the two columns on the CALLER row', async () => {
+test('connect: verifies the pair at Trello first, then stores the pair through the Vault function for the CALLER', async () => {
   const newKey = 'NEWKEYNEWKEY1111222233334444'; const newTok = 'NEWTOKENNEWTOKEN11112222333344445555';
   w.accounts.set(`${newKey}|${newTok}`, { boards: [], lists: {} });
   const r = await call({ action: 'connect', apiKey: newKey, token: newTok, userId: UID_B });
@@ -188,9 +189,9 @@ test('connect: verifies the pair at Trello first, then stores exactly the two co
   assert.ok(!text.includes(newKey) && !text.includes(newTok));
   assert.equal(w.calls.filter((c) => c.url.includes('api.trello.com')).length, 1);          // the verification call
   assert.equal(new URL(upstream()[0].url).pathname, '/1/members/me');
-  const patch = rows().find((c) => c.method === 'PATCH');
-  assert.ok(patch.url.includes(`id=eq.${UID_A}`));
-  assert.deepEqual(JSON.parse(patch.body), { trello_api_key: newKey, trello_token: newTok });
+  assert.equal(rows().filter((c) => c.method === 'PATCH').length, 0);                       // the credential never rides a profiles PATCH
+  assert.equal(rpcCalls('trello_store_credentials').length, 1);
+  assert.deepEqual(JSON.parse(rpcCalls('trello_store_credentials')[0].body), { p_user_id: UID_A, p_api_key: newKey, p_token: newTok });
   assert.equal(w.profiles.get(UID_A).trello_token, newTok);
   assert.equal(w.profiles.get(UID_B).trello_token, TOK_B);                                  // the other user is untouched
   assert.equal(w.profiles.get(UID_A).trello_board_id, 'boardA001');                         // board/list choices are not touched
@@ -199,7 +200,7 @@ test('connect: Trello rejects the pair -> 400 invalid_credentials and NOTHING is
   const r = await call({ action: 'connect', apiKey: 'WRONGKEYWRONGKEY12', token: 'WRONGTOKENWRONGTOKEN12' });
   assert.equal(r.status, 400);
   assert.equal((await r.json()).code, 'invalid_credentials');
-  assert.equal(rows().filter((c) => c.method === 'PATCH').length, 0);
+  assert.equal(rpcCalls('trello_store_credentials').length, 0);
   assert.equal(w.profiles.get(UID_A).trello_token, TOK_A);
 });
 test('connect: malformed key/token -> 400 before any network call (beyond Auth)', async () => {
@@ -216,7 +217,7 @@ test('connect: no profile row for the caller -> 404, nothing stored', async () =
 });
 
 /* ---------- disconnect ---------- */
-test('disconnect: clears all six columns on the caller row, then revokes the token at Trello', async () => {
+test('disconnect: clears the credentials (Vault function) and the four board/list columns on the caller row, then revokes the token at Trello', async () => {
   const r = await call({ action: 'disconnect' });
   assert.deepEqual(await r.json(), { ok: true, revoked: true });
   const p = w.profiles.get(UID_A);
@@ -224,8 +225,9 @@ test('disconnect: clears all six columns on the caller row, then revokes the tok
   assert.deepEqual(w.revoked, [TOK_A]);
   assert.equal(w.profiles.get(UID_B).trello_token, TOK_B);
   // order: the clear is written BEFORE the revoke is attempted
-  const order = w.calls.map((c) => (c.method === 'PATCH' ? 'clear' : c.method === 'DELETE' ? 'revoke' : null)).filter(Boolean);
-  assert.deepEqual(order, ['clear', 'revoke']);
+  const order = w.calls.map((c) => (c.url.endsWith('/rpc/trello_clear_credentials') ? 'clear' : c.method === 'PATCH' ? 'board' : c.method === 'DELETE' ? 'revoke' : null)).filter(Boolean);
+  assert.deepEqual(order, ['clear', 'board', 'revoke']);
+  assert.deepEqual(JSON.parse(rows().find((c) => c.method === 'PATCH').body), { trello_board_id: null, trello_board_name: null, trello_list_id: null, trello_list_name: null });
 });
 test('disconnect: a failed revoke does not undo the disconnect; it is reported as revoked:false', async () => {
   w.fail.revokeStatus = 500;
@@ -235,7 +237,7 @@ test('disconnect: a failed revoke does not undo the disconnect; it is reported a
 });
 test('disconnect: when the clear fails nothing is revoked and the error is reported', async () => {
   let n = 0; const real = w.fetch;
-  w.fetch = (url, init) => (String(url).includes('/rest/v1/') && (init?.method === 'PATCH') ? Promise.resolve(new Response('{}', { status: 500 })) : real(url, init));
+  w.fetch = (url, init) => (String(url).includes('/rpc/trello_clear_credentials') ? Promise.resolve(new Response('{}', { status: 500 })) : real(url, init));
   const r = await call({ action: 'disconnect' });
   assert.equal(r.status, 500);
   assert.deepEqual(w.revoked, []);

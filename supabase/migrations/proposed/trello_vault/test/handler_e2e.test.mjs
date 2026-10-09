@@ -1,14 +1,14 @@
-// PROPOSED -- NOT APPLIED. End-to-end: handler.vault.ts -> a stand-in for PostgREST -> the REAL SQL functions in the PGlite replica.
+// End-to-end (the migration it exercises is applied live as 20261009212435; this folder keeps the evidence): supabase/functions/trello/handler.ts -> a stand-in for PostgREST -> the REAL SQL functions in the PGlite replica.
 //   * Trello and Supabase Auth are the same fakes the deployed handler's own tests use (tools/verify/trello_fakes.mjs).
 //   * The stand-in PostgREST maps /rest/v1/rpc/<fn> and PATCH /rest/v1/profiles onto SQL run as service_role in a
 //     transaction (SET LOCAL ROLE + request.jwt.claims), the way PostgREST does it. It is a stand-in: it does not parse
 //     PostgREST's full filter grammar, only the two shapes the handler sends.
-//   * PARITY: the same request script runs against the ORIGINAL handler.ts (in-memory profiles) and the patched one (Vault);
+//   * PARITY: the same request script runs against the PRE-VAULT handler (test/fixtures/handler.pre-vault.ts, in-memory profiles) and the patched one (Vault);
 //     every status and body must be identical.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { handle as handleOriginal } from '../../../../functions/trello/handler.ts';
-import { handle as handleVault } from '../handler.vault.ts';
+import { handle as handleOriginal } from './fixtures/handler.pre-vault.ts';   // the plaintext-column handler that was live until 2026-10-09 (git f1e7c91)
+import { handle as handleVault } from '../../../../functions/trello/handler.ts';  // the Vault handler, now the repo's real one
 import { createWorld, ENV, SECRETS, SUPABASE_URL, SERVICE_KEY, ANON_KEY, UID_A, UID_B, KEY_A, TOK_A, KEY_B, TOK_B } from '../../../../../tools/verify/trello_fakes.mjs';
 import { freshDb, asRole, runScript, MIGRATION, U } from './replica.mjs';
 
@@ -244,12 +244,12 @@ test('PostgREST variants the handler must tolerate: a single object instead of a
   }
 });
 
-test('the patched handler differs from the deployed one only where the credentials are read, written and cleared', async () => {
+test('the Vault handler differs from the pre-Vault one only where the credentials are read, written and cleared', async () => {
   const { readFileSync } = await import('node:fs');
   const strip = (s) => s.replace(/\r/g, '');
-  const a = strip(readFileSync(new URL('../../../../functions/trello/handler.ts', import.meta.url), 'utf8')).split('\n');
-  const b = strip(readFileSync(new URL('../handler.vault.ts', import.meta.url), 'utf8')).split('\n');
-  // Everything from "Trello" onward, up to the actions, is untouched; same exports and same entry point.
+  const a = strip(readFileSync(new URL('./fixtures/handler.pre-vault.ts', import.meta.url), 'utf8')).split('\n');
+  const b = strip(readFileSync(new URL('../../../../functions/trello/handler.ts', import.meta.url), 'utf8')).split('\n');
+  // The Trello section, the entry point and the header types are untouched; same exports.
   const section = (lines, from, to) => lines.slice(lines.findIndex((l) => l.includes(from)), lines.findIndex((l) => l.includes(to))).join('\n');
   assert.equal(section(b, '/* ---------- Trello ---------- */', '/* ---------- actions ---------- */'), section(a, '/* ---------- Trello ---------- */', '/* ---------- actions ---------- */'));
   const tail = (lines) => lines.slice(lines.findIndex((l) => l.includes('/* ---------- entry ---------- */'))).join('\n');

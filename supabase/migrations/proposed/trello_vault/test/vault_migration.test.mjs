@@ -432,7 +432,7 @@ test('rehearsal script: reports FAILED (and still commits nothing) when a check 
 test('source hygiene: every proposed file carries the PROPOSED -- NOT APPLIED banner', async () => {
   const { readFileSync } = await import('node:fs');
   const { DIR } = await import('./replica.mjs');
-  for (const f of ['20261009120000_trello_credentials_to_vault.sql', 'rollback.sql', 'live_rehearsal_rolled_back.sql', 'handler.vault.ts']) {
+  for (const f of ['20261009120000_trello_credentials_to_vault.sql', 'rollback.sql', 'live_rehearsal_rolled_back.sql']) {
     assert.match(readFileSync(DIR + '/' + f, 'utf8').slice(0, 400), /PROPOSED/, f);
   }
   assert.equal(FNS.length, 3);

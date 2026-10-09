@@ -18,8 +18,8 @@
 -- The one thing a rollback cannot recover is a credential whose Vault secret was deleted out from under the profile: that
 -- is reported as a refusal naming the profile count, and the user has to reconnect Trello after the rollback.
 --
--- ORDER OF OPERATIONS: run this script, then immediately redeploy the ORIGINAL handler.ts (the one that reads the plaintext
--- columns). Between the two, the patched handler answers 500 db_error on Trello actions (its RPCs are gone).
+-- ORDER OF OPERATIONS: run this script, then immediately redeploy the pre-Vault handler (the one that reads the plaintext
+-- columns; it is test/fixtures/handler.pre-vault.ts, and git f1e7c91:supabase/functions/trello/handler.ts). Between the two, the patched handler answers 500 db_error on Trello actions (its RPCs are gone).
 -- Idempotent: a second run finds nothing to roll back and exits cleanly.
 -- ============================================================================
 begin;
