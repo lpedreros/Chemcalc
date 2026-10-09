@@ -876,14 +876,22 @@ function updateSummary() {
    TASK_PRESETS (task_presets.js, from Supabase task_presets.scope_steps), the
    same rows tsApplyPreset() puts in a task's own scope note, so the content
    exists once and the two lists cannot drift apart. */
+/* A preset's scope steps as one numbered list ("1. ...", "2. ..."), or '' when it has none. The one place that turns
+   steps into text, for the Scope of Work box below and for the steps a task offers to "Save as Template". */
+function presetScopeSteps(preset) {
+  if (!preset || !preset.scopeSteps || !preset.scopeSteps.length) return '';
+  return preset.scopeSteps.map(function(s, i) {
+    return (i + 1) + '. ' + s;
+  }).join('\n');
+}
+
 /* Appends a preset's scope ("Name:" then its numbered steps) to the one Scope of Work box.
    Used by the template dropdown and by Task Starter, so both write exactly the same text. */
 function appendPresetScope(preset) {
   var ta = document.getElementById('scopeNotes');
-  if (!ta || !preset || !preset.scopeSteps || !preset.scopeSteps.length) return false;
-  var text = preset.name + ':\n' + preset.scopeSteps.map(function(s, i) {
-    return (i + 1) + '. ' + s;
-  }).join('\n');
+  var steps = presetScopeSteps(preset);
+  if (!ta || !steps) return false;
+  var text = preset.name + ':\n' + steps;
   ta.value += (ta.value ? '\n\n' : '') + text;
   syncPrintMirror(ta);
   return true;
@@ -1459,6 +1467,11 @@ function tsApplyPreset(idx) {
   if (!preset) return;
   closeModal('taskStarterModal');
   addRepairTask(preset.name, preset.taskRows);
+  // Remember which steps this task came from. addRepairTask already incremented taskCounter, so it is the new card's id.
+  // "Save as Template" falls back to these when the user has not written a note of their own on the task.
+  var presetSteps = presetScopeSteps(preset);
+  var presetCard = document.getElementById('repairCard' + taskCounter);
+  if (presetCard && presetSteps) presetCard.dataset.presetScope = presetSteps;
   mergePresetMaterials(preset);
   // The preset's scope steps go into the one Scope of Work box at the bottom of the page, the same text the
   // template dropdown inserts. The task's own "+ Add scope of work note" stays empty unless the user adds one.
@@ -1588,9 +1601,11 @@ async function saveTaskAsTemplate(cardId) {
     rows.push({ name: n ? n.value : '', hours: parseFloat(h ? h.value : 0) || 0 });
   });
 
-  // Collect scope text
+  // Collect scope text: the user's own note on this task wins. A task that came from a preset has no note of its own (its steps
+  // went into the Scope of Work box), so with no note the template carries that preset's steps instead of saving blank scope.
   var scopeEl = document.getElementById('repairScope' + cardId);
   var scopeText = scopeEl ? scopeEl.value.trim() : '';
+  if (!scopeText) scopeText = card.dataset.presetScope || '';
 
   // Duplicate check
   var existing = _userTemplates.find(function(t) {

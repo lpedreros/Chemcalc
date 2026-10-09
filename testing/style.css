@@ -942,8 +942,8 @@ main.mp-calc-app{
 /* Right-side clearance from the fixed bottom-right floating-action
    cluster (Donate/BoatMD chat/Help -- see --chrome-fab-right and
    .fab-donate/.help-float-btn/#chemcalc-chatbot in style.css). Same
-   "tune padding, don't touch the cluster" approach as the existing
-   .mp-results-panel desktop fix in style.css.
+   "tune padding, don't touch the cluster" approach the .mp-results-panel
+   desktop fix used until it was removed (see .mp-results-panel).
 
    QA (Sentinel) flagged this as broken at ~375-410px and clean at
    430px+; live bounding-rect testing here (full scroll-range sweep,
@@ -1599,6 +1599,79 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
    four characters (12.5, 100, 2.25) with room to spare; 48px would clip those. */
 .est-table input.cost-input { min-width: 86px; }
 .est-table input.qty-input  { min-width: 60px; }
+
+/* -- Materials/Paint table on mobile — stack to 3 lines, #materialsTable only -- */
+@media (max-width: 600px) {
+  #materialsTable thead { display: none; }
+  #materialsTable,
+  #materialsTable tbody { display: block; width: 100%; }
+  #materialsTable tbody tr {
+    display: flex; flex-wrap: wrap; align-items: center;
+    padding: 0.5rem 0; border-bottom: 1px solid var(--chrome-paper-line);
+  }
+  #materialsTable tbody tr td {
+    display: block; min-width: 0; box-sizing: border-box; padding: 0.2rem 0.25rem;
+  }
+  /* Line 1: drag handle + Item. Item gets the rest of the line, so a long product name shows as much as the screen allows. */
+  #materialsTable tbody tr td.col-drag { flex: 0 0 24px; padding-left: 0; order: 1; }
+  #materialsTable tbody tr td:nth-child(2) { flex: 1 1 0; min-width: 0; order: 2; } /* Item — this <td> has no column class */
+  /* Forces a hard break after Item — an item with a 100% basis takes a line to itself, so without it flexbox
+     would pull Cost and the rest up onto line 1 as well */
+  #materialsTable tbody tr::after { content: ""; flex-basis: 100%; order: 3; }
+  /* Line 2: Cost, Markup, Qty — labeled, since <thead> is hidden at this width. Sized by how long each value gets:
+     Markup is 3 digits at most (the field stops at 500), so it is a narrow fixed column. Cost runs longest (12345.67)
+     and takes the biggest share of what is left, Qty (100.25) the rest. Cost keeps its existing 86px minimum so it
+     still can't clip (same reasoning as .cost-input's sitewide min-width), and Qty never drops below 76px, enough for
+     1000.25. All three minimums plus Markup still fit a 320px phone (86 + 64 + 76 = 226 of 230px). */
+  #materialsTable tbody tr td.col-cost { flex: 3 1 0; min-width: 86px; order: 4; align-self: flex-start; }
+  #materialsTable tbody tr td.col-markup { flex: 0 0 64px; order: 5; align-self: flex-start; }
+  #materialsTable tbody tr td.col-qty { flex: 2 1 0; min-width: 76px; order: 6; align-self: flex-start; }
+  #materialsTable tbody tr td.col-cost input.cost-input {
+    min-width: 0; width: 100%;
+    -moz-appearance: textfield;
+  }
+  #materialsTable tbody tr td.col-cost input.cost-input::-webkit-outer-spin-button,
+  #materialsTable tbody tr td.col-cost input.cost-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  #materialsTable tbody tr td.col-cost::before,
+  #materialsTable tbody tr td.col-markup::before,
+  #materialsTable tbody tr td.col-qty::before {
+    display: block; font-size: 0.72rem; color: var(--chrome-ink-500);
+  }
+  #materialsTable tbody tr td.col-cost::before { content: "Cost ($):"; }
+  #materialsTable tbody tr td.col-markup::before { content: "Markup:"; }
+  #materialsTable tbody tr td.col-qty::before { content: "Qty:"; }
+  /* Second hard break, after Qty: Markup and Qty have no fixed width, so without it flexbox would pull Retail, Total
+     and Actions up onto line 2 as well */
+  #materialsTable tbody tr::before { content: ""; flex-basis: 100%; order: 7; }
+  /* Line 3: Retail, Total, Actions at their natural width (width:auto overrides the 68px / 90px table-column hints on
+     .col-retail / .col-total, which would otherwise cap a $10,000+ price). Actions drops to a line of its own only when
+     the numbers are too wide to share the line, and wraps inside its cell if it has to (plain inline-block, not flex). */
+  #materialsTable tbody tr td.col-retail { flex: 0 0 auto; width: auto; order: 8; padding-right: 0.9rem; }
+  #materialsTable tbody tr td.col-total { flex: 0 0 auto; width: auto; order: 9; text-align: left; }
+  #materialsTable tbody tr td.col-actions { flex: 1 1 auto; order: 10; text-align: right; }
+  #materialsTable tbody tr td.col-retail .retail-display::before {
+    content: "Retail: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
+  }
+  #materialsTable tbody tr td.col-total .line-total-display::before {
+    content: "Total: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
+  }
+  /* Inputs are content-box sitewide, so width:100% plus their own padding and border spilled about 15px out of every
+     cell, running the Item field into Cost and the Markup field under the Retail label. border-box makes each input
+     fill its cell exactly. */
+  #materialsTable tbody tr td input { box-sizing: border-box; }
+  /* The Subtotal row is in <tfoot>, which stays a table while the table above goes block, so it sized itself and ran
+     about 19px past the card edge. Make it one row of label + amount; the two empty cells only exist to line up the
+     desktop columns. */
+  #materialsTable tfoot { display: block; width: 100%; }
+  #materialsTable tfoot tr { display: flex; align-items: center; }
+  #materialsTable tfoot td { display: block; box-sizing: border-box; width: auto; }
+  #materialsTable tfoot td.col-drag,
+  #materialsTable tfoot td.col-actions { display: none; }
+  #materialsTable tfoot td.subtotal-label { flex: 1 1 auto; min-width: 0; }
+}
+
 .retail-display { color: var(--chrome-ink-900); font-weight: 600; white-space: nowrap; }
 .line-total-display { font-weight: 600; white-space: nowrap; }
 .subtotal-row td { background: var(--chrome-paper-muted); }
@@ -1701,6 +1774,13 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .summary-divider { border-top: 1px solid rgba(255,255,255,0.14); margin: 0.4rem 0; }
 .summary-grand { font-size: 1.1rem; font-weight: 700; color: #ffffff; padding-top: 0.4rem; }
 .summary-grand span:last-child { color: var(--chrome-signal-400); font-size: 2rem; }
+@media (max-width: 600px) {
+  /* The estimate total is 2rem monospace beside its label in a row that cannot wrap, so a large total (about $28,000
+     and up on a 320px phone, or seven figures on a 375px one) pushed the page wider than the screen. Now the amount
+     drops under its label, right-aligned, when the two do not fit on one line. */
+  .summary-grand { flex-wrap: wrap; }
+  .summary-grand span:last-child { margin-left: auto; }
+}
 .internal-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.28); }
 .internal-label { font-size: 0.82rem; color: #ff8f80; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
 
@@ -3036,15 +3116,49 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
    LIBRARY TABLE - MOBILE
    ============================================================ */
 @media (max-width: 600px) {
-  .lib-table col.col-cost    { width: 18%; }
-  .lib-table col.col-markup  { width: 0; }
-  .lib-table col.col-actions { width: 14%; }
-
   /* Hide Type and Markup columns on small screens */
   .lib-table th:nth-child(2),
   .lib-table td:nth-child(2),
   .lib-table th:nth-child(4),
   .lib-table td:nth-child(4) { display: none; }
+
+  /* Saved items on two lines each, not one row of four squeezed columns. With Type and Markup hidden, the <col>
+     widths (35 / 12 / 12 / 12 / 20 / 9%) land on the four cells that are still rendered, in order: at 375px the
+     Name got 108px, Cost, Buy URL and Actions 37px each. That showed under half of a 27-character product name,
+     about 2% of a Buy URL, and left more than half of the delete button cut off. The <col> widths can't fix it, because they
+     are matched to cells by position: zeroing the Type and Markup columns would zero Cost and Actions instead (the
+     col.col-cost / col-markup / col-actions rules that used to sit here matched nothing, since no <col> carries
+     those classes). So at this width the table becomes a list of rows: Name takes all of line 1; line 2 is Cost,
+     then Buy URL on the rest of the line, then the save and delete buttons. The header can't line up with
+     two-line rows, so it goes, and the two small labels below stand in for it. Cells are picked by position, like
+     the hide rule above: 1 Name, 3 Cost, 5 Buy URL, then the actions cell. */
+  .lib-table thead,
+  .lib-table colgroup { display: none; }
+  .lib-table,
+  .lib-table tbody { display: block; width: 100%; }
+  .lib-table tbody tr { display: flex; flex-wrap: wrap; align-items: flex-end; padding: 0.4rem 0.5rem; }
+  .lib-table tbody tr td:nth-child(1),
+  .lib-table tbody tr td:nth-child(3),
+  .lib-table tbody tr td:nth-child(5),
+  .lib-table tbody tr td.lib-actions-cell { display: block; box-sizing: border-box; min-width: 0; padding: 0.15rem 0.25rem; }
+  /* A 100% basis takes a line to itself, so Cost and the rest wrap to line 2 with no spacer needed. */
+  .lib-table tbody tr td:nth-child(1) { flex: 1 1 100%; }
+  /* Cost: 5.5rem shows 12345.67 whole, with some margin for a font that runs a little wider, once the spin
+     buttons are hidden (below). */
+  .lib-table tbody tr td:nth-child(3) { flex: 0 0 5.5rem; }
+  .lib-table tbody tr td:nth-child(5) { flex: 1 1 0; }
+  /* Save and delete at their natural width. width:auto overrides the cell's 1% (.lib-actions-cell), which as a flex
+     basis would shrink the cell below its two buttons. */
+  .lib-table tbody tr td.lib-actions-cell { flex: 0 0 auto; width: auto; }
+  /* The sitewide .est-table number-input rule (0.88rem, roomier padding) outranks .lib-table .lib-edit, so Cost came
+     out 2.6px taller than the Buy URL field it now sits beside. Same size here, so line 2 lines up. */
+  .lib-table tbody tr td:nth-child(3) input { font-size: 0.82rem; padding: 4px 6px; -moz-appearance: textfield; }
+  .lib-table tbody tr td:nth-child(3) input::-webkit-outer-spin-button,
+  .lib-table tbody tr td:nth-child(3) input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .lib-table tbody tr td:nth-child(3)::before,
+  .lib-table tbody tr td:nth-child(5)::before { display: block; font-size: 0.72rem; line-height: 1.3; color: var(--chrome-ink-500); }
+  .lib-table tbody tr td:nth-child(3)::before { content: "Cost ($):"; }
+  .lib-table tbody tr td:nth-child(5)::before { content: "Buy URL:"; }
 
   .lib-add-form .row > .col-md-3,
   .lib-add-form .row > .col-md-2,
@@ -3699,47 +3813,31 @@ body,
 }
 @media (min-width:992px){
   .mp-results-panel{position:sticky;top:1.5rem;}
-  /* Right-side clearance from the fixed bottom-right floating-action
-     cluster (Donate/BoatMD chat/Help -- see .fab-donate/#chemcalc-chatbot/
-     .help-float-btn). At >=992px this panel sits sticky in the right-hand
-     grid column, close enough to the viewport's right edge that the
-     cluster visually sits on top of its own content (compare-box cards,
-     hero value, print button) regardless of scroll position. The class is
-     shared by every calculator page, so one rule covers them all. The
-     padding also decides how wide the Email Me input (.email-capture-box,
-     injected by email-results.js) can be; see #captureEmailInput below
-     for the floor that keeps its placeholder from truncating. */
-  /* The padding scales down above 1280px, where the wrapper's auto-centering
-     margin already provides real clearance from the cluster on its own.
-     The inner max(0px, ...) floors the viewport-width term at zero below
-     1280px; without it, narrower viewports would get MORE padding than
-     11rem, not less. */
-  /* Re-derived 2026-10-03 for the 1280px wrapper (see PAGE CANVAS AND CONTENT
-     WRAPPER). The panel's right edge now sits the wrapper's side padding
-     (1.25rem, 2rem from 1024px) plus the centering margin past 1280px from
-     the viewport edge. The label-expanded cluster reaches about 186px in from
-     the viewport edge; 11rem keeps the panel's content clear of it with about
-     37px to spare at 1200px (measured: content ends at 977px, cluster circles
-     start at 1101px, expanded labels at about 1014px) and also covers the
-     992-1023px tier, where the side padding is smaller. */
-  .mp-results-panel{padding-right:max(0px, 11rem - max(0px, (100vw - 1280px) / 2));}
+  /* No right-side padding here, on purpose. This panel used to carry up to
+     11rem of padding-right to keep its content clear of the fixed
+     bottom-right floating-action cluster (Donate/BoatMD chat/Help). That
+     squeezed every calculator's results into the left half of the dark box:
+     the tiles wrapped, the divider under the title stopped short, and the
+     Email Me field stuck out past its own card. Removed 2026-10-09 at the
+     owner's request: the cluster floats over the panel, as it does over
+     every other page, and the content fills the box with the same inset on
+     both sides. The class is shared by every calculator page, so this
+     covers them all. */
 }
 
 /* Email-capture input (email-results.js injects #captureEmailInput +
    #btnEmailResults as a Bootstrap .input-group into each calculator page's
    .mp-email-capture container, identically on every page -- this file is
    the only place that can style it without touching that JS). Bare, it has
-   no min-width, so it freely shrinks to whatever the .mp-results-panel's
-   padding-right above leaves it (as little as 129px at 1200px with the old
-   9.5rem clearance,
+   no min-width, so it shrinks to whatever room its container leaves it,
    well under the ~153px its own placeholder needs at 16px Inter --
-   canvas-measured live). Bootstrap's .input-group already has
+   canvas-measured live. Bootstrap's .input-group already has
    flex-wrap:wrap, so giving the input a floor here just makes it wrap
    the Email Me button onto its own line once the row gets tight, instead
-   of silently shrinking below a readable width -- confirmed live this
-   doesn't reopen the cluster-clearance fix above (input-group sits well
-   inside the panel's own right edge in both the wrapped and unwrapped
-   states). 10rem clears the ~153px minimum with room to spare. */
+   of silently shrinking below a readable width. 10rem clears the ~153px
+   minimum with room to spare. The results panel no longer has right
+   padding (see above), so the row now gets the panel's full width and
+   this floor is only a safety net. */
 #captureEmailInput{min-width:10rem;}
 .mp-results-head{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;

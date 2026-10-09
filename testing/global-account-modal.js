@@ -451,7 +451,7 @@
       '      <label class="est-label">Default Board &amp; List</label>' +
       '      <div class="trello-picker-row">' +
       '        <select id="trelloBoardSelect" class="est-input" onchange="trelloLoadLists()"><option value="">- Select a board -</option></select>' +
-      '        <select id="trelloListSelect" class="est-input"><option value="">- Select a list -</option></select>' +
+      '        <select id="trelloListSelect" class="est-input" onchange="trelloSaveBoardList()"><option value="">- Select a list -</option></select>' +
       '      </div>' +
       '      <button class="btn-trello-load" onclick="trelloLoadBoards()">&#8635; Refresh Boards</button>' +
       '    </div>' +
