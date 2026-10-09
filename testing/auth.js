@@ -186,6 +186,14 @@ async function saveEstimateToSupabase(payload) {
 
   var matTotal  = (payload.materials || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
   var paintTotal = (payload.paint || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
+  // Labor is hours x hourly rate over every row of every task, summed per task like calcTaskTotal() in estimate.js.
+  // A blank, zero or non-numeric rate bills at 100 (not 0), the same fallback the page uses.
+  var laborRate  = parseFloat(payload.hourlyRate) || 100;
+  var laborTotal = (payload.tasks || []).reduce(function(s, t) {
+    var taskTotal = 0;
+    (t.rows || []).forEach(function(r) { taskTotal += (parseFloat(r.hours) || 0) * laborRate; });
+    return s + taskTotal;
+  }, 0);
 
   const row = {
     user_id:         currentUser.id,
@@ -203,7 +211,7 @@ async function saveEstimateToSupabase(payload) {
     hin:             payload.boatHIN      || '',
     materials_total: matTotal,
     paint_total:     paintTotal,
-    labor_total:     parseFloat(payload.grandTotal) || 0,
+    labor_total:     laborTotal,
     grand_total:     parseFloat(payload.grandTotal) || 0,
     hourly_rate:     parseFloat(payload.hourlyRate) || 0,
     estimate_data:   payload,
