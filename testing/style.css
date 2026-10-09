@@ -9,15 +9,7 @@
    (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). */
 
 /* ============================================================
-   PRINT STYLES (mekpcalc / clothcalc / awlgrip / epifanespoly / alexseal)
-   Merged into style.css 2026-09-16 (single-file consolidation --
-   Leo's non-negotiable: one CSS file for the whole site, page-specific
-   rules allowed only as commented sections in this file, never
-   separate files). print_style_fix_v4.css itself is deleted (git rm,
-   not renamed to .deprecated like the earlier clothcalc.css/
-   mekpcalc.css merges) -- see git history for the pre-merge original
-   file if it's ever needed again.
-
+   PRINT STYLES 
    Three parts, in this order: (1) the sitewide print base, (2) the
    shared calculator print hides, (3) the universal print letterhead.
 
@@ -45,15 +37,6 @@
 
 /* ------------------------------------------------------------
    -- sitewide print base -- (Section 1)
-
-   None of the rules below changes anything today. `.no-print`,
-   `.weight-result`, `.ratio-value` and the standalone `.d-print-block`
-   override are carried over unchanged for parity -- a sitewide grep
-   found no markup using `.no-print`/`.weight-result`/`.ratio-value`,
-   and every real use of `.d-print-block` already pairs it with
-   Bootstrap's own `.d-none` (which alone fully hides the element on
-   screen). The plain body/h1/h2/p/li rules are overridden by the
-   !important rules in "ESTIMATE PRINT STYLES" further down this file.
    ------------------------------------------------------------ */
 .d-print-block {
   display: none;
@@ -84,14 +67,14 @@
 @media print {
   /* Hide common non-printable elements */
   body > header,
-  body > .row.mt-4, /* Legacy Tips/Other Calcs wrapper; no current markup matches */
-  main > .row.mt-4, /* Legacy Tips/Other Calcs wrapper; no current markup matches */
-  main > .row.mt-5, /* Legacy Tips/Other Calcs wrapper; no current markup matches */
+  body > .row.mt-4,
+  main > .row.mt-4,
+  main > .row.mt-5,
   body > main > .card:not(.printable-section),
   body > main > form > .card:not(.printable-section),
   body > main > form > .form-group,
   body > main > form > .mb-3,
-  .printable-section .row.mb-3, /* Legacy; no current markup matches (ClothCalc's unit row is .cloth-result-unit-row.d-print-none) */
+  .printable-section .row.mb-3,
   #donationModal,
   body > footer,
   .menu-toggle,
@@ -215,24 +198,12 @@
 }
 
 /* ============================================================
-   -- Universal print letterhead -- (Section 3). Scoped under
-   #printLetterhead, an id that exists on all 5 calculator pages
+   -- Universal print letterhead -- (Section 3). An id that exists on all 5 calculator pages
    (mekpcalc.html, clothcalc.html, awlgrip.html, epifanespoly.html,
-   alexseal.html) -- one per page, no collision. On-screen visibility
-   uses the d-none / d-print-block utility pattern (the section is
+   alexseal.html. On-screen visibility uses the d-none / d-print-block utility pattern (the section is
    d-none on screen and shown only inside @media print). Rendered by
    print-letterhead.js's ChemCalcPrintLetterhead.render(), called from
    each page's own calc()-equivalent function.
-
-   The compare grid's column count is not fixed, because the pages
-   differ: MEKP and Epifanes always show 2 compare items, ClothCalc
-   always shows 3, and Awlgrip/Alexseal show 2 or 3 depending on
-   whether their accelerator row is shown. A single hardcoded column
-   count would either flatten ClothCalc's row or squeeze the 3-item
-   accelerator case into 2 columns. print-letterhead.js's dl() sets
-   data-cols="2"/"3" on .print-lh-compare per render() call, based on
-   the real number of visible items, and the two data-cols rules below
-   simply respond to that.
    ============================================================ */
 @media print {
   #printLetterhead {
@@ -428,26 +399,6 @@
 
 /* ============================================================
    SHARED SITE COMPONENTS -- PAGE CANVAS AND CONTENT WRAPPER
-   Added 2026-10-03 to match the Magic Patterns pages (PageHero.tsx and
-   the content wrapper CalculatorShell.tsx and every other MP page use):
-   a light page, a full-bleed square-edged dark hero band, and content
-   capped at 1280px with 20px side padding (32px from 1024px) that is
-   pulled up into the hero's bottom padding.
-
-   <body class="mp-canvas"> opts a page in, and every page has. The sitewide
-   body{background:#1c1c1e;margin:1em} and .container{...} rules further
-   down are legacy from before the redesign and are what printing still
-   uses, so they are overridden only under .mp-canvas, and only on screen so
-   printing is unchanged. The header and footer drop the -1em side margins
-   that cancelled the old body margin.
-
-   .mp-canvas > main is the content wrapper. It outranks the legacy
-   .container rule (class plus tag against one class) and, being first in
-   the file, still lets main.mp-calc-app's own bottom padding win a tie on
-   source order. After a .mp-hero--overlap the wrapper is pulled up over
-   the hero by 3rem (5rem from 1024px); after a plain .mp-hero it just
-   gets 2.5rem of room, for a page whose first block is a heading on the
-   canvas and not a card.
    ============================================================ */
 @media screen{
   body.mp-canvas{background-color:var(--chrome-paper);margin:0;}
@@ -466,10 +417,7 @@
 
 /* ============================================================
    SHARED SITE COMPONENTS -- CALCULATOR PAGES (shell and form layout)
-   Added 2026-10-02. The five calculator pages (Cloth, MEKP, Awlgrip,
-   Epifanes, Alexseal) each carried their own copy of the same page shell
-   and form layout under their own prefix. This block is placed before
-   the per-calculator sections so any calculator-specific rule that still
+   This block is placed before the per-calculator sections so any calculator-specific rule that still
    needs to adjust one of these wins by source order.
 
    .mp-calc-app: the <main> of every calculator page. It is main.mp-calc-app
@@ -479,11 +427,7 @@
    here: calculator pages sit on the light canvas (PAGE CANVAS AND CONTENT
    WRAPPER, above) like every MP page, and the results panel carries its
    own dark background (.mp-results-panel), so it does not depend on the
-   page behind it. Below 768px the page is single column and the
-   fixed bottom-right floating cluster (Donate, BoatMD chat, Help) passes
-   over the report banner while scrolling, so 17.5rem of bottom clearance
-   is measured to clear the mobile worst case; the 768-991px tablet tier
-   needs only 5rem (live-measured about 170-190px of margin at rest).
+   page behind it.
 
    .mp-fields / .mp-field-card--wide: the grid of field cards. Two columns
    from 576px, with --wide spanning both; --single keeps a page's cards
@@ -533,9 +477,7 @@ main.mp-calc-app{
 
 /* ============================================================
    SHARED SITE COMPONENTS -- CALCULATOR PARTS (slider, callouts, labels)
-   Added 2026-10-02. The same small parts were copied under each
-   calculator's own prefix, with only the prefix changing.
-
+   
    .mp-slider: the reducer or percentage slider (MEKP, Awlgrip, Alexseal)
    with its label row, live percentage readout (.mp-slider-value), and
    min/max scale. --slider-fill is a percentage the calculator's script
@@ -629,17 +571,12 @@ main.mp-calc-app{
 
    This is a visual layer only: clothcalc.js's math, ids, and event
    wiring do not depend on it.
-
-   Approved design: Magic Patterns -- Fiberglass Calculator
-   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw)
    ============================================================ */
 
 /* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
-   PAGES), including the mobile and tablet bottom clearance from the
-   floating cluster. */
+   PAGES). */
 
-/* Tips & Safety list items -- 5 duplicate inline-styled paragraphs,
-   extracted per the sitewide no-inline-CSS rule. */
+/* Tips & Safety list items. */
 .cloth-safety-tip{margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);}
 
 /* ---------- Field cards ----------
