@@ -298,18 +298,19 @@ function populatePrintHeader() {
   setText('printEstDate',  estDate  ? 'Date: ' + estDate : '');
   setText('printEstValid', estValid ? 'Valid: ' + estValid : '');
 
-  // Company info (pro)
-  if (biz) {
-    setText('printCompanyName',    biz.name    || '');
-    setText('printCompanyTagline', biz.tagline || '');
-    setText('printCompanyPhone',   biz.phone   || '');
-    setText('printCompanyEmail',   biz.email   || '');
-    setText('printCompanyWebsite', biz.website || '');
-    setText('printCompanyAddress', biz.address || '');
+  // Company info (pro): a Pro user with no business info gets blank fields, not whatever was drawn last
+  if (isPro) {
+    var co = biz || {};
+    setText('printCompanyName',    co.name    || '');
+    setText('printCompanyTagline', co.tagline || '');
+    setText('printCompanyPhone',   co.phone   || '');
+    setText('printCompanyEmail',   co.email   || '');
+    setText('printCompanyWebsite', co.website || '');
+    setText('printCompanyAddress', co.address || '');
     // Logo
     var logoEl = document.getElementById('printLogoImg');
-    if (logoEl && biz.logoUrl) {
-      logoEl.src = biz.logoUrl;
+    if (logoEl && co.logoUrl) {
+      logoEl.src = co.logoUrl;
       logoEl.style.display = '';
     }
   }
