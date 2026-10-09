@@ -1,0 +1,8 @@
+{
+  "name": "trello-vault-proposed-tests",
+  "private": true,
+  "type": "module",
+  "description": "PROPOSED, NOT APPLIED. Tests for the Trello-to-Vault migration against a local PGlite replica. npm install && npm test",
+  "scripts": { "build:rehearsal": "node test/build_rehearsal.mjs", "test": "node --test \"test/*.test.mjs\"" },
+  "devDependencies": { "@electric-sql/pglite": "0.5.8" }
+}
