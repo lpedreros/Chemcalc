@@ -1,38 +1,31 @@
-/* Design-system fonts (Inter + IBM Plex Mono) -- used by the sitewide dark
-   header/footer chrome and floating-action cluster (see the "SITEWIDE
-   DESIGN TOKENS + HEADER/FOOTER DARK CHROME REDESIGN" block near the
-   bottom of this file). Loaded via <link> in Library/head-common.lbi
-   (live on every real page as of the head-sync round,
-   ChemCalc_FullSite_Blueprint.md) instead of @import here -- both
-   loading would double-fetch the same Google Fonts stylesheet. Source:
-   Magic Patterns MEKP Calculator artifact, index.css
-   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). */
+/* Design-system fonts (Inter + IBM Plex Mono) for the sitewide dark
+   header/footer chrome and floating-action cluster. Loaded via <link> in
+   Library/head-common.lbi, not @import here, to avoid double-fetching the
+   same Google Fonts stylesheet. */
 
 /* ============================================================
-   PRINT STYLES 
+   PRINT STYLES
    Three parts, in this order: (1) the sitewide print base, (2) the
    shared calculator print hides, (3) the universal print letterhead.
 
-   Placed at the very TOP of style.css, not appended to the bottom --
-   the "ESTIMATE PRINT STYLES" block further down this file sets
-   sitewide (unscoped) print rules for body/h1-h4/p,li/a with
-   !important, which already beats this section's plain (non-!important)
-   body/h1,h2/p,li rules on every page. Where both blocks use !important
-   on the same selector (body, a), the later block wins, so appending
-   this section to the bottom would flip that tie.
+   Keep this section at the very TOP of style.css. The "ESTIMATE PRINT
+   STYLES" block further down sets sitewide (unscoped) print rules for
+   body/h1-h4/p,li/a with !important, which already beats this section's
+   plain (non-!important) body/h1,h2/p,li rules. Where both blocks use
+   !important on the same selector (body, a), the later block wins, so
+   moving this section below it would flip that tie.
 
-   DO NOT wrap this section in an outer @media print -- its two bare
-   rules (.no-print, .d-print-block below) are deliberately OUTSIDE any
-   @media print block: they hide print-only elements on SCREEN.
-   Wrapping them in @media print would make print-only content (the
-   QR-code/letterhead sections) visible on every page, all the time.
+   DO NOT wrap this section in an outer @media print: its two bare rules
+   (.no-print, .d-print-block below) are deliberately OUTSIDE any @media
+   print block, because they hide print-only elements on SCREEN. Inside
+   @media print they would show the QR-code/letterhead sections on every
+   page, all the time.
 
    These rules load on every page that links style.css, not only the
-   calculator pages -- everything below except the two bare rules is
-   scoped inside @media print, no markup anywhere uses
-   .no-print/.weight-result/.ratio-value, and every .d-print-block usage
-   already pairs with Bootstrap's .d-none (which alone already hides it
-   on screen).
+   calculator pages. Everything except the two bare rules is scoped inside
+   @media print. No markup uses .no-print/.weight-result/.ratio-value, and
+   every .d-print-block usage pairs with Bootstrap's .d-none, which alone
+   hides it on screen.
    ============================================================ */
 
 /* ------------------------------------------------------------
@@ -58,7 +51,7 @@
 }
 
 /* ------------------------------------------------------------
-   -- shared calculator print hides -- (Section 2, v7 convention)
+   -- shared calculator print hides -- (Section 2)
    Per-element display:none selectors covering site chrome
    (header/footer/nav/donate button), the printable results
    card, and the QR code. Like everything in style.css, these rules
@@ -149,7 +142,7 @@
   .printable-section #mekp-drops /* For cloth calc */
   {
     font-weight: bold !important;
-    font-size: 18pt !important; /* Adjusted for better readability, was 24pt */
+    font-size: 18pt !important; /* Print size for the key result values */
     margin-bottom: 0.5em !important;
     line-height: 1.3 !important;
   }
@@ -175,7 +168,7 @@
   }
 
   #printQrCode img {
-    max-width: 120px !important; /* Adjusted size, was 160px */
+    max-width: 120px !important; /* QR code print size */
     height: auto !important;
     margin: 0 auto !important;
     border: none !important;
@@ -198,12 +191,14 @@
 }
 
 /* ============================================================
-   -- Universal print letterhead -- (Section 3). An id that exists on all 5 calculator pages
+   -- Universal print letterhead -- (Section 3). Scoped under
+   #printLetterhead, an id that exists on all 5 calculator pages
    (mekpcalc.html, clothcalc.html, awlgrip.html, epifanespoly.html,
-   alexseal.html. On-screen visibility uses the d-none / d-print-block utility pattern (the section is
-   d-none on screen and shown only inside @media print). Rendered by
-   print-letterhead.js's ChemCalcPrintLetterhead.render(), called from
-   each page's own calc()-equivalent function.
+   alexseal.html), one per page. On-screen visibility uses the d-none /
+   d-print-block utility pattern (the section is d-none on screen and
+   shown only inside @media print). Rendered by print-letterhead.js's
+   ChemCalcPrintLetterhead.render(), called from each page's own
+   calc()-equivalent function.
    ============================================================ */
 @media print {
   #printLetterhead {
@@ -327,8 +322,9 @@
     gap: 10px !important;
     margin: 0 0 14px !important;
   }
-  /* Column count set per render() call by print-letterhead.js's dl()
-     (data-cols="2"|"3") -- see block header comment above. */
+  /* Column count is set per render() call by print-letterhead.js's dl()
+     (data-cols="2"|"3") from the number of visible compare items; the pages
+     differ, so it cannot be fixed in CSS. */
   #printLetterhead .print-lh-compare[data-cols="2"] { grid-template-columns: repeat(2, 1fr) !important; }
   #printLetterhead .print-lh-compare[data-cols="3"] { grid-template-columns: repeat(3, 1fr) !important; }
   #printLetterhead .print-lh-compare > div {
@@ -399,6 +395,22 @@
 
 /* ============================================================
    SHARED SITE COMPONENTS -- PAGE CANVAS AND CONTENT WRAPPER
+   A light page canvas with a full-bleed dark hero band; content is capped
+   at 1280px with 20px side padding (32px from 1024px) and pulled up into
+   the hero's bottom padding.
+
+   <body class="mp-canvas"> opts a page in. The sitewide body rule
+   (background #1c1c1e, margin 1em) and .container rule further down are
+   what printing still uses, so they are overridden only under
+   .mp-canvas, and only on screen, leaving print unchanged. The header and
+   footer drop the -1em side margins that cancel the body margin.
+
+   .mp-canvas > main is the content wrapper. It outranks the .container
+   rule (class plus tag against one class) and, being first in the file,
+   still lets main.mp-calc-app's own bottom padding win a tie on source
+   order. After a .mp-hero--overlap the wrapper is pulled up over the hero
+   by 3rem (5rem from 1024px); after a plain .mp-hero it gets 2.5rem of
+   room.
    ============================================================ */
 @media screen{
   body.mp-canvas{background-color:var(--chrome-paper);margin:0;}
@@ -417,17 +429,17 @@
 
 /* ============================================================
    SHARED SITE COMPONENTS -- CALCULATOR PAGES (shell and form layout)
-   This block is placed before the per-calculator sections so any calculator-specific rule that still
-   needs to adjust one of these wins by source order.
+   This block is placed before the per-calculator sections so any
+   calculator-specific rule that still needs to adjust one of these wins by
+   source order.
 
    .mp-calc-app: the <main> of every calculator page. It is main.mp-calc-app
    (tag plus class), not a bare class, because the sitewide
    .container{padding:1em} has the same single-class specificity and would
-   otherwise win on source order. The page background is no longer set
-   here: calculator pages sit on the light canvas (PAGE CANVAS AND CONTENT
-   WRAPPER, above) like every MP page, and the results panel carries its
-   own dark background (.mp-results-panel), so it does not depend on the
-   page behind it.
+   otherwise win on source order. The page background is not set here:
+   calculator pages sit on the light canvas (PAGE CANVAS AND CONTENT
+   WRAPPER, above), and the results panel carries its own dark background
+   (.mp-results-panel), so it does not depend on the page behind it.
 
    .mp-fields / .mp-field-card--wide: the grid of field cards. Two columns
    from 576px, with --wide spanning both; --single keeps a page's cards
@@ -477,20 +489,20 @@ main.mp-calc-app{
 
 /* ============================================================
    SHARED SITE COMPONENTS -- CALCULATOR PARTS (slider, callouts, labels)
-   
+
    .mp-slider: the reducer or percentage slider (MEKP, Awlgrip, Alexseal)
    with its label row, live percentage readout (.mp-slider-value), and
    min/max scale. --slider-fill is a percentage the calculator's script
    sets from the slider's own value, min, and max on every input; the fixed
    50% fallback covers first paint before JS runs.
 
-   .mp-note: a light callout box for product- or method-specific guidance.
-   Awlgrip, Epifanes, and Alexseal had byte-identical copies, and MEKP's
-   "locked" message is the same box with its own layout on top.
+   .mp-note: a light callout box for product- or method-specific guidance
+   (Awlgrip, Epifanes, Alexseal). MEKP's "locked" message is the same box
+   with its own layout on top.
 
-   .mp-advisory: the ambient-temperature advisory (ClothCalc and MEKP had
-   identical copies). It stays hidden until the calculator's script shows
-   it, and its color follows the data-band attribute the script sets.
+   .mp-advisory: the ambient-temperature advisory shared by ClothCalc and
+   MEKP. It stays hidden until the calculator's script shows it, and its
+   color follows the data-band attribute the script sets.
 
    .mp-result-label: the small uppercase label above a results-panel hero
    number. The hero numbers themselves differ in size between calculators
@@ -558,11 +570,9 @@ main.mp-calc-app{
 
 /* ============================================================
    CLOTHCALC PAGE-SPECIFIC STYLES
-   Merged into style.css 2026-09-14 (single-file consolidation --
-   Leo's non-negotiable: one CSS file for the whole site, page-specific
-   rules allowed only as commented sections in this file, never
-   separate files). Most of what clothcalc.html needs is the shared
-   .mp-* components (SHARED SITE COMPONENTS above and SHARED CALCULATOR
+   Page-specific rules live in this file as commented sections, not in
+   separate files. Most of what clothcalc.html needs is the shared .mp-*
+   components (SHARED SITE COMPONENTS above and SHARED CALCULATOR
    COMPONENTS further down); what is left here is ClothCalc-specific:
    the material-layer cards, the results panel's volume-unit row and
    hero number, the conditional MEKP catalyst sub-block, and the Share
@@ -580,17 +590,15 @@ main.mp-calc-app{
 .cloth-safety-tip{margin:0;padding:.85rem 0;font-size:.88rem;line-height:1.5;color:var(--chrome-ink-700);}
 
 /* ---------- Field cards ----------
-   Hybrid layout (unlike mekpcalc.html's clean 2-col + wide split, where
-   the two compact cards pair up and the other two are wide): most of
-   this page's cards carry multi-item input rows that want the full
-   column width, so a straight 2-col
-   split would leave an awkward empty cell next to whichever card
-   doesn't get a same-width partner. Only Measurement System (just a
-   2-button toggle -- too narrow for a full-width row on its own) pairs
-   up, with Resin & Temperature as its partner; Dimensions, Layers, and
-   Cost stay full-width via .mp-field-card--wide (Leo, 2026-09-13).
-   (.mp-field-card itself, and its icon/head/title/hint children, are
-   shared -- see style.css.) */
+   Hybrid layout (unlike mekpcalc.html's 2-col + wide split): most of this
+   page's cards carry multi-item input rows that want the full column
+   width, so a straight 2-col split would leave an awkward empty cell next
+   to whichever card has no same-width partner. Only Measurement System
+   (just a 2-button toggle, too narrow for a full-width row on its own)
+   pairs up, with Resin & Temperature as its partner; Dimensions, Layers,
+   and Cost stay full-width via .mp-field-card--wide. (.mp-field-card
+   itself, and its icon/head/title/hint children, are shared -- see
+   style.css.) */
 /* The grid is .mp-fields and the wide cards are .mp-field-card--wide. */
 
 /* Row of 2-3 fields (inputs and/or selects) that wraps on narrow
@@ -601,26 +609,16 @@ main.mp-calc-app{
 /* The row, group, compact group, and label are .mp-input-row,
    .mp-input-group, .mp-input-group--compact, and .mp-input-label. */
 
-/* Project Dimensions row -- Length/Width/Units fit on one row even on
-   the narrowest common phone widths (~360-375px), instead of Units
-   wrapping below Length+Width. Scoped to #dimensionsCard only so the
-   shared .mp-input-row wrap-when-tight behavior (and the other
-   cards' own .mp-input-group--compact sizing) stays unchanged.
-   Placeholder truncation tradeoff (Leo, 2026-09-13): Length/Width's
-   "e.g., 48"/"e.g., 24" placeholders truncate to "e.g.," at this width
-   since the field is narrower than the full placeholder needs -- real
-   typed values (1-3 digits) are far shorter and always display fully,
-   so this only affects the placeholder hint, never real data. Verified
-   live there's no further CSS-only win available: Units is a native
-   <select>, and its rendered width is already governed by its own
-   intrinsic content size (widest option "Centimeters" + the browser's
-   native dropdown-arrow chrome), not by min-width or flex-shrink --
-   forcing min-width down further (tested to 3.5rem) and allowing
-   flex-shrink (tested 0 1 auto) changed its rendered width by 0px.
-   Genuinely freeing more room for the placeholder would require
-   shrinking Units below its own content's natural size, which starts
-   truncating "Centimeters" itself instead -- a functional regression
-   traded for a cosmetic one. Left as-is. */
+/* Project Dimensions row -- Length/Width/Units fit on one row even on the
+   narrowest common phone widths (~360-375px), instead of Units wrapping below
+   Length+Width. Scoped to #dimensionsCard only so the shared .mp-input-row
+   wrap-when-tight behavior (and the other cards' own .mp-input-group--compact
+   sizing) is unchanged. At this width the Length/Width placeholders ("e.g.,
+   48"/"e.g., 24") truncate to "e.g.,"; typed values (1-3 digits) always
+   display fully. Units is a native <select> whose rendered width is set by
+   its own content (widest option "Centimeters" plus the native dropdown
+   arrow), not by min-width or flex-shrink, so more room for the placeholders
+   would have to come from truncating "Centimeters" itself. */
 @media (max-width: 575.98px) {
   #dimensionsCard .mp-input-row{flex-wrap:nowrap;}
   #dimensionsCard .mp-input-row > .mp-input-group:not(.mp-input-group--compact){
@@ -632,26 +630,20 @@ main.mp-calc-app{
 }
 
 /* Resin & Temperature row -- Resin Type / (Epoxy Mix Ratio) / Ambient
-   Temperature always stack as their own full-width rows now (Leo,
-   2026-09-13), NOT side-by-side at tablet+ widths as originally shipped.
-   That side-by-side version was fine when #resinTempCard had the full
-   row to itself, but once it started sharing a row with
-   #measurementSystemCard at this same 576px breakpoint (see
-   .mp-fields' 2-col split), the card's width roughly halved right
-   where the old side-by-side rule kicked in -- squeezing Ambient
-   Temperature's input down to where its value could be cut off/
-   invisible. Scoped to #resinTempCard only so Project Dimensions and
-   Cost Estimation keep the shared .mp-input-row wrap-when-tight
-   behavior unchanged. */
+   Temperature always stack as their own full-width rows. #resinTempCard
+   shares a row with #measurementSystemCard at the 576px breakpoint (see
+   .mp-fields' 2-col split), so the card is roughly half width and a
+   side-by-side row would squeeze Ambient Temperature's input until its value
+   is cut off. Scoped to #resinTempCard only so Project Dimensions and Cost
+   Estimation keep the shared .mp-input-row wrap-when-tight behavior. */
 #resinTempCard .mp-input-row > .mp-input-group{flex:1 1 100%;}
 
 @media (min-width:576px){
-  /* Ambient Temperature's group has 3 stacked children (label, input,
-     toggle) in the markup -- turn it into its own 2-row flex: label
-     alone on row 1, input + toggle inline together on row 2, instead of
-     the toggle stacking under the input. Still correct/needed post-fix:
-     this is about the group's OWN internal layout, not its width
-     relative to its siblings. */
+  /* Ambient Temperature's group has 3 stacked children (label, input, toggle)
+     in the markup -- turn it into its own 2-row flex: label alone on row 1,
+     input + toggle inline together on row 2, instead of the toggle stacking
+     under the input. This is the group's own internal layout, independent of
+     its width relative to its siblings. */
   #resinTempCard .mp-input-group:has(.mp-unit-toggle){
     display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;
   }
@@ -739,27 +731,19 @@ main.mp-calc-app{
 
 /* ---------- Feedback modal ----------
    .modal-overlay/.modal-box/.modal-title (style.css) are already light.
-   .help-modal-pitch's base rule (style.css) is still dark-styled
-   (color:#aaa) pending its own conversion -- #helpModal gets a scoped
-   light override there already; this page's #helpModal reuses the
-   exact same global override (no per-page CSS needed here -- this page
-   has no #feedbackModal, unlike the other calculator pages, so
-   nothing to add). */
+   .help-modal-pitch's base rule (style.css) is dark-styled (color:#aaa);
+   #helpModal gets a scoped light override there, which this page's
+   #helpModal reuses. This page has no #feedbackModal, unlike the other
+   calculator pages, so there is nothing to add here. */
 
 /* ============================================================
    MEKPCALC PAGE-SPECIFIC STYLES
-   Merged into style.css 2026-09-14 (single-file consolidation, same
-   round/reasoning as CLOTHCALC PAGE-SPECIFIC STYLES above). Most of
-   what mekpcalc.html needs is the shared .mp-* components; what is
-   left here is genuinely MEKP-specific: the Duratec toggle and its
-   locked message, the status pill, the resin-volume input row, and
-   the hero cc-value/drops styling (deliberately NOT unified with
-   ClothCalc's -- real value differences, not duplication). Colors,
-   fonts, shadows and timing reference the sitewide --chrome-* tokens
-   in the ":root" block.
-
-   Approved design: Magic Patterns -- MEKP Calculator
-   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw)
+   Most of what mekpcalc.html needs is the shared .mp-* components; what is
+   left here is MEKP-specific: the Duratec toggle and its locked message,
+   the status pill, the resin-volume input row, and the hero cc-value/drops
+   styling (deliberately NOT unified with ClothCalc's -- real value
+   differences, not duplication). Colors, fonts, shadows and timing
+   reference the sitewide --chrome-* tokens in the ":root" block.
    ============================================================ */
 
 /* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
@@ -830,9 +814,9 @@ main.mp-calc-app{
    .mp-slider-label-row, .mp-slider-value, and .mp-slider-scale (SHARED SITE
    COMPONENTS -- CALCULATOR PARTS). */
 
-/* .mekp-result-line is not used by any page now (the result lines in
-   mekpcalc.html are sr-only elements without it) but is left defined
-   for any incidental reuse. */
+/* .mekp-result-line is not used by any page (the result lines in
+   mekpcalc.html are sr-only elements without it); it stays defined for
+   incidental reuse. */
 
 /* ---------- Status pill ---------- */
 .mekp-result-status{
@@ -874,21 +858,17 @@ main.mp-calc-app{
 
 /* ---------- Feedback modal ----------
    .modal-overlay/.modal-box/.modal-title (style.css) are already light and
-   need no override here. .help-modal-pitch's base rule (style.css) is still
-   dark-styled (color:#aaa) pending its own conversion -- #helpModal gets a
-   scoped light override there; #feedbackModal needs the same treatment,
-   added here. It applies on every page that has a #feedbackModal
-   (mekpcalc, awlgrip, epifanespoly, alexseal), not just this one. */
+   need no override here. .help-modal-pitch's base rule (style.css) is
+   dark-styled (color:#aaa); #helpModal gets a scoped light override there,
+   and #feedbackModal gets the same treatment here. It applies on every page
+   that has a #feedbackModal (mekpcalc, awlgrip, epifanespoly, alexseal),
+   not just this one. */
 #feedbackModal .help-modal-pitch{color:var(--chrome-ink-600);}
 
 /* ============================================================
    AWLGRIPCALC PAGE-SPECIFIC STYLES
-   Added 2026-09-13 for the Awlgrip Coatings Calculator's visual/DOM
-   rebuild onto the shared .mp-* component vocabulary already
-   established by the CLOTHCALC/MEKPCALC sections above -- see those for
-   the full history of that system. Unlike those two, awlgrip.html had
-   no page-scoped stylesheet before this (plain Bootstrap .card
-   markup) -- this section is new, not a merge of a pre-existing file.
+   Awlgrip Coatings Calculator rules on top of the shared .mp-* component
+   vocabulary used by the CLOTHCALC and MEKPCALC sections above.
    ============================================================ */
 
 /* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
@@ -896,11 +876,10 @@ main.mp-calc-app{
    floating cluster. */
 
 /* ---------- Field cards ---------- */
-/* All 3 cards (Measurement System, Product Line, the merged Coating Area
-   and Application Method card) are marked --wide and stack full-width,
-   one per row -- since the field reorder/merge (Leo's request) left
-   Measurement System with no remaining compact card to pair with,
-   stacking cleanly avoids an empty half-row next to it. */
+/* All 3 cards (Measurement System, Product Line, the merged Coating Area and
+   Application Method card) are marked --wide and stack full-width, one per
+   row: Measurement System has no compact card to pair with, so stacking
+   avoids an empty half-row next to it. */
 /* The grid is .mp-fields and the wide cards are .mp-field-card--wide. */
 
 /* ---------- Merged Coating Area / Application Method card -- two
@@ -939,74 +918,33 @@ main.mp-calc-app{
 .awlgrip-accel-table tbody tr:last-child td{border-bottom:none;}
 .awlgrip-accel-footnote{font-size:.72rem;color:var(--chrome-ink-500);font-style:italic;}
 
-/* Right-side clearance from the fixed bottom-right floating-action
-   cluster (Donate/BoatMD chat/Help -- see --chrome-fab-right and
-   .fab-donate/.help-float-btn/#chemcalc-chatbot in style.css). Same
-   "tune padding, don't touch the cluster" approach the .mp-results-panel
-   desktop fix used until it was removed (see .mp-results-panel).
-
-   QA (Sentinel) flagged this as broken at ~375-410px and clean at
-   430px+; live bounding-rect testing here (full scroll-range sweep,
-   not a single snapshot -- same methodology as the earlier
-   floating-cluster fixes) found the real broken range is wider: the
-   card's text -- not just the footnote/guidance lines Sentinel
-   happened to catch, the whole card is full-width and every part of
-   it sweeps through the cluster's fixed y-band while scrolling --
-   overlaps the cluster continuously from 375px up through 991px,
-   becoming clean only at 992px, where .mp-grid's own 7fr/5fr
-   breakpoint (style.css) moves this card's column away from the
-   right edge entirely. Confirmed overlap amounts: 39px at
-   375/410/430px, 23px at 576px, 74px at 768/900px (measured when the
-   Donate button still gained a permanent text label above 767px,
-   which made it wider; all three buttons are now icon-only circles
-   at rest, see FLOATING-ACTION CLUSTER -- SHARED CHROME).
-   991.98px matches this project's own established tablet-ceiling
-   breakpoint (see main.mp-calc-app's tablet tier in SHARED SITE
-   COMPONENTS -- CALCULATOR PAGES) and lines up exactly with where
-   .mp-grid's own breakpoint takes over, so the fix's range is tied to
-   a real layout boundary, not a guess. 6rem clears the worst measured
-   case (74px) with margin, re-verified clean at 375/410/430/576/
-   768/900px after applying, with no visual cramping at the
-   narrowest (375px) width. */
+/* Right-side clearance from the fixed bottom-right floating-action cluster
+   (Donate/BoatMD chat/Help -- see --chrome-fab-right and
+   .fab-donate/.help-float-btn/#chemcalc-chatbot in style.css). Below 992px
+   this card is full-width, so its text sweeps through the cluster's fixed
+   band while scrolling; the padding keeps the text clear of it. 991.98px is
+   this project's tablet ceiling (see main.mp-calc-app's tablet tier in SHARED
+   SITE COMPONENTS -- CALCULATOR PAGES) and is where .mp-grid's own 7fr/5fr
+   breakpoint moves this card's column away from the right edge, so 992px and
+   up needs no clearance. The base value is 6rem; the 768-991.98px sub-range
+   overrides it below. */
 @media (max-width:991.98px){
   .awlgrip-accel-info{padding-right:6rem;}
 }
 
-/* 768-991.98px sub-range needs more clearance than the base rule
-   above (7.5rem versus 6rem). The figure was measured back when the
-   BoatMD chat toggle (#chemcalc-chatbot) carried a permanent "Ask BoatMD"
-   text label above 767px that widened it to ~143px, wider than
-   Donate/Help at this range. A full-scroll-range sweep (2px steps,
-   every scroll position from 0 to document.body.scrollHeight -
-   innerHeight) checked the actual text elements (.awlgrip-accel-table,
-   its last row, the footnote, and the guidance paragraph) -- not the
-   outer .awlgrip-accel-info div, which doesn't shrink from padding the
-   way its text content does -- against all three floating buttons' real
-   getBoundingClientRect(), and found a consistent 13.203125px overlap
-   against #chemcalc-chatbot at 768px, 900px, and 991px. 7.5rem (120px)
-   total clears that deficit over the base rule's 96px (109.2px needed)
-   with ~11px to spare. The floating-action cluster has since changed
-   (see FLOATING-ACTION CLUSTER -- SHARED CHROME): all three buttons are
-   now icon-only circles at rest at every width and only expand
-   into labeled pills on hover/focus, so the permanent label that drove
-   this number is gone and the rule now simply gives extra clearance.
-   375/410/430/576px remain clean under the base 6rem rule alone; 992px+
-   still needs neither rule (.mp-grid's own breakpoint moves this card
-   away from the right edge entirely). Placed after the base rule so it
-   wins by cascade order for this narrower, more specific range. */
+/* 768-991.98px sub-range: 7.5rem, more clearance than the base rule above
+   (6rem). Placed after the base rule so it wins by cascade order for this
+   narrower, more specific range. */
 @media (min-width:768px) and (max-width:991.98px){
   .awlgrip-accel-info{padding-right:7.5rem;}
 }
 
 /* ============================================================
    EPIFANES PAGE-SPECIFIC STYLES
-   Added 2026-09-19 for the Epifanes Polyurethane Calculator's visual/
-   DOM rebuild onto the shared .mp-* component vocabulary already
-   established by the CLOTHCALC/MEKPCALC/AWLGRIPCALC sections above --
-   see those for the full history of that system. epifanespoly.html had
-   no page-scoped stylesheet before this (plain Bootstrap .card markup).
-   The shared .mp-* components now cover everything this page needs, so
-   this section holds only pointers to them and no rules of its own.
+   Epifanes Polyurethane Calculator, built on the shared .mp-* component
+   vocabulary (see the CLOTHCALC/MEKPCALC/AWLGRIPCALC sections above). The
+   shared components cover everything this page needs, so this section
+   holds only pointers to them and no rules of its own.
    ============================================================ */
 
 /* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
@@ -1030,10 +968,10 @@ main.mp-calc-app{
 
 /* ============================================================
    ALEXSEAL PAGE-SPECIFIC STYLES
-   Added 2026-09-29 for the Alexseal Yacht Coatings Calculator (Premium
-   Topcoat 501, Finish Primer 442, Protective Primer 161). Reuses the
-   shared .mp-* component vocabulary throughout; the only rule of its own
-   in this section is the #acceleratorEnabledLabel color below.
+   Alexseal Yacht Coatings Calculator (Premium Topcoat 501, Finish Primer
+   442, Protective Primer 161). Reuses the shared .mp-* component
+   vocabulary throughout; the only rule of its own in this section is the
+   #acceleratorEnabledLabel color below.
    ============================================================ */
 
 /* The page shell is main.mp-calc-app (SHARED SITE COMPONENTS -- CALCULATOR
@@ -1070,8 +1008,8 @@ main.mp-calc-app{
 /* ============================================================
    END OF THE CALCULATOR PAGE-SPECIFIC STYLES (CLOTHCALC, MEKPCALC,
    AWLGRIPCALC, EPIFANES, ALEXSEAL). The sitewide base styles (body,
-   header and nav, cards, estimator, modals) start below; sections added
-   since carry their own banners further down.
+   header and nav, cards, estimator, modals) start below; later sections
+   carry their own banners.
    ============================================================ */
 
 /* Base Styles */
@@ -1197,13 +1135,11 @@ h1 {
     content: ">";
 }
 .content {
-    /* Padding moved onto .content > ul (see "KITS PAGE-SPECIFIC STYLES"
-       below) -- padding on .content itself stayed visible as a solid
-       band even at max-height:0 (overflow:hidden clips a box's
-       CHILDREN, not its own padding), so collapsed sections showed a
-       ~17px sliver instead of nothing. kits.html is the only page that
-       uses .content (confirmed via repo-wide grep), so this is safe to
-       change directly rather than overriding it elsewhere. */
+    /* Padding lives on .content > ul (see "KITS PAGE-SPECIFIC STYLES" below),
+       not on .content itself: padding on a collapsed box stays visible even
+       at max-height:0 (overflow:hidden clips a box's CHILDREN, not its own
+       padding), which would leave a sliver instead of nothing. kits.html is
+       the only page that uses .content. */
     padding: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
@@ -1329,18 +1265,15 @@ h1 {
 }
 
 /* ============================================================
-   Print Styles -- MOVED to the "PRINT STYLES" section at the top of
-   this file
-   ------------------------------------------------------------
-   The generic print block that used to live here (.no-print,
-   .d-print-block, body margin reset, h1/h2/p/li sizing,
-   .weight-result/.ratio-value) now lives in that section, alongside
-   the calculator-page print-hide convention it used to compete with.
+   Print Styles -- see the "PRINT STYLES" section at the top of this file.
+   The generic print block (.no-print, .d-print-block, body margin reset,
+   h1/h2/p/li sizing, .weight-result/.ratio-value) lives there, alongside
+   the calculator-page print-hide convention.
    ============================================================ */
 
 /* ============================================================
    ESTIMATE TOOL ADDITIONS
-   estimate.html sits on the Magic Patterns design like every other page:
+   estimate.html uses the shared page design like every other page:
    <body class="mp-canvas"> (light canvas), a .mp-hero band, and white
    .mp-card boxes. The static parts of the page take the shared classes in
    their markup (.mp-card, .mp-panel for the summary, .mp-btn for the
@@ -1349,7 +1282,7 @@ h1 {
    also supplies the base .est-label / .est-input / .est-table look that the
    account, login and feedback modals reuse inside .modal-box on other
    pages. The printed estimate does not follow any of this: the print rules
-   (ESTIMATE PRINT STYLES, further down) pin the values it had before.
+   (ESTIMATE PRINT STYLES, further down) pin their own values.
    ============================================================ */
 
 /* -- Page layout --
@@ -1494,7 +1427,7 @@ h1 {
    Light by default: the modals (login, account, feedback) reuse these inside
    .modal-box, and the page is on the light canvas. The main-page fields take
    the shared field look (.mp-select / .mp-input) through the .est-container
-   selectors added to that rule; only the read-only tint is set here. */
+   selectors in that rule; only the read-only tint is set here. */
 .est-label { display: block; font-size: 0.88rem; color: var(--chrome-ink-800); margin-bottom: 0.3rem; font-weight: 500; }
 .est-container .est-label { font-size: 0.8125rem; font-weight: 600; }
 .req-star { color: #B23A2E; }
@@ -1573,8 +1506,10 @@ h1 {
 .col-retail { width: 68px; }
 .col-qty    { width: 76px; }
 .col-total  { width: 90px; text-align: right; }
-/* Actions header — stacked label, centered, fits the short Buy link and 3 narrow icon buttons.
-   Its width is what the Actions cell needs; "Buy" (not "Buy Here") is what pays for the wider Your Cost and Qty. */
+/* Actions header — stacked label, centered, fits the short Buy link and 3
+   narrow icon buttons. Its width is what the Actions cell needs; the short
+   "Buy" label keeps it narrow enough to leave room for the wider Your Cost
+   and Qty. */
 .col-actions { width: 116px; text-align: center; white-space: normal; line-height: 1.2; }
 /* Actions cell — stack buy link on top, then icon buttons side by side */
 td.col-actions { display: table-cell; }
@@ -1618,11 +1553,13 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   /* Forces a hard break after Item — an item with a 100% basis takes a line to itself, so without it flexbox
      would pull Cost and the rest up onto line 1 as well */
   #materialsTable tbody tr::after { content: ""; flex-basis: 100%; order: 3; }
-  /* Line 2: Cost, Markup, Qty — labeled, since <thead> is hidden at this width. Sized by how long each value gets:
-     Markup is 3 digits at most (the field stops at 500), so it is a narrow fixed column. Cost runs longest (12345.67)
-     and takes the biggest share of what is left, Qty (100.25) the rest. Cost keeps its existing 86px minimum so it
-     still can't clip (same reasoning as .cost-input's sitewide min-width), and Qty never drops below 76px, enough for
-     1000.25. All three minimums plus Markup still fit a 320px phone (86 + 64 + 76 = 226 of 230px). */
+  /* Line 2: Cost, Markup, Qty — labeled, since <thead> is hidden at this
+     width. Sized by how long each value gets: Markup is 3 digits at most (the
+     field stops at 500), so it is a narrow fixed column. Cost runs longest
+     (12345.67) and takes the biggest share of what is left, Qty (100.25) the
+     rest. Cost keeps the 86px minimum from .cost-input's sitewide rule so it
+     can't clip, and Qty never drops below 76px, enough for 1000.25. All three
+     minimums plus Markup fit a 320px phone (86 + 64 + 76 = 226 of 230px). */
   #materialsTable tbody tr td.col-cost { flex: 3 1 0; min-width: 86px; order: 4; align-self: flex-start; }
   #materialsTable tbody tr td.col-markup { flex: 0 0 64px; order: 5; align-self: flex-start; }
   #materialsTable tbody tr td.col-qty { flex: 2 1 0; min-width: 76px; order: 6; align-self: flex-start; }
@@ -1657,12 +1594,13 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   #materialsTable tbody tr td.col-total .line-total-display::before {
     content: "Total: "; display: block; font-size: 0.72rem; font-weight: 400; color: var(--chrome-ink-500);
   }
-  /* Inputs are content-box sitewide, so width:100% plus their own padding and border spilled about 15px out of every
-     cell, running the Item field into Cost and the Markup field under the Retail label. border-box makes each input
-     fill its cell exactly. */
+  /* Inputs are content-box sitewide, so width:100% plus their own padding and
+     border would spill out of the cell. border-box makes each input fill its
+     cell exactly. */
   #materialsTable tbody tr td input { box-sizing: border-box; }
-  /* The Subtotal row is in <tfoot>, which stays a table while the table above goes block, so it sized itself and ran
-     about 19px past the card edge. Make it one row of label + amount; the two empty cells only exist to line up the
+  /* The Subtotal row is in <tfoot>, which stays a table while the table above
+     goes block, so it sizes itself and can run past the card edge. Make it
+     one row of label + amount; the two empty cells only exist to line up the
      desktop columns. */
   #materialsTable tfoot { display: block; width: 100%; }
   #materialsTable tfoot tr { display: flex; align-items: center; }
@@ -1760,8 +1698,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .btn-add-task { margin-bottom: 0.5rem; }
 
 /* -- Summary --
-   A dark .mp-panel: the title, rows and total follow the Magic Patterns
-   summary panel (white figures, amber total in the mono font). */
+   A dark .mp-panel: white figures, amber total in the mono font. */
 .est-summary-card .est-card-title { color: var(--chrome-signal-400); font-size: 1.3rem; font-weight: 800; border-bottom-color: rgba(255,255,255,0.14); }
 .est-summary-card .help-icon { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
 .est-summary-card .help-icon:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.5); }
@@ -1775,9 +1712,10 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .summary-grand { font-size: 1.1rem; font-weight: 700; color: #ffffff; padding-top: 0.4rem; }
 .summary-grand span:last-child { color: var(--chrome-signal-400); font-size: 2rem; }
 @media (max-width: 600px) {
-  /* The estimate total is 2rem monospace beside its label in a row that cannot wrap, so a large total (about $28,000
-     and up on a 320px phone, or seven figures on a 375px one) pushed the page wider than the screen. Now the amount
-     drops under its label, right-aligned, when the two do not fit on one line. */
+  /* The estimate total is 2rem monospace beside its label. The row wraps, so
+     when the two do not fit on one line (a large total on a narrow phone) the
+     amount drops under its label, right-aligned, instead of widening the
+     page. */
   .summary-grand { flex-wrap: wrap; }
   .summary-grand span:last-child { margin-left: auto; }
 }
@@ -1803,12 +1741,12 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 
 /* -- Summary rail and page grid --
    <aside class="est-rail"> holds the format toggle + Save/Load Draft, the
-   summary and the action buttons, as MP's sticky right column. Below 1024px
+   summary and the action buttons as a sticky right column. Below 1024px
    and in print it has no box of its own (display: contents) and the page is
    plain block flow, so the three blocks sit where they are in the document
    (after the Scope card, before Terms) and Tab order is the order on screen:
    no `order` overrides, which would move them on screen but not for the
-   keyboard. From 1024px the page is MP's 12-column grid: cards 7 columns (8
+   keyboard. From 1024px the page is a 12-column grid: cards 7 columns (8
    from 1280px), the rail 5 (4 from 1280px) and sticky. All of it is
    screen-only: a landscape sheet is 1056px wide, and print must not turn
    into columns. */
@@ -1823,7 +1761,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
     border-radius: 12px; box-shadow: var(--chrome-shadow-lift);
   }
 
-  /* Format toggle: MP's equal-width row, then Save/Load Draft under it */
+  /* Format toggle: equal-width row, then Save/Load Draft under it */
   .est-rail .est-toolbar {
     display: block; margin: 0; padding: 0.5rem; overflow: visible;
     background: transparent; border: 0; border-radius: 0; box-shadow: none;
@@ -1863,7 +1801,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 }
 
 /* -- Estimate History preview (last card of the left column) --
-   MP's History card: icon badge, title, View all, then divided rows of
+   A history card: icon badge, title, View all, then divided rows of
    estimate number, client, total and status. The number is .history-est-link
    and the status is the History page's own .history-status select. Its
    signed-out, free and empty states reuse .history-empty. */
@@ -1890,13 +1828,11 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .est-history .history-loading { padding: 2rem 1.5rem; }
 
 /* -- Modals --
-   Light-body/dark-accent pattern (ChemCalc_FullSite_Blueprint.md),
-   matching the Donate modal, the Help modal, and Magic Patterns'
-   Estimator.tsx: paper-card panels throughout, ink-950/900 reserved for
+   Light-body/dark-accent pattern, matching the Donate modal and the Help
+   modal: paper-card panels throughout, ink-950/900 reserved for
    accent/CTA/Pro-feature boxes only. This is the shared base every
-   modal in the app renders through -- #helpModal and .fab-donate-modal
-   already carry their own scoped overrides (untouched here) that take
-   precedence by specificity. */
+   modal in the app renders through; #helpModal and .fab-donate-modal
+   carry their own scoped overrides that take precedence by specificity. */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(4, 20, 26, 0.6);
   z-index: 2000; display: flex; align-items: center; justify-content: center;
@@ -1910,40 +1846,30 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   margin: auto;
   max-height: 90vh;
   overflow-y: auto;
-  /* Slim scrollbar rather than none. The bar used to be hidden
-     outright, which left long modal content clipped with no signal
-     that anything was below -- measured at 317px hidden on a
-     1440x900 laptop and 1586px hidden on a phone. Values match
-     .chatbot-messages' scrollbar further down this file, the site's
+  /* Slim scrollbar, so long modal content shows that more is below. Values
+     match .chatbot-messages' scrollbar further down this file, the site's
      only other custom bar, so the two look like one system. */
   scrollbar-width: thin;                                         /* Firefox */
   scrollbar-color: var(--chrome-paper-line) var(--chrome-paper-card);  /* Firefox: thumb track */
-  /* Scroll-edge fades, CSS only. The two "cover" gradients are
-     painted in the card's own colour and scroll WITH the content
-     (background-attachment: local), so each one slides out of view
-     once you reach that end; the two colour bands stay fixed to the
-     box (scroll), so a band is only visible where a cover has moved
-     away. Net effect: a band appears at the bottom whenever more
-     content remains, at the top once you have scrolled down, and
-     neither shows when the content fits.
+  /* Scroll-edge fades, CSS only. The two "cover" gradients are painted in the
+     card's own colour and scroll WITH the content (background-attachment:
+     local), so each one slides out of view once you reach that end; the two
+     colour bands stay fixed to the box (scroll), so a band is only visible
+     where a cover has moved away. Net effect: a band appears at the bottom
+     whenever more content remains, at the top once you have scrolled down,
+     and neither shows when the content fits.
 
-     Sized at 96px (about one inch at 96dpi) in signal orange. The
-     first version was 14px of 14%-opacity ink in a radial gradient
-     -- strongest at the centre, nothing at the corners -- and was
-     invisible on a white card. Orange rather than ink because ink
-     reads as a drop shadow, and a shadow is exactly what nobody
-     could see; orange is this design system's own attention colour
-     (CTA buttons, active tabs, the Help modal's step badges).
-     rgba literals rather than the token because a hex custom
-     property cannot take an alpha channel directly -- the value
-     242,166,60 IS --chrome-signal-400 (#F2A63C). Change both band
-     stops together if this ever needs retuning.
+     Bands are 96px (about one inch at 96dpi) in signal orange, this design
+     system's attention colour (CTA buttons, active tabs, the Help modal's
+     step badges); ink would read as a drop shadow. rgba literals rather than
+     the token because a hex custom property cannot take an alpha channel
+     directly -- the value 242,166,60 IS --chrome-signal-400 (#F2A63C). Change
+     both band stops together if this ever needs retuning.
 
-     COVERS ARE 120px WITH THEIR FIRST 96px SOLID, deliberately
-     taller than the 96px bands. A cover whose solid region is
-     shorter than its band leaks colour at that edge permanently,
-     even at scroll position zero. Keep cover solid-length >= band
-     height if either number is ever changed. */
+     COVERS ARE 120px WITH THEIR FIRST 96px SOLID, deliberately taller than
+     the 96px bands. A cover whose solid region is shorter than its band leaks
+     colour at that edge permanently, even at scroll position zero. Keep cover
+     solid-length >= band height if either number is ever changed. */
   background-image:
     linear-gradient(var(--chrome-paper-card) 80%, rgba(255, 255, 255, 0)),
     linear-gradient(rgba(255, 255, 255, 0), var(--chrome-paper-card) 20%),
@@ -2037,9 +1963,9 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .ts-card-name { font-size: 0.9rem; font-weight: 700; color: var(--chrome-ink-900); }
 .ts-card-desc { font-size: 0.75rem; color: var(--chrome-ink-500); line-height: 1.3; }
 
-/* My Templates card -- kept a distinct gold/yellow accent (not the
-   site's orange signal-*) so "mine" stays visually distinguishable from
-   the brand accent; only re-tuned for a light card background. */
+/* My Templates card -- a distinct gold/yellow accent (not the site's orange
+   signal-*) so "mine" stays visually distinguishable from the brand accent,
+   tuned for a light card background. */
 .ts-card-mine { border-color: #D4AF37; background: #FDFBF0; }
 .ts-card-mine:hover { border-color: #B8941F; background: #FBF6DC; }
 .ts-card-actions {
@@ -2074,7 +2000,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .btn-ts-blank:hover { border-color: var(--chrome-signal-400); color: var(--chrome-signal-600); }
 
 /* Save as Template button on repair card -- same gold/yellow accent as
-   .ts-card-mine above, re-tuned for a light background. */
+   .ts-card-mine above, tuned for a light background. */
 .btn-save-template {
   background: none; border: 1px solid #D4AF37; color: #8A6D00;
   border-radius: 5px; padding: 0.2rem 0.6rem; font-size: 0.78rem;
@@ -2086,10 +2012,9 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 @media (max-width: 600px) {
   .ts-card { width: calc(50% - 0.38rem); }
 }
-/* Pricing cards: light by default (Free tier); the featured/Pro card
-   becomes the dark ink-950 accent box, matching MP's Estimator.tsx "Pro
-   feature" callout pattern -- dark ink reserved for the CTA/Pro card
-   only, not the whole comparison. */
+/* Pricing cards: light by default (Free tier); the featured/Pro card is the
+   dark ink-950 accent box -- dark ink is reserved for the CTA/Pro card only,
+   not the whole comparison. */
 .plan-card {
   flex: 1; min-width: 200px; background: var(--chrome-paper-card);
   border-radius: 10px; padding: 1.25rem; border: 1px solid var(--chrome-paper-line); position: relative;
@@ -2135,9 +2060,9 @@ body.customer-view .repair-task-table thead { display: none !important; }
 body.customer-view .btn-add-task-row { display: none !important; }
 body.customer-view #internalSummaryFull { display: none !important; }
 body.customer-view #customerSummary { display: flex !important; }
-/* Hide the materials and scope-of-work cards (#materialsCard, .pro-feature-card)
-   and all cost/markup/retail columns in customer view. The #paintCard rule is
-   dead: estimate.html no longer has that card. */
+/* Hide the materials and scope-of-work cards (#materialsCard,
+   .pro-feature-card) and all cost/markup/retail columns in customer view. The
+   #paintCard rule is dead: estimate.html has no such card. */
 body.customer-view #materialsCard { display: none !important; }
 body.customer-view .pro-feature-card { display: none !important; }
 body.customer-view .col-cost { display: none !important; }
@@ -2145,7 +2070,8 @@ body.customer-view .col-markup { display: none !important; }
 body.customer-view .col-retail { display: none !important; }
 body.customer-view .markup-control { display: none !important; }
 
-/* -- Itemized screen view: restore the materials and scope-of-work cards and task rows (overrides customer-view; #paintCard no longer exists) -- */
+/* -- Itemized screen view: restore the materials and scope-of-work cards and
+   task rows (overrides customer-view; there is no #paintCard) -- */
 body.customer-view.fmt-itemized #materialsCard { display: block !important; }
 body.customer-view.fmt-itemized .pro-feature-card { display: block !important; }
 body.customer-view.fmt-itemized .repair-task-table tbody { display: table-row-group !important; }
@@ -2481,13 +2407,13 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   }
   .summary-grand span:last-child { color: #111 !important; font-size: 13pt !important; }
 
-  /* -- Pre-reskin print values --
-     On screen the estimator follows the Magic Patterns design (Inter, ink
-     text, light table footers, a dark summary panel with mono figures). The
-     printed estimate is a separate fixed design and did not change, so the
-     rules below pin it to what it was before that restyle, defects included
-     (the dark subtotal bars, and the pale summary and deposit labels). Changing
-     how the printed estimate looks is its own decision. */
+  /* -- Print values pinned against the screen design --
+     On screen the estimator uses the shared page design (Inter, ink text,
+     light table footers, a dark summary panel with mono figures). The
+     printed estimate is a separate fixed design, so the rules below pin it
+     against those screen styles, including the dark subtotal bars and the
+     pale summary and deposit labels. Changing how the printed estimate
+     looks is its own decision. */
   .est-container { font-family: inherit !important; color: inherit !important; }
   .est-container .est-label { font-weight: 500 !important; }
   .est-container .est-input { font-family: inherit !important; border-radius: 6px !important; }
@@ -2925,8 +2851,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
 
 /* ============================================================
-   ESTIMATE HISTORY -- LEGACY (pre-redesign dark layout)
-   history.html now uses the .history-* rules in ESTIMATE HISTORY
+   ESTIMATE HISTORY -- LEGACY (dark layout)
+   history.html uses the .history-* rules in ESTIMATE HISTORY
    PAGE-SPECIFIC STYLES further down. The .hist-* and .status-* rules
    in this block are not used by any page. Still live here: .modal-sm,
    .modal-actions and .btn-danger (history.html delete modal), and
@@ -3099,9 +3025,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
    UPGRADE MODAL PRICING NOTE
    .plan-beta-note is the small centered footnote under the plan cards
    in estimate.html's upgrade modal. .plan-price-strike and
-   .plan-price-free (the struck-through price and the big green free
-   price of the old free-beta pricing display) are not used by any page
-   now.
+   .plan-price-free (a struck-through price and a big green free price)
+   are not used by any page.
    ============================================================ */
 
 .plan-beta-note {
@@ -3122,16 +3047,16 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .lib-table th:nth-child(4),
   .lib-table td:nth-child(4) { display: none; }
 
-  /* Saved items on two lines each, not one row of four squeezed columns. With Type and Markup hidden, the <col>
-     widths (35 / 12 / 12 / 12 / 20 / 9%) land on the four cells that are still rendered, in order: at 375px the
-     Name got 108px, Cost, Buy URL and Actions 37px each. That showed under half of a 27-character product name,
-     about 2% of a Buy URL, and left more than half of the delete button cut off. The <col> widths can't fix it, because they
-     are matched to cells by position: zeroing the Type and Markup columns would zero Cost and Actions instead (the
-     col.col-cost / col-markup / col-actions rules that used to sit here matched nothing, since no <col> carries
-     those classes). So at this width the table becomes a list of rows: Name takes all of line 1; line 2 is Cost,
-     then Buy URL on the rest of the line, then the save and delete buttons. The header can't line up with
-     two-line rows, so it goes, and the two small labels below stand in for it. Cells are picked by position, like
-     the hide rule above: 1 Name, 3 Cost, 5 Buy URL, then the actions cell. */
+  /* Saved items on two lines each, not one row of four squeezed columns: Name
+     takes all of line 1; line 2 is Cost, then Buy URL on the rest of the
+     line, then the save and delete buttons. The header can't line up with
+     two-line rows, so it is hidden and the two small labels below stand in
+     for it. The <col> widths can't drive this layout: they are matched to
+     cells by position, so with Type and Markup hidden the first four <col>s
+     (35 / 12 / 12 / 12%) land on Name, Cost, Buy URL and Actions, and zeroing
+     the Type and Markup columns would zero Cost and Actions instead. Cells
+     are picked by position, like the hide rule above: 1 Name, 3 Cost, 5 Buy
+     URL, then the actions cell. */
   .lib-table thead,
   .lib-table colgroup { display: none; }
   .lib-table,
@@ -3150,8 +3075,9 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   /* Save and delete at their natural width. width:auto overrides the cell's 1% (.lib-actions-cell), which as a flex
      basis would shrink the cell below its two buttons. */
   .lib-table tbody tr td.lib-actions-cell { flex: 0 0 auto; width: auto; }
-  /* The sitewide .est-table number-input rule (0.88rem, roomier padding) outranks .lib-table .lib-edit, so Cost came
-     out 2.6px taller than the Buy URL field it now sits beside. Same size here, so line 2 lines up. */
+  /* The sitewide .est-table number-input rule (0.88rem, roomier padding)
+     outranks .lib-table .lib-edit, which would leave Cost taller than the Buy
+     URL field beside it. Same size here, so line 2 lines up. */
   .lib-table tbody tr td:nth-child(3) input { font-size: 0.82rem; padding: 4px 6px; -moz-appearance: textfield; }
   .lib-table tbody tr td:nth-child(3) input::-webkit-outer-spin-button,
   .lib-table tbody tr td:nth-child(3) input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -3168,7 +3094,7 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
   .modal-box  { padding: 1rem; }
 }
 
-/* -- .float-save-btn: floating Save Draft pill. No page uses this class now; Save Draft lives in the toolbar (#saveDraftBtn) and as a .fap-btn in the floating action panel. -- */
+/* -- .float-save-btn: floating Save Draft pill. No page uses this class; Save Draft lives in the toolbar (#saveDraftBtn) and as a .fap-btn in the floating action panel. -- */
 
 /* ============================================================
    FLOATING ACTION PANEL (FAP)
@@ -3370,11 +3296,10 @@ body,
    HELP MODAL CONTENT
    Used by the Help modal on estimate.html, kits.html, services.html and the
    five calculator pages (mekpcalc, clothcalc, awlgrip, epifanespoly,
-   alexseal). The Help button's own
-   CHROME (position/size/hover-expand/focus-visible/print) now
-   lives in the "FLOATING-ACTION CLUSTER -- SHARED CHROME" section
-   further down this file -- see .help-float-btn there. Only the
-   modal's own content styling remains below.
+   alexseal). The Help button's own chrome (position/size/hover-expand/
+   focus-visible/print) is in the "FLOATING-ACTION CLUSTER -- SHARED
+   CHROME" section further down this file (see .help-float-btn there); this
+   section styles only the modal's content.
    ============================================================ */
 
 /* Help modal content sections */
@@ -3526,65 +3451,53 @@ body,
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ============================================================
-   SITEWIDE DESIGN TOKENS + HEADER/FOOTER DARK CHROME REDESIGN
+   SITEWIDE DESIGN TOKENS + HEADER/FOOTER DARK CHROME
    ------------------------------------------------------------
-   Phase 0 of the approved full-site translation
-   (ChemCalc_FullSite_Blueprint.md, in the project's "Claude outputs"
-   folder): a CSS custom-property
-   token system translated from the Magic Patterns "MEKP
-   Calculator" artifact's tailwind.config.js, plus the sitewide
-   header/footer/floating-action-cluster visual language from
-   components/layout/SiteHeader.tsx, SiteFooter.tsx and
-   FloatingActions.tsx
-   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw).
-   The :root block below is the token system every page should
-   reference going forward (paper/ink/signal/sea colors, shadows,
-   timing, fonts) rather than adding new hardcoded hex.
+   A CSS custom-property token system (paper/ink/signal/sea colors,
+   shadows, timing, fonts) in the :root block below, which every page
+   should reference rather than adding new hardcoded hex, plus the
+   sitewide header/footer visual language.
 
-   The header/footer styles here apply to the markup in
-   Library/nav.lbi and Library/Footer.lbi, which render on every
-   page via Dreamweaver library includes -- editing this section
-   changes the header/footer everywhere. The floating-action
-   cluster's (Donate/BoatMD chat/Help) button CHROME lives in the
-   "FLOATING-ACTION CLUSTER -- SHARED CHROME" section further down
-   this file; this section only sets the shared --chrome-fab-right
-   token those buttons use (below) and the header/footer chrome.
+   The header/footer styles here apply to the markup in Library/nav.lbi
+   and Library/Footer.lbi, which render on every page via Dreamweaver
+   library includes -- editing this section changes the header/footer
+   everywhere. The floating-action cluster's (Donate/BoatMD chat/Help)
+   button chrome lives in the "FLOATING-ACTION CLUSTER -- SHARED CHROME"
+   section further down this file; this section only sets the shared
+   --chrome-fab-right token those buttons use (below) and the
+   header/footer chrome.
 
    Everything header/footer-specific below is scoped under the
-   .site-header-dark / .site-footer-dark compound classes (a "new class
-   alongside the old one" pattern), so it only
+   .site-header-dark / .site-footer-dark compound classes, so it only
    touches the header/footer and never collides with unrelated
    .header/.nav/.footer usage. The base .header/.nav/.menu-toggle/
-   .footer.text-center rules earlier in this file are left in
-   place, unedited, for minimal diff -- Library/nav.lbi and
-   Library/Footer.lbi no longer emit the class combinations those
-   old rules key off (.header alone still applies -- see print
-   note below -- but .footer.text-center no longer matches), so
-   those old declarations are superseded here rather than removed.
-   Fonts (Inter, IBM Plex Mono) are loaded by the <link> in
-   Library/head-common.lbi (this file has no @import for them) and
+   .footer.text-center rules earlier in this file are overridden here
+   rather than removed: Library/nav.lbi and Library/Footer.lbi do not
+   emit the class combinations those older rules key off (.header alone
+   still applies -- see the print note below -- but .footer.text-center
+   does not match). Fonts (Inter, IBM Plex Mono) are loaded by the <link>
+   in Library/head-common.lbi (this file has no @import for them) and
    reach the header/footer, the floating-action cluster and the .mp-*
    calculator components through --chrome-font-sans and
-   --chrome-font-mono -- this does not change the body{} font stack
-   used for body copy elsewhere on the site.
+   --chrome-font-mono; the body{} font stack used for body copy is
+   separate.
 
-   PRINT: hiding the header/nav/footer on print is NOT handled
-   here. It already works two ways that this redesign deliberately
-   keeps intact rather than duplicating:
+   PRINT: hiding the header/nav/footer on print is NOT handled here. It
+   works two ways:
      1. Sitewide (all pages, via this file's own "ESTIMATE PRINT
         STYLES" @media print block above): bare `.header` and `nav`
         element selectors, plus `.menu-toggle` and `.d-print-none` --
-        satisfied because the new header keeps the "header" class and
-        the "nav"/"mainNav" element/id.
+        satisfied because the header keeps the "header" class and the
+        "nav"/"mainNav" element/id.
      2. The "shared calculator print hides" @media print block near the
-        top of this file (merged in from the deleted
-        print_style_fix_v4.css, and now applying on every page):
-        `body > header`, `body > footer`, `.menu-toggle`,
-        `.d-print-none` -- all satisfied structurally (header/footer
-        stay direct children of body) and by class (`d-print-none` kept
-        on <header>, `menu-toggle` kept on the toggle button).
-   No new print class was introduced; print stays governed by those two
-   existing blocks.
+        top of this file, which applies on every page: `body > header`,
+        `body > footer`, `.menu-toggle`, `.d-print-none` -- satisfied
+        structurally (header/footer stay direct children of body) and by
+        class (`d-print-none` on <header>, `menu-toggle` on the toggle
+        button).
+   No print class is defined for the chrome; print stays governed by
+   those two blocks, so the markup must keep those classes, ids and
+   structure.
    ============================================================ */
 
 :root {
@@ -3614,10 +3527,9 @@ body,
   --chrome-sea-500: #0F7A85;
   --chrome-sea-600: #0A5D66;
 
-  /* On-recommendation green (paired with --chrome-signal-500 for "off") --
-     added for the MEKP calculator's on/off-recommendation color coding
-     (.mekp-result-status.is-on and the .is-on catalyst numbers); no
-     suitable green existed sitewide before this. */
+  /* On-recommendation green (paired with --chrome-signal-500 for "off"), used
+     by the MEKP calculator's on/off-recommendation color coding
+     (.mekp-result-status.is-on and the .is-on catalyst numbers). */
   --chrome-on-500: #5EE0A6;
 
   /* Shadows */
@@ -3632,10 +3544,9 @@ body,
   --chrome-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Shared right-edge offset for the bottom-right floating-action cluster
-     (Donate / BoatMD chat toggle / Help) -- see the "FLOATING-ACTION
-     CLUSTER -- SHARED CHROME" section further down this file, where
-     all three buttons' chrome (including their use of this token) now
-     lives together. */
+     (Donate / BoatMD chat toggle / Help) -- see the "FLOATING-ACTION CLUSTER
+     -- SHARED CHROME" section further down this file, where all three
+     buttons' chrome (including their use of this token) lives together. */
   --chrome-fab-right: 1.25rem;
 
   /* The same cluster's vertical layout. Every button is a --chrome-fab-size
@@ -3655,19 +3566,17 @@ body,
 
 /* ============================================================
    SHARED CALCULATOR COMPONENTS (.mp-*)
-   Rules that used to be duplicated byte-for-byte across the MEKP
-   (.mekp-*) and ClothCalc (.cloth-*) page styles, now shared by every
-   calculator page -- including future ones. Per the original blueprint
-   (ChemCalc_FullSite_Blueprint.md sec. 3) and Leo's non-negotiable: one
-   CSS file, real shared classes.
+   Rules shared by every calculator page, including future ones: real
+   shared classes in this single CSS file instead of per-page .mekp-*
+   and .cloth-* copies.
    ============================================================ */
 
-/* The page title band, from MP's PageHero.tsx: a full-bleed, square-edged
-   dark band that is a direct child of <body class="mp-canvas">, before
-   <main>. Its text lines up with the 1280px content wrapper below (the
-   side padding is the wrapper's 20px/32px plus the centering margin past
-   1280px). .mp-hero--overlap adds the extra bottom padding the wrapper
-   is pulled up into (MP's overlap prop): 5rem, 7rem from 1024px. */
+/* The page title band: a full-bleed, square-edged dark band that is a direct
+   child of <body class="mp-canvas">, before <main>. Its text lines up with
+   the 1280px content wrapper below (the side padding is the wrapper's
+   20px/32px plus the centering margin past 1280px). .mp-hero--overlap adds
+   the extra bottom padding the wrapper is pulled up into: 5rem, 7rem from
+   1024px. */
 .mp-hero{
   background:var(--chrome-ink-950);
   font-family:var(--chrome-font-sans);
@@ -3706,10 +3615,9 @@ body,
   .mp-hero--overlap{padding-bottom:7rem;}
 }
 
-/* A hero with a box beside its copy (MP's PageHero aside): put the copy in
-   the first child of .mp-hero-split and the box (.mp-hero-aside) in the
-   second. The box stacks under the copy and sits to its right from 1024px,
-   bottom-aligned with it. */
+/* A hero with a box beside its copy: put the copy in the first child of
+   .mp-hero-split and the box (.mp-hero-aside) in the second. The box stacks
+   under the copy and sits to its right from 1024px, bottom-aligned with it. */
 .mp-hero-split{display:flex;flex-direction:column;gap:2rem;}
 .mp-hero-aside{
   padding:1rem 1.25rem;border:1px solid rgba(255,255,255,.1);border-radius:12px;
@@ -3755,11 +3663,11 @@ body,
 }
 .mp-select-compact{flex:0 0 auto;width:auto;min-width:5.5rem;}
 
-/* ---------- Segmented pill-button toggle: canonical site-wide
-   toggle style (Leo, 2026-09-07). Any control that flips between
-   states/units uses this, not a checkbox switch. estimate.html's Format
-   toggle (.view-toggle-wrap / .btn-view-toggle) is the same control; its
-   script marks the active button with .active, not aria-pressed. ---------- */
+/* ---------- Segmented pill-button toggle: the canonical site-wide
+   toggle style. Any control that flips between states/units uses this,
+   not a checkbox switch. estimate.html's Format toggle
+   (.view-toggle-wrap / .btn-view-toggle) is the same control; its script
+   marks the active button with .active, not aria-pressed. ---------- */
 .mp-unit-toggle,
 .view-toggle-wrap{
   display:flex;flex:none;gap:.15rem;padding:.2rem;
@@ -3813,31 +3721,25 @@ body,
 }
 @media (min-width:992px){
   .mp-results-panel{position:sticky;top:1.5rem;}
-  /* No right-side padding here, on purpose. This panel used to carry up to
-     11rem of padding-right to keep its content clear of the fixed
-     bottom-right floating-action cluster (Donate/BoatMD chat/Help). That
-     squeezed every calculator's results into the left half of the dark box:
-     the tiles wrapped, the divider under the title stopped short, and the
-     Email Me field stuck out past its own card. Removed 2026-10-09 at the
-     owner's request: the cluster floats over the panel, as it does over
-     every other page, and the content fills the box with the same inset on
-     both sides. The class is shared by every calculator page, so this
-     covers them all. */
+  /* No right-side padding on the results panel, on purpose: the content fills
+     the dark box with the same inset on both sides, and the fixed
+     bottom-right floating-action cluster (Donate/BoatMD chat/Help) floats
+     over it. Clearance padding here would squeeze the results into the left
+     half of the box on every calculator page (the class is shared). */
 }
 
 /* Email-capture input (email-results.js injects #captureEmailInput +
    #btnEmailResults as a Bootstrap .input-group into each calculator page's
-   .mp-email-capture container, identically on every page -- this file is
-   the only place that can style it without touching that JS). Bare, it has
-   no min-width, so it shrinks to whatever room its container leaves it,
-   well under the ~153px its own placeholder needs at 16px Inter --
-   canvas-measured live. Bootstrap's .input-group already has
-   flex-wrap:wrap, so giving the input a floor here just makes it wrap
-   the Email Me button onto its own line once the row gets tight, instead
-   of silently shrinking below a readable width. 10rem clears the ~153px
-   minimum with room to spare. The results panel no longer has right
-   padding (see above), so the row now gets the panel's full width and
-   this floor is only a safety net. */
+   .mp-email-capture container, identically on every page -- this file is the
+   only place that can style it without touching that JS). Bare, it has no
+   min-width, so it shrinks to whatever room its container leaves it, well
+   under the ~153px its placeholder needs at 16px Inter. Bootstrap's
+   .input-group already has flex-wrap:wrap, so giving the input a floor here
+   makes the Email Me button wrap onto its own line once the row gets tight,
+   instead of silently shrinking the input below a readable width. 10rem
+   clears the ~153px minimum with room to spare. The results panel has no
+   right padding (see above), so the row gets the panel's full width and this
+   floor is a safety net. */
 #captureEmailInput{min-width:10rem;}
 .mp-results-head{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
@@ -3877,11 +3779,11 @@ body,
 .mp-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
 .mp-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
 
-/* Materials-display bucket-section headings (2026-10 build, MEKP/ClothCalc/
-   Awlgrip only). New class, added only where material-selection.js's
-   renderGroupedMaterialLinks() renders it -- epifanespoly.html/alexseal.html
-   build their affiliate list independently and never emit this class, so
-   this rule can't affect their unchanged flat-list rendering. */
+/* Materials-display bucket-section headings (MEKP/ClothCalc/Awlgrip only).
+   The class is emitted only by material-selection.js's
+   renderGroupedMaterialLinks(); epifanespoly.html/alexseal.html build their
+   affiliate list independently and never emit it, so this rule can't affect
+   their flat-list rendering. */
 .mp-affiliate-list .mp-affiliate-section-heading{
   list-style:none;font-size:.72rem;font-weight:700;text-transform:uppercase;
   letter-spacing:.05em;color:rgba(255,255,255,.45);
@@ -4124,10 +4026,9 @@ body,
   .site-header-dark .nav-auth-login,
   .site-header-dark .nav-auth-name { width: 100%; justify-content: center; }
 }
-/* Body's own left/right margin (1em by default, 0 at <=575.98px -- see
-   body{} near the top of this file) would otherwise leave a gap down
-   each side of the full-bleed bar; cancelled here rather than editing
-   the shared body{} rule. */
+/* Body's own left/right margin (1em by default, 0 at <=575.98px -- see body{}
+   near the top of this file) would otherwise leave a gap down each side of
+   the full-bleed bar; cancelled here instead of in the shared body{} rule. */
 @media (max-width: 575.98px) {
   .header.site-header-dark { margin-left: 0; margin-right: 0; }
 }
@@ -4159,22 +4060,13 @@ body,
 }
 @media (max-width: 767.98px) {
   /* Bottom clearance from the fixed bottom-right floating-action cluster
-     (Donate/BoatMD chat/Help) -- same mechanism as main.mp-calc-app's
-     mobile tier above (padding-bottom:17.5rem): the footer is the last
-     element on every page, so scrolled to the true bottom, the cluster's
-     fixed band covers the last line(s) of its brand/copyright text the
-     same way it covers a calculator page's own last content without that
-     padding. Confirmed identically on epifanespoly.html and awlgrip.html
-     at 375x812, scrolled to the actual bottom of the page (not just the
-     outer container) -- via real getBoundingClientRect overlap checks
-     against all three cluster buttons, not a single screenshot. Started
-     from that tier's 17.5rem, but live-measured a real 5.5x19px overlap
-     between the copyright line and the Help button on epifanespoly.html
-     at that value (awlgrip.html was already clean, by a ~2.5px margin --
-     too close to trust). 20rem re-verified clean on both pages, plus
-     mekpcalc.html as a third, with zero overlap against all three
-     buttons; re-verify live if this cluster's own size/position ever
-     changes. */
+     (Donate/BoatMD chat/Help) -- same mechanism as main.mp-calc-app's mobile
+     tier above (padding-bottom:17.5rem): the footer is the last element on
+     every page, so scrolled to the true bottom, the cluster's fixed band
+     would cover the last line(s) of its brand/copyright text. 20rem (more
+     than that tier's 17.5rem) keeps the copyright line clear of all three
+     buttons; it depends on the cluster's size and position, so re-check it if
+     either changes. */
   .site-footer-inner { padding-bottom: 20rem; }
 }
 @media (min-width: 992px) {
@@ -4238,19 +4130,18 @@ body,
    ------------------------------------------------------------
    Position, size, icon-only-at-rest, hover/focus-visible pill
    expansion, and print hiding for all three bottom-right floating
-   buttons, consolidated here (2026-09-20) so a cluster-wide change
-   touches one place instead of three. Each button's own modal/
-   panel CONTENT (donation modal, help modal, chat window) is NOT
-   here -- see .fab-donate-modal, the #helpModal rules below and the
-   "HELP MODAL CONTENT" section, and the "CHATBOT STYLES" section
-   respectively.
+   buttons live here, so a cluster-wide change touches one place.
+   Each button's own modal/panel CONTENT (donation modal, help modal,
+   chat window) is NOT here -- see .fab-donate-modal, the #helpModal
+   rules below and the "HELP MODAL CONTENT" section, and the "CHATBOT
+   STYLES" section respectively.
    Shared right-edge token: --chrome-fab-right (defined in the
    SITEWIDE DESIGN TOKENS section).
 
-   Bottom-right stack, matching FloatingActions.tsx: Help (closest to
-   the edge) sits at --chrome-fab-bottom-help (1.25rem, 1.75rem from
-   992px), the BoatMD chat toggle one --chrome-fab-size + --chrome-fab-gap
-   above that, Donate (or Feedback) the same step above the chat toggle.
+   Bottom-right stack: Help (closest to the edge) sits at
+   --chrome-fab-bottom-help (1.25rem, 1.75rem from 992px), the BoatMD
+   chat toggle one --chrome-fab-size + --chrome-fab-gap above that,
+   Donate (or Feedback) the same step above the chat toggle.
    All three are --chrome-fab-size circles at rest, and on hover/focus they
    grow only in width, toward the left (each is anchored by a fixed right):
    the height is never changed and there is no lift, and the right padding
@@ -4348,13 +4239,11 @@ body,
 .help-float-btn {
   /* Bottom-right floating-action cluster: Help sits closest to the screen
      edge, with the BoatMD chat toggle (.chatbot-toggle, injected by
-     chatbot.js) and Donate button (Library/Footer.lbi's .fab-donate)
-     stacked above it. See the shared --chrome-fab-right token in the
-     "SITEWIDE DESIGN TOKENS" block above. Recolored to the same tokens
-     (Leo/MP redesign, Phase 0).
-     Icon-only at rest at every viewport width; expands into the labeled
-     pill on hover/focus instead of a permanent label -- same hover-expand
-     technique as .fab-donate above and .chatbot-toggle below. */
+     chatbot.js) and Donate button (Library/Footer.lbi's .fab-donate) stacked
+     above it. See the shared --chrome-fab-right token in the "SITEWIDE DESIGN
+     TOKENS" block above. Icon-only at rest at every viewport width; expands
+     into the labeled pill on hover/focus -- same hover-expand technique as
+     .fab-donate above and .chatbot-toggle below. */
   position: fixed;
   bottom: var(--chrome-fab-bottom-help);
   right: var(--chrome-fab-right, 1.25rem);
@@ -4424,10 +4313,9 @@ body,
 }
 
 /* ---------- BoatMD chat toggle ---------- */
-/* Position rule -- chatbot.js injects the toggle button/icon markup into
-   this fixed container; DOM structure and JS logic untouched by this
-   restyle. See the "CHATBOT STYLES" section further down this file for
-   the chat window/panel content and this section's own merge history. */
+/* Position rule -- chatbot.js injects the toggle button/icon markup into this
+   fixed container. See the "CHATBOT STYLES" section further down this file
+   for the chat window/panel content. */
 #chemcalc-chatbot {
     position: fixed;
     bottom: var(--chrome-fab-bottom-chat);
@@ -4435,11 +4323,10 @@ body,
     z-index: 1040;
     font-family: var(--chrome-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
 }
-/* Toggle Button -- icon-only circle at rest, at every viewport width;
-   expands into the pill shape with icon + "Ask BoatMD" label on
-   hover/focus, matching MP's chat trigger. The label is a CSS-only
-   ::after (chatbot.js's injected button markup/icon SVG is untouched --
-   this keeps the restyle to CSS, no JS/logic edit). */
+/* Toggle Button -- icon-only circle at rest, at every viewport width; expands
+   into the pill shape with icon + "Ask BoatMD" label on hover/focus. The
+   label is a CSS-only ::after, independent of chatbot.js's injected button
+   markup/icon SVG. */
 .chatbot-toggle {
     padding: 0.75rem;
     border-radius: 50%;
@@ -4516,17 +4403,13 @@ body,
   color: var(--chrome-ink-900);
 }
 
-/* Help modal panel: open-only fade + scale/translate transition (~220ms,
-   matching MP's FloatingActions.tsx AnimatePresence values), scoped to
-   #helpModal only -- no other .modal-overlay instance (task starter,
-   upgrade, login, etc.) is touched. openHelpModal()/openModal()/
-   closeModal() are unchanged -- they still just flip the element's inline
-   display style; @starting-style is what lets that plain toggle animate on
-   the way in. The close direction can't be animated this way without a
-   JS/class-based hook (out of scope -- chatbot.js/estimate.js/
-   global-account-modal.js are not touched), so closing stays instant, and
-   browsers without @starting-style support keep the instant show/hide
-   behavior in both directions. */
+/* Help modal panel: open-only fade + scale/translate transition (~220ms),
+   scoped to #helpModal only (no other .modal-overlay instance: task starter,
+   upgrade, login, etc.). openHelpModal()/openModal()/closeModal() just flip
+   the element's inline display style; @starting-style is what lets that plain
+   toggle animate on the way in. The close direction can't be animated this
+   way without a JS/class-based hook, so closing is instant, and browsers
+   without @starting-style support show/hide instantly in both directions. */
 #helpModal.modal-overlay {
   opacity: 1;
   transition: opacity 220ms var(--chrome-ease-smooth), display 220ms allow-discrete;
@@ -4541,16 +4424,14 @@ body,
   #helpModal .modal-box { opacity: 0; transform: scale(0.96) translateY(12px); }
 }
 
-/* ---------- Help modal: panel content restyle ----------
-   Finishes the Phase 0 restyle that only reached the trigger button and
-   the open transition above. Matches FloatingActions.tsx's help panel:
-   paper-card panel on an ink-950 scrim, ink-900 headings, numbered
-   ink-900/signal-400 step badges, and an ink-950 CTA box with a
-   signal-400 button. Scoped to #helpModal only -- the generic
+/* ---------- Help modal: panel content ----------
+   Paper-card panel on an ink-950 scrim, ink-900 headings, numbered
+   ink-900/signal-400 step badges, and an ink-950 CTA box with a signal-400
+   button. Scoped to #helpModal only; the generic
    .modal-overlay/.modal-box/.modal-title/.btn-plan-pro rules above (also
-   used by the task-starter, upgrade, and login modals) are untouched.
-   Per-page tiered content (helpContentGuest/Free/Pro copy) is unchanged
-   -- only the CSS around it moves. */
+   used by the task-starter, upgrade, and login modals) are not affected.
+   The per-page tiered copy (helpContentGuest/Free/Pro) is content; this
+   styles only the panel around it. */
 #helpModal.modal-overlay {
   background: rgba(4, 20, 26, 0.6);
 }
@@ -4627,10 +4508,9 @@ body,
   font-weight: 600;
   /* <strong>label</strong> and the trailing text run are two
      independently-auto-sized flex items by default, so each row's label
-     column ends up a different width (measured live: 73/86/149/70px
-     across the four MEKP steps) and the description text starts at a
-     different x-position per row. A fixed basis makes every row share
-     one column width; 150px fits "Check Duratec (if applicable)" with
+     column would end up a different width and the description text would
+     start at a different x-position per row. A fixed basis makes every row
+     share one column width; 150px fits "Check Duratec (if applicable)" with
      the parenthetical wrapping to its own line. */
   flex: 0 0 150px;
 }
@@ -4669,9 +4549,9 @@ body,
   background: var(--chrome-signal-200);
 }
 
-/* ---------- Donate modal: finish the panel chrome ----------
-   Body copy, hr divider, and the "Close" button recolored for the light
-   panel above. PayPal form fields themselves are untouched. */
+/* ---------- Donate modal: panel chrome ----------
+   Body copy, hr divider, and the "Close" button styled for the light
+   panel above. The PayPal form fields themselves are not styled here. */
 .fab-donate-modal .modal-body p {
   color: var(--chrome-ink-600);
 }
@@ -4691,15 +4571,11 @@ body,
 /* ============================================================
    CHATBOT STYLES (#chemcalc-chatbot / BoatMD, chatbot.js)
    ------------------------------------------------------------
-   The BoatMD toggle button's own CHROME (position/size/hover-expand/
-   focus-visible/print) now lives in the "FLOATING-ACTION CLUSTER --
-   SHARED CHROME" section further up this file -- see #chemcalc-chatbot
-   and .chatbot-toggle there. Only the chat window/panel's own content
-   styling remains below.
-
-   Merged into style.css from the former standalone chatbot_styles.css
-   on 2026-09-16 (single-file consolidation); that file no longer
-   exists.
+   The BoatMD toggle button's own chrome (position/size/hover-expand/
+   focus-visible/print) is in the "FLOATING-ACTION CLUSTER -- SHARED
+   CHROME" section further up this file (see #chemcalc-chatbot and
+   .chatbot-toggle there). This section styles only the chat
+   window/panel's content.
    ============================================================ */
 
 /* Chat Window */
@@ -4719,15 +4595,12 @@ body,
     overflow: hidden;
 }
 
-/* Open-only fade + scale/translate transition (~220ms, matching MP's
-   FloatingActions.tsx AnimatePresence values). chatbot.js's
-   toggleChatbot()/closeChatbot() are unchanged -- they still just flip
-   this element's inline display style between "none" and "flex";
-   @starting-style is what lets that plain toggle animate on the way in.
-   The close direction can't be animated this way without a JS/class-based
-   hook (out of scope), so closing stays instant, and browsers without
-   @starting-style support keep the instant show/hide behavior in both
-   directions. */
+/* Open-only fade + scale/translate transition (~220ms). chatbot.js's
+   toggleChatbot()/closeChatbot() just flip this element's inline display
+   style between "none" and "flex"; @starting-style is what lets that plain
+   toggle animate on the way in. The close direction can't be animated this
+   way without a JS/class-based hook, so closing is instant, and browsers
+   without @starting-style support show/hide instantly in both directions. */
 .chatbot-window {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -5044,12 +4917,10 @@ body,
 
 /* ============================================================
    SHARED SITE COMPONENTS -- CARDS
-   Added 2026-10-02. One definition for what used to be copied page by
-   page: the paper card (the Home, Calculators index, Services, About,
-   Kits, and legal-document cards were all the same box), plus the icon
-   badge, title, and body text that sat inside the services and kits
-   cards byte for byte. The page sections below keep only what is
-   genuinely page-specific.
+   One definition for the paper card used by the Home, Calculators index,
+   Services, About, Kits, and legal-document pages, plus the icon badge,
+   title, and body text inside the services and kits cards. The page
+   sections below keep only what is genuinely page-specific.
 
    Usage: <div class="mp-card mp-card--stack"> ... </div>. Modifiers
    combine: --roomy for long-form document and story cards, --compact for
@@ -5101,12 +4972,10 @@ body,
 .mp-card-text{font-size:.88rem;line-height:1.6;color:var(--chrome-ink-600);margin:0 0 1.25rem;}
 .mp-card-text--tight{margin-bottom:0;}
 
-/* .mp-panel: the dark callout box (ink-950 fill, white text, rounded). The
-   Home Pro panel, the Calculators call-to-action, the Services estimator
-   panel and the About expertise card were once four copies of this box, with
-   the radius and padding drifting between 12px/16px and 1.5rem to 2.5rem;
-   they now share this rule. --roomy is the large Home Pro panel; on phones
-   the panel tightens by .25rem and --roomy drops to 1.75rem. */
+/* .mp-panel: the dark callout box (ink-950 fill, white text, rounded), shared
+   by the Home Pro panel, the Calculators call-to-action, the Services
+   estimator panel and the About expertise card. --roomy is the large Home Pro
+   panel; on phones the panel tightens by .25rem and --roomy drops to 1.75rem. */
 .mp-panel{
   background:var(--chrome-ink-950);border-radius:16px;padding:1.75rem;color:#ffffff;
 }
@@ -5131,10 +5000,8 @@ body,
 
 /* ============================================================
    SHARED SITE COMPONENTS -- BUTTONS
-   Added 2026-10-02. One pill button instead of per-page copies: the
-   Home, Calculators index, Services, About, and Kits buttons were the
-   same button with different colors and sizes, each restating the same
-   base declarations and the same hover, visited, and active overrides.
+   One pill button shared by the Home, Calculators index, Services, About,
+   and Kits pages.
 
    Usage: class="mp-btn mp-btn--primary". Color variants: --primary
    (amber fill), --ghost (outline on a dark background), --outline
@@ -5145,18 +5012,16 @@ body,
    Every variant restates margin-top, font-style, font-size, and
    font-weight across :visited, :hover, and :active. The legacy sitewide
    anchor rule (a, a:visited, a:hover, a:active in the base styles) wins
-   on any property a new class does not itself set -- the lesson already
-   paid for on the Home page buttons -- so size and placement modifiers
-   carry their own copies of those state overrides rather than relying on
-   the base rule.
+   on any property a new class does not itself set, so size and placement
+   modifiers carry their own copies of those state overrides rather than
+   relying on the base rule.
 
    State rules are written in link, visited, hover, active order, and
-   every color variant sets its text color on :active too. Two bugs in
-   the per-page copies this replaces: :active never set a color, so the
-   legacy anchor rule turned a pressed button's text light blue; and the
-   outline button's :visited rule came after its :hover rule at equal
-   strength, so a visited outline button showed sea-green text on its
-   own sea-green hover fill.
+   every color variant sets its text color on :active too: without an
+   :active color the legacy anchor rule turns a pressed button's text light
+   blue, and a :visited rule placed after :hover at equal strength would
+   show a visited outline button's sea-green text on its own sea-green
+   hover fill.
    ============================================================ */
 .mp-btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
@@ -5198,11 +5063,10 @@ body,
 
 /* ============================================================
    SHARED SITE COMPONENTS -- PHOTO HERO
-   Added 2026-10-02. .calc-hero, .services-hero, .about-hero, and
-   .kits-hero were the same background (a left-to-right dark gradient
-   over a photo) with only the image and its vertical crop changing,
-   each copied out in full. .mp-hero--photo is that one background; a
-   page supplies its photo with two custom properties:
+   .mp-hero--photo is the one hero background (a left-to-right dark
+   gradient over a photo) used by .calc-hero, .services-hero,
+   .about-hero, and .kits-hero; only the image and its vertical crop
+   change per page. A page supplies its photo with two custom properties:
      .about-hero{--mp-hero-image:url("images/x.jpg");--mp-hero-position:center 52%;}
    and puts both classes on the hero: class="mp-hero mp-hero--photo about-hero".
 
@@ -5219,19 +5083,18 @@ body,
 
 /* ============================================================
    SHARED SITE COMPONENTS -- PAGE SHELL, SPLIT LAYOUT, LONG-FORM TEXT
-   Added 2026-10-02.
 
-   .mp-split: a stacked grid that becomes two columns at 992px.
-   .home-solutions-grid, .about-grid, and .legal-doc-layout were the
-   same grid; .home-hero-inner and .services-estimator-grid were the
-   same grid centered with a wider gap (--center). A page sets its
-   column ratio with one custom property:
+   .mp-split: a stacked grid that becomes two columns at 992px. It is the
+   grid behind .home-solutions-grid, .about-grid, and .legal-doc-layout;
+   .home-hero-inner and .services-estimator-grid use it centered with a
+   wider gap (--center). A page sets its column ratio with one custom
+   property:
      .about-grid{--mp-split-cols:7fr 5fr;}
 
    .mp-prose: long-form text inside a card -- headings, paragraphs,
-   lists, and links. The About story card and the legal documents had
-   the same type scale (1.3rem headings, .95rem / 1.65 body). Wrap each
-   block in .mp-prose-section; consecutive sections get a divider.
+   lists, and links, with the type scale shared by the About story card
+   and the legal documents (1.3rem headings, .95rem / 1.65 body). Wrap
+   each block in .mp-prose-section; consecutive sections get a divider.
    Headings and body copy are plain elements, so the markup needs no
    per-element classes. Body text inherits the page font, the same as
    every other card on the site; only headings set Inter explicitly.
@@ -5251,15 +5114,13 @@ body,
 }
 .mp-split--center{gap:2.5rem;align-items:center;}
 /* Grid items may shrink below their content's intrinsic width. Without this a
-   wide <select> (the Awlgrip paint-type menu) held the single phone column
-   open past the screen edge: 8px at 375px before 2026-10-03, 13px once the
-   canvas wrapper's side padding became MP's 20px. */
+   wide <select> (the Awlgrip paint-type menu) holds the single phone column
+   open past the screen edge. */
 .mp-split > *{min-width:0;}
 
 /* .mp-card-grid: a grid of cards -- one column, two from 768px, and three
-   from 992px with --three. The Services page's grids were the same
-   three-column grid; the Kits and Calculators index grids were the same
-   two-column grid. */
+   from 992px with --three (the Services page's grids are three-column; the
+   Kits and Calculators index grids are two-column). */
 .mp-card-grid{
   display:grid;gap:1.25rem;
   grid-template-columns:1fr;
@@ -5329,7 +5190,6 @@ body,
 
 /* ============================================================
    SHARED SITE COMPONENTS -- SECTION HEADINGS AND CHECKLIST
-   Added 2026-10-02.
 
    .mp-section-title / .mp-section-lead: the centered heading and lead
    paragraph that open a page section (Home and Services use both; Kits
@@ -5363,15 +5223,10 @@ body,
 
 /* ============================================================
    HOME PAGE-SPECIFIC STYLES (index.html)
-   Added 2026-09-21 for the Home page's rebuild onto the approved
-   Magic Patterns design (Home.tsx -- https://www.magicpatterns.com/
-   c/igj1coepi9s4kwq41co9iw). Visual-only translation from React/
-   Tailwind to plain CSS; index.html has no calculator math or
-   Supabase data of its own, so there was no page logic underneath
-   the old markup to preserve. Built on the same --chrome-* token
-   system as every other page-specific section in this file -- no new
-   hardcoded colors were needed. Namespaced under .home-* so nothing
-   here can leak onto other pages.
+   Built on the same --chrome-* token system as every other page-specific
+   section in this file. index.html has no calculator math or Supabase
+   data of its own, so these rules are visual only. Namespaced under
+   .home-* so nothing here can leak onto other pages.
    ============================================================ */
 
 /* ---------- Shared home-* primitives (container) ---------- */
@@ -5486,10 +5341,8 @@ body,
 
 /* ============================================================
    CALCULATORS INDEX PAGE-SPECIFIC STYLES (calculators.html)
-   Added 2026-09-23 for the Calculators index rebuild onto the
-   approved Magic Patterns design (Calculators.tsx -- chemcalc-redesign
-   repo). Visual-only translation; this page has no calculator math
-   of its own, just links out to the five calculator pages.
+   This page has no calculator math of its own, just links out to the five
+   calculator pages.
 
    Reuses .mp-hero/.mp-hero-title/.mp-hero-tagline/.mp-hero-copy
    verbatim (SHARED CALCULATOR COMPONENTS section above) for the
@@ -5545,27 +5398,23 @@ body,
 
 @media (max-width:575.98px){
   .calc-index-cta{padding:1.5rem;}
-  /* MEKP (first) card's real height ends close enough to the fixed
+  /* The first (MEKP) card's real height ends close enough to the fixed
      floating cluster's occupied band (#chemcalc-chatbot, at
-     --chrome-fab-bottom-chat and --chrome-fab-size tall; 5.5rem and 56px
-     when this was measured) that the Awlgrip card's tag pill lands inside it at
-     initial paint, scroll 0 -- confirmed via Range.getClientRects() on
-     the tag text. Extra clearance after the first card only, so the
-     rest of the stack's spacing is untouched. Floating cluster's own
-     CSS is not touched. */
+     --chrome-fab-bottom-chat and --chrome-fab-size tall) that the Awlgrip
+     card's tag pill would land inside it at initial paint (scroll 0). Extra
+     clearance after the first card only, so the rest of the stack's spacing
+     is unchanged. */
   .calc-index-grid > .mp-card:first-child{margin-bottom:3.5rem;}
 }
 
 /* ============================================================
    SERVICES PAGE-SPECIFIC STYLES (services.html)
-   Added 2026-09-29 for the Services page interior rebuild onto the
-   chrome design system, following the Calculators Index rebuild's
-   conventions (CALCULATORS INDEX PAGE-SPECIFIC STYLES, above) -- same
-   .mp-hero reuse, with the service cards, project showcase, and Custom
-   Estimator rows laid out by .mp-card-grid and .mp-split. This page has
-   no calculator math of its own, just service listings, a real-photo
-   project showcase (Facebook links preserved), and the Custom
-   Estimator pitch section.
+   Same .mp-hero reuse as the Calculators index (CALCULATORS INDEX
+   PAGE-SPECIFIC STYLES, above), with the service cards, project
+   showcase, and Custom Estimator rows laid out by .mp-card-grid and
+   .mp-split. This page has no calculator math of its own, just service
+   listings, a real-photo project showcase (with Facebook links), and
+   the Custom Estimator pitch section.
 
    Namespaced under .services-* so nothing here can leak onto other
    pages -- same discipline as .home-* and .calc-index-*. Every button is
@@ -5635,13 +5484,10 @@ body,
 
 /* ============================================================
    ABOUT PAGE-SPECIFIC STYLES (about.html)
-   Added 2026-09-30 for the About page interior rebuild onto the chrome
-   design system, the same pattern already used by index.html,
-   calculators.html, and services.html. Reuses .mp-hero and
-   .mp-hero-title verbatim for the H1 band (no tagline, no copy
-   paragraph on this page). The two-column grid below it (.about-grid)
-   is .mp-split, which is one column and becomes two at min-width:992px;
-   .about-grid only sets the column ratio.
+   Reuses .mp-hero and .mp-hero-title verbatim for the H1 band (no
+   tagline, no copy paragraph on this page). The two-column grid below it
+   (.about-grid) is .mp-split, which is one column and becomes two at
+   min-width:992px; .about-grid only sets the column ratio.
 
    Namespaced under .about-* so nothing here can leak onto other pages
    -- same discipline as .home-*, .calc-index-*, .services-*. The
@@ -5685,10 +5531,6 @@ body,
 
 /* ============================================================
    TRELLO-SETUP PAGE-SPECIFIC STYLES (trello-setup.html)
-   Added 2026-09-30 (inline-style cleanup); rebuilt 2026-10-03 onto the
-   chrome design system from Magic Patterns' pages/TrelloSetup.tsx
-   (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw), with sizes,
-   spacing, and colors read from the live preview.
 
    What is shared (SHARED SITE COMPONENTS above): the hero (.mp-hero), the
    .mp-split grid on the light canvas, the dark box (.mp-panel), the paper
@@ -5918,32 +5760,25 @@ h2.trello-setup-title{
 
 /* ============================================================
    KITS PAGE-SPECIFIC STYLES (kits.html)
-   Added 2026-10-01 for the Kits page interior rebuild onto the chrome
-   design system, the same pattern already used by index.html,
-   calculators.html, services.html, and about.html. Reuses .mp-hero/
-   .mp-hero-title/.mp-hero-tagline/.mp-hero-copy verbatim for the H1
-   band. The "Need a Custom Solution?" 2-card row is an .mp-card-grid of
-   .mp-card boxes inside the .kits-custom-section wrapper.
+   Reuses .mp-hero/.mp-hero-title/.mp-hero-tagline/.mp-hero-copy verbatim
+   for the H1 band. The "Need a Custom Solution?" 2-card row is an
+   .mp-card-grid of .mp-card boxes inside the .kits-custom-section
+   wrapper.
 
    main.js's Supabase-backed product list (#product-list-container,
    #search-input, #filter-buttons/.filter-btn, .collapsible/.content,
-   .star-toggle) keeps its exact ids/classes and DOM structure --
-   restyled in place only. #search-input and .collapsible/.content/
-   .star-toggle/.filter-btn already had pre-chrome rules higher up this
-   file (the legacy "Filter Buttons" through "Search Input" blocks, plus
-   "Quick Wins Touch-spacing"); #search-input is an ID selector, so this
-   section's override is also written as #search-input (equal
-   specificity, later source order wins) rather than a class, which an ID
-   would have beaten regardless of source order. .filter-btn/
-   .collapsible/.content/.star-toggle are plain classes already, so
-   same-specificity + later order is enough. Those older rules are left
-   in place, not deleted -- kits.html is the only page that references
-   any of them (confirmed via repo-wide grep), so nothing else depends on
-   their current look. #custom-kit-options' id was dropped from the
-   markup (confirmed unreferenced by any JS/CSS/anchor outside its own
-   now-superseded "Custom Kit Options" rules higher up) in favor of a
-   plain .kits-custom-section class, so no ID-vs-class specificity fight
-   there either.
+   .star-toggle) depends on those exact ids/classes and DOM structure, so
+   they are styled in place, with no markup changes. #search-input, .collapsible/.content/
+   .star-toggle and .filter-btn also have older rules higher up this file
+   (the "Filter Buttons" through "Search Input" blocks, plus "Quick Wins
+   Touch-spacing"); kits.html is the only page that references any of
+   them. #search-input is an ID selector, so this section's override is
+   also written as #search-input (equal specificity, later source order
+   wins) rather than a class, which an ID would beat regardless of source
+   order. .filter-btn/.collapsible/.content/.star-toggle are plain
+   classes, so same specificity + later order is enough. The custom-kit
+   wrapper is a plain .kits-custom-section class (no ID), so there is no
+   ID-vs-class specificity fight there either.
 
    Namespaced under .kits-* so nothing here can leak onto other pages
    -- same discipline as .home-*, .calc-index-*, .services-*, .about-*.
@@ -5975,9 +5810,8 @@ h2.trello-setup-title{
 .kits-custom-footnote{font-size:.85rem;color:var(--chrome-ink-500);text-align:center;margin:1.5rem 0 0;}
 
 /* ---------- Search + filter toolbar (sticky) ----------
-   .header is position:relative (not fixed), so top:0 needs no offset
-   for a fixed header -- confirmed via the legacy .header rule under
-   "Header & Nav". */
+   .header is position:relative (not fixed; see the legacy .header rule
+   under "Header & Nav"), so top:0 needs no offset for a fixed header. */
 .kits-toolbar{
   position:sticky;top:0;z-index:40;
   max-width:1100px;margin:0 auto 1.5rem;padding:1rem 1.5rem;
@@ -6023,31 +5857,29 @@ h2.trello-setup-title{
   box-shadow:var(--chrome-shadow-panel);
   text-transform:uppercase;
 }
-/* Section names come straight from affiliate_materials.section (e.g.
-   "Mask Filter Kits" is stored title-case, unlike the other 6 sections'
-   all-caps values) -- fixed at the CSS layer so it can't recur with any
-   future section name, not by touching the data. text-transform is
-   inherited by ::after, so it's explicitly reset here to keep the
-   collapse/expand chevron's own content ("v"/">" ) visually unchanged --
-   text-transform:uppercase would otherwise turn its lowercase "v" into
-   "V", a different glyph shape, which nobody asked for. */
+/* Section names come straight from affiliate_materials.section and their case
+   varies ("Mask Filter Kits" is stored title-case, unlike the other 6
+   sections' all-caps values), so the case is evened out at the CSS layer and
+   works for any future section name. text-transform is inherited by ::after,
+   so it is explicitly reset here to keep the collapse/expand chevron's own
+   content ("v"/">") unchanged: text-transform:uppercase would otherwise turn
+   its lowercase "v" into "V", a different glyph shape. */
 .collapsible::after{color:var(--chrome-ink-600);text-transform:none;}
 .content{
   background:var(--chrome-paper-card);border:1px solid var(--chrome-paper-line);border-top:none;
 }
-/* .content's own padding is 0 (see the legacy .content rule higher up)
-   so .content's overflow:hidden actually clips this <ul> (its own
-   padding) when max-height is 0 -- padding living on .content itself
-   stayed visible as a solid band regardless of max-height, since
-   overflow:hidden clips a box's CHILDREN, not its own padding. main.js
-   renders exactly one <ul> per .content, never nested (confirmed in
-   source), so .content > ul can't double-apply. */
+/* .content's own padding is 0 (see the legacy .content rule higher up) so
+   .content's overflow:hidden actually clips this <ul> (its own padding) when
+   max-height is 0 -- padding on .content itself would stay visible as a solid
+   band regardless of max-height, since overflow:hidden clips a box's
+   CHILDREN, not its own padding. main.js renders exactly one <ul> per
+   .content, never nested, so .content > ul can't double-apply. */
 .content > ul{padding:1em;margin:0;}
-/* Matches the ul's own 1em top/bottom padding exactly, so the gap
-   above the first item and below the last item are equal -- without
-   this, the legacy "Quick Wins Touch-spacing" rule's margin-bottom on
-   EVERY li (including the last) stacked on top of the ul's own
-   padding-bottom, roughly doubling the bottom gap vs. the top. */
+/* Zeroes the last item's bottom margin so the gap above the first item and
+   below the last item are equal (the ul's own padding is 1em top and bottom);
+   without it, the legacy "Quick Wins Touch-spacing" rule's margin-bottom on
+   EVERY li (including the last) stacks on top of the ul's padding-bottom,
+   roughly doubling the bottom gap vs. the top. */
 .content ul li:last-child{margin-bottom:0;}
 .content ul li a{color:var(--chrome-ink-900);}
 .content ul li a:hover{color:var(--chrome-signal-600);}
@@ -6058,33 +5890,27 @@ h2.trello-setup-title{
 @media (max-width:575.98px){
   .kits-custom-title{font-size:1.2rem;}
   .kits-toolbar{padding:.85rem 1rem;}
-  /* First custom-services card renders high enough in the initial
-     viewport (scroll 0, 375px) that its right edge sits under the
-     fixed floating cluster's column (#chemcalc-chatbot/.fab-donate/
-     .help-float-btn, right:var(--chrome-fab-right), --chrome-fab-size wide) --
-     confirmed via getBoundingClientRect() on both: without this rule
-     the card's right edge is flush with the cluster's right edge, so
-     the cluster's full column covers it; with the 5.5rem the card
-     ends 38px short of that column (32px when the buttons were 56px
-     wide). Same defect shape as the
-     Calculators Index collision. Extra right clearance on the section
-     wrapper (not the grid/card itself, so desktop/tablet 2-col layout
-     is untouched) keeps card content clear of that column. Floating
-     cluster's own CSS is not touched, same as that fix. */
+  /* The first custom-services card renders high enough in the initial
+     viewport (scroll 0, 375px) that its right edge would sit under the fixed
+     floating cluster's column (#chemcalc-chatbot/.fab-donate/.help-float-btn,
+     right:var(--chrome-fab-right), --chrome-fab-size wide): without this rule
+     the card's right edge is flush with the cluster's right edge, so the
+     cluster's full column covers it. 5.5rem of extra right clearance on the
+     section wrapper (not the grid/card itself, so the desktop/tablet 2-col
+     layout is unchanged) keeps card content clear of that column. */
   .kits-custom-section{padding-right:5.5rem;}
 }
 
 /* ============================================================
    PRINT-ONLY CONTRAST -- SERVICES AND KITS PANEL TEXT
-   Added 2026-10-03, extended the same day. The Services and Kits pages
-   recolored their text from white to dark teal for the new light screen
-   canvas (<body class="mp-canvas">). That canvas is screen-only, so in
-   print these two pages still render the legacy dark .container
-   background (#2c2c2e), and the recolored text fell to 1.2-3.0:1 against
-   it. The rules below restore each element's earlier light (white-based)
-   value for print only; screen rendering is untouched. Measured under
-   print-media emulation against that background, every rule below clears
-   4.5:1 (.kits-product-disclosure is the tightest).
+   The Services and Kits pages color their text dark teal for the light
+   screen canvas (<body class="mp-canvas">). That canvas is screen-only,
+   so in print these two pages still render the legacy dark .container
+   background (#2c2c2e), and dark text would be unreadable against it.
+   The rules below set each element's light (white-based) value for print
+   only; screen rendering is untouched. Each rule keeps at least 4.5:1
+   contrast against that background (.kits-product-disclosure is the
+   tightest).
 
    .mp-section-title and .mp-section-lead are shared with the Home page
    (a light section with dark text), so those rules are scoped to each
@@ -6109,20 +5935,17 @@ h2.trello-setup-title{
 
 /* ============================================================
    ESTIMATE HISTORY PAGE-SPECIFIC STYLES (history.html)
-   Added 2026-10-03 for the Estimate History rebuild onto the chrome
-   design system, from Magic Patterns' pages/EstimateHistory.tsx and
-   components/history/EstimatesTable.tsx. Everything shareable is shared:
-   .mp-hero (--overlap), .mp-card (--flush), .mp-card-icon (the gate's lock
-   badge), .mp-select (the search field), .mp-btn. What is here is what only
-   this page has. Namespaced .history-*; the older .hist-* and .status-*
-   rules (the pre-redesign dark layout) are no longer used by any page and
-   are left in place for a separate cleanup.
+   Everything shareable is shared: .mp-hero (--overlap), .mp-card
+   (--flush), .mp-card-icon (the gate's lock badge), .mp-select (the
+   search field), .mp-btn. What is here is what only this page has.
+   Namespaced .history-*; the older .hist-* and .status-* rules (see
+   ESTIMATE HISTORY -- LEGACY above) are not used by any page.
 
    The status control is the real native <select> (history.js still calls
-   updateStatus() on change and writes to Supabase), restyled as MP's colored
-   chip: appearance:none, a per-status color, and a chevron. Seven real
-   statuses, not MP's four: in progress, completed and invoiced follow the
-   existing palette (amber and teal steps).
+   updateStatus() on change and writes to Supabase), styled as a colored
+   chip: appearance:none, a per-status color, and a chevron. There are
+   seven statuses; in progress, completed and invoiced follow the existing
+   palette (amber and teal steps).
 
    Links and buttons restate margin-top, font-style, font-size, font-weight,
    and color on :visited, :hover, and :active, because the legacy sitewide
@@ -6276,7 +6099,8 @@ h2.trello-setup-title{
 }
 .history-status option{background:#ffffff;color:var(--chrome-ink-900);text-decoration:none;}
 .history-status--draft{background-color:var(--chrome-paper-muted);color:var(--chrome-ink-600);border-color:var(--chrome-paper-line);}
-/* MP uses signal-600 text here, which measures 3.78:1 on signal-50 at 12px; dark ink keeps the pale-amber chip and clears 4.5:1. */
+/* Dark ink text keeps the pale-amber chip above 4.5:1 contrast (signal-600
+   text measures only 3.78:1 on signal-50 at 12px). */
 .history-status--sent{background-color:var(--chrome-signal-50);color:var(--chrome-ink-800);border-color:var(--chrome-signal-200);}
 .history-status--approved{background-color:rgba(15,122,133,.1);color:var(--chrome-sea-600);border-color:rgba(15,122,133,.2);}
 .history-status--in-progress{background-color:var(--chrome-signal-200);color:var(--chrome-ink-900);border-color:var(--chrome-signal-400);}
@@ -6347,22 +6171,17 @@ h2.trello-setup-title{
 
 /* ============================================================
    LEGAL DOCUMENT PAGE STYLES (privacy.html / terms.html / cookie.html / legal.html)
-   Added 2026-10-02 for the Privacy Policy, Terms of Use, and Cookie
-   Policy interior rebuild onto the chrome design system (legal.html, the
-   Legal Disclaimer, now uses the same layout), the same pattern already
-   used by index.html, calculators.html, services.html, about.html, and
-   kits.html. One shared "legal document" layout applied to all four
-   pages: the title band reuses .mp-hero, .mp-hero-title, and
-   .mp-hero-tagline verbatim (the tagline carries each page's own
-   "Effective date" line, which differs between pages and is not synced;
-   legal.html has no tagline), then a two-column layout
-   (.legal-doc-layout) with the document card on the left
-   (.legal-doc-article) and a small sticky card on the right
-   (.legal-doc-sidebar) listing all four legal documents with the current
-   one marked via aria-current="page". There is no client-side router, so
-   each page is its own static HTML file and its sidebar links to the
-   other three real .html files. The two-column split is .mp-split (one
-   column, two from min-width:992px); .legal-doc-layout only sets the
+   One shared "legal document" layout applied to all four pages: the
+   title band reuses .mp-hero, .mp-hero-title, and .mp-hero-tagline
+   verbatim (the tagline carries each page's own "Effective date" line,
+   which differs between pages and is not synced; legal.html has no
+   tagline), then a two-column layout (.legal-doc-layout) with the
+   document card on the left (.legal-doc-article) and a small sticky card
+   on the right (.legal-doc-sidebar) listing all four legal documents with
+   the current one marked via aria-current="page". There is no client-side
+   router, so each page is its own static HTML file and its sidebar links
+   to the other three real .html files. The two-column split is .mp-split
+   (one column, two from min-width:992px); .legal-doc-layout only sets the
    column ratio.
 
    Namespaced under .legal-doc-* so nothing here can leak onto other
