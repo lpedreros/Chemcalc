@@ -17,7 +17,8 @@
 -- WHAT THIS DOES, in one transaction:
 --   1. revoke SELECT on public.profiles from anon and authenticated (table level)
 --   2. revoke UPDATE (trello_api_key, trello_token) from authenticated
---   3. grant SELECT on the 26 other columns (incl. the generated trello_connected) to authenticated
+--   3. grant SELECT on the 28 other columns (incl. the generated trello_connected and the two opaque Vault id columns
+--      trello_api_key_id / trello_token_id added by 20261009212435_trello_credentials_to_vault) to authenticated
 --   anon gets nothing: RLS ("auth.uid() = id") already returns anon zero rows, so no behavior is lost; it only removes
 --   a grant that served no purpose. (Opt-out: delete "anon" from statement 1 and the anon assertions; the secrets are
 --   then still readable by anon in principle, blocked only by RLS.)
@@ -46,7 +47,7 @@ declare
     'stripe_customer_id','stripe_subscription_id','subscription_status',
     'trello_board_id','trello_board_name','trello_list_id','trello_list_name',
     'biz_name','biz_tagline','biz_phone','biz_email','biz_website','biz_address','biz_prefix','biz_logo_url',
-    'beta_tester','biz_custom_terms','trello_connected'];
+    'beta_tester','biz_custom_terms','trello_connected','trello_api_key_id','trello_token_id'];
   secrets text[] := array['trello_api_key','trello_token'];
   unknown_cols text;
   missing_cols text;
@@ -65,7 +66,7 @@ begin
    where not exists (select 1 from information_schema.columns
                       where table_schema = 'public' and table_name = 'profiles' and column_name = c);
   if missing_cols is not null then
-    raise exception 'expected profiles column(s) not found: % (is step A applied?)', missing_cols;
+    raise exception 'expected profiles column(s) not found: % (is step A, or the Trello Vault migration that adds the two id columns, applied?)', missing_cols;
   end if;
 
   if has_table_privilege('authenticated', 'public.profiles', 'UPDATE')
@@ -106,7 +107,7 @@ grant select (
   stripe_customer_id, stripe_subscription_id, subscription_status,
   trello_board_id, trello_board_name, trello_list_id, trello_list_name,
   biz_name, biz_tagline, biz_phone, biz_email, biz_website, biz_address, biz_prefix, biz_logo_url,
-  beta_tester, biz_custom_terms, trello_connected
+  beta_tester, biz_custom_terms, trello_connected, trello_api_key_id, trello_token_id
 ) on public.profiles to authenticated;
 
 -- Post-flight: the secrets are closed to the browser roles, everything else still works, nothing protected became writable.
@@ -117,7 +118,7 @@ declare
     'stripe_customer_id','stripe_subscription_id','subscription_status',
     'trello_board_id','trello_board_name','trello_list_id','trello_list_name',
     'biz_name','biz_tagline','biz_phone','biz_email','biz_website','biz_address','biz_prefix','biz_logo_url',
-    'beta_tester','biz_custom_terms','trello_connected'];
+    'beta_tester','biz_custom_terms','trello_connected','trello_api_key_id','trello_token_id'];
   writable text[] := array[
     'full_name','company_name','estimate_prefix','logo_url',
     'trello_board_id','trello_board_name','trello_list_id','trello_list_name',
