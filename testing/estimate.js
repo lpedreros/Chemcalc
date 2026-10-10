@@ -1273,7 +1273,7 @@ function collectEstimateData() {
     grandTotal: grandTotalValue,
     materials: materials,
     tasks: tasks,
-    company: (typeof getProfile === 'function' && getProfile()) ? (getProfile().company_name || 'Think & Engage LLC') : 'Think & Engage LLC',
+    company: (typeof getProfile === 'function' && getProfile()) ? (getProfile().company_name || '') : '',
     userEmail: (typeof getUser === 'function' && getUser()) ? getUser().email : null,
     tier: (typeof getProfile === 'function' && getProfile()) ? (getProfile().tier || 'free') : 'free',
     loggedAt: new Date().toISOString()
