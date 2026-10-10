@@ -1,7 +1,7 @@
 // email-results.js
 // Handles the "Email me these results" functionality across all calculators
 
-async function sendResultsEmail(calculatorName, resultElementIds) {
+async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderName) {
     const emailInput = document.getElementById('captureEmailInput');
     const btn = document.getElementById('btnEmailResults');
     const msg = document.getElementById('emailResultsMsg');
@@ -14,6 +14,28 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
         msg.style.color = "#e74c3c";
         msg.style.display = "block";
         return;
+    }
+
+    // Optional batch-input recap, prepended ahead of the computed results
+    // below. recapBuilderName is a global function name (not a function
+    // reference -- this call is assembled into an inline onclick string
+    // by injectEmailCaptureUI, so it has to stay JSON-serializable) that
+    // the calling page supplies. It's looked up and called HERE, at send
+    // time, so it reads whatever the real inputs say right now -- not
+    // whatever they said back when injectEmailCaptureUI ran at page load.
+    // Pages that don't pass a third argument keep the exact old behavior.
+    let recapHtml = '';
+    if (recapBuilderName && typeof window[recapBuilderName] === 'function') {
+        try {
+            const recapPairs = window[recapBuilderName]() || [];
+            recapPairs.forEach(pair => {
+                if (pair && pair.label && pair.value) {
+                    recapHtml += `<p style="margin-bottom: 6px; font-size: 14px; color: #555555;"><strong>${pair.label}:</strong> ${pair.value}</p>`;
+                }
+            });
+        } catch (err) {
+            console.error('Recap builder (' + recapBuilderName + ') failed:', err);
+        }
     }
 
     // Gather results HTML
@@ -43,12 +65,24 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
             throw new Error("Supabase client not loaded.");
         }
 
+        const optInEl = document.getElementById('marketingOptIn');
+        const marketingOptIn = optInEl ? optInEl.checked : false;
+
         const { data, error } = await _sb.functions.invoke('send-results', {
             body: {
                 email: email,
                 calculatorName: calculatorName,
-                resultsHtml: resultsHtml,
-                sourceUrl: window.location.href
+                resultsHtml: recapHtml + resultsHtml,
+                sourceUrl: window.location.href,
+                // Canonical tracker identifier ("awlgrip"/"alexseal"/"clothcalc"/
+                // "epifanes"/"mekp" -- same one calc-tracker.js's logCalculation()
+                // takes as its first argument), NOT calculatorName above --
+                // that's just the human-readable display string used for the
+                // email subject and can be reworded without meaning to change
+                // tip selection. Guarded so a missing window._ccLastCalc sends
+                // null instead of throwing.
+                calculatorId: window._ccLastCalc && window._ccLastCalc.calculator ? window._ccLastCalc.calculator : null,
+                marketingOptIn: marketingOptIn
             }
         });
 
@@ -59,9 +93,28 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
         msg.style.display = "block";
         emailInput.value = ""; // clear input
 
-        // Mark this session as having captured an email in analytics
-        if (typeof markEmailCaptured === 'function') {
-          markEmailCaptured();
+        // Log this settled answer immediately (skips the debounce), and
+        // AWAIT it -- mark_email_captured() flips the most recent row for
+        // this session, so the row this send corresponds to has to exist
+        // before the mark runs. Previously the mark fired first and
+        // unawaited, so it either found no row at all (the immediate path
+        // cancels the pending debounced write) or flipped an older,
+        // unrelated row.
+        //
+        // NOTE: window._ccLastCalc.calculator is the tracker's own
+        // identifier (e.g. 'mekp') set by the calculator script alongside
+        // its logCalculation() call -- NOT this function's own
+        // calculatorName parameter above, which is just the display
+        // string used for the email subject (e.g. "MEKP Catalyst").
+        if (window._ccLastCalc && typeof logCalculation === 'function') {
+          await logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+
+          // Only mark once that row is actually in. With no _ccLastCalc
+          // there is no row for this send, and marking would flip whatever
+          // unrelated row happened to be most recent -- the exact bug above.
+          if (typeof markEmailCaptured === 'function') {
+            await markEmailCaptured();
+          }
         }
 
     } catch (err) {
@@ -75,20 +128,30 @@ async function sendResultsEmail(calculatorName, resultElementIds) {
     }
 }
 
-// Helper to inject the UI into a container
-function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray) {
+// Helper to inject the UI into a container. recapBuilderName is optional:
+// the name of a global function (defined on the calling page) that
+// returns an array of {label, value} pairs assembled from that page's
+// own real inputs -- see sendResultsEmail() above for how/when it's
+// called. Omit it and behavior is unchanged from before this existed.
+function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray, recapBuilderName) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    const recapArg = recapBuilderName ? `, '${recapBuilderName}'` : '';
 
     const html = `
         <div class="email-capture-box mt-4 p-3" style="background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
             <h6 style="margin-bottom: 10px; color: #2c3e50;">Save Your Results</h6>
-            <p style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 10px;">Enter your email to get a copy of these results and helpful marine repair tips.</p>
+            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">Enter your email to get a copy of these results.</p>
             <div class="input-group mb-2">
                 <input type="email" id="captureEmailInput" class="form-control" placeholder="your@email.com">
                 <div class="input-group-append">
-                    <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")})">Email Me</button>
+                    <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")}${recapArg})">Email Me</button>
                 </div>
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="marketingOptIn">
+                <label class="form-check-label" for="marketingOptIn" style="font-size: 0.8rem; color:#5f6b6c;">Also send me occasional marine repair tips (unsubscribe anytime)</label>
             </div>
             <div id="emailResultsMsg" style="display:none; font-size: 0.85rem; margin-top: 5px;"></div>
         </div>

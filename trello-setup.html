@@ -37,154 +37,383 @@
   }
   </script>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag("js", new Date());
-    gtag("config", "G-DTECSH4N52");
-  </script>
-		
-	<!-- Meta Pixel -->
-	<script src="/meta-pixel.js"></script>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="images/Think-and-Engage-Logo1c-Black-Seal.png" />
-
-  <!-- Bootstrap CSS -->
+<!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css" />
+<!-- #BeginLibraryItem "/Library/head-common.lbi" -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- ============================================================
+     Common head resources -- loaded on every real page. Kept in sync
+     by sync_library.py's marker-based auto-discovery (run from
+     \testing\): it reads this file and replaces everything between
+     the #BeginLibraryItem "/Library/head-common.lbi" / #EndLibraryItem
+     markers on every page that has them -- the same mechanism as
+     every other .lbi (nav.lbi, Footer.lbi, etc.), no separate page
+     list to maintain. To update sitewide: edit ONLY this file, then
+     re-run `python3 sync_library.py`. Never hand-edit the marked
+     block on an individual page -- the next sync will overwrite it.
 
-  <!-- AI Chatbot -->
-  <link rel="stylesheet" href="/chatbot_styles.css" />
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-	<script src="/supabase-client.js"></script>
-	<script src="/global-auth.js"></script>
-  </head>
-<body>
+     DO NOT put page-specific meta (title, description, OG/Twitter,
+     canonical, JSON-LD schema, robots) or page-only assets (calculator
+     CSS/JS, qrcode.min.js, affiliate-click-tracker.js, the Estimator's
+     own scripts) here -- those stay outside the markers, per page.
+     print_style_fix_v4.css and chatbot_styles.css used to belong on
+     this list too, but both are gone as of 2026-09-16 (commit
+     6529dd1) -- folded into style.css, whose one shared link is
+     already above in this file, so neither needs a link of its own
+     anymore, page-specific or otherwise.
 
-<!-- Header --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">
-  <div class="site-title">ChemCalc</div>
-  <div class="powered-by-header">
-    <span>Powered by</span>
-    <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
-  </div>
-  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
-  <nav id="mainNav" class="nav">
-    <a href="/index.html">Home</a>
+     DELIBERATELY NOT included here, even though every other page
+     shares them, because they are not actually safe to force onto
+     every page uniformly:
+       - Bootstrap CSS: 18 of 19 pages use 4.5.2 (stackpath CDN), but
+         estimate.html runs on Bootstrap 5.3.0 (jsdelivr) with no
+         jQuery/Popper -- a real, load-bearing difference, not drift.
+         Stays page-specific everywhere.
+       - global-account-modal.js: loaded on every page, but not always
+         from <head> -- estimate.html loads it near the end of <body>
+         instead (its own loginModal/bizInfoModal markup was already
+         removed in favor of the ones it injects -- a completed
+         migration, not a gap). Left where it is rather than moved into
+         head, to avoid touching that page's script order. Stays
+         page-specific everywhere; cookie.html/privacy.html/terms.html/
+         trello-setup.html were genuinely missing it anywhere on the
+         page (a real "Log In" dead link) and got it added directly,
+         once, outside their markers.
+     ============================================================ -->
+
+<!-- Web app manifest ("Add to Home Screen") -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="/images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+<!-- Apple touch icon (iOS "Add to Home Screen") -- independent of
+     manifest.json's own icons array, and previously wired up only on
+     clothcalc.html (a one-off guess, "Assuming same image for apple
+     touch icon", pointing at the browser-tab favicon PNG). Moved here
+     as the single sitewide source, pointing at the dedicated 180x180
+     icon rendered onto white for this purpose (see testing/icons/). -->
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+
+<!-- Google Fonts: Inter + IBM Plex Mono -- used by the sitewide dark
+     header/footer/floating-action chrome and by mekpcalc.css. Approved
+     design: Magic Patterns (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw).
+     style.css no longer @imports these itself now that this link is
+     finally live on every real page (see style.css's top-of-file
+     comment) -- loading both would double-fetch the same stylesheet. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<!-- Site stylesheet -->
+<link rel="stylesheet" href="/style.css">
+
+<!-- Chatbot styles -- chatbot.js/Library/Chatbot.lbi loads on every
+     page, so its stylesheet needs to as well (it was missing on 7
+     pages before this). -->
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DTECSH4N52');
+</script>
+
+<!-- Meta Pixel -->
+<script src="/meta-pixel.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/global-auth.js"></script>
+<!-- #EndLibraryItem -->
+<script src="/global-account-modal.js?v=1"></script> <!-- page-specific: fixes a dead Log In link, see head-common.lbi's own note -->
+</head>
+<body class="mp-canvas">
+<!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
+     Shared icon sprite (Phase 0 design system, ChemCalc_FullSite_Blueprint.md)
+     Inline SVG symbols, no icon-library dependency. Translated from the
+     lucide-react icons used by the Magic Patterns MEKP Calculator artifact
+     (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). Built once,
+     included sitewide so future phases can reuse it without redefining.
+
+     Usage: <svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-NAME"/></svg>
+
+     Currently wired up: icon-flask (Library/nav.lbi brand badge),
+     icon-menu / icon-x (Library/nav.lbi mobile toggle), icon-heart-handshake
+     (Library/Footer.lbi Donate button). The rest (user, printer,
+     thermometer, beaker, percent, ruler, star, search, chevron-down,
+     message-circle) are pre-built here for later phases (calculator pages,
+     estimator, account UI) -- not yet referenced anywhere.
+     ============================================================ -->
+<svg aria-hidden="true" class="svg-sprite-hidden" focusable="false">
+  <symbol id="icon-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+  </symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+  </symbol>
+  <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+  </symbol>
+  <symbol id="icon-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+  </symbol>
+  <symbol id="icon-beaker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/>
+  </symbol>
+  <symbol id="icon-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+  </symbol>
+  <symbol id="icon-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 17 17 3l4 4L7 21Z"/><path d="m14.5 5.5 2 2"/><path d="m11.5 8.5 2 2"/><path d="m8.5 11.5 2 2"/><path d="m5.5 14.5 2 2"/>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </symbol>
+  <symbol id="icon-message-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </symbol>
+  <symbol id="icon-heart-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/><path d="m12 5-3 3 3 3-2 2"/>
+  </symbol>
+  <!-- Added 2026-10-03 for contact.html (Magic Patterns Contact page); translated from lucide-react the same way as the symbols above. -->
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </symbol>
+  <symbol id="icon-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+  </symbol>
+  <symbol id="icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+  </symbol>
+  <!-- Added 2026-10-03 for history.html (Magic Patterns Estimate History page); lucide-react translations, same pattern as above. -->
+  <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/><path d="M12 5v14"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+  </symbol>
+  <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+  </symbol>
+  <symbol id="icon-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+  </symbol>
+  <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
+  </symbol>
+</svg>
+<!-- #EndLibraryItem -->
+
+<!-- Header --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="header site-header-dark d-print-none">
+  <div class="site-header-inner">
+    <a href="/index.html" class="site-brand">
+      <span class="site-brand-badge" aria-hidden="true"><svg width="20" height="20"><use href="#icon-flask"/></svg></span>
+      <span class="site-brand-text">
+        <span class="site-brand-name">ChemCalc</span>
+        <span class="site-brand-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" onclick="this.classList.toggle('is-open')">
+      <svg class="icon-menu" width="20" height="20" aria-hidden="true"><use href="#icon-menu"/></svg>
+      <svg class="icon-close" width="20" height="20" aria-hidden="true"><use href="#icon-x"/></svg>
+    </button>
+    <nav id="mainNav" class="nav" aria-label="Primary">
+      <a href="/index.html">Home</a>
 	<a href="/calculators.html">Calculators</a>
-    <a href="/estimate.html">Estimator</a>
-    <a href="/services.html">Services</a>
-    <a href="/kits.html">Kits</a>
-    <a href="/about.html">About</a>
-    <a href="/contact.html">Contact</a>
-    <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
-  </nav>
+      <a href="/estimate.html">Estimator</a>
+      <a href="/services.html">Services</a>
+      <a href="/kits.html">Kits</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
+      <span id="navAuthIndicator" class="nav-auth-indicator"></span>
+    </nav>
+  </div>
 </header>
 <!-- #EndLibraryItem --><!-- Main Content -->
-<main class="container py-5" style="max-width: 780px;">
+<div class="mp-hero mp-hero--overlap">
+  <h1 class="mp-hero-title">Connecting Trello to ChemCalc</h1>
+  <p class="mp-hero-tagline">A step-by-step guide for ChemCalc Pro users</p>
+  <p class="mp-hero-copy">About five minutes, start to finish. You'll need two browser tabs open &mdash; Trello and ChemCalc &mdash; for Steps 1 through 3.</p>
+</div>
+<main class="container">
+  <!-- What this does + What you will need -->
+  <div class="mp-split trello-setup-overview">
+    <section class="mp-panel trello-setup-panel">
+      <h2 class="mp-panel-title">What this does</h2>
+      <p class="trello-setup-panel-copy trello-setup-panel-copy--lead">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click.</p>
 
-  <h1 class="text-center mb-2">Connecting Trello to ChemCalc</h1>
-  <p class="text-center mb-5" style="color: #aaa;">A step-by-step guide for ChemCalc Pro users</p>
+      <!-- Illustrative example of the card ChemCalc creates. Static sample, not live data. -->
+      <div class="trello-setup-mock" role="img" aria-label="Example of the Trello card ChemCalc creates">
+        <div class="trello-setup-mock-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><path d="M14 4h7"/><path d="M14 9h7"/><path d="M14 15h7"/><path d="M14 20h7"/></svg>New Estimates</div>
+        <p class="trello-setup-mock-title">Dockside Charters &mdash; 2016 Robalo R246</p>
+        <p class="trello-setup-mock-desc">Transom delamination repair, 1708 laminate, gelcoat spray.</p>
+        <div class="trello-setup-mock-meta">
+          <span class="trello-setup-chip">24 hrs</span>
+          <span class="trello-setup-chip trello-setup-chip--total">$3,165</span>
+          <span class="trello-setup-mock-link">Open estimate<svg class="trello-setup-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
+        </div>
+      </div>
 
-  <!-- What this does -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">What this does</h5>
-      <p class="card-text">Once connected, any estimate you build in ChemCalc can be sent to a Trello card with one click. The card will include the client name, vessel info, scope of work, task hours, grand total, and a direct link back to the estimate.</p>
-    </div>
-  </div>
-
-  <!-- What you need -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">What you will need</h5>
-      <ul class="mb-0">
-        <li>A Trello account — free at <a href="https://trello.com" target="_blank" rel="noopener">trello.com</a></li>
-        <li>A Trello board with at least one list already set up (e.g., "New Estimates" or "Leads")</li>
-        <li>A ChemCalc Pro account</li>
+      <p class="sr-only">The card will include:</p>
+      <ul class="mp-checklist trello-setup-fields">
+        <li>Client name</li>
+        <li>Vessel info</li>
+        <li>Scope of work</li>
+        <li>Task hours</li>
+        <li>Grand total</li>
+        <li>Direct link back to the estimate</li>
       </ul>
-    </div>
+    </section>
+
+    <section class="mp-card mp-card--roomy">
+      <h2 class="trello-setup-title">What you will need</h2>
+      <ul class="mp-resource-links trello-setup-needs">
+        <li>
+          <span class="trello-setup-box" aria-hidden="true"></span>
+          <span>
+            <span class="trello-setup-need-label">A Trello account</span>
+            <span class="trello-setup-need-detail"><span class="sr-only"> &mdash; </span><a class="trello-setup-need-link" href="https://trello.com" target="_blank" rel="noopener">free at trello.com<svg class="trello-setup-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a></span>
+          </span>
+        </li>
+        <li>
+          <span class="trello-setup-box" aria-hidden="true"></span>
+          <span>
+            <span class="trello-setup-need-label">A Trello board with at least one list</span>
+            <span class="trello-setup-need-detail">already set up (e.g., "New Estimates" or "Leads")</span>
+          </span>
+        </li>
+        <li>
+          <span class="trello-setup-box" aria-hidden="true"></span>
+          <span>
+            <span class="trello-setup-need-label">A ChemCalc Pro account</span>
+          </span>
+        </li>
+      </ul>
+    </section>
   </div>
 
-  <!-- Step 1 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Step 1 &mdash; Get your Trello API Key</h5>
-      <ol class="mb-0">
-        <li>Go to <a href="https://trello.com/power-ups/admin" target="_blank" rel="noopener">trello.com/power-ups/admin</a></li>
-        <li>Click <strong>New Power-Up</strong> in the top right corner</li>
-        <li>Fill in any name (e.g., "ChemCalc"), select your workspace, and click <strong>Create</strong></li>
-        <li>On the next screen, click <strong>API Key</strong> in the left sidebar</li>
-        <li>Your API Key will be displayed at the top of the page — copy it and keep this tab open</li>
+  <!-- Steps: jump rail (desktop) + numbered step list -->
+  <div class="mp-split trello-setup-steps">
+    <nav class="trello-setup-rail" aria-label="Setup steps">
+      <h2 class="trello-setup-rail-title">Setup steps</h2>
+      <ol>
+        <li><a href="#step-1"><span class="trello-setup-rail-num">1.</span> Get your Trello API Key</a></li>
+        <li><a href="#step-2"><span class="trello-setup-rail-num">2.</span> Open My Business Info in ChemCalc</a></li>
+        <li><a href="#step-3"><span class="trello-setup-rail-num">3.</span> Enter your API Key and Authorize</a></li>
+        <li><a href="#step-4"><span class="trello-setup-rail-num">4.</span> Select your Board and List</a></li>
+        <li><a href="#step-5"><span class="trello-setup-rail-num">5.</span> Send an Estimate to Trello</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
       </ol>
-      <p class="mt-3 mb-0" style="color: #aaa; font-size: 0.9rem;">Your API Key is not a password, but treat it like one. Do not share it publicly.</p>
-    </div>
-  </div>
+    </nav>
 
-  <!-- Step 2 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Step 2 &mdash; Open My Business Info in ChemCalc</h5>
-      <ol class="mb-0">
-        <li>Log in to your ChemCalc account at <a href="https://chemcalc.co/estimate.html" target="_blank" rel="noopener">chemcalc.co/estimate.html</a></li>
-        <li>Click <strong>My Business Info</strong> at the top of the page</li>
-        <li>Scroll down to the <strong>Trello Integration</strong> section</li>
-      </ol>
-    </div>
-  </div>
+    <ol class="trello-setup-step-list">
 
-  <!-- Step 3 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Step 3 &mdash; Enter your API Key and Authorize</h5>
-      <ol class="mb-0">
-        <li>Paste your API Key into the <strong>Trello API Key</strong> field</li>
-        <li>Click <strong>Authorize Trello</strong></li>
-        <li>A Trello popup will open asking you to confirm access &mdash; click <strong>Allow</strong></li>
-        <li>The popup will close automatically and ChemCalc will confirm the connection</li>
-      </ol>
-      <p class="mt-3 mb-0" style="color: #aaa; font-size: 0.9rem;">If the popup does not open, check that your browser allows popups for chemcalc.co.</p>
-    </div>
-  </div>
+      <!-- Step 1 -->
+      <li class="trello-setup-step" id="step-1">
+        <span class="mp-card-icon trello-setup-step-num" aria-hidden="true">1</span>
+        <div class="mp-card">
+          <h3><span class="sr-only">Step 1 &mdash; </span>Get your Trello API Key</h3>
+          <ol class="trello-setup-substeps">
+            <li>Go to <a class="trello-setup-code" href="https://trello.com/power-ups/admin" target="_blank" rel="noopener">trello.com/power-ups/admin<svg class="trello-setup-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a></li>
+            <li>Click <strong>New Power-Up</strong> in the top right corner</li>
+            <li>Fill in any name (e.g., "ChemCalc"), select your workspace, and click <strong>Create</strong></li>
+            <li>On the next screen, click <strong>API Key</strong> in the left sidebar</li>
+            <li>Your API Key will be displayed at the top of the page — copy it and keep this tab open</li>
+          </ol>
+          <p class="trello-setup-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Your API Key is not a password, but treat it like one. Do not share it publicly.</p>
+        </div>
+      </li>
 
-  <!-- Step 4 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Step 4 &mdash; Select your Board and List</h5>
-      <ol class="mb-0">
-        <li>Once authorized, a <strong>Board</strong> dropdown will appear</li>
-        <li>Select the Trello board you want estimates sent to</li>
-        <li>A <strong>List</strong> dropdown will appear &mdash; select the list within that board</li>
-        <li>Click <strong>Save Business Info</strong></li>
-      </ol>
-    </div>
-  </div>
+      <!-- Step 2 -->
+      <li class="trello-setup-step" id="step-2">
+        <span class="mp-card-icon trello-setup-step-num" aria-hidden="true">2</span>
+        <div class="mp-card">
+          <h3><span class="sr-only">Step 2 &mdash; </span>Open My Business Info in ChemCalc</h3>
+          <ol class="trello-setup-substeps">
+            <li>Log in to your ChemCalc account at <a class="trello-setup-code" href="https://chemcalc.co/estimate.html" target="_blank" rel="noopener">chemcalc.co/estimate.html<svg class="trello-setup-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a></li>
+            <li>Click <strong>My Business Info</strong> at the top of the page</li>
+            <li>Scroll down to the <strong>Trello Integration</strong> section</li>
+          </ol>
+        </div>
+      </li>
 
-  <!-- Step 5 -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Step 5 &mdash; Send an Estimate to Trello</h5>
-      <ol class="mb-0">
-        <li>Build your estimate as normal</li>
-        <li>Click the <strong>Add to Trello</strong> button</li>
-        <li>ChemCalc will create a Trello card containing the client info, vessel, scope of work, task hours, and a direct link back to the estimate</li>
-      </ol>
-    </div>
+      <!-- Step 3 -->
+      <li class="trello-setup-step" id="step-3">
+        <span class="mp-card-icon trello-setup-step-num" aria-hidden="true">3</span>
+        <div class="mp-card">
+          <h3><span class="sr-only">Step 3 &mdash; </span>Enter your API Key and Authorize</h3>
+          <ol class="trello-setup-substeps">
+            <li>Paste your API Key into the <strong>Trello API Key</strong> field</li>
+            <li>Click <strong>Authorize Trello</strong></li>
+            <li>A Trello popup will open asking you to confirm access &mdash; click <strong>Allow</strong></li>
+            <li>The popup will close automatically and ChemCalc will confirm the connection</li>
+          </ol>
+          <p class="trello-setup-note trello-setup-note--info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>If the popup does not open, check that your browser allows popups for chemcalc.co.</p>
+        </div>
+      </li>
+
+      <!-- Step 4 -->
+      <li class="trello-setup-step" id="step-4">
+        <span class="mp-card-icon trello-setup-step-num" aria-hidden="true">4</span>
+        <div class="mp-card">
+          <h3><span class="sr-only">Step 4 &mdash; </span>Select your Board and List</h3>
+          <ol class="trello-setup-substeps">
+            <li>Once authorized, a <strong>Board</strong> dropdown will appear</li>
+            <li>Select the Trello board you want estimates sent to</li>
+            <li>A <strong>List</strong> dropdown will appear &mdash; select the list within that board</li>
+            <li>ChemCalc saves your choice automatically &mdash; look for &ldquo;Board and list saved.&rdquo; under the dropdowns</li>
+          </ol>
+        </div>
+      </li>
+
+      <!-- Step 5 -->
+      <li class="trello-setup-step" id="step-5">
+        <span class="mp-card-icon trello-setup-step-num" aria-hidden="true">5</span>
+        <div class="mp-card">
+          <h3><span class="sr-only">Step 5 &mdash; </span>Send an Estimate to Trello</h3>
+          <ol class="trello-setup-substeps">
+            <li>Build your estimate as normal</li>
+            <li>Click the <strong>Add to Trello</strong> button</li>
+            <li>ChemCalc will create a Trello card containing the client info, vessel, scope of work, task hours, and a direct link back to the estimate</li>
+          </ol>
+        </div>
+      </li>
+
+    </ol>
   </div>
 
   <!-- Troubleshooting -->
-  <div class="card mb-5">
-    <div class="card-body">
-      <h5 class="card-title">Troubleshooting</h5>
-      <table class="table table-sm mb-0" style="color: inherit;">
+  <section class="mp-card mp-card--flush trello-setup-help" id="troubleshooting">
+    <div class="trello-setup-help-head">
+      <h2 class="trello-setup-title">Troubleshooting</h2>
+    </div>
+    <div class="trello-setup-table-wrap">
+      <table class="trello-setup-table">
         <thead>
           <tr>
-            <th>Problem</th>
-            <th>Fix</th>
+            <th scope="col">Problem</th>
+            <th scope="col">Fix</th>
           </tr>
         </thead>
         <tbody>
@@ -202,7 +431,7 @@
           </tr>
           <tr>
             <td>Card was not created</td>
-            <td>Confirm your list is selected and click Save Business Info before trying again</td>
+            <td>Confirm a board and a list are both selected and that you saw &ldquo;Board and list saved.&rdquo; before trying again</td>
           </tr>
           <tr>
             <td>Token expired</td>
@@ -211,32 +440,44 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </section>
 
   <!-- CTA -->
-  <div class="text-center">
-    <a href="estimate.html" class="btn btn-primary">Go to the Estimator</a>
-  </div>
+  <section class="mp-panel trello-setup-panel trello-setup-cta">
+    <div class="trello-setup-cta-text">
+      <h2 class="mp-panel-title">Connected? Send your first card.</h2>
+      <p class="trello-setup-panel-copy">Open the Repair Estimator, build a quote, and use Add to Trello.</p>
+    </div>
+    <a href="estimate.html" class="mp-btn mp-btn--primary">Open the Estimator</a>
+  </section>
 
 </main>
 
-<!-- Donation Button -->
-<button id="donateButton" class="btn btn-primary fixed-donate-btn" data-toggle="modal" data-target="#donationModal">Donate</button>
+<!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Donate — top of the bottom-right floating-action cluster (with the
+     BoatMD chat toggle from chatbot_styles.css and the page Help button
+     from Library/HelpButton.lbi below it; see --chrome-fab-right and
+     .fab-donate in style.css). Trigger + modal chrome restyled to tokens
+     only — the PayPal form fields below are unchanged. -->
+<button id="donateButton" class="fab-donate d-print-none" data-toggle="modal" data-target="#donationModal">
+  <svg width="16" height="16" aria-hidden="true"><use href="#icon-heart-handshake"/></svg>
+  <span class="fab-donate-label">Donate</span>
+</button>
 
-<!-- Donation Modal -->
+<!-- Donation Modal (PayPal snippet unchanged) -->
 <div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" style="background-color: #2c2c2e; color: #ffffff; border: none;">
-      <div class="modal-header" style="border-bottom: 1px solid #48484a;">
+    <div class="modal-content fab-donate-modal">
+      <div class="modal-header">
         <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence.</p>
-        <p>Your support goes toward site development, content updates, and continuous improvement of our services.</p>
-        <hr style="border-color: #48484a;">
+        <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+        <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+        <hr>
         <div class="donation-options">
           <form action="https://www.paypal.com/donate" method="post" target="_top">
             <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
@@ -248,50 +489,44 @@
           </form>
         </div>
       </div>
-      <div class="modal-footer" style="border-top: 1px solid #48484a;">
+      <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Footer -->
-<footer class="footer text-center">
-  <div class="legal-links mb-2">
-    <a href="/privacy.html">Privacy Policy</a> |
-    <a href="/terms.html">Terms of Use</a> |
-    <a href="/cookie.html">Cookie Policy</a>
-  </div>
-  <p class="mb-2">&copy; 2025 ChemCalc. All rights reserved.</p>
-  <div class="powered-by">
-    <span>Powered by</span>
-    <img src="images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" />
+<!-- Footer Section -->
+<footer class="footer site-footer-dark">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">
+      <span class="site-footer-badge" aria-hidden="true">T&amp;E</span>
+      <span class="site-footer-brand-text">
+        <span class="site-footer-brand-name">Think &amp; Engage</span>
+        Parent brand of ChemCalc
+      </span>
+    </div>
+    <div class="legal-links mb-2">
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/cookie.html">Cookie Policy</a>
+    </div>
+    <p class="mb-2">&copy; <span id="currentYear">2026</span> ChemCalc. All rights reserved.</p>
   </div>
 </footer>
+<!-- #EndLibraryItem -->
 
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="main.js"></script><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="container header d-print-none">
-  <div class="site-title">ChemCalc</div>
-  <div class="powered-by-header">
-    <span>Powered by</span>
-    <img src="/images/Think-and-Engage-Logo1c-white-Seal.png" alt="Think &amp; Engage Logo" onerror="this.style.display='none'" />
-  </div>
-  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
-  <nav id="mainNav" class="nav">
-    <a href="/index.html">Home</a>
-	<a href="/calculators.html">Calculators</a>
-    <a href="/estimate.html">Estimator</a>
-    <a href="/services.html">Services</a>
-    <a href="/kits.html">Kits</a>
-    <a href="/about.html">About</a>
-    <a href="/contact.html">Contact</a>
-    <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
-  </nav>
-</header>
-<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
+<script src="main.js"></script>
+<!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+
+<!-- BoatMD Chatbot (global — loads on every page) -->
+<script src="/chatbot.js"></script>
+<!-- #EndLibraryItem -->
+<!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 

@@ -36,13 +36,31 @@ async function authInit() {
 }
 
 /* ── Load profile from Supabase ──────────────────────────── */
+// Every profiles column the browser may read. NOT select('*'): the database hides trello_api_key and trello_token from the
+// browser (only the `trello` Edge Function reads them) and refuses any select that includes a hidden column. A new profiles
+// column the page needs must be added here AND get its own GRANT SELECT (column) in the migration that adds it.
+const PROFILE_COLUMNS = 'id, created_at, email, full_name, company_name, estimate_prefix, logo_url, tier, ' +
+  'stripe_customer_id, stripe_subscription_id, subscription_status, ' +
+  'trello_board_id, trello_board_name, trello_list_id, trello_list_name, ' +
+  'biz_name, biz_tagline, biz_phone, biz_email, biz_website, biz_address, biz_prefix, biz_logo_url, ' +
+  'beta_tester, biz_custom_terms, trello_connected';
+
 async function loadProfile() {
   if (!currentUser) return;
-  const { data, error } = await _sb
+  let { data, error } = await _sb
     .from('profiles')
-    .select('*')
+    .select(PROFILE_COLUMNS)
     .eq('id', currentUser.id)
     .single();
+  // TRANSITIONAL: until migration add_profiles_trello_connected is applied, that column does not exist (42703) and the whole
+  // select fails, which would make every Pro user look like a free user. Retry without it. Delete this once the migration is live.
+  if (error && error.code === '42703') {
+    ({ data, error } = await _sb
+      .from('profiles')
+      .select(PROFILE_COLUMNS.replace(', trello_connected', ''))
+      .eq('id', currentUser.id)
+      .single());
+  }
   if (!error && data) currentProfile = data;
 }
 
@@ -53,8 +71,10 @@ function applyAuthUI() {
   const logoutBtn    = document.getElementById('logoutBtn');
   const upgradeBtn   = document.querySelector('.btn-tier-upgrade');
   const manageSubBtn = document.getElementById('manageSubBtn');
+  const manageSubCompedBtn = document.getElementById('manageSubCompedBtn');
   const tier         = currentProfile ? currentProfile.tier : 'free';
   const proActive    = isPro();
+  const hasStripeCustomer = !!(currentProfile && currentProfile.stripe_customer_id);
 
   if (currentUser) {
     const name = currentProfile?.full_name || currentUser.email;
@@ -72,7 +92,8 @@ function applyAuthUI() {
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
     // Show Manage Subscription for Pro, Upgrade button for Free
     if (upgradeBtn)   upgradeBtn.style.display   = proActive ? 'none'         : 'inline-block';
-    if (manageSubBtn) manageSubBtn.style.display = proActive ? 'inline-block' : 'none';
+    if (manageSubBtn) manageSubBtn.style.display = (proActive && hasStripeCustomer) ? 'inline-block' : 'none';
+    if (manageSubCompedBtn) manageSubCompedBtn.style.display = (proActive && !hasStripeCustomer) ? 'inline-block' : 'none';
   } else {
     if (tierLabel) {
       tierLabel.textContent = '\uD83D\uDD10 Free Plan';
@@ -82,6 +103,7 @@ function applyAuthUI() {
     if (logoutBtn)    logoutBtn.style.display    = 'none';
     if (upgradeBtn)   upgradeBtn.style.display   = 'inline-block';
     if (manageSubBtn) manageSubBtn.style.display = 'none';
+    if (manageSubCompedBtn) manageSubCompedBtn.style.display = 'none';
   }
 
   // Tell estimate.js what tier we're on
@@ -113,7 +135,7 @@ async function doGoogleLogin() {
   const { error } = await _sb.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.href,
+      redirectTo: window.location.origin + window.location.pathname + window.location.search,
       queryParams: {
         prompt: 'select_account'
       }
@@ -164,6 +186,14 @@ async function saveEstimateToSupabase(payload) {
 
   var matTotal  = (payload.materials || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
   var paintTotal = (payload.paint || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
+  // Labor is hours x hourly rate over every row of every task, summed per task like calcTaskTotal() in estimate.js.
+  // A blank, zero or non-numeric rate bills at 100 (not 0), the same fallback the page uses.
+  var laborRate  = parseFloat(payload.hourlyRate) || 100;
+  var laborTotal = (payload.tasks || []).reduce(function(s, t) {
+    var taskTotal = 0;
+    (t.rows || []).forEach(function(r) { taskTotal += (parseFloat(r.hours) || 0) * laborRate; });
+    return s + taskTotal;
+  }, 0);
 
   const row = {
     user_id:         currentUser.id,
@@ -181,7 +211,7 @@ async function saveEstimateToSupabase(payload) {
     hin:             payload.boatHIN      || '',
     materials_total: matTotal,
     paint_total:     paintTotal,
-    labor_total:     parseFloat(payload.grandTotal) || 0,
+    labor_total:     laborTotal,
     grand_total:     parseFloat(payload.grandTotal) || 0,
     hourly_rate:     parseFloat(payload.hourlyRate) || 0,
     estimate_data:   payload,

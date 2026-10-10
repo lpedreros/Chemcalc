@@ -7,10 +7,12 @@
 //
 // Depends on: supabase-client.js (_sb)
 // On estimate.html, additional tabs (Biz Info, Trello, Materials Library) are shown
-// because estimate.js and materials_library.js provide the required functions.
+// because estimate.js, trello.js and materials_library.js provide the required functions.
 //
 // Usage: <script src="/global-account-modal.js"></script>
-//        (load AFTER supabase-client.js on all pages)
+//        Tolerates loading either before or after supabase-client.js --
+//        resolveSession() polls for _sb to appear (bounded wait, ~10s)
+//        instead of assuming it is already there.
 (function () {
   'use strict';
 
@@ -25,7 +27,8 @@
   // defines them first, so they won't be overwritten there).
   // ══════════════════════════════════════════════════════════════════════════
 
-  // Internal user/profile cache (used only when auth.js is NOT loaded)
+  // Internal user/profile cache (filled by resolveSession(), which runs on every
+  // page except estimate.html)
   var _cachedUser = null;
   var _cachedProfile = null;
   var _sessionReady = null; // Promise: resolves when profile fetch completes
@@ -42,6 +45,20 @@
       var p = _cachedProfile;
       return (p && p.tier === 'pro') || (p && p.subscription_status === 'active');
     };
+  }
+  // Shared synchronous auth-state getter (2026-10-02 consolidation) -- for
+  // any script that runs after resolution has already happened and needs
+  // the current value without waiting for a chemcalc:authchange event.
+  // Reads through getUser()/getProfile() rather than closing over
+  // _cachedUser/_cachedProfile directly: on estimate.html, resolveSession()
+  // below never runs (auth.js handles session resolution there instead,
+  // see isEstimatorPage), so _cachedUser/_cachedProfile would always be
+  // null there -- but getUser()/getProfile() already resolve correctly on
+  // every page regardless, via the same "if not already defined" guard
+  // that lets auth.js's own versions win on estimate.html. Without this,
+  // global-auth.js's nav pill would always show logged-out on estimate.html.
+  if (typeof window.getAuthState !== 'function') {
+    window.getAuthState = function () { return { user: getUser(), profile: getProfile() }; };
   }
 
   // ── doLogin (email/password) ─────────────────────────────────────────────
@@ -70,7 +87,7 @@
       var result = await _sb.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.href,
+          redirectTo: window.location.origin + window.location.pathname + window.location.search,
           queryParams: { prompt: 'select_account' }
         }
       });
@@ -122,12 +139,26 @@
   // ── Internal: resolve session and cache user/profile ─────────────────────
   // This runs IMMEDIATELY at script parse time (in <head>) so the profile
   // fetch starts as early as possible. _sessionReady resolves when done.
-  // On estimate.html, auth.js handles this via authInit() — but on other pages
-  // this is the only mechanism.
+  // On estimate.html, auth.js handles this via authInit() and this never runs;
+  // on every other page it does run (history.html also loads auth.js, but
+  // still runs this).
   function resolveSession() {
     _sessionReady = _doResolveSession();
   }
   async function _doResolveSession() {
+    // _sb is a top-level `const` in supabase-client.js -- a lexical
+    // binding, never a window property, so `window._sb` is always
+    // undefined. On 15 of 20 pages this script loads in <head> BEFORE
+    // supabase-client.js, so _sb genuinely does not exist yet here.
+    // Poll for it instead of giving up immediately; bounded so a page
+    // that never loads supabase-client.js still gives up cleanly.
+    var waitedMs = 0;
+    var pollMs = 50;
+    var maxWaitMs = 10000;
+    while (!(typeof _sb !== 'undefined' && _sb) && waitedMs < maxWaitMs) {
+      await new Promise(function (resolve) { setTimeout(resolve, pollMs); });
+      waitedMs += pollMs;
+    }
     if (typeof _sb === 'undefined' || !_sb) return;
     try {
       var sessionResult = await _sb.auth.getSession();
@@ -135,19 +166,30 @@
       if (session && session.user) {
         _cachedUser = session.user;
         var profileResult = await _sb.from('profiles')
-          .select('full_name, tier, subscription_status, company_name, beta_tester')
+          .select('full_name, tier, subscription_status, company_name, beta_tester, stripe_customer_id')
           .eq('id', session.user.id)
           .single();
         if (profileResult.data) _cachedProfile = profileResult.data;
       }
     } catch (e) { /* fail silently */ }
 
+    // Broadcast the initial resolution before registering the live
+    // listener below, so any script that needs auth state (global-auth.js's
+    // nav pill, main.js's favorites Pro-gate) can read it via a
+    // chemcalc:authchange listener instead of each running its own
+    // independent getSession()/profile fetch -- that duplication (four
+    // separate places doing this) is what the login-indicator bug
+    // (diagnosed via commit 4b6f080's temporary logging) and the
+    // favorites race (fixed in commit 421da99, but only by working around
+    // the duplication rather than removing it) both trace back to.
+    window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: { user: _cachedUser, profile: _cachedProfile } }));
+
     // Listen for auth changes (login/logout from this page)
     _sb.auth.onAuthStateChange(async function (event, newSession) {
       if (newSession && newSession.user) {
         _cachedUser = newSession.user;
         var profileResult = await _sb.from('profiles')
-          .select('full_name, tier, subscription_status, company_name, beta_tester')
+          .select('full_name, tier, subscription_status, company_name, beta_tester, stripe_customer_id')
           .eq('id', newSession.user.id)
           .single();
         if (profileResult.data) _cachedProfile = profileResult.data;
@@ -155,12 +197,14 @@
         _cachedUser = null;
         _cachedProfile = null;
       }
+      window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: { user: _cachedUser, profile: _cachedProfile } }));
     });
   }
 
   // ══════════════════════════════════════════════════════════════════════════
   // SELF-CONTAINED STRIPE CHECKOUT FUNCTIONS
-  // On estimate.html, stripe-checkout.js defines these first — guards prevent overwrite.
+  // On estimate.html, stripe-checkout.js loads after this script and redefines
+  // these, so its versions win there.
   // ══════════════════════════════════════════════════════════════════════════
 
   var _selectedPlan = 'monthly';
@@ -232,7 +276,7 @@
   // MODAL INFRASTRUCTURE
   // ══════════════════════════════════════════════════════════════════════════
 
-  // ── Modal open/close (global, replaces estimate.js versions) ─────────────
+  // ── Modal open/close (global; on estimate.html, estimate.js loads after this and redefines them) ─────────────
   window.openModal = function (id) {
     var el = document.getElementById(id);
     if (el) el.style.display = 'flex';
@@ -331,7 +375,7 @@
       '    </div>' +
       '  </div>' +
       '  <button class="btn-modal-primary mt-4" onclick="saveProfile()">Save Profile</button>' +
-      '  <p class="modal-footer-link" id="profileSaveStatus"></p>' +
+      '  <p class="modal-footer-link" id="profileSaveStatus" role="status" aria-live="polite"></p>' +
       '  <hr class="trello-divider" />' +
       '  <button class="btn-logout-sm" onclick="doLogout()">Log Out</button>' +
       '</div>';
@@ -355,6 +399,9 @@
       '      <p class="modal-sub">You are on the <strong>Pro</strong> plan. Manage your billing and subscription below.</p>' +
       '      <button class="btn-modal-secondary" onclick="window.open(\'https://billing.stripe.com/p/login/7sY8wPehIbUY6Wn6xE6wE00\',\'_blank\')">Manage Subscription</button>' +
       '    </div>' +
+      '    <div id="subCompedBlock" style="display:none;">' +
+      '      <p class="modal-sub">You\'re on a complimentary Pro plan. Contact us if you need to make changes.</p>' +
+      '    </div>' +
       '  </div>' +
       '</div>';
   }
@@ -372,9 +419,10 @@
       '    <div class="col-md-6"><label class="est-label">Address</label><input type="text" id="bizAddress" class="est-input" placeholder="123 Marina Blvd, Daytona Beach, FL" /></div>' +
       '    <div class="col-md-6"><label class="est-label">Estimate # Prefix</label><input type="text" id="bizPrefix" class="est-input" placeholder="e.g. DMG or TE" maxlength="6" /><p class="scope-hint">Estimates will be numbered DMG-20260629-1234</p></div>' +
       '    <div class="col-md-6"><label class="est-label">Logo URL <span class="scope-hint">(link to your logo image)</span></label><input type="url" id="bizLogoUrl" class="est-input" placeholder="https://yoursite.com/logo.png" /></div>' +
+      '    <div class="col-md-12"><label class="est-label">Custom Terms &amp; Conditions <span class="scope-hint">(replaces the standard terms on your printed estimates &mdash; leave blank to keep the default)</span></label><textarea id="bizCustomTerms" class="est-textarea" rows="8" placeholder="Paste your own Terms &amp; Conditions text here. Each clause on its own paragraph."></textarea></div>' +
       '  </div>' +
       '  <button class="btn-modal-primary mt-4" onclick="saveBusinessInfo()">Save Business Info</button>' +
-      '  <p class="modal-footer-link" id="bizSaveStatus"></p>' +
+      '  <p class="modal-footer-link" id="bizSaveStatus" role="status" aria-live="polite"></p>' +
       '</div>';
   }
 
@@ -382,9 +430,10 @@
     return '' +
       '<div class="acct-tab-panel" id="acctPanelTrello" style="display:none;">' +
       '  <h4 class="acct-section-title">Trello Integration <span class="pro-badge-inline">Pro</span></h4>' +
+      '  <p class="scope-hint"><a href="/trello-setup.html" target="_blank">Full setup guide &#8599;</a></p>' +
       '  <p class="modal-sub">Connect your Trello account to send estimates directly to your board.</p>' +
       '  <div class="row g-3">' +
-      '    <div class="col-12">' +
+      '    <div class="col-12" id="trelloConnectRow">' +
       '      <label class="est-label">Trello API Key</label>' +
       '      <div class="trello-key-row">' +
       '        <input type="text" id="trelloApiKey" class="est-input" placeholder="Paste your Trello API key here" />' +
@@ -392,15 +441,17 @@
       '      </div>' +
       '      <p class="scope-hint">Get your API key at <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a></p>' +
       '    </div>' +
-      '    <div class="col-12" id="trelloTokenRow" style="display:none;">' +
-      '      <label class="est-label">Trello Token <span class="scope-hint">(auto-filled after authorization)</span></label>' +
-      '      <input type="text" id="trelloToken" class="est-input" placeholder="Token will appear here after you authorize" readonly />' +
+      '    <div class="col-12" id="trelloConnectedRow" style="display:none;">' +
+      '      <div class="trello-connected-row">' +
+      '        <p class="trello-connected-line">&#10003; Trello is connected.</p>' +
+      '        <button class="btn-trello-disconnect" id="trelloDisconnectBtn" onclick="trelloDisconnect()">Disconnect Trello</button>' +
+      '      </div>' +
       '    </div>' +
       '    <div class="col-12" id="trelloBoardRow" style="display:none;">' +
       '      <label class="est-label">Default Board &amp; List</label>' +
       '      <div class="trello-picker-row">' +
       '        <select id="trelloBoardSelect" class="est-input" onchange="trelloLoadLists()"><option value="">- Select a board -</option></select>' +
-      '        <select id="trelloListSelect" class="est-input"><option value="">- Select a list -</option></select>' +
+      '        <select id="trelloListSelect" class="est-input" onchange="trelloSaveBoardList()"><option value="">- Select a list -</option></select>' +
       '      </div>' +
       '      <button class="btn-trello-load" onclick="trelloLoadBoards()">&#8635; Refresh Boards</button>' +
       '    </div>' +
@@ -520,14 +571,18 @@
     // Use sessionStorage (set by global-auth.js) as reliable fallback
     var storedTier = sessionStorage.getItem('chemcalc_user_tier');
     var proActive = (storedTier === 'pro') || ((typeof isPro === 'function') ? isPro() : false);
+    var hasStripeCustomer = !!(profile && profile.stripe_customer_id);
     var tierEl = document.getElementById('subTierName');
     var upgradeBlock = document.getElementById('subUpgradeBlock');
     var manageBlock = document.getElementById('subManageBlock');
+    var compedBlock = document.getElementById('subCompedBlock');
     if (tierEl) tierEl.textContent = proActive ? 'Pro' : 'Free';
     if (upgradeBlock) upgradeBlock.style.display = proActive ? 'none' : '';
-    if (manageBlock) manageBlock.style.display = proActive ? '' : 'none';
+    if (manageBlock) manageBlock.style.display = (proActive && hasStripeCustomer) ? '' : 'none';
+    if (compedBlock) compedBlock.style.display = (proActive && !hasStripeCustomer) ? '' : 'none';
 
-    // Biz Info tab (only on estimator — loadBusinessInfo already populates fields)
+    // Biz Info tab (only on estimator — populateBizInfoModal() in estimate.js fills
+    // the fields; loadBusinessInfo() just returns the saved values)
     if (isEstimatorPage && typeof loadBusinessInfo === 'function') {
       loadBusinessInfo();
     }
@@ -542,37 +597,61 @@
     var newPw = document.getElementById('profileNewPassword').value;
     var confirmPw = document.getElementById('profileConfirmPassword').value;
     var statusEl = document.getElementById('profileSaveStatus');
+    window.setSaveStatus(statusEl, 'pending', 'Saving\u2026');
 
     // Update name in profiles table
     if (newName) {
-      await _sb.from('profiles').update({ full_name: newName }).eq('id', user.id);
+      var nameFailure = '';
+      try {
+        var nameRes = await _sb.from('profiles').update({ full_name: newName }).eq('id', user.id);
+        if (nameRes.error) nameFailure = nameRes.error.message || 'unknown error';
+      } catch (e) {
+        nameFailure = (e && e.message) || 'network error';
+      }
+      if (nameFailure) {
+        console.warn('Profile name save error:', nameFailure);
+        window.setSaveStatus(statusEl, 'error', 'Couldn\u2019t save your name (' + nameFailure + '). Please try again.');
+        return;
+      }
     }
 
     // Update password if provided
     if (newPw) {
       if (newPw.length < 8) {
-        if (statusEl) { statusEl.textContent = 'Password must be at least 8 characters.'; statusEl.style.color = '#ff6b6b'; }
+        window.setSaveStatus(statusEl, 'error', 'Password must be at least 8 characters.');
         return;
       }
       if (newPw !== confirmPw) {
-        if (statusEl) { statusEl.textContent = 'Passwords do not match.'; statusEl.style.color = '#ff6b6b'; }
+        window.setSaveStatus(statusEl, 'error', 'Passwords do not match.');
         return;
       }
       var result = await _sb.auth.updateUser({ password: newPw });
       if (result.error) {
-        if (statusEl) { statusEl.textContent = 'Password update failed: ' + result.error.message; statusEl.style.color = '#ff6b6b'; }
+        window.setSaveStatus(statusEl, 'error', 'Password update failed: ' + result.error.message);
         return;
       }
     }
 
-    if (statusEl) {
-      statusEl.textContent = '\u2713 Saved!';
-      statusEl.style.color = '#7ed47e';
-      setTimeout(function () { statusEl.textContent = ''; }, 2500);
-    }
+    window.setSaveStatus(statusEl, 'ok', '\u2713 Saved', 5000);
 
     // Refresh the nav indicator name
     if (typeof globalAuthRefresh === 'function') globalAuthRefresh();
+  };
+
+  // One way to show the result of a save in the account modal. kind: 'pending' | 'ok' | 'error' | 'info'; the colors
+  // are the .save-status--* rules in style.css. autoClearMs clears the message later (errors are left until the next save).
+  window.setSaveStatus = function (el, kind, message, autoClearMs) {
+    if (!el) return;
+    clearTimeout(el._saveStatusTimer);
+    ['pending', 'ok', 'error', 'info'].forEach(function (k) { el.classList.remove('save-status--' + k); });
+    if (kind) el.classList.add('save-status--' + kind);
+    el.textContent = message || '';
+    if (autoClearMs) {
+      el._saveStatusTimer = setTimeout(function () {
+        el.textContent = '';
+        ['pending', 'ok', 'error', 'info'].forEach(function (k) { el.classList.remove('save-status--' + k); });
+      }, autoClearMs);
+    }
   };
 
   // ── Inject modals into the page ──────────────────────────────────────────
@@ -587,8 +666,11 @@
   }
 
   // ── Init ─────────────────────────────────────────────────────────────────
-  // IMPORTANT: resolveSession() starts IMMEDIATELY at script parse time
-  // (only needs _sb which loaded before this script in <head>).
+  // IMPORTANT: resolveSession() starts IMMEDIATELY at script parse time.
+  // It does NOT assume _sb has already loaded -- _doResolveSession() polls
+  // for it (bounded wait, ~10s; see line 14 and _doResolveSession() below),
+  // since global-account-modal.js can execute before supabase-client.js
+  // finishes loading.
   // This gives the async profile fetch maximum time to complete before
   // the user can interact with the page.
   // inject() still waits for DOMContentLoaded because it needs the DOM.
@@ -610,9 +692,10 @@
 
 // ── Global Help Modal Opener ─────────────────────────────────────────────────
 // Used by HelpButton.lbi on every page that has a #helpModal.
-// Shows the correct Free or Pro content section based on the user's tier.
-// NOTE: estimate.js also defines this function — the version here is identical
-// so there is no conflict; whichever loads last wins (same behaviour either way).
+// Shows the correct Guest, Free or Pro content section based on the user's tier.
+// NOTE: estimate.js also defines this function, but its version only has the
+// free/pro states (no guest case); on estimate.html it loads after this file, so
+// it wins there.
 // ── openHelpModal (three-state: guest / free / pro) ────────────────────────
 // Shows different help content based on auth state:
 //   - Not logged in → helpContentGuest (Sign Up / Log In)
@@ -622,7 +705,7 @@
 // as primary source. Falls back to getUser()/isPro() from resolveSession().
 // This avoids the race condition where resolveSession() hasn't finished yet.
 function openHelpModal() {
-  // Primary: sessionStorage (set by global-auth.js, which resolves first)
+  // Primary: sessionStorage (set by global-auth.js from the auth state this file resolves)
   var storedTier = sessionStorage.getItem('chemcalc_user_tier');
   // Secondary: internal cache (set by resolveSession in this file)
   var user = (typeof window.getUser === 'function') ? window.getUser() : null;

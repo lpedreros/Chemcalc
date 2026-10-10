@@ -15,6 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const widthInput = document.getElementById("width");
   const unitsSelect = document.getElementById("units");
   const resinTypeSelect = document.getElementById("resin-type");
+
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // page's own init has already called displayAffiliateLinks() against a
+  // still-empty affiliateLinksData -- re-render once the fetch actually
+  // completes. Call displayAffiliateLinks(resinType) directly (not the
+  // full calculateResin()) -- calculateResin() also fires a
+  // logCalculation() analytics call, which must not run a second time as
+  // a side effect of this listener. Derive resinType the same way
+  // calculateResin() does (resinTypeSelect.value).
+  window.addEventListener('affiliateLinksReady', () => {
+    displayAffiliateLinks(resinTypeSelect.value);
+  }, { once: true });
   const epoxyRatioContainer = document.getElementById("epoxy-ratio-container");
   const epoxyMixRatioSelect = document.getElementById("epoxy-mix-ratio");
   const temperatureInput = document.getElementById("temperature");
@@ -29,14 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalAreaEl = document.getElementById("total-area");
   const resinVolumeEl = document.getElementById("resin-volume");
   const resinWeightEl = document.getElementById("resin-weight");
+  const resinWeightLabelEl = document.getElementById("resin-weight-label");
   const hardenerAmountEl = document.getElementById("hardener-amount");
+  const hardenerLabelEl = document.getElementById("hardener-label");
   const workingTimeEl = document.getElementById("working-time");
   const estimatedCostEl = document.getElementById("estimated-cost");
+  const costHintEl = document.getElementById("cost-hint");
   const mekpResultsContainer = document.getElementById("mekp-results-container");
   const mekpPercentageEl = document.getElementById("mekp-percentage");
   const mekpCcsEl = document.getElementById("mekp-ccs");
   const mekpDropsEl = document.getElementById("mekp-drops");
   const clothResinRatioEl = document.getElementById("cloth-resin-ratio");
+
+  // sr-only, full-labeled-sentence mirrors for email-results.js's
+  // injectEmailCaptureUI (see clothcalc.html) -- the visible spans above
+  // hold bare values next to a separate .mp-compare-label element,
+  // which injectEmailCaptureUI can't see.
+  const clothEmailVolumeEl = document.getElementById("clothEmailVolume");
+  const clothEmailWeightEl = document.getElementById("clothEmailWeight");
+  const clothEmailHardenerEl = document.getElementById("clothEmailHardener");
+  const clothEmailCostEl = document.getElementById("clothEmailCost");
 
   // Print Summary Elements
   const printTimestampEl = document.getElementById("print-timestamp");
@@ -458,53 +482,103 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    affiliateLinksList.innerHTML = ""; 
-    const linksToShowKeys = new Set();
-
-    // Add Resin Specific Links
-    if (resinType === "polyester" || resinType === "vinylester") {
-        linksToShowKeys.add("polyester_resin_1gallon_kit_with_mekp");
-        // MEKp is usually included or bought separately, but the kit has it.
-        // If a standalone MEKp link existed, it would be added here.
-    } else if (resinType === "epoxy") {
-        linksToShowKeys.add("epoxy_resin_base_1gallon");
-        linksToShowKeys.add("epoxy_resin_hardener_fast_1quart"); // Or slow, depending on preference
-    }
-
-    // Add Fiberglass Cloth Links (examples)
-    linksToShowKeys.add("fiberglass_cloth_1708_biaxial_50_in_x_10_yards");
-    linksToShowKeys.add("fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards");
-
-    // Add General Supplies (using standardized keys)
-    linksToShowKeys.add("latex_gloves");
-    linksToShowKeys.add("mixing_sticks_reusable");
-    linksToShowKeys.add("disposable_paper_cups_125pack");
-    linksToShowKeys.add("chip_brushes_2inch_36pack"); // Example, could be 1-inch too
-    linksToShowKeys.add("blue_tape_1inch_6pack");
-    linksToShowKeys.add("rags");
-    linksToShowKeys.add("ribbed_bubble_rollers_for_fiberglass_assorted_sizes_4pack");
-    linksToShowKeys.add("3m_full_face_respirator_medium_model_6800_filter_kit_linked_below");
-    linksToShowKeys.add("acetone"); // Common for polyester/vinylester cleanup
-    linksToShowKeys.add("denatured_alcohol_1gallon"); // Common for epoxy cleanup
+    affiliateLinksList.innerHTML = "";
+    // Curated selection (material-selection.js): job.keys branches by
+    // resinType and is the explicit list this calculator actually needs --
+    // no more identityTags/isResinJob tag-sweep (that matched too broadly).
+    // identityTags:[] and isResinJob:false mean selectMaterialKeys' tag
+    // sweep now only ever contributes universal-tagged rows, same as
+    // Awlgrip. cleanupKeys (same for all 3 resin types) are the chemistry-
+    // specific post-work solvents; universal-tagged rows already cover
+    // general pre-work cleanup.
+    const CLOTHCALC_KEYS_BY_RESIN = {
+      polyester: [
+        'polyester_resin_1gallon_kit_with_mekp',
+        'mekp_catalyst_8oz_236cc',
+        'duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite',
+        'fiberglass_cloth_1708_biaxial_50_in_x_10_yards',
+        'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'electric_scissors_for_cutting_fiberglass_cloth',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'peel_ply_30_inch_x_15_yards',
+        'peel_ply_40_inch_x_400_inch'
+      ],
+      vinylester: [
+        'fgci_vinylester_resin_1gallon_kit_with_4oz_mekp',
+        'fgci_vinylester_resin_1quart_kit_with_1oz_mekp',
+        'mekp_catalyst_8oz_236cc',
+        'duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite',
+        'fiberglass_cloth_1708_biaxial_50_in_x_10_yards',
+        'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'electric_scissors_for_cutting_fiberglass_cloth',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'peel_ply_30_inch_x_15_yards',
+        'peel_ply_40_inch_x_400_inch'
+      ],
+      epoxy: [
+        'epoxy_resin_base_1gallon',
+        'epoxy_resin_hardener_fast_1quart',
+        'epoxy_resin_hardener_slow_1_quart',
+        'fiberglass_cloth_1708_biaxial_50_in_x_10_yards',
+        'fiberglass_cloth_csm_chopped_strand_matt_50_in_x_10_yards',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'electric_scissors_for_cutting_fiberglass_cloth',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_1pack',
+        'dupont_tyvek_400_ty122s_disposable_protective_coverall_hood_and_boots_25pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'peel_ply_30_inch_x_15_yards',
+        'peel_ply_40_inch_x_400_inch'
+      ]
+    };
+    // role:'base' -- the catalyst/hardener quantity this calculator's math
+    // actually computes (mekpCcs for polyester/vinylester, set in
+    // calculateResin()). Epoxy has no base item:
+    // resinVolumeLiters/hardenerVolumeLiters
+    // are computed, but the hardener has two alternative product choices
+    // (fast/slow cure) the code never picks between -- same "multiple
+    // competing SKUs, none uniquely the computed one" situation as the
+    // resin-kit links above (CLOTHCALC_KEYS_BY_RESIN), so
+    // epoxy_resin_base_1gallon and both hardener
+    // keys stay role:'suggestion' (they land in the Materials & Supplies
+    // fallback section, not a bucket, since they carry only the 'epoxy'
+    // chemistry-identity tag).
+    const CLOTHCALC_BASE_KEYS_BY_RESIN = {
+      polyester: ['mekp_catalyst_8oz_236cc'],
+      vinylester: ['mekp_catalyst_8oz_236cc'],
+      epoxy: []
+    };
+    // ClothCalc only calculates saturation volumes -- it never has fairing
+    // compound in its selection. Excluded explicitly rather than relying
+    // on it just happening to be empty.
+    const CLOTHCALC_ALLOWED_BUCKETS = ['PPE', 'Prep & Masking', 'Mixing', 'Application', 'Finishing'];
+    const job = {
+      isResinJob: false,
+      identityTags: [],
+      keys: CLOTHCALC_KEYS_BY_RESIN[resinType] || [],
+      cleanupKeys: ['denatured_alcohol_1gallon', 'denatured_alcohol_5gallon', 'acetone_5gallon'],
+      respiratorKey: '3m_full_face_respirator_medium_model_6800_filter_kit_linked_below'
+    };
+    const linksToShowKeys = selectMaterialKeys(getCandidateRows(), job);
 
     if (linksToShowKeys.size > 0) {
-      let hasDisplayedLinks = false;
-      linksToShowKeys.forEach((key) => {
-        const linkData = affiliateLinksData[key];
-        if (linkData && linkData.url && linkData.name) {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = linkData.url;
-          a.textContent = linkData.name;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer sponsored";
-          li.appendChild(a);
-          affiliateLinksList.appendChild(li);
-          hasDisplayedLinks = true;
-        } else {
-            console.warn(`Attempted to render link for key but not found in affiliateLinksData: ${key}`);
-        }
-      });
+      const hasDisplayedLinks = renderGroupedMaterialLinks(
+        affiliateLinksList,
+        Array.from(linksToShowKeys),
+        CLOTHCALC_BASE_KEYS_BY_RESIN[resinType] || [],
+        CLOTHCALC_ALLOWED_BUCKETS
+      );
       if (hasDisplayedLinks) {
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
       } else {
@@ -513,11 +587,125 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else {
       affiliateLinksList.innerHTML = "<li>No specific products found. Check Kits page.</li>";
-      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block"; 
+      if (affiliateLinksContainer) affiliateLinksContainer.style.display = "block";
     }
   }
 
+  // Epoxy-only hardener product advisory (fast-cure vs. slow-cure, by
+  // temperature) -- separate from computeClothAdvisory()'s general
+  // cure-temperature warning below. Non-blocking informational text,
+  // does not touch the resin-volume math or mix-ratio dropdown.
+  function computeEpoxyHardenerAdvisory(rawTemp, isFahrenheitFlag) {
+    if (rawTemp === '' || rawTemp === null || isNaN(rawTemp)) return null;
+    var f = isFahrenheitFlag ? rawTemp : celsiusToFahrenheit(rawTemp);
+    var tempLine;
+    if (f < 60) {
+      tempLine = "Under 60°F: a fast-cure hardener is the better call — slow-cure may struggle to kick off in the cold.";
+    } else if (f <= 80) {
+      tempLine = "60–80°F: either fast- or slow-cure hardener works fine here.";
+    } else {
+      tempLine = "Above 80°F: a slow-cure hardener buys you working time before the pot kicks.";
+    }
+    return tempLine + " Need a clear, natural-wood finish? Consider System Three's 207 Special Clear instead of picking by temperature alone. Mixing a large batch? Consider splitting it into smaller pours to manage heat buildup.";
+  }
+
+  function updateEpoxyHardenerAdvisory() {
+    var el = document.getElementById('epoxy-hardener-advisory');
+    if (!el || !temperatureInput || !resinTypeSelect) return;
+    if (resinTypeSelect.value !== 'epoxy') {
+      el.textContent = '';
+      el.style.display = 'none';
+      return;
+    }
+    var raw = temperatureInput.value === '' ? NaN : parseFloat(temperatureInput.value);
+    var advisory = computeEpoxyHardenerAdvisory(raw, isFahrenheit);
+    if (advisory) {
+      el.textContent = advisory;
+      el.style.display = 'block';
+    } else {
+      el.textContent = '';
+      el.style.display = 'none';
+    }
+  }
+
+  // Ambient-temperature advisory, resin-dependent. Polyester/vinylester shares MEKP's
+  // breakpoints/copy verbatim (mekpcalc-ui.js's computeAdvisory) — single source of
+  // truth in spec, duplicated here only because this is a separate vanilla file with
+  // no shared module system. Epoxy has its own breakpoints/copy. Copy is Editor-approved
+  // final text — do not edit wording.
+  function computeClothAdvisory(rawTemp, isFahrenheitFlag, resinType) {
+    if (rawTemp === '' || rawTemp === null || isNaN(rawTemp)) return null;
+    var f = isFahrenheitFlag ? rawTemp : celsiusToFahrenheit(rawTemp);
+
+    if (resinType === 'epoxy') {
+      if (f < 55) return { band: 'extreme-cold', text: "Below 55°F — this epoxy isn't curing, it's hibernating, and it won't wake without added heat, so warm the shop or don't start." };
+      if (f < 60) return { band: 'cool', text: "55–60°F — cure is possible, just reluctant; give it the time it's clearly asking for." };
+      if (f < 70) return { band: 'ideal', text: "60–70°F — everything behaves, the resin included; enjoy the calm while it lasts." };
+      if (f < 80) return { band: 'warm', text: "70–80°F — the reaction quickens, and so should you; pot life is shorter than it looks." };
+      if (f < 90) return { band: 'hot', text: "80–90°F — pot life is vanishing fast, and a rushed cure turns brittle; keep batches small." };
+      return { band: 'extreme-hot', text: "90°F and above — enough curing resin in one pot can run away with its own heat; don't mix a batch here." };
+    }
+
+    // Polyester / vinylester — identical to MEKP calculator's bands.
+    if (f < 60) return { band: 'extreme-cold', text: "Below 60°F — the cure doesn't slow, it stops; warm the shop or walk away." };
+    if (f < 65) return { band: 'cool', text: "60–65°F — the resin's in no rush, and it shows; expect a longer, unhurried cure." };
+    if (f < 75) return { band: 'ideal', text: "65–75°F — the resin behaves exactly as promised, which is rarer than you'd think." };
+    if (f < 85) return { band: 'warm', text: "75–85°F — the clock speeds up here; mix only what you can use before it notices." };
+    if (f < 95) return { band: 'hot', text: "85–95°F — this resin is already halfway to setting before you've finished stirring; mix small, move fast." };
+    return { band: 'extreme-hot', text: "95°F and above — the catalyzed resin can kick in the can before you've used a drop; don't mix here." };
+  }
+
+  function updateClothTempAdvisory() {
+    var adviceEl = document.getElementById('cloth-temp-advisory');
+    if (!adviceEl || !temperatureInput || !resinTypeSelect) return;
+    var raw = temperatureInput.value === '' ? NaN : parseFloat(temperatureInput.value);
+    var advisory = computeClothAdvisory(raw, isFahrenheit, resinTypeSelect.value);
+    if (advisory) {
+      adviceEl.textContent = advisory.text;
+      adviceEl.setAttribute('data-band', advisory.band);
+      adviceEl.style.display = 'block';
+    } else {
+      adviceEl.textContent = '';
+      adviceEl.removeAttribute('data-band');
+      adviceEl.style.display = 'none';
+    }
+  }
+
+  // Dashed-placeholder print letterhead for calculateResin()'s early-
+  // return paths (blank/invalid length, blank/invalid width, zero valid
+  // layers, and the defensive !resinInfo case -- unreachable via the
+  // real <select>, but the same gap in kind, so fixed alongside the
+  // other three rather than left as a known miss). Without this, the
+  // letterhead kept showing the PRIOR successful calculation's real
+  // numbers after inputs were cleared/invalidated, and Print would
+  // generate a QR over that stale printout with no warning (Sentinel's
+  // post-437c891 QA). Mirrors MEKP's own empty-state render() call --
+  // same label strings and disclaimer text as this file's own success-
+  // path render() call below, not retyped from memory.
+  function renderEmptyPrintLetterhead() {
+    if (typeof ChemCalcPrintLetterhead === 'undefined') return;
+    ChemCalcPrintLetterhead.render({
+      docTitle: 'Fiberglass Cloth Saturation Calculator — Mix Results',
+      pageSlug: 'clothcalc',
+      recap: [
+        { label: 'Dimensions', value: '—' },
+        { label: 'Resin Type', value: '—' },
+        { label: 'Temperature', value: '—' }
+      ],
+      primary: { label: 'Total resin needed', value: '—', unit: null, sub: null },
+      compare: [
+        { label: resinWeightLabelEl ? resinWeightLabelEl.textContent : 'Resin Weight', value: '—' },
+        { label: 'Working Time', value: '—' },
+        { label: 'Estimated Cost', value: '—' }
+      ],
+      advisory: '',
+      disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and layer schedule both change resin demand.'
+    });
+  }
+
   function calculateResin() {
+    updateClothTempAdvisory();
+    updateEpoxyHardenerAdvisory();
     const lengthVal = lengthInput.value;
     const widthVal = widthInput.value;
     const length = parseFloat(lengthVal);
@@ -533,6 +721,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isNaN(length) || isNaN(width) || length <= 0 || width <= 0) {
       resultsSection.style.display = "none";
       if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+      lastCalculatedResults = null;
+      renderEmptyPrintLetterhead();
       return;
     }
 
@@ -540,6 +730,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (areaSqMeters <= 0) {
         resultsSection.style.display = "none";
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+        lastCalculatedResults = null;
+        renderEmptyPrintLetterhead();
         return;
     }
 
@@ -577,6 +769,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         resultsSection.style.display = "none";
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+        lastCalculatedResults = null;
+        renderEmptyPrintLetterhead();
         return;
     }
 
@@ -584,34 +778,45 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!resinInfo) {
         resultsSection.style.display = "none";
         if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
+        lastCalculatedResults = null;
+        renderEmptyPrintLetterhead();
         return;
     }
 
     const resinVolumeLiters = totalResinKg / resinInfo.density;
     let hardenerVolumeLiters = 0;
+    let hardenerWeightKg = 0;
     let mekpPercentage = 0;
     let mekpCcs = 0;
     let mekpDrops = 0;
 
     if (resinType === "epoxy") {
+      const isWeightRatio = /w$/i.test(epoxyMixRatio.trim());
       const ratioParts = epoxyMixRatio.replace(/[^0-9:]/g, '').split(":").map(Number);
       if (ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0) {
-        hardenerVolumeLiters = resinVolumeLiters * (ratioParts[1] / ratioParts[0]);
+        if (isWeightRatio) {
+          const resinWeightKgForRatio = resinVolumeLiters * resinInfo.density;
+          hardenerWeightKg = resinWeightKgForRatio * (ratioParts[1] / ratioParts[0]);
+          hardenerVolumeLiters = hardenerWeightKg / approxEpoxyHardenerDensity;
+        } else {
+          hardenerVolumeLiters = resinVolumeLiters * (ratioParts[1] / ratioParts[0]);
+          hardenerWeightKg = hardenerVolumeLiters * approxEpoxyHardenerDensity;
+        }
       }
       mekpResultsContainer.style.display = "none";
-      hardenerAmountEl.style.display = "block";
     } else { // Polyester or Vinylester
       const tempC = isFahrenheit ? fahrenheitToCelsius(temp) : temp;
-      if (tempC >= 15 && tempC <= 18) mekpPercentage = 2.0;
-      else if (tempC > 18 && tempC <= 22) mekpPercentage = 1.8;
-      else if (tempC > 22 && tempC <= 25) mekpPercentage = 1.5;
-      else if (tempC > 25 && tempC <= 30) mekpPercentage = 1.0;
-      else mekpPercentage = tempC < 15 ? 2.5 : 0.8; // Simplified for out of range
+      // MEKP-% now shares the standalone MEKP calculator's curve (mekp-
+      // curve.js) instead of a separately-authored one -- single source
+      // of truth. NaN falls back to the coldest/most-cautious tier
+      // (3.0%) rather than the old code's undocumented fallthrough to
+      // 0.8% -- deliberate.
+      const recommendedNum = getRecommendedMekpPercent(tempC);
+      mekpPercentage = recommendedNum === null ? 3.0 : recommendedNum;
 
       mekpCcs = (resinVolumeLiters * 1000 * (mekpPercentage / 100) * resinInfo.density) / mekpDensity;
       mekpDrops = mekpCcs / mlPerDrop;
       mekpResultsContainer.style.display = "block";
-      hardenerAmountEl.style.display = "none";
     }
 
     let workingTime = resinInfo.baseWorkingTime;
@@ -634,6 +839,12 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (resinCostUnit === "lb") costPerLiter = (resinCost * kgToLb) * resinInfo.density;
       estimatedCost = (resinVolumeLiters + hardenerVolumeLiters) * costPerLiter;
     }
+    if (costHintEl) {
+      costHintEl.textContent = (resinType === "epoxy")
+        ? "Estimated cost includes hardener, priced at your entered resin cost per unit."
+        : "Estimated cost covers resin only — MEKP catalyst isn't included.";
+      costHintEl.style.display = (resinCost > 0) ? "block" : "none";
+    }
 
     resultsSection.style.display = "block";
     totalAreaEl.textContent = `${areaSqMeters.toFixed(2)} m² / ${(areaSqMeters * sqMeterToSqFeet).toFixed(2)} ft²`;
@@ -642,28 +853,76 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedSystem = resultSystemSelect.value;
     // resultUnit is already defined as: const resultUnit = resultVolumeUnitSelect.value;
 
-    resinVolumeEl.textContent = formatDisplayVolume(resinVolumeLiters, resultUnit, selectedSystem);
-    
-    // Hardener display logic is managed by the epoxy check earlier for visibility,
-    // here we just set the text content if applicable.
-    if (resinType === "epoxy" && hardenerVolumeLiters > 0) {
-        hardenerAmountEl.textContent = formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem);
-    } 
-    // No 'else' needed here for hardenerAmountEl.textContent as it's hidden for other resin types.
-    
     let weightDisplayUnit;
     if (selectedSystem === "imperial") {
         weightDisplayUnit = (resultUnit === "gal" || resultUnit === "qt") ? "lbs" : "oz";
     } else { // metric
         weightDisplayUnit = (resultUnit === "l") ? "kg" : "g";
     }
-    resinWeightEl.textContent = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
+
+    // "Total Resin Needed" hero -- epoxy shows the COMBINED resin+hardener
+    // volume. Round 2 left this as base-resin-only for both types, which
+    // read as broken once the Hardener/Catalyst box below also showed
+    // that same base-resin number next to itself (Leo, 2026-09-1X) --
+    // the hero has to actually BE the sum the split box decomposes.
+    // Poly/Vinylester: unchanged, base resin only.
+    const heroVolumeLiters = (resinType === "epoxy") ? (resinVolumeLiters + hardenerVolumeLiters) : resinVolumeLiters;
+    resinVolumeEl.textContent = formatDisplayVolume(heroVolumeLiters, resultUnit, selectedSystem);
+    clothEmailVolumeEl.textContent = "Total resin needed: " + resinVolumeEl.textContent;
+
+    // Resin Weight box -- same combined-vs-base-only split as the hero,
+    // and the same label distinction ("Total Resin Weight" for epoxy vs.
+    // plain "Resin Weight" -- no "Base" qualifier needed for
+    // Poly/Vinylester since nothing sits next to it to disambiguate from,
+    // now that the Hardener/Catalyst box is hidden entirely for those types).
+    const totalResinWeightKg = (resinType === "epoxy") ? (totalResinKg + hardenerWeightKg) : totalResinKg;
+    if (resinWeightLabelEl) resinWeightLabelEl.textContent = (resinType === "epoxy") ? "Total Resin Weight" : "Resin Weight";
+    resinWeightEl.textContent = formatDisplayWeight(totalResinWeightKg, weightDisplayUnit, selectedSystem);
+    clothEmailWeightEl.textContent = (resinWeightLabelEl ? resinWeightLabelEl.textContent : "Resin Weight") + ": " + resinWeightEl.textContent;
+
+    // Hardener/Catalyst box -- epoxy only. Poly/Vinylester's own MEKP-%
+    // detail block below already covers that case under MEKP's own
+    // "Catalyst" terminology; this box duplicated it under a generic
+    // label. Reverted to hidden entirely (not just its value blanked)
+    // for Poly/Vinylester -- matches this box's pre-Round-2 behavior,
+    // and sidesteps any stale-value-on-resin-type-switch failure mode
+    // regardless of root cause.
+    const hardenerBoxEl = hardenerAmountEl.closest('.mp-compare-box');
+    if (resinType === "epoxy") {
+      if (hardenerBoxEl) hardenerBoxEl.style.display = "";
+      // Same key already used to derive ratioParts above -- e.g.
+      // "3:1v" -> "3:1", "100:45w" -> "100:45".
+      const ratioLabel = epoxyMixRatio.replace(/[^0-9:]/g, '');
+      if (hardenerLabelEl) hardenerLabelEl.textContent = `Resin : Hardener (${ratioLabel})`;
+      const resinVolDisplay = formatDisplayVolume(resinVolumeLiters, resultUnit, selectedSystem);
+      const hardenerVolDisplay = formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem);
+      const resinWeightDisplay = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
+      const hardenerWeightDisplay = formatDisplayWeight(hardenerWeightKg, weightDisplayUnit, selectedSystem);
+      hardenerAmountEl.innerHTML = `${resinVolDisplay} : ${hardenerVolDisplay}<span class="mp-compare-value-sub">(${resinWeightDisplay} : ${hardenerWeightDisplay})</span>`;
+      clothEmailHardenerEl.textContent = `${hardenerLabelEl ? hardenerLabelEl.textContent : "Resin : Hardener"}: ${resinVolDisplay} : ${hardenerVolDisplay} (${resinWeightDisplay} : ${hardenerWeightDisplay})`;
+      clothEmailHardenerEl.style.display = "block";
+    } else {
+      if (hardenerBoxEl) hardenerBoxEl.style.display = "none";
+      clothEmailHardenerEl.style.display = "none";
+    }
+
+    // Estimated Cost normally spans both grid columns (.mp-compare-box-wide
+    // -- its value can run long), but when Hardener/Catalyst is hidden
+    // (Poly/Vinylester) that leaves Working Time alone on its own row
+    // with an empty gap next to it instead of the two sharing a row.
+    // Only stay wide when Hardener/Catalyst is genuinely occupying its
+    // usual grid cell.
+    const estimatedCostBoxEl = estimatedCostEl.closest('.mp-compare-box');
+    if (estimatedCostBoxEl) {
+      estimatedCostBoxEl.classList.toggle('mp-compare-box-wide', resinType === "epoxy");
+    }
 
     mekpPercentageEl.textContent = `${mekpPercentage.toFixed(1)}%`;
     mekpCcsEl.textContent = `${mekpCcs.toFixed(1)} mL`;
     mekpDropsEl.textContent = `${mekpDrops.toFixed(0)} drops`;
     workingTimeEl.textContent = `~${workingTime.toFixed(0)} minutes`;
     estimatedCostEl.textContent = `$${estimatedCost.toFixed(2)}`;
+    clothEmailCostEl.textContent = "Estimated Cost: " + estimatedCostEl.textContent;
 
     lastCalculatedResults = {
         length, width, units,
@@ -685,24 +944,89 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: only log when user has entered real dimensions (function already returns early for <= 0)
     if (typeof logCalculation === 'function' && length > 0 && width > 0) {
-      logCalculation('clothcalc', {
-        length:       length,
-        width:        width,
-        units:        units,
-        resinType:    resinType,
+      const CC = window.CC_UNITS;
+      const dimUnitMap = { in: CC.IN, ft: CC.FT, cm: CC.CM, m: CC.M };
+      const resultVolUnitMap = { gal: CC.GAL, qt: CC.QT, floz: CC.FLOZ, l: CC.L, ml: CC.ML };
+      const dimUnit = dimUnitMap[units];
+      // tempCForWorkingTime (computed above, used in the working-time
+      // formula) is already temp converted to Celsius regardless of
+      // resinType -- reused here as temperature's canonical base rather
+      // than re-deriving the same conversion a second time.
+      const _ccInputs = {
+        length:        { value: length, unit: dimUnit },
+        width:         { value: width, unit: dimUnit },
+        resinType:     resinType,
         epoxyMixRatio: (resinType === 'epoxy') ? epoxyMixRatio : null,
-        temperature:  temp,
-        tempUnit:     isFahrenheit ? 'fahrenheit' : 'celsius',
-        layers:       Array.from(layers).map(l => l.querySelector('.material-type').value),
-        resultSystem: selectedSystem,
-        resultUnit:   resultUnit
-      }, {
-        resinVolume:   resinVolumeEl.textContent,
-        resinWeight:   resinWeightEl.textContent,
-        hardener:      (resinType === 'epoxy') ? hardenerAmountEl.textContent : null,
-        mekpVolume:    (resinType !== 'epoxy') ? mekpCcsEl.textContent : null,
-        workingTime:   workingTimeEl.textContent,
-        estimatedCost: estimatedCostEl.textContent
+        temperature:   { value: temp, unit: (isFahrenheit ? CC.F : CC.C), base: tempCForWorkingTime, baseUnit: CC.C },
+        layers:        Array.from(layers).map(l => l.querySelector('.material-type').value),
+        resultSystem:  selectedSystem,
+        resultUnit:    resultVolUnitMap[resultUnit]
+      };
+      const _ccResults = {
+        // heroVolumeLiters/totalResinWeightKg are the COMBINED (resin +
+        // hardener) numbers for epoxy -- the ones actually shown in the
+        // hero/weight boxes (see the comments above where they're
+        // computed). resinVolumeLiters/totalResinKg (base-resin-only)
+        // are logged separately below, under the "hardener" field, since
+        // that's the box that actually displays the base-vs-hardener
+        // split for epoxy.
+        resinVolume:   { value: heroVolumeLiters, unit: CC.L },
+        resinWeight:   { value: totalResinWeightKg, unit: CC.KG },
+        hardener:      (resinType === 'epoxy') ? {
+          resinVolume:    { value: resinVolumeLiters, unit: CC.L },
+          hardenerVolume: { value: hardenerVolumeLiters, unit: CC.L },
+          resinWeight:    { value: totalResinKg, unit: CC.KG },
+          hardenerWeight: { value: hardenerWeightKg, unit: CC.KG }
+        } : null,
+        mekpVolume:    (resinType !== 'epoxy') ? { value: mekpCcs, unit: CC.ML } : null,
+        workingTime:   { value: workingTime, unit: CC.MIN },
+        estimatedCost: { value: estimatedCost, unit: CC.USD }
+      };
+      logCalculation('clothcalc', _ccInputs, _ccResults);
+      // Cached for Print/Email Me to log this settled answer immediately
+      // (see calc-tracker.js's logCalculation immediate=true path).
+      window._ccLastCalc = { calculator: 'clothcalc', inputs: _ccInputs, results: _ccResults };
+    }
+
+    if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+      function selectedOptionText(select) {
+        if (!select || select.selectedIndex < 0) return '';
+        const opt = select.options[select.selectedIndex];
+        return opt ? opt.text : '';
+      }
+      let resinText = selectedOptionText(resinTypeSelect);
+      if (resinType === 'epoxy' && epoxyMixRatioSelect) {
+        const ratioText = selectedOptionText(epoxyMixRatioSelect);
+        if (ratioText) resinText += ' (' + ratioText + ')';
+      }
+      const dimText = (lengthVal && widthVal)
+        ? (lengthVal.trim() + ' x ' + widthVal.trim() + ' ' + selectedOptionText(unitsSelect))
+        : '—';
+      const tempText = temperatureInput.value
+        ? (temperatureInput.value.trim() + (tempUnitLabel ? tempUnitLabel.textContent : ''))
+        : '—';
+      const catalystText = (resinType === 'epoxy')
+        ? clothEmailHardenerEl.textContent
+        : ((mekpPercentageEl.textContent || mekpCcsEl.textContent || mekpDropsEl.textContent)
+            ? ('MEKP Catalyst: ' + mekpPercentageEl.textContent + ' • ' + mekpCcsEl.textContent + ' • ' + mekpDropsEl.textContent)
+            : '');
+
+      ChemCalcPrintLetterhead.render({
+        docTitle: 'Fiberglass Cloth Saturation Calculator — Mix Results',
+        pageSlug: 'clothcalc',
+        recap: [
+          { label: 'Dimensions', value: dimText },
+          { label: 'Resin Type', value: resinText || '—' },
+          { label: 'Temperature', value: tempText }
+        ],
+        primary: { label: 'Total resin needed', value: resinVolumeEl.textContent || '—', unit: null, sub: clothResinRatioEl.textContent },
+        compare: [
+          { label: resinWeightLabelEl ? resinWeightLabelEl.textContent : 'Resin Weight', value: resinWeightEl.textContent || '—' },
+          { label: 'Working Time', value: workingTimeEl.textContent || '—' },
+          { label: 'Estimated Cost', value: estimatedCostEl.textContent || '—' }
+        ],
+        advisory: catalystText,
+        disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and layer schedule both change resin demand.'
       });
     }
   }
@@ -743,22 +1067,119 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resultSystemSelect) resultSystemSelect.addEventListener("change", handleResultSystemChange);
   }
 
+  // Wires the visible °F/°C segmented-pill toggle (.mp-unit-btn) to the
+  // real hidden <input id="temp-unit-toggle"> that setupEventListeners()
+  // already listens on -- mirrors mekpcalc-ui.js's initTempUnitToggle()
+  // pattern exactly. No calculation logic here; handleTempUnitToggle()
+  // (unchanged) does all the real work once the "change" event fires.
+  function initTempUnitToggle() {
+    const hidden = document.getElementById('temp-unit-toggle');
+    const buttons = Array.from(document.querySelectorAll('.mp-unit-btn[data-tempunit]'));
+    if (!hidden || !buttons.length) return;
+
+    function setTempUnit(unit) {
+      hidden.checked = (unit === 'fahrenheit');
+      buttons.forEach((btn) => {
+        const active = btn.getAttribute('data-tempunit') === unit;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      // clothcalc.js's own "change" listener on #temp-unit-toggle
+      // (registered in setupEventListeners()) re-runs handleTempUnitToggle().
+      hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.getAttribute('aria-pressed') === 'true') return;
+        setTempUnit(btn.getAttribute('data-tempunit'));
+      });
+    });
+  }
+
+  // Wires the visible Metric/Imperial segmented-pill toggle (.mp-unit-btn)
+  // to the real hidden <select id="result-system"> that setupEventListeners()
+  // already listens on -- mirrors initTempUnitToggle() above exactly.
+  //
+  // Also keeps the temperature-unit toggle paired with the measurement
+  // system (metric<->celsius, imperial<->fahrenheit), same fix as
+  // mekpcalc-ui.js's setSystem(). If the temp toggle doesn't already
+  // match, convert #temperature's value with the existing
+  // celsiusToFahrenheit/fahrenheitToCelsius functions and update the temp
+  // toggle's hidden checkbox + button states + label directly, WITHOUT
+  // dispatching #temp-unit-toggle's own "change" event -- that would run
+  // calculateResin() a second time (once here, once via #result-system's
+  // own change below), including a second logCalculation() analytics
+  // call. handleResultSystemChange() (unchanged) does the real work once
+  // this function's single "change" event on #result-system fires.
+  function initResultSystemToggle() {
+    const hidden = document.getElementById('result-system');
+    const buttons = Array.from(document.querySelectorAll('.mp-unit-btn[data-system]'));
+    if (!hidden || !buttons.length) return;
+
+    function setSystem(system) {
+      const wantsFahrenheit = (system === 'imperial');
+      if (tempUnitToggle && tempUnitToggle.checked !== wantsFahrenheit) {
+        const currentTempValue = parseFloat(temperatureInput.value);
+        if (!isNaN(currentTempValue)) {
+          temperatureInput.value = wantsFahrenheit
+            ? celsiusToFahrenheit(currentTempValue).toFixed(1)
+            : fahrenheitToCelsius(currentTempValue).toFixed(1);
+        }
+        tempUnitToggle.checked = wantsFahrenheit;
+        isFahrenheit = wantsFahrenheit;
+        if (tempUnitLabel) tempUnitLabel.textContent = wantsFahrenheit ? '°F' : '°C';
+        const tempButtons = document.querySelectorAll('.mp-unit-btn[data-tempunit]');
+        tempButtons.forEach((btn) => {
+          const active = btn.getAttribute('data-tempunit') === (wantsFahrenheit ? 'fahrenheit' : 'celsius');
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      }
+
+      hidden.value = system;
+      buttons.forEach((btn) => {
+        const active = btn.getAttribute('data-system') === system;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      // clothcalc.js's own "change" listener on #result-system
+      // (registered in setupEventListeners()) re-runs handleResultSystemChange().
+      hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.getAttribute('aria-pressed') === 'true') return;
+        setSystem(btn.getAttribute('data-system'));
+      });
+    });
+  }
+
   function initializeCalculator() {
     setupInitialUnitsAndInputs();
     toggleEpoxyRatioVisibility();
     updateRemoveButtonVisibility();
     setupEventListeners();
+    initTempUnitToggle();
+    initResultSystemToggle();
     calculateResin();
   }
 
   initializeCalculator();
 
   const printButton = document.getElementById("printButton");
-  const qrCodeContainer = document.getElementById("printQrCode");
 
-  if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
+  // #printQrCode is not looked up here: print-letterhead.js's render()
+  // rebuilds it fresh inside #printLetterhead on every calculateResin()
+  // run (the empty-state letterhead included, so it already exists by the
+  // time this setup code runs), and that innerHTML rebuild would detach
+  // any reference captured here the moment the next calculation runs.
+  // The click handler below (already guarded on lastCalculatedResults)
+  // does its own fresh lookup instead.
+  if (printButton && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", (event) => {
       event.preventDefault();
+      if (window._ccLastCalc && typeof logCalculation === 'function') {
+        logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+      }
       if (!lastCalculatedResults) {
           alert("Please perform a calculation first.");
           return;
@@ -780,8 +1201,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       const pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = "";
-      new QRCode(qrCodeContainer, {
+      const freshQrContainer = document.getElementById("printQrCode");
+      if (!freshQrContainer) { console.error("QR code container not found at print time."); return; }
+      freshQrContainer.innerHTML = "";
+      new QRCode(freshQrContainer, {
         text: pageUrl,
         width: 100,
         height: 100,
@@ -795,7 +1218,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   } else {
       if (!printButton) console.error("Print button not found");
-      if (!qrCodeContainer) console.error("QR code container not found");
       if (typeof QRCode === "undefined") console.error("QRCode library not loaded");
   }
 });

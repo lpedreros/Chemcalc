@@ -1,20 +1,48 @@
-/* epifanesScript.js - v2.1 (Ensures related products are always visible and mixing results update) */
+/* epifanesScript.js - v3.0 (Product + application-method selectors added;
+   see build report for the .mp-* visual rebuild this pairs with) */
 
 document.addEventListener("DOMContentLoaded", () => {
   const totalVolumeInput = document.getElementById("totalVolume");
   const volumeUnitSelect = document.getElementById("volumeUnit");
+  const productSelect = document.getElementById("epifanesProduct");
+  const methodSelect = document.getElementById("epifanesMethod");
+  const methodButtons = Array.prototype.slice.call(document.querySelectorAll('.mp-unit-btn[data-method]'));
+  const resultBaseLabelEl = document.getElementById("resultBaseLabel");
   const resultBaseDisplay = document.getElementById("resultBase");
+  const resultHardenerLabelEl = document.getElementById("resultHardenerLabel");
   const resultHardenerDisplay = document.getElementById("resultHardener");
+  const resultThinnerLabelEl = document.getElementById("resultThinnerLabel");
   const resultThinnerDisplay = document.getElementById("resultThinner");
+  const emailBaseEl = document.getElementById("epifanesEmailBase");
+  const emailHardenerEl = document.getElementById("epifanesEmailHardener");
+  const emailThinnerEl = document.getElementById("epifanesEmailThinner");
+  const noteSpeedcoatEl = document.getElementById("epifanesNoteSpeedcoat");
+  const noteSprayGuidanceEl = document.getElementById("epifanesNoteSprayGuidance");
   const affiliateLinksList = document.getElementById("affiliateLinksList");
   const affiliateLinksContainer = document.getElementById("affiliateLinksContainer");
 
-  // Check if essential elements exist
-  if (!totalVolumeInput || !volumeUnitSelect || !resultBaseDisplay || !resultHardenerDisplay || !affiliateLinksList || !affiliateLinksContainer) {
+  // Check if essential elements exist. Thinner label/value, the sr-only
+  // email mirrors, the two product/method notes and the method toggle
+  // buttons are soft-checked at their own use sites instead (same
+  // philosophy as the original guard, which already treated
+  // resultThinnerDisplay as optional).
+  if (!totalVolumeInput || !volumeUnitSelect || !productSelect || !methodSelect ||
+      !resultBaseLabelEl || !resultBaseDisplay || !resultHardenerLabelEl || !resultHardenerDisplay ||
+      !affiliateLinksList || !affiliateLinksContainer) {
     console.error("One or more essential DOM elements for the Epifanes calculator are missing. Functionality may be impaired.");
     if (affiliateLinksContainer) affiliateLinksContainer.style.display = "none";
-    return; 
+    return;
   }
+
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // DOMContentLoaded handler's own displayAffiliateLinks() call (below) has
+  // already run against a still-empty affiliateLinksData -- re-render once
+  // the fetch actually completes. displayAffiliateLinks() takes no args and
+  // is pure render (innerHTML rebuild only, no analytics), so it's safe to
+  // call directly here.
+  window.addEventListener('affiliateLinksReady', () => {
+    displayAffiliateLinks();
+  }, { once: true });
 
   const toCcs = {
     ccs: 1,
@@ -32,12 +60,59 @@ document.addEventListener("DOMContentLoaded", () => {
     gallons: 1 / 3785.41,
   };
 
+  // Human-readable unit labels for display/email only -- toCcs/fromCcs
+  // keys stay the lookup keys and analytics unit codes. "ounces" reads
+  // "fl oz", not "Ounces": these are fluid ounces (the page's own
+  // <option> reads "Fluid Ounces (US fl oz)", and the analytics comment
+  // below states "ounces" maps to FLOZ, not the mass OZ).
+  const unitLabels = {
+    ccs: "mL (cc)",
+    ounces: "fl oz",
+    liters: "Liters",
+    quarts: "Quarts",
+    gallons: "Gallons"
+  };
+
+  // Standard line supports Brush/Roll and Spray; PU Speedcoat is
+  // spray-only by manufacturer design. Colour products (both lines) get
+  // the "(colour)" result label instead of "(clear)".
+  const speedcoatProducts = ['en012', 'en013', 'en110'];
+  const colourProducts = ['en105', 'en110'];
+
+  function selectedOptionText(select) {
+    if (!select || select.selectedIndex < 0) return '';
+    const opt = select.options[select.selectedIndex];
+    return opt ? opt.text : '';
+  }
+
+  function renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel) {
+    if (typeof ChemCalcPrintLetterhead === 'undefined') return;
+    const v = (totalVolumeInput.value || '').trim();
+    const amountText = v ? (v + ' ' + selectedOptionText(volumeUnitSelect)) : '—';
+    ChemCalcPrintLetterhead.render({
+      docTitle: 'Epifanes Clear Varnish / Topside Paint — Mix Results',
+      pageSlug: 'epifanespoly',
+      recap: [
+        { label: 'Product', value: selectedOptionText(productSelect) || '—' },
+        { label: 'Method', value: selectedOptionText(methodSelect) || '—' },
+        { label: 'Amount', value: amountText }
+      ],
+      primary: { label: resultBaseLabelEl.textContent, value: resultBaseDisplay.textContent, unit: null, sub: null },
+      compare: [
+        { label: resultHardenerLabelEl.textContent, value: resultHardenerDisplay.textContent },
+        { label: resultThinnerLabelEl ? resultThinnerLabelEl.textContent : 'Thinning', value: resultThinnerDisplay ? resultThinnerDisplay.textContent : '—' }
+      ],
+      advisory: '',
+      disclaimer: 'Reference only — always confirm mix ratios against Epifanes’ technical data sheet.'
+    });
+  }
+
   function formatNumber(number) {
     if (isNaN(number) || number === null) {
         return "--";
     }
     const unit = volumeUnitSelect.value;
-    let fractionDigits = 2; 
+    let fractionDigits = 2;
     if (unit === "ounces" || unit === "ccs") {
         fractionDigits = 1;
     }
@@ -54,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    affiliateLinksList.innerHTML = ""; 
+    affiliateLinksList.innerHTML = "";
     const linksToShowKeys = new Set();
 
     linksToShowKeys.add("latex_gloves");
@@ -89,26 +164,124 @@ document.addEventListener("DOMContentLoaded", () => {
       affiliateLinksContainer.style.display = "block";
     } else {
       affiliateLinksList.innerHTML = "<li>No specific products found. Check Kits page.</li>";
-      affiliateLinksContainer.style.display = "block"; 
+      affiliateLinksContainer.style.display = "block";
     }
   }
 
+  // ── Application Method toggle shim ──────────────────────────────────
+  // Same pattern as awlgrip.html's methodType toggle (see
+  // awlgripcalc-ui.js), folded directly in here since this page only has
+  // the one toggle to sync -- no separate -ui.js file needed. The hidden
+  // <select id="epifanesMethod"> stays the source of truth; the visible
+  // buttons just mirror it.
+  function syncMethodButtons() {
+    if (!methodButtons.length) return;
+    const brushOption = methodSelect.querySelector('option[value="brush"]');
+    const brushDisabled = !!(brushOption && brushOption.disabled);
+    methodButtons.forEach((btn) => {
+      const value = btn.getAttribute('data-method');
+      btn.setAttribute('aria-pressed', value === methodSelect.value ? 'true' : 'false');
+      if (value === 'brush') {
+        btn.disabled = brushDisabled;
+        btn.setAttribute('aria-disabled', brushDisabled ? 'true' : 'false');
+      }
+    });
+  }
+
+  methodButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const value = btn.getAttribute('data-method');
+      if (btn.disabled || methodSelect.value === value) return;
+      methodSelect.value = value;
+      // methodSelect's own "change" listener (registered below) re-runs
+      // calculateEpifanes(), which calls syncMethodButtons() itself.
+      methodSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  });
+
+  // ── Thinner advisory (product + method aware, NOT computed) ─────────
+  // Deliberately advisory rather than a calculated volume: the real TDS
+  // gives ranges that vary by coat and substrate, not one number per
+  // product, so a single computed figure would be invented precision.
+  function thinnerAdvisory(productType, methodType) {
+    if (speedcoatProducts.indexOf(productType) !== -1) {
+      return "Thin 15-20%. Use Epifanes PU Speedcoat Spraythinner - a different product from the standard line's spray thinner.";
+    }
+    if (methodType === 'spray') {
+      return "Thin 15-20%. Use Epifanes Poly-urethane Spray Thinner. Note: Epifanes recommends the PU Speedcoat version of this product for spray application.";
+    }
+    return "Thin 0-15% depending on coat and substrate - see the TDS. Use Epifanes Poly-urethane Brush Thinner or Epifanes PU Slow Reducer.";
+  }
+
+  function setThinnerAdvisory(productType, methodType) {
+    const label = "Thinning";
+    const text = thinnerAdvisory(productType, methodType);
+    if (resultThinnerLabelEl) resultThinnerLabelEl.textContent = label;
+    if (resultThinnerDisplay) resultThinnerDisplay.textContent = text;
+    if (emailThinnerEl) emailThinnerEl.textContent = label + ": " + text;
+  }
+
+  // Label/value split (visual rebuild only): .mp-compare-box splits the
+  // label and value into two separate spans, so both are written here
+  // together, plus the sr-only "Label: value" mirrors for
+  // injectEmailCaptureUI (see build report -- .mp-compare-value alone
+  // can't be read as a full sentence, same fix awlgrip.html needed).
+  function setResults(baseLabel, baseValue, hardenerLabel, hardenerValue) {
+    resultBaseLabelEl.textContent = baseLabel;
+    resultBaseDisplay.textContent = baseValue;
+    resultHardenerLabelEl.textContent = hardenerLabel;
+    resultHardenerDisplay.textContent = hardenerValue;
+    if (emailBaseEl) emailBaseEl.textContent = baseLabel + ": " + baseValue;
+    if (emailHardenerEl) emailHardenerEl.textContent = hardenerLabel + ": " + hardenerValue;
+  }
+
   function calculateEpifanes() {
+    const productType = productSelect.value;
+    const isSpeedcoat = speedcoatProducts.indexOf(productType) !== -1;
+    const isColour = colourProducts.indexOf(productType) !== -1;
+
+    // Speedcoat constraint: force + lock Spray, disable Brush/Roll --
+    // same mechanism awlgripscript.js uses to disable its real
+    // <option value="roll"> for spray-only products.
+    const brushOption = methodSelect.querySelector('option[value="brush"]');
+    if (brushOption) brushOption.disabled = isSpeedcoat;
+    if (isSpeedcoat && methodSelect.value === 'brush') {
+      methodSelect.value = 'spray';
+    }
+    // Re-sync the visible toggle buttons every time, so a Speedcoat
+    // product selection VISIBLY moves the toggle to Spray instead of
+    // leaving Brush/Roll highlighted while spray values are computed.
+    syncMethodButtons();
+
+    const methodType = methodSelect.value;
+
+    // Product/method-driven notes -- same style="display:none;" + JS
+    // pattern as awlgrip.html's productNoteAwlcraftSE/productNoteHDTClear.
+    if (noteSpeedcoatEl) noteSpeedcoatEl.style.display = isSpeedcoat ? "block" : "none";
+    if (noteSprayGuidanceEl) noteSprayGuidanceEl.style.display = (!isSpeedcoat && methodType === 'spray') ? "block" : "none";
+
+    const baseLabel = isColour ? "Component A (colour)" : "Component A (clear)";
+    const hardenerLabel = "Component B (hardener)";
+
+    // Thinner advisory is product/method-driven, not volume-driven --
+    // update it regardless of whether a volume has been entered yet.
+    setThinnerAdvisory(productType, methodType);
+
     const totalVolumeValue = parseFloat(totalVolumeInput.value) || 0;
     const unit = volumeUnitSelect.value;
 
     if (totalVolumeValue <= 0) {
-      resultBaseDisplay.textContent = "Component A (Base): --";
-      resultHardenerDisplay.textContent = "Component B (Hardener): --";
+      setResults(baseLabel, "--", hardenerLabel, "--");
+      renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel);
       return;
     }
 
     const totalVolumeCcs = totalVolumeValue * (toCcs[unit] || 0);
 
     if (totalVolumeCcs <= 0) {
-        resultBaseDisplay.textContent = "Component A (Base): Error";
-        resultHardenerDisplay.textContent = "Component B (Hardener): Error";
-        return;
+      setResults(baseLabel, "Error", hardenerLabel, "Error");
+      renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel);
+      return;
     }
 
     const baseVolumeCcs = totalVolumeCcs * (2 / 3);
@@ -117,61 +290,84 @@ document.addEventListener("DOMContentLoaded", () => {
     const baseVolumeOutput = baseVolumeCcs * (fromCcs[unit] || 0);
     const hardenerVolumeOutput = hardenerVolumeCcs * (fromCcs[unit] || 0);
 
-    resultBaseDisplay.innerHTML = `Component A (Base): <strong>${formatNumber(baseVolumeOutput)} ${unit}</strong>`;
-    resultHardenerDisplay.innerHTML = `Component B (Hardener): <strong>${formatNumber(hardenerVolumeOutput)} ${unit}</strong>`;
-    
-    if (resultThinnerDisplay) { 
-        resultThinnerDisplay.textContent = "Thinner (Optional): Use Epifanes Polyurethane Thinner (Brush or Spray) as needed, typically 0-5% for brushing, 5-15% for spraying. Refer to TDS.";
-    }
+    const baseValueStr = formatNumber(baseVolumeOutput) + " " + (unitLabels[unit] || unit);
+    const hardenerValueStr = formatNumber(hardenerVolumeOutput) + " " + (unitLabels[unit] || unit);
+
+    setResults(baseLabel, baseValueStr, hardenerLabel, hardenerValueStr);
 
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: function already returns early for <= 0, but be explicit
     if (typeof logCalculation === 'function' && totalVolumeValue > 0) {
-      logCalculation('epifanes', {
-        totalVolume: totalVolumeValue,
-        unit:        unit
-      }, {
-        base:     resultBaseDisplay.innerHTML,
-        hardener: resultHardenerDisplay.innerHTML
-      });
+      const CC = window.CC_UNITS;
+      // toCcs/fromCcs keys ("ounces" etc.) are volumes of mixed paint,
+      // not mass -- "ounces" maps to FLOZ, not the mass OZ.
+      const unitMap = { ccs: CC.CCS, ounces: CC.FLOZ, liters: CC.L, quarts: CC.QT, gallons: CC.GAL };
+      const _ccInputs = {
+        productType: productType,
+        methodType: methodType,
+        totalVolume: { value: totalVolumeValue, unit: unitMap[unit], base: totalVolumeCcs, baseUnit: CC.CCS }
+      };
+      const _ccResults = {
+        base:     { value: baseVolumeOutput, unit: unitMap[unit], base: baseVolumeCcs, baseUnit: CC.CCS },
+        hardener: { value: hardenerVolumeOutput, unit: unitMap[unit], base: hardenerVolumeCcs, baseUnit: CC.CCS }
+      };
+      logCalculation('epifanes', _ccInputs, _ccResults);
+      // Cached for Print/Email Me to log this settled answer immediately
+      // (see calc-tracker.js's logCalculation immediate=true path).
+      window._ccLastCalc = { calculator: 'epifanes', inputs: _ccInputs, results: _ccResults };
     }
+
+    renderPrintLetterhead(productType, methodType, baseLabel, hardenerLabel);
   }
 
   totalVolumeInput.addEventListener("input", calculateEpifanes);
   volumeUnitSelect.addEventListener("change", calculateEpifanes);
+  productSelect.addEventListener("change", calculateEpifanes);
+  methodSelect.addEventListener("change", calculateEpifanes);
 
   const printButton = document.getElementById("printButton");
-  const qrCodeContainer = document.getElementById("printQrCode");
 
-  if (printButton && qrCodeContainer) {
+  // #printQrCode is not looked up here: it only exists once
+  // renderPrintLetterhead() has run at least once (it's built fresh
+  // inside #printLetterhead on every calculation, per print-letterhead
+  // .js's render()) -- at this point in setup, calculateEpifanes() below
+  // hasn't run yet, so it wouldn't exist yet either. The click handler
+  // below does its own fresh lookup instead, both to sidestep that
+  // ordering issue and because render()'s innerHTML rebuild would
+  // detach any reference captured here the moment the user changes an
+  // input anyway (same fix as every other calculator's print handler).
+  if (printButton) {
     if (typeof QRCode !== "undefined") {
-        printButton.addEventListener("click", (event) => { 
-            event.preventDefault(); 
+        printButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (window._ccLastCalc && typeof logCalculation === 'function') {
+              logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+            }
             const pageUrl = window.location.href;
-            qrCodeContainer.innerHTML = ""; 
-            new QRCode(qrCodeContainer, {
+            const freshQrContainer = document.getElementById("printQrCode");
+            if (!freshQrContainer) { console.error("QR code container not found at print time."); return; }
+            freshQrContainer.innerHTML = "";
+            new QRCode(freshQrContainer, {
                 text: pageUrl,
-                width: 100, 
+                width: 100,
                 height: 100,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
             });
-            
+
             setTimeout(() => {
                 window.print();
-            }, 250); 
+            }, 250);
         });
     } else {
         console.error("QRCode library not loaded, print QR functionality disabled.");
         if(printButton) printButton.style.display = 'none';
     }
   } else {
-      if (!printButton) console.warn("Print button not found.");
-      if (!qrCodeContainer) console.warn("QR code container for print not found.");
+      console.warn("Print button not found.");
   }
 
   calculateEpifanes();
   displayAffiliateLinks();
 });
-

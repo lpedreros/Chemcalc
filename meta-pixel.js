@@ -14,7 +14,8 @@
 // - If logCalculation doesn't exist (non-calculator page), it just fires PageView
 //
 // WHERE TO LOAD:
-// - In <head>, AFTER supabase-client.js, BEFORE any calculator scripts
+// - In <head>, BEFORE any calculator scripts (Library/head-common.lbi loads it
+//   ahead of supabase-client.js; it has no dependency on that file)
 // - Or at the bottom with the other scripts — order doesn't matter for the
 //   wrapper since it uses DOMContentLoaded to set up
 //
@@ -71,7 +72,8 @@
   // When logCalculation fires, we ALSO fire a Meta custom event.
   // This is non-destructive: if logCalculation doesn't exist, nothing breaks.
   //
-  // The wrapper preserves the original function's behavior completely.
+  // The wrapper preserves the original function's behavior completely,
+  // including its return value (see wrapLogCalculation() below).
   function setupCalculatorTracking() {
     var calculatorName = getCurrentCalculator();
 
@@ -101,20 +103,32 @@
   function wrapLogCalculation(calculatorName) {
     var originalLogCalculation = window.logCalculation;
 
-    window.logCalculation = function (calculator, inputs, results) {
-      // 1. Call the original function — never interfere with its behavior
-      originalLogCalculation.call(this, calculator, inputs, results);
+    window.logCalculation = function () {
+      var args = arguments;
+
+      // 1. Call the original function -- never interfere with its behavior.
+      // Forward ALL arguments untouched -- do not name/limit them here, or a
+      // future argument added to logCalculation() silently gets dropped again.
+      // CAPTURE and RETURN its result (see the return at the end of this
+      // wrapper): calc-tracker.js's logCalculation returns the insert promise
+      // on its immediate=true path, and email-results.js awaits that promise
+      // so the row exists before mark_email_captured() runs. Dropping the
+      // return value here made the wrapped global resolve instantly and
+      // silently defeated that fix.
+      var result = originalLogCalculation.apply(this, args);
 
       // 2. Fire Meta Pixel custom event
       try {
         fbq('trackCustom', 'CalculatorUsed', {
           calculator_name: calculatorName,
-          calculator_id: calculator
+          calculator_id: args[0]
         });
       } catch (e) {
         // Never let pixel errors affect the user experience
         console.warn('[meta-pixel] Custom event failed:', e.message);
       }
+
+      return result;
     };
 
     console.info('[meta-pixel] Tracking active for:', calculatorName);

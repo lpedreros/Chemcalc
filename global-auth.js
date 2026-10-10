@@ -2,10 +2,11 @@
 // Adds a site-wide login indicator to the nav on every page.
 // Shows "Hi, [Name]" when logged in, or "Log In / Sign Up" when not.
 // Load this AFTER supabase-client.js on every page.
-// It is self-contained — it does not depend on auth.js or estimate.js.
+// It does not depend on auth.js or estimate.js, but it does read the shared auth
+// state that global-account-modal.js publishes (getAuthState(), chemcalc:authchange).
 //
 // Usage: <script src="/global-auth.js"></script>
-//        (place after supabase-client.js, before closing </body>)
+//        (place after supabase-client.js; Library/head-common.lbi loads both in <head>)
 
 (function () {
   'use strict';
@@ -56,21 +57,39 @@
       .replace(/"/g, '&quot;');
   }
 
-  // ── 4. Fetch profile from Supabase (same pattern as auth.js) ─────────────
-  async function fetchProfile(userId) {
-    try {
-      var result = await _sb
-        .from('profiles')
-        .select('full_name, tier, subscription_status')
-        .eq('id', userId)
-        .single();
-      return result.data || null;
-    } catch (e) {
-      return null;
+  // ── 4. Apply a resolved (user, profile) pair sitewide ────────────────────
+  // Shared by the initial getAuthState() read and every later
+  // chemcalc:authchange event, so both paths stay identical. autofillEmailFields
+  // is only called when there's a real user -- the original logged-out
+  // branch never called it either; calling it with a null email would set
+  // matching inputs' .value to the literal string "null" (the DOM coerces
+  // el.value = null via ToString, it doesn't clear the field).
+  function applyAuthState(user, profile) {
+    updateIndicator(user, profile);
+    if (user) {
+      sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
+      autofillEmailFields(user.email);
+    } else {
+      sessionStorage.setItem('chemcalc_user_tier', 'guest');
     }
   }
 
-  // ── 5. Init: check current session, then listen for changes ──────────────
+  // ── 5. Init: read the shared auth state, then listen for changes ─────────
+  // 2026-10-02 consolidation: this file used to run its own independent
+  // getSession() + profile fetch and its own onAuthStateChange listener --
+  // one of four places on the page doing that independently, which is what
+  // the login-indicator bug (no SIGNED_IN event ever reaching this file's
+  // own listener, per commit 4b6f080's diagnostic logging) traced back to.
+  // Now reads from global-account-modal.js's shared getAuthState()/
+  // chemcalc:authchange instead -- that script loads before this one on
+  // 15 of the 20 pages (estimate.html, cookie.html, privacy.html, terms.html
+  // and trello-setup.html load it after), which is fine because init() below
+  // waits for DOMContentLoaded. estimate.html is the exception in a different
+  // way: global-account-modal.js skips its own session check there (auth.js
+  // does the session work, see isEstimatorPage), so nothing from that script
+  // ever fires chemcalc:authchange, and getAuthState() is read here before
+  // auth.js has resolved. estimate.js's setUserTier() therefore publishes the
+  // event itself after every session change; the load order has no effect.
   async function init() {
     injectIndicator();
 
@@ -80,41 +99,23 @@
       return;
     }
 
-    // Check existing session
-    var sessionResult = await _sb.auth.getSession();
-    var session = sessionResult.data && sessionResult.data.session;
+    var initialState = (typeof window.getAuthState === 'function') ? window.getAuthState() : { user: null, profile: null };
+    applyAuthState(initialState.user, initialState.profile);
 
-    if (session && session.user) {
-      var profile = await fetchProfile(session.user.id);
-      updateIndicator(session.user, profile);
-      // Store tier in sessionStorage for chatbot and other scripts to read
-      sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
-      // Autofill email fields on calculator pages (e.g. "Email Me" box)
-      autofillEmailFields(session.user.email);
-    } else {
-      updateIndicator(null, null);
-      sessionStorage.setItem('chemcalc_user_tier', 'free');
-    }
-
-    // Listen for login / logout events
-    _sb.auth.onAuthStateChange(async function (event, newSession) {
-      if (newSession && newSession.user) {
-        var profile = await fetchProfile(newSession.user.id);
-        updateIndicator(newSession.user, profile);
-        autofillEmailFields(newSession.user.email);
-        sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
-      } else {
-        updateIndicator(null, null);
-        sessionStorage.setItem('chemcalc_user_tier', 'free');
-      }
+    // Live updates (login/logout without a page nav) arrive via this event
+    // instead of a page-local onAuthStateChange subscription.
+    window.addEventListener('chemcalc:authchange', function (e) {
+      applyAuthState(e.detail.user, e.detail.profile);
     });
   }
 
   // ── 6. Autofill email fields for logged-in users ─────────────────────────
-  // Fills any input with id="emailInput" (the "Email Me" box in email-results.js)
-  // and id="clientEmail" (the estimator client email field).
+  // Fills any input with id="emailInput" (no element has that id now; the "Email Me"
+  // box in email-results.js is id="captureEmailInput"). The estimator's
+  // id="clientEmail" is deliberately not here: that box holds the customer's address,
+  // so it must load blank, not with the contractor's own email.
   function autofillEmailFields(email) {
-    var fields = ['emailInput', 'clientEmail'];
+    var fields = ['emailInput'];
     fields.forEach(function (id) {
       var el = document.getElementById(id);
       if (el && !el.value) {

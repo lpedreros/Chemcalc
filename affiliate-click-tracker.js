@@ -11,8 +11,8 @@
 //   - Works alongside the existing gtag tracking in main.js.
 //
 // DEPENDENCIES:
-//   - Requires _sb (supabase-client.js) to already be loaded in <head>.
-//   - Should be loaded AFTER the Supabase CDN + supabase-client.js.
+//   - Requires _sb (supabase-client.js) only at click time, not at load.
+//   - Load order vs. the Supabase CDN + supabase-client.js does not matter.
 //   - Safe to load before or after affiliate_links.js / main.js.
 // ============================================================
 

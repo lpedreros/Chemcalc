@@ -2,8 +2,8 @@
 // Shared analytics module for all ChemCalc calculator pages.
 //
 // WHAT IT DOES:
-//   - Logs one row to the `calculator_events` Supabase table every time
-//     a calculation fires on any calculator page.
+//   - Logs one row to the `calculator_events` Supabase table once an
+//     answer settles (13s debounced), or right away for Print/Email Me.
 //   - Attaches user_id if the visitor is logged in.
 //   - Attaches a session_id (random, per browser session, no login needed).
 //   - Attaches approximate country + city via IP geolocation (one call per session).
@@ -11,6 +11,9 @@
 //
 // HOW TO USE (in each calculator's script):
 //   logCalculation('awlgrip', { product: 'awlgrip', method: 'spray', ... }, { paint: '12 oz', ... });
+//   // ...and cache the same values on window._ccLastCalc right alongside
+//   // that call, so a later Print/Email Me action can log immediately:
+//   logCalculation('awlgrip', inputs, results, true);
 //
 // DEPENDENCIES:
 //   - Requires _sb (supabase-client.js) to already be loaded in <head>.
@@ -51,25 +54,62 @@ async function getLocation() {
   }
 }
 
+// ── Shared unit vocabulary ───────────────────────────────────
+// Every calculator references these constants instead of typing unit
+// strings by hand, so "l" vs "L" vs "liters" can't silently split the
+// analytics data into two buckets. A typo becomes undefined and fails
+// loudly (a jsonb value that's obviously wrong) instead of quietly
+// creating a second bucket for the same unit.
+window.CC_UNITS = Object.freeze({
+  ML:'ml', L:'l', FLOZ:'floz', QT:'qt', GAL:'gal', CCS:'ccs',
+  G:'g', KG:'kg', OZ:'oz', LB:'lb',
+  MM:'mm', CM:'cm', M:'m', IN:'in', FT:'ft',
+  M2:'m2', FT2:'ft2', CM2:'cm2', IN2:'in2',
+  C:'c', F:'f',
+  PCT:'pct', DROPS:'drops', MIN:'min', USD:'usd', RATIO:'ratio', COUNT:'count'
+});
+
 // ── Debounce timer ──────────────────────────────────────────
 // Prevents logging on every keystroke. Only logs after user stops
-// typing/changing inputs for 2 seconds.
+// typing/changing inputs for 13 seconds — long enough that someone
+// exploring live (dragging a slider, comparing two temperatures)
+// settles on one row per finished answer instead of several per session.
 let _logTimer = null;
+
+// Content signature of the last row this page actually inserted.
+// Used to suppress byte-identical repeat inserts -- a second settle
+// cycle on unchanged values, or a Print/Email immediate insert
+// landing on top of an already-written debounced row, both produced
+// duplicate rows carrying identical inputs and results. Compares
+// content rather than timing so it catches every path. Resets on
+// page navigation, which is intended: a fresh page visit logging
+// the same values again is a genuine new event.
+let _lastLoggedSignature = null;
 
 // ── Main log function ────────────────────────────────────────
 // Called by each calculator script after every calculation.
-// DEBOUNCED: waits 2 seconds of inactivity before actually inserting.
+// DEBOUNCED by default: waits 13 seconds of inactivity before actually
+// inserting. Pass immediate=true (Print/Email Me call sites) to skip the
+// wait and log the current state right away instead — used for actions
+// that mean the user is done, not mid-exploration.
 //
-// @param {string} calculator  - Identifier: 'awlgrip' | 'mekp' | 'clothcalc' | 'epifanes'
-// @param {object} inputs      - Plain object of all input values at time of calculation
-// @param {object} results     - Plain object of all output values shown to the user
+// @param {string} calculator   - Identifier: 'awlgrip' | 'alexseal' | 'mekp' | 'clothcalc' | 'epifanes'
+// @param {object} inputs       - Plain object of all input values at time of calculation
+// @param {object} results      - Plain object of all output values shown to the user
+// @param {boolean} [immediate] - Skip the debounce and insert right away (default false)
 //
 // This is fire-and-forget: a failure here never breaks the calculator.
-function logCalculation(calculator, inputs, results) {
-  // Cancel any pending log — only the final value gets recorded
+function logCalculation(calculator, inputs, results, immediate = false) {
+  // Cancel any pending log either way — immediate mode inserts this call's
+  // state right now, so a stale queued write for an earlier state must not
+  // also fire later and duplicate the row; debounced mode just restarts
+  // the wait as before.
   if (_logTimer) clearTimeout(_logTimer);
 
-  _logTimer = setTimeout(async function () {
+  // Same insert logic either path takes — extracted so immediate=true can
+  // call it directly instead of through setTimeout, without duplicating
+  // the payload/error-handling code below.
+  async function doInsert() {
     try {
       if (typeof _sb === 'undefined' || !_sb) {
         console.warn('[calc-tracker] Supabase client (_sb) not available. Skipping log.');
@@ -86,6 +126,11 @@ function logCalculation(calculator, inputs, results) {
         userId = user ? user.id : null;
       } catch (e) { /* anonymous — that's fine */ }
 
+      const signature = calculator + '|' + JSON.stringify(inputs) + '|' + JSON.stringify(results);
+      if (signature === _lastLoggedSignature) {
+        return;
+      }
+
       const { error } = await _sb
         .from('calculator_events')
         .insert({
@@ -101,13 +146,22 @@ function logCalculation(calculator, inputs, results) {
 
       if (error) {
         console.warn('[calc-tracker] Insert failed:', error.message);
+      } else {
+        _lastLoggedSignature = signature;
       }
 
     } catch (err) {
       // Never let a tracking error surface to the user
       console.warn('[calc-tracker] Unexpected error:', err.message);
     }
-  }, 2000); // 2-second debounce
+  }
+
+  if (immediate) {
+    _logTimer = null;
+    return doInsert();
+  }
+
+  _logTimer = setTimeout(doInsert, 13000); // 13-second debounce
 }
 
 // ── Mark email captured ──────────────────────────────────────
@@ -119,16 +173,16 @@ async function markEmailCaptured() {
 
     const sessionId = getSessionId();
 
-    // Find the most recent row for this session and update it
-    const { error } = await _sb
-      .from('calculator_events')
-      .update({ email_captured: true })
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: false })
-      .limit(1);
+    // RLS has no SELECT policy for anon, so a direct UPDATE can never locate
+    // its target row for anonymous sessions and silently affects zero rows.
+    // mark_email_captured() is SECURITY DEFINER and bypasses RLS to do the
+    // same update safely, without exposing row data to anon.
+    const { data, error } = await _sb.rpc('mark_email_captured', { p_session_id: sessionId });
 
     if (error) {
       console.warn('[calc-tracker] markEmailCaptured failed:', error.message);
+    } else if (data === 0) {
+      console.warn('[calc-tracker] markEmailCaptured: no matching row found for session', sessionId);
     }
   } catch (err) {
     console.warn('[calc-tracker] markEmailCaptured unexpected error:', err.message);

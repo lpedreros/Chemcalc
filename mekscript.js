@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Affiliate links
   const affiliateLinksList = document.getElementById("affiliateLinksList");
 
+  // affiliate_links.js's Supabase fetch is async and can resolve after this
+  // DOMContentLoaded handler's own displayAffiliateLinks() call has already
+  // run against a still-empty affiliateLinksData -- re-render once the
+  // fetch actually completes. displayAffiliateLinks() takes no args and is
+  // pure render (innerHTML rebuild only, no analytics), so it's safe to
+  // call directly here.
+  window.addEventListener('affiliateLinksReady', () => {
+    displayAffiliateLinks();
+  }, { once: true });
+
   // Constants
   const mlPerOz = 29.5735;
   const mlPerQuart = 946.353;
@@ -44,16 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
         { value: "gallon", text: "Gallons (gal)" },
       ];
       defaultUnit = "oz";
-      const resinVolumeUnitSpan = document.getElementById("resinVolumeUnit");
-      if (resinVolumeUnitSpan) resinVolumeUnitSpan.textContent = "oz"; 
     } else { // metric
       options = [
         { value: "ml", text: "Milliliters (mL/cc)" },
         { value: "liter", text: "Liters (L)" },
       ];
       defaultUnit = "ml";
-      const resinVolumeUnitSpan = document.getElementById("resinVolumeUnit");
-      if (resinVolumeUnitSpan) resinVolumeUnitSpan.textContent = "mL"; 
     }
     
     let unitFound = false;
@@ -121,12 +127,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (resinMl > 0) {
         let recommendedPct = "N/A";
+        // Hoisted out of the block below (rather than left as a `const`
+        // scoped to the `if (!isNaN(tempC))` branch) so the analytics
+        // block further down can read the actual number instead of
+        // re-parsing it back out of mekpRecommendedP's formatted text.
+        let recommendedNum = null;
         if (!isNaN(tempC)) {
-            if (tempC >= 29.4) recommendedPct = "1.0%";
-            else if (tempC >= 23.9) recommendedPct = "1.5%";
-            else if (tempC >= 18.3) recommendedPct = "2.0%";
-            else if (tempC >= 15.6) recommendedPct = "2.5%";
-            else recommendedPct = "3.0% (Caution!)";
+            recommendedNum = getRecommendedMekpPercent(tempC);
+            recommendedPct = (recommendedNum === 3.0) ? "3.0% (Caution!)" : `${recommendedNum.toFixed(1)}%`;
             mekpRecommendedP.textContent = `Recommended MEKP % (based on ${temp.toFixed(0)}°${selectedTempUnit === 'fahrenheit' ? 'F' : 'C'}): ${recommendedPct}`;
         } else {
             mekpRecommendedP.textContent = "Recommended MEKP % (based on temperature): Enter Temp";
@@ -146,20 +154,57 @@ document.addEventListener("DOMContentLoaded", () => {
         displayAffiliateLinks();
 
         // ── Analytics: log this calculation (fire-and-forget) ──
-        // Guard: only log when user has entered a real resin amount AND a temperature
-        if (typeof logCalculation === 'function' && resinAmount > 0 && !isNaN(tempC)) {
-          logCalculation('mekp', {
-            resinAmount:      resinAmount,
-            volumeUnit:       selectedVolumeUnit,
-            temperature:      temp,
-            tempUnit:         selectedTempUnit,
+        // Guard: only log when the user has entered a real resin amount.
+        // Temperature is deliberately NOT required: the slider/Duratec path
+        // produces a complete, correct answer without one, and those
+        // calculations were previously invisible to analytics entirely.
+        if (typeof logCalculation === 'function' && resinAmount > 0) {
+          const CC = window.CC_UNITS;
+          // Volume-unit select values ("oz" etc.) -> shared vocabulary.
+          // "oz" here is Fluid Ounces (see updateVolumeUnits()'s option
+          // list above), so it maps to FLOZ, not the mass OZ.
+          const volumeUnitMap = { oz: CC.FLOZ, quart: CC.QT, gallon: CC.GAL, ml: CC.ML, liter: CC.L };
+          const _ccInputs = {
+            resinAmount:      { value: resinAmount, unit: volumeUnitMap[selectedVolumeUnit], base: resinMl, baseUnit: CC.ML },
+            temperature:      isNaN(tempC)
+              ? null
+              : { value: temp, unit: (selectedTempUnit === 'fahrenheit' ? CC.F : CC.C), base: tempC, baseUnit: CC.C },
             usingDuratec:     useDuratec,
-            mekpPercentage:   mekpPercentage,
+            mekpPercentage:   { value: mekpPercentage, unit: CC.PCT },
             percentageSource: percentageSource
-          }, {
-            mekpVolume: mekpCcsP.textContent,
-            mekpDrops:  mekpDropsP.textContent,
-            recommended: mekpRecommendedP.textContent
+          };
+          const _ccResults = {
+            mekpVolume:  { value: mekpMl, unit: CC.ML },
+            mekpDrops:   { value: mekpDrops, unit: CC.DROPS },
+            // recommendedNum is the number getRecommendedMekpPercent()
+            // returned (or null if temp was invalid) -- not a re-parse of
+            // mekpRecommendedP's formatted text.
+            recommended: (recommendedNum === null) ? null : { value: recommendedNum, unit: CC.PCT }
+          };
+          logCalculation('mekp', _ccInputs, _ccResults);
+          // Cached for Print/Email Me to log this settled answer immediately
+          // (see calc-tracker.js's logCalculation immediate=true path).
+          window._ccLastCalc = { calculator: 'mekp', inputs: _ccInputs, results: _ccResults };
+        }
+
+        if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+          ChemCalcPrintLetterhead.render({
+            docTitle: 'MEKP Calculator — Mix Results',
+            pageSlug: 'mekpcalc',
+            recap: [
+              { label: 'Batch Volume', value: resinAmount ? (resinAmount + ' ' + ({oz:'oz',quart:'qt',gallon:'gal',ml:'mL',liter:'L'}[selectedVolumeUnit] || selectedVolumeUnit)) : '—' },
+              { label: 'Ambient Temperature', value: !isNaN(temp) ? (temp.toFixed(0) + '°' + (selectedTempUnit === 'fahrenheit' ? 'F' : 'C')) : '—' },
+              { label: 'MEKP Method', value: useDuratec ? 'Duratec 904-001 (locked 2%)' : 'Custom percentage' }
+            ],
+            primary: { label: 'Add this much MEKP catalyst', value: mekpMl.toFixed(1), unit: 'cc', sub: '≈ ' + mekpDrops.toFixed(0) + ' drops' },
+            compare: [
+              { label: 'Recommended (by temp)', value: recommendedPct },
+              { label: 'Percentage used', value: mekpPercentage.toFixed(2) + '%' }
+            ],
+            advisory: (!isNaN(tempC) && tempC < 15.6)
+              ? 'Warning: Temperature is below 60°F (15.6°C). Curing may be significantly slowed or inhibited. Consider warming the workspace or materials.'
+              : '',
+            disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and catalyst percentage both change gel time.'
           });
         }
     } else {
@@ -169,38 +214,73 @@ document.addEventListener("DOMContentLoaded", () => {
         mekpDropsP.textContent = "MEKP Drops: —";
         tempAdviceP.style.display = "none";
         if (affiliateLinksList) affiliateLinksList.innerHTML = "";
+
+        if (typeof ChemCalcPrintLetterhead !== 'undefined') {
+          ChemCalcPrintLetterhead.render({
+            docTitle: 'MEKP Calculator — Mix Results',
+            pageSlug: 'mekpcalc',
+            recap: [
+              { label: 'Batch Volume', value: '—' },
+              { label: 'Ambient Temperature', value: '—' },
+              { label: 'MEKP Method', value: useDuratec ? 'Duratec 904-001 (locked 2%)' : 'Custom percentage' }
+            ],
+            primary: { label: 'Add this much MEKP catalyst', value: '—', unit: 'cc', sub: '' },
+            compare: [
+              { label: 'Recommended (by temp)', value: '—' },
+              { label: 'Percentage used', value: '—' }
+            ],
+            advisory: '',
+            disclaimer: 'Reference only — always confirm cure characteristics against your resin manufacturer’s technical data sheet. Recalculate before every batch; temperature and catalyst percentage both change gel time.'
+          });
+        }
     }
   }
+
+  // role:'base' -- the one item this calculator's math actually computes
+  // (the MEKP catalyst volume/drops). The resin-kit links in job.keys
+  // below are generic "where to buy resin" suggestions -- calculateMEKP()
+  // takes resin volume as a user-entered input, it never computes which
+  // specific resin product to buy -- so those stay role:'suggestion'.
+  var MEKP_BASE_KEYS = ['mekp_catalyst_8oz_236cc'];
+  var MEKP_ALLOWED_BUCKETS = ['PPE', 'Prep & Masking', 'Filling & Fairing', 'Mixing', 'Application', 'Finishing'];
 
   function displayAffiliateLinks() {
     if (!affiliateLinksList || typeof affiliateLinksData === "undefined") return;
 
     affiliateLinksList.innerHTML = "";
-    // Corrected keys based on console output and affiliate_links.js structure
-    const linksToShow = [
-        "polyester_resin_1gallon_kit_with_mekp",      // Corrected: was polyester_resin_1_gallon_kit_with_mekp
-        "white_gel_coat_1gallon_kit_with_wax_and_mekp", // Corrected: was white_gel_coat_1_gallon_kit_with_mekp
-        "latex_gloves",                               // Correct (was working)
-        "disposable_paper_cups_125pack",              // Corrected: was disposable_paper_cups_125_pack
-        "mixing_sticks_reusable",                     // Correct (was working)
-        "3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below" // Corrected: was 3m_full_face_respirator_large_model_ultimate_fx_ff_402_filter_kit_linked_below
-    ];
+    // Curated selection (material-selection.js): job.keys is the explicit
+    // list this calculator actually needs -- no more identityTags/
+    // isResinJob tag-sweep (that matched too broadly, including spray
+    // hardware and other unrelated items sharing a resin-identity tag).
+    // identityTags:[] and isResinJob:false mean selectMaterialKeys' tag
+    // sweep now only ever contributes universal-tagged rows, same as
+    // Awlgrip. cleanupKeys are the chemistry-specific post-work solvents;
+    // universal-tagged rows already cover general pre-work cleanup.
+    const job = {
+      isResinJob: false,
+      identityTags: [],
+      keys: [
+        'mekp_catalyst_8oz_236cc',
+        'polyester_resin_1gallon_kit_with_mekp',
+        'white_gel_coat_1gallon_kit_with_wax_and_mekp',
+        'white_gel_coat_1quart_kit_with_wax_and_mekp',
+        'duratec_resin_and_gel_coat_additive_for_tackfree_curingmy_favorite',
+        '3m_performance_atomizing_heads_size_12_5pack_for_3m_paint_gun_for_gel_coat_repairs',
+        '3m_performance_atomizing_heads_size_14_5pack_for_3m_paint_gun_for_gel_coat_repairs',
+        '3m_performance_atomizing_heads_size_20_5pack_for_3m_paint_gun_for_gel_coat_repairs',
+        'chip_brushes_1inch_24pack',
+        'chip_brushes_2inch_36pack',
+        'poly_resin_roller_covers_9inch_6pack',
+        'roller_tray_with_liners_and_roller_frame_9inch_10pack',
+        'fgci_vinylester_resin_1gallon_kit_with_4oz_mekp',
+        'fgci_vinylester_resin_1quart_kit_with_1oz_mekp'
+      ],
+      cleanupKeys: ['denatured_alcohol_1gallon', 'denatured_alcohol_5gallon', 'acetone_5gallon'],
+      respiratorKey: '3m_full_face_respirator_large_model_ultimate_fx_ff402_filter_kit_linked_below'
+    };
+    const linksToShow = Array.from(selectMaterialKeys(getCandidateRows(), job));
 
-    linksToShow.forEach(key => {
-      const linkData = affiliateLinksData[key]; 
-      if (linkData) {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = linkData.url;
-        a.textContent = linkData.name;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer sponsored";
-        li.appendChild(a);
-        affiliateLinksList.appendChild(li);
-      } else {
-          console.warn(`Affiliate link key not found in affiliateLinksData: ${key}`);
-      }
-    });
+    renderGroupedMaterialLinks(affiliateLinksList, linksToShow, MEKP_BASE_KEYS, MEKP_ALLOWED_BUCKETS);
   }
 
   const inputsToWatch = [
@@ -231,9 +311,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (printButton && qrCodeContainer && typeof QRCode !== "undefined") {
     printButton.addEventListener("click", (event) => {
       event.preventDefault();
+      if (window._ccLastCalc && typeof logCalculation === 'function') {
+        logCalculation(window._ccLastCalc.calculator, window._ccLastCalc.inputs, window._ccLastCalc.results, true);
+      }
       const pageUrl = window.location.href;
-      qrCodeContainer.innerHTML = "";
-      new QRCode(qrCodeContainer, {
+      // Fresh lookup, not the qrCodeContainer captured at page-load: the
+      // print letterhead's render() (print-letterhead.js) rebuilds
+      // #printLetterhead's whole innerHTML -- including a brand new
+      // #printQrCode div -- on every calculation, so the page-load
+      // reference goes stale (detached from the DOM) the moment the user
+      // changes any input. Generating into the stale node would produce
+      // a QR code nobody can see.
+      const freshQrContainer = document.getElementById("printQrCode") || qrCodeContainer;
+      freshQrContainer.innerHTML = "";
+      new QRCode(freshQrContainer, {
         text: pageUrl,
         width: 100,
         height: 100,
@@ -241,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.H
       });
-      
+
       setTimeout(() => {
           window.print();
       }, 250);

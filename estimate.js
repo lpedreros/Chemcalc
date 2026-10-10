@@ -13,8 +13,6 @@ var grandTotalValue = 0;
 /* setUserTier - called by auth.js after session loads */
 function setUserTier(tier) {
   var isPro = tier === 'pro';
-  var loggedIn = false;
-  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch(e) {}
 
   // Pro-feature elements: always visible, but locked (grayed) for free users
   document.querySelectorAll('.pro-feature').forEach(function (el) {
@@ -31,9 +29,8 @@ function setUserTier(tier) {
   var btnFmtInternal = document.getElementById('btnFmtInternal');
   if (btnFmtInternal) btnFmtInternal.innerHTML = 'Internal Copy';
 
-  // Internal summary (logged-in only)
-  var internalSummary = document.getElementById('internalSummary');
-  if (internalSummary) internalSummary.classList.toggle('d-none', !loggedIn);
+  // Internal summary (logged in, Internal Copy format only)
+  updateInternalSummary();
 
   // Body class for print CSS
   document.body.classList.toggle('free-user', !isPro);
@@ -62,8 +59,25 @@ function setUserTier(tier) {
   // Deposit calculator - Pro only
   showDepositCalc(isPro);
 
+  // Estimate History preview: signed out / free / Pro
+  renderHistoryPreview(tier);
+
   // Populate print header with current data
   populatePrintHeader();
+
+  // Publish the resolved auth state the way every other page does. The nav
+  // pill and the saved tier in global-auth.js listen for chemcalc:authchange,
+  // which global-account-modal.js fires from its own session check; that check
+  // is skipped on this page (auth.js does the session work here), so without
+  // this the pill reads the state once, before it has resolved, and stays on
+  // "Log In / Sign Up" for a signed-in user. auth.js calls this function after
+  // every session change, so this fires on login and logout too.
+  try {
+    window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: {
+      user: (typeof getUser === 'function') ? getUser() : null,
+      profile: (typeof getProfile === 'function') ? getProfile() : null
+    } }));
+  } catch (e) { /* never block the page on this */ }
 }
 
 /* -- Print Style Toggle -- */
@@ -92,11 +106,20 @@ function proSaveDraft() {
 function proLoadDraft() {
   if (_checkPro()) { openLoadDraftModal(); } else { openModal('upgradeModal'); }
 }
-function proLogEstimate() {
-  if (_checkPro()) { logEstimate(); } else { openModal('upgradeModal'); }
-}
 function proSetPrintItemized() {
   if (_checkPro()) { setPrintStyle('itemized'); } else { openModal('upgradeModal'); }
+}
+
+/* The internal cost block (your cost, gross profit, margin) is for the
+   contractor only: it shows for a logged-in user on the Internal Copy format
+   and on no other. Applied when the tier is set and again on every format
+   change, so Summary and Itemized never carry it. */
+function updateInternalSummary() {
+  var el = document.getElementById('internalSummary');
+  if (!el) return;
+  var loggedIn = false;
+  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch(e) {}
+  el.classList.toggle('d-none', !(loggedIn && currentFormat === 'internal'));
 }
 
 /* -- Consolidated format selector -- */
@@ -125,6 +148,7 @@ function setFormat(fmt) {
     setView('internal');
     setPrintStyle('internal');
   }
+  updateInternalSummary();
 }
 function proSetFormat(fmt) {
   if (_checkPro()) { setFormat(fmt); } else { openModal('upgradeModal'); }
@@ -133,8 +157,12 @@ function proAddToTrello() {
   if (_checkPro()) { addToTrello(); } else { openModal('upgradeModal'); }
 }
 
-/* -- Business Info (Pro): save/load from localStorage -- */
-function saveBusinessInfo() {
+/* -- Business Info (Pro): saved to and loaded from the Supabase profile -- */
+async function saveBusinessInfo() {
+  var statusEl = document.getElementById('bizSaveStatus');
+  var saveBtn = document.querySelector('#acctPanelBizInfo .btn-modal-primary');
+  var say = function (kind, msg, ms) { if (typeof window.setSaveStatus === 'function') window.setSaveStatus(statusEl, kind, msg, ms); };
+
   var biz = {
     name:    document.getElementById('bizName').value.trim(),
     tagline: document.getElementById('bizTagline').value.trim(),
@@ -143,37 +171,11 @@ function saveBusinessInfo() {
     website: document.getElementById('bizWebsite').value.trim(),
     address: document.getElementById('bizAddress').value.trim(),
     prefix:  document.getElementById('bizPrefix').value.trim().toUpperCase(),
-    logoUrl: document.getElementById('bizLogoUrl').value.trim()
+    logoUrl: document.getElementById('bizLogoUrl').value.trim(),
+    customTerms: document.getElementById('bizCustomTerms').value.trim()
   };
   // Always save to localStorage as fast local cache
   localStorage.setItem('chemcalc_biz_info', JSON.stringify(biz));
-
-  // Save biz info + Trello settings to Supabase so it travels with the user
-  var user = (typeof getUser === 'function') ? getUser() : null;
-  if (user && _sb) {
-    var profileUpdate = {
-      biz_name:     biz.name,
-      biz_tagline:  biz.tagline,
-      biz_phone:    biz.phone,
-      biz_email:    biz.email,
-      biz_website:  biz.website,
-      biz_address:  biz.address,
-      biz_prefix:   biz.prefix,
-      biz_logo_url: biz.logoUrl
-    };
-    // Merge Trello settings if available
-    if (typeof trelloCollectSettings === 'function') {
-      var trelloSettings = trelloCollectSettings();
-      Object.assign(profileUpdate, trelloSettings);
-    }
-    _sb.from('profiles').update(profileUpdate).eq('id', user.id)
-      .then(function(res) {
-        if (res.error) console.warn('Profile save error:', res.error.message);
-      });
-  } else if (typeof trelloCollectSettings === 'function') {
-    // Not logged in - at least update in-memory Trello state
-    trelloCollectSettings();
-  }
 
   // Apply prefix to current estimate number
   if (biz.prefix) {
@@ -186,18 +188,60 @@ function saveBusinessInfo() {
 
   populatePrintHeader();
 
-  var status = document.getElementById('bizSaveStatus');
-  if (status) {
-    status.textContent = '\u2713 Saved!';
-    status.style.color = '#7ed47e';
-    setTimeout(function () { status.textContent = ''; }, 2500);
+  // Save biz info + Trello settings to Supabase so it travels with the user
+  var user = (typeof getUser === 'function') ? getUser() : null;
+  if (!(user && _sb)) {
+    // Not logged in - at least update in-memory Trello state
+    if (typeof trelloCollectSettings === 'function') trelloCollectSettings();
+    say('info', 'Saved on this device only. Sign in to keep it with your account.', 6000);
+    return;
   }
+
+  var profileUpdate = {
+    biz_name:     biz.name,
+    biz_tagline:  biz.tagline,
+    biz_phone:    biz.phone,
+    biz_email:    biz.email,
+    biz_website:  biz.website,
+    biz_address:  biz.address,
+    biz_prefix:   biz.prefix,
+    biz_logo_url: biz.logoUrl,
+    biz_custom_terms: biz.customTerms
+  };
+  // Merge Trello settings if available
+  if (typeof trelloCollectSettings === 'function') Object.assign(profileUpdate, trelloCollectSettings());
+
+  // Wait for the database and say what happened: a rejected save used to show "Saved!" anyway
+  say('pending', 'Saving\u2026');
+  if (saveBtn) saveBtn.disabled = true;
+  var failure = '';
+  try {
+    var res = await _sb.from('profiles').update(profileUpdate).eq('id', user.id);
+    if (res.error) failure = res.error.message || 'unknown error';
+  } catch (e) {
+    failure = (e && e.message) || 'network error';
+  }
+  if (saveBtn) saveBtn.disabled = false;
+
+  if (failure) {
+    console.warn('Profile save error:', failure);
+    say('error', 'Couldn\u2019t save your changes (' + failure + '). Please try again.');
+    return;
+  }
+
+  // loadBusinessInfo() and trelloInit() read the profile held in memory, which a save does not refresh: bring it up to date
+  // (Business Info AND Trello columns) so the printed header shows what was just saved and reopening the account modal
+  // does not reset the Trello connection to its old values, which the next save would then write back
+  var live = (typeof getProfile === 'function') ? getProfile() : null;
+  if (live) { Object.assign(live, profileUpdate); populatePrintHeader(); }
+  say('ok', '\u2713 Saved to your account', 5000);
 }
 
 function loadBusinessInfo() {
-  // Prefer Supabase profile data (already loaded into currentProfile by auth.js)
+  // The Supabase profile (already loaded into currentProfile by auth.js) is the only source. With no business name and
+  // no custom terms there is no business info, and this returns null.
   var profile = (typeof getProfile === 'function') ? getProfile() : null;
-  if (profile && profile.biz_name) {
+  if (profile && (profile.biz_name || profile.biz_custom_terms)) {
     return {
       name:    profile.biz_name    || '',
       tagline: profile.biz_tagline || '',
@@ -206,23 +250,21 @@ function loadBusinessInfo() {
       website: profile.biz_website || '',
       address: profile.biz_address || '',
       prefix:  profile.biz_prefix  || '',
-      logoUrl: profile.biz_logo_url || ''
+      logoUrl: profile.biz_logo_url || '',
+      customTerms: profile.biz_custom_terms || ''
     };
   }
-  // Fallback to localStorage (for users who saved before this update)
-  try {
-    var raw = localStorage.getItem('chemcalc_biz_info');
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
+  return null;
 }
 
 function populateBizInfoModal() {
-  var biz = loadBusinessInfo();
-  if (!biz) return;
+  // With no business info there is nothing to fill in, but the Trello state below still has to be restored: a Business
+  // Info save writes the Trello board and list back to the profile, so unrestored they would be saved blank.
+  var biz = loadBusinessInfo() || {};
   var fields = {
     bizName: biz.name, bizTagline: biz.tagline, bizPhone: biz.phone,
     bizEmail: biz.email, bizWebsite: biz.website, bizAddress: biz.address,
-    bizPrefix: biz.prefix, bizLogoUrl: biz.logoUrl
+    bizPrefix: biz.prefix, bizLogoUrl: biz.logoUrl, bizCustomTerms: biz.customTerms
   };
   Object.keys(fields).forEach(function (id) {
     var el = document.getElementById(id);
@@ -256,20 +298,39 @@ function populatePrintHeader() {
   setText('printEstDate',  estDate  ? 'Date: ' + estDate : '');
   setText('printEstValid', estValid ? 'Valid: ' + estValid : '');
 
-  // Company info (pro)
-  if (biz) {
-    setText('printCompanyName',    biz.name    || '');
-    setText('printCompanyTagline', biz.tagline || '');
-    setText('printCompanyPhone',   biz.phone   || '');
-    setText('printCompanyEmail',   biz.email   || '');
-    setText('printCompanyWebsite', biz.website || '');
-    setText('printCompanyAddress', biz.address || '');
+  // Company info (pro): a Pro user with no business info gets blank fields, not whatever was drawn last
+  if (isPro) {
+    var co = biz || {};
+    setText('printCompanyName',    co.name    || '');
+    setText('printCompanyTagline', co.tagline || '');
+    setText('printCompanyPhone',   co.phone   || '');
+    setText('printCompanyEmail',   co.email   || '');
+    setText('printCompanyWebsite', co.website || '');
+    setText('printCompanyAddress', co.address || '');
     // Logo
     var logoEl = document.getElementById('printLogoImg');
-    if (logoEl && biz.logoUrl) {
-      logoEl.src = biz.logoUrl;
+    if (logoEl && co.logoUrl) {
+      logoEl.src = co.logoUrl;
       logoEl.style.display = '';
     }
+  }
+
+  // Terms & Conditions: a Pro user's own text replaces the standard paragraph (textContent, so it is plain text; the
+  // .legal-text--custom class keeps its line breaks). With none, or not Pro, the standard paragraph from the page is back.
+  var legalEl = document.getElementById('legalText');
+  if (legalEl) {
+    if (legalEl.getAttribute('data-default-text') === null) legalEl.setAttribute('data-default-text', legalEl.textContent);
+    var customTerms = (biz && biz.customTerms) ? biz.customTerms : '';
+    legalEl.textContent = customTerms || legalEl.getAttribute('data-default-text');
+    legalEl.classList.toggle('legal-text--custom', !!customTerms);
+  }
+
+  // Signature caption: a Pro user's own business name replaces "Think & Engage LLC"; falls back to the
+  // default for free tier or a Pro user who hasn't set a business name.
+  var sigRepEl = document.getElementById('sigRepCaption');
+  if (sigRepEl) {
+    if (sigRepEl.getAttribute('data-default-text') === null) sigRepEl.setAttribute('data-default-text', sigRepEl.textContent);
+    sigRepEl.textContent = (biz && biz.name) ? ('Authorized Representative, ' + biz.name) : sigRepEl.getAttribute('data-default-text');
   }
 }
 
@@ -309,122 +370,6 @@ function getAffiliateLink(key) {
   }
   return null;
 }
-
-/* -- Material presets -- */
-var MATERIAL_PRESETS = {
-  gelcoat: {
-    materials: [
-      { name: 'White Gelcoat, 1-gallon kit', cost: 0, qty: 1, source: 'amz', affKey: 'white_gel_coat_1gallon_kit_with_wax_and_mekp' },
-      { name: '3M Platinum Plus Filler (gallon)', cost: 0, qty: 1, source: 'amz', affKey: '3m_platinum_plus_filler_1_gallon' },
-      { name: '80-grit Sanding Disc 5-inch (50-box)', cost: 0, qty: 2, source: 'amz', affKey: '80_grit_sanding_disc_5inch_50box' },
-      { name: '400-grit Wet Sandpaper (50 sheets)', cost: 0, qty: 2, source: 'amz', affKey: '400_grit_wet_paper_50_sheets' },
-      { name: 'Preval Sprayer (single)', cost: 0, qty: 2, source: 'amz', affKey: 'preval_singlepack' },
-      { name: 'Denatured Alcohol (gallon)', cost: 0, qty: 1, source: 'amz', affKey: 'denatured_alcohol_1gallon' },
-      { name: 'Masking Paper 12-inch', cost: 0, qty: 1, source: 'amz', affKey: 'masking_paper_12inch' },
-      { name: '3M Clean Sanding Blocks', cost: 0, qty: 1, source: 'amz', affKey: '3m_clean_sanding_blocks' }
-    ],
-    paint: [],
-    taskName: 'Gelcoat Repair',
-    tasks: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask', hours: 0.5 },
-      { name: 'Grind', hours: 1.0 },
-      { name: 'Fill & Shape', hours: 1.5 },
-      { name: 'Shoot Gel Coat', hours: 1.0 },
-      { name: 'Wet Sand & Buff', hours: 1.5 },
-      { name: 'Cleanup', hours: 0.5 },
-      { name: 'Driving', hours: 0.5 }
-    ]
-  },
-  fiberglass: {
-    materials: [
-      { name: 'Polyester Resin (gallon)', cost: 0, qty: 1, source: 'amz', affKey: 'polyester_resin_1gallon_kit_with_mekp' },
-      { name: '1708 Biaxial Cloth 50in x 10yd', cost: 0, qty: 3, source: 'amz', affKey: 'fiberglass_cloth_1708_biaxial_50_in_x_10_yards' },
-      { name: '3M Platinum Plus Filler (gallon)', cost: 0, qty: 1, source: 'amz', affKey: '3m_platinum_plus_filler_1_gallon' },
-      { name: '80-grit Sanding Disc 5-inch (50-box)', cost: 0, qty: 2, source: 'amz', affKey: '80_grit_sanding_disc_5inch_50box' },
-      { name: '400-grit Wet Sandpaper (50 sheets)', cost: 0, qty: 2, source: 'amz', affKey: '400_grit_wet_paper_50_sheets' },
-      { name: 'Denatured Alcohol (gallon)', cost: 0, qty: 1, source: 'amz', affKey: 'denatured_alcohol_1gallon' },
-      { name: 'Masking Paper 12-inch', cost: 0, qty: 1, source: 'amz', affKey: 'masking_paper_12inch' },
-      { name: 'White Gelcoat, 1-gallon kit', cost: 0, qty: 1, source: 'amz', affKey: 'white_gel_coat_1gallon_kit_with_wax_and_mekp' }
-    ],
-    paint: [],
-    taskName: 'Fiberglass Repair',
-    tasks: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask', hours: 0.5 },
-      { name: 'Grind', hours: 1.5 },
-      { name: 'Cut Cloth', hours: 0.5 },
-      { name: 'Glass', hours: 2.0 },
-      { name: 'Fill & Shape', hours: 2.0 },
-      { name: 'Match', hours: 1.0 },
-      { name: 'Shoot Gel Coat', hours: 1.0 },
-      { name: 'Wet Sand & Buff', hours: 2.0 },
-      { name: 'Cleanup', hours: 0.5 },
-      { name: 'Driving', hours: 0.5 }
-    ]
-  },
-  paint: {
-    materials: [
-      { name: '80-grit Sanding Disc 5-inch (50-box)', cost: 0, qty: 2, source: 'amz', affKey: '80_grit_sanding_disc_5inch_50box' },
-      { name: '400-grit Wet Sandpaper (50 sheets)', cost: 0, qty: 3, source: 'amz', affKey: '400_grit_wet_paper_50_sheets' },
-      { name: 'Masking Paper 12-inch', cost: 0, qty: 2, source: 'amz', affKey: 'masking_paper_12inch' },
-      { name: 'Denatured Alcohol (gallon)', cost: 0, qty: 1, source: 'amz', affKey: 'denatured_alcohol_1gallon' },
-      { name: '320-grit Xtract Sanding Disc 5-inch (50-box)', cost: 0, qty: 2, source: 'amz', affKey: '320_grit_xtract_sanding_disc_5_inch_50box' }
-    ],
-    paint: [
-      { name: 'Awlcraft 2000 / Awlgrip Spray Converter (qt)', cost: 0, qty: 1, source: 'amz', affKey: 'awlcraft2000awlgrip_spray_converter_1quart' },
-      { name: 'Awlcraft 2000 / Awlgrip Spray Reducer (qt)', cost: 0, qty: 1, source: 'amz', affKey: 'awlcraft2000awlgrip_spray_reducer_1quart' }
-    ],
-    taskName: 'Full Paint Job',
-    tasks: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask', hours: 1.0 },
-      { name: 'Grind / Sand', hours: 2.0 },
-      { name: 'Fill & Shape', hours: 1.0 },
-      { name: 'Match', hours: 0.5 },
-      { name: 'Shoot Paint', hours: 2.0 },
-      { name: 'Wet Sand & Buff', hours: 2.0 },
-      { name: 'Cleanup', hours: 0.5 },
-      { name: 'Driving', hours: 0.5 }
-    ]
-  },
-  structural: {
-    materials: [
-      { name: 'Polyester Resin (gallon)', cost: 0, qty: 2, source: 'amz', affKey: 'polyester_resin_1gallon_kit_with_mekp' },
-      { name: '1708 Biaxial Cloth 50in x 10yd', cost: 0, qty: 6, source: 'amz', affKey: 'fiberglass_cloth_1708_biaxial_50_in_x_10_yards' },
-      { name: 'Coosa Board (sheet)', cost: 0, qty: 1, source: 'web', affKey: null },
-      { name: '3M Platinum Plus Filler (gallon)', cost: 0, qty: 1, source: 'amz', affKey: '3m_platinum_plus_filler_1_gallon' },
-      { name: 'Denatured Alcohol (gallon)', cost: 0, qty: 1, source: 'amz', affKey: 'denatured_alcohol_1gallon' },
-      { name: '80-grit Sanding Disc 5-inch (50-box)', cost: 0, qty: 2, source: 'amz', affKey: '80_grit_sanding_disc_5inch_50box' },
-      { name: 'Masking Paper 12-inch', cost: 0, qty: 1, source: 'amz', affKey: 'masking_paper_12inch' }
-    ],
-    paint: [],
-    taskName: 'Structural Repair',
-    tasks: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Demo / Removal', hours: 2.0 },
-      { name: 'Grind', hours: 2.0 },
-      { name: 'Cut Cloth', hours: 1.0 },
-      { name: 'Glass', hours: 3.0 },
-      { name: 'Fill & Shape', hours: 2.0 },
-      { name: 'Cleanup', hours: 1.0 },
-      { name: 'Driving', hours: 0.5 }
-    ]
-  },
-  custom: {
-    materials: [],
-    paint: [],
-    taskName: 'Repair Task',
-    tasks: [
-      { name: 'Getting Ready', hours: 0.5 },
-      { name: 'Mask', hours: 0.5 },
-      { name: 'Grind', hours: 1.0 },
-      { name: 'Fill & Shape', hours: 1.0 },
-      { name: 'Cleanup', hours: 0.5 },
-      { name: 'Driving', hours: 0.5 }
-    ]
-  }
-};
 
 /* -- Init -- */
 // -- Help popover toggle --
@@ -500,6 +445,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Load materials library immediately on page load (will no-op if not logged in)
   if (typeof loadMaterialsLibrary === 'function') loadMaterialsLibrary();
+
+  // Fill the Scope of Work template dropdown as soon as task_presets.js has its rows (retries briefly)
+  if (typeof populateScopeSnippetOptions === 'function') populateScopeSnippetOptions();
 });
 
 function initEstimate() {
@@ -540,29 +488,6 @@ function setView(view) {
   updateSummary();
 }
 
-/* -- Job preset -- */
-function applyJobPreset(presetKey) {
-  if (!presetKey) return;
-  var preset = MATERIAL_PRESETS[presetKey];
-  if (!preset) return;
-
-  // Clear and repopulate materials
-  var matBody = document.getElementById('materialsBody');
-  matBody.innerHTML = '';
-  preset.materials.forEach(function (item) {
-    addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item);
-  });
-
-  // Clear existing tasks and add one preset task
-  document.getElementById('tasksContainer').innerHTML = '';
-  taskCounter = 0;
-  addRepairTask(preset.taskName, preset.tasks);
-
-  // Reset preset dropdown
-  document.getElementById('jobPreset').value = '';
-  updateSummary();
-}
-
 /* -- Add material row -- */
 function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
   var tbody = document.getElementById(bodyId);
@@ -599,7 +524,7 @@ function buildBuyLink(affKey, source) {
   var url = affKey ? getAffiliateLink(affKey) : null;
   if (url) {
     var reportBtn = '<button class="btn-report-link" onclick="reportBrokenLink(\'' + escHtml(affKey) + '\')" title="Report missing or broken link">&#9888;</button>';
-    return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy Here</a>' + reportBtn;
+    return '<a href="' + url + '" target="_blank" rel="noopener" class="buy-link">Buy</a>' + reportBtn;
   }
   return '<span class="buy-link-none">-</span>';
 }
@@ -789,6 +714,7 @@ function addRepairTask(taskName, taskList) {
     '<div class="repair-scope-wrap">' +
       '<button class="repair-scope-toggle d-print-none" onclick="toggleScope(this)">+ Add scope of work note</button>' +
       '<textarea class="repair-scope-textarea" id="repairScope' + id + '" rows="3" placeholder="Optional: describe the work for this repair..."></textarea>' +
+      '<div class="print-mirror"></div>' +
     '</div>';
 
   document.getElementById('tasksContainer').appendChild(card);
@@ -944,30 +870,97 @@ function updateSummary() {
 }
 
 
-/* -- Scope of Work Snippets ---------------------------- */
-var _scopeSnippets = {
-  gelcoat:   'Gelcoat Repair:\nGrind out damaged gelcoat to sound fiberglass laminate. Thoroughly clean and prep the area using styrene/acetone solvent. Apply color-matched marine gelcoat mixed with appropriate catalyst and PVA curing agent. Block sand repaired area progressively from 400-grit up to 2000-grit compound. Machine buff and polish to match the factory gloss and profile of the surrounding hull.',
-  spider:    'Spider Cracks (Stress Cracks):\nV-groove cracks down to the laminate to relieve stress points. Fill with reinforced compound, sand flush, apply color-matched gelcoat, and buff to blend with the surrounding surface.',
-  paint:     'Full Paint Job (Awlcraft 2000):\nDe-wax and chemically clean all surfaces. Machine sand existing coating to create a mechanical bond profile. Repair minor surface imperfections using marine fairing compound. Apply multiple coats of high-build epoxy primer, followed by block sanding to ensure a perfectly flat surface. Apply 3 cross-coats of Awlcraft 2000 acrylic urethane topcoat via professional spray equipment under controlled environmental conditions to achieve a high-gloss, durable marine finish.',
-  buff:      'Hull Buff & Wax (Oxidation Removal):\nMachine compound hull surfaces using heavy-cut wool pads to remove oxidation. Follow with a fine finishing polish to restore depth, and seal with premium marine paste wax or ceramic coating.',
-  fiberglass:'Fiberglass Repair:\nGrind back fractured laminate to a 12:1 bevel ratio to ensure structural bonding. Wipe down area with chemical solvent to remove contaminants. Lay up alternating layers of marine-grade biaxial fiberglass cloth saturated with high-strength resin system. Allow full cure cycle before rough-fairing the surface with structural epoxy compound to restore original hull lines and strength profiles.',
-  keel:      'Keel Repair:\nGrind back damaged or gouged keel area to clean structure. Rebuild the keel line with high-strength biaxial cloth and vinyl ester/epoxy resin. Fair, barrier coat, and touch up bottom paint or gelcoat.',
-  transom:   'Transom Core Replacement:\nRemove top skin or outer skin to access rotted wood core. Excavate degraded material, clean the inner skin, and laminate a new high-density foam or marine plywood core. Re-glass with heavy structural laminate.',
-  stringer:  'Stringer / Bulkhead Repair:\nGrind away fractured or delaminated fiberglass tabbing around structural members. Prep surfaces, inject structural adhesive or replace rotted wood, and re-tab to the hull using heavy biaxial glass.',
-  rubrail:   'Rub Rail Replacement:\nRemove old rub rail and scrape away old sealant. Seal old fastener holes, bed the new track in marine polyurethane sealant (3M 5200/4200), and insert the new vinyl insert or stainless steel track.',
-  thruhull:  'Thru-Hull / Seacock Replacement:\nRemove corroded or damaged fitting. Sand and clean the fiberglass backing area. Install a new marine-grade thru-hull valve bedded in marine polyurethane sealant, tightening to factory safety torque specs.'
-};
+/* -- Scope of Work templates ------------------------------
+   The "Insert Scope Template" dropdown at the bottom of the page reads
+   TASK_PRESETS (task_presets.js, from Supabase task_presets.scope_steps), the
+   same rows tsApplyPreset() puts in a task's own scope note, so the content
+   exists once and the two lists cannot drift apart. */
+/* A preset's scope steps as one numbered list ("1. ...", "2. ..."), or '' when it has none. The one place that turns
+   steps into text, for the Scope of Work box below and for the steps a task offers to "Save as Template". */
+function presetScopeSteps(preset) {
+  if (!preset || !preset.scopeSteps || !preset.scopeSteps.length) return '';
+  return preset.scopeSteps.map(function(s, i) {
+    return (i + 1) + '. ' + s;
+  }).join('\n');
+}
+
+/* Appends a preset's scope ("Name:" then its numbered steps) to the one Scope of Work box.
+   Used by the template dropdown and by Task Starter, so both write exactly the same text. */
+function appendPresetScope(preset) {
+  var ta = document.getElementById('scopeNotes');
+  var steps = presetScopeSteps(preset);
+  if (!ta || !steps) return false;
+  var text = preset.name + ':\n' + steps;
+  ta.value += (ta.value ? '\n\n' : '') + text;
+  syncPrintMirror(ta);
+  return true;
+}
 
 function insertScopeSnippet(sel) {
-  var key = sel.value;
-  if (!key) return;
-  var ta = document.getElementById('scopeNotes');
-  if (!ta) return;
-  var text = _scopeSnippets[key] || '';
-  ta.value += (ta.value ? '\n\n' : '') + text;
+  var name = sel.value;
+  if (!name) return;
+  var preset = (typeof TASK_PRESETS !== 'undefined')
+    ? TASK_PRESETS.find(function(p) { return p.name === name; })
+    : null;
+  var added = appendPresetScope(preset);
   sel.value = ''; // reset dropdown
-  ta.focus();
+  if (added) document.getElementById('scopeNotes').focus();
 }
+
+function populateScopeSnippetOptions(sel, _attempt) {
+  sel = sel || document.getElementById('scopeSnippet');
+  if (!sel) return;
+  _attempt = _attempt || 0;
+  if (typeof TASK_PRESETS === 'undefined' || !TASK_PRESETS.length) {
+    // task_presets.js fetch may not have resolved yet - retry briefly, then give up.
+    if (_attempt < 10) setTimeout(function() { populateScopeSnippetOptions(sel, _attempt + 1); }, 500);
+    return;
+  }
+  // Keep the placeholder option (the first child), rebuild everything after it. Remove child nodes,
+  // not options: sel.remove(i) takes an <option> out of its <optgroup> and leaves the empty group behind.
+  while (sel.children.length > 1) sel.removeChild(sel.lastChild);
+  var byCategory = {};
+  var order = [];
+  TASK_PRESETS.forEach(function(p) {
+    if (!p.scopeSteps || !p.scopeSteps.length) return; // nothing to insert for this preset
+    var cat = p.category || 'General';
+    if (!byCategory[cat]) { byCategory[cat] = []; order.push(cat); }
+    byCategory[cat].push(p);
+  });
+  order.forEach(function(cat) {
+    var group = document.createElement('optgroup');
+    group.label = cat;
+    byCategory[cat].forEach(function(p) {
+      var opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = p.name;
+      group.appendChild(opt);
+    });
+    sel.appendChild(group);
+  });
+}
+
+/* -- Print mirrors of the scope textareas ---------------
+   A <textarea> cannot print all of its text (Chromium sizes it from its rows
+   attribute and treats overflow: visible as auto), so a long note printed as a
+   clipped, scrollable box. The scope textareas therefore print through a plain
+   .print-mirror element placed right after each one: style.css shows only that
+   element in print and only the textarea on screen. Typing keeps it current
+   through the input listener below; code that sets a scope textarea's value
+   directly must call syncPrintMirror(textarea) afterwards. The textarea stays
+   the source of truth (collectEstimateData and the Trello PDF read it). */
+function syncPrintMirror(ta) {
+  var mirror = ta && ta.nextElementSibling;
+  if (mirror && mirror.classList.contains('print-mirror')) mirror.textContent = ta.value;
+}
+function syncAllPrintMirrors() {
+  document.querySelectorAll('.print-mirror').forEach(function (m) { syncPrintMirror(m.previousElementSibling); });
+}
+document.addEventListener('input', function (e) {
+  if (e.target.matches && e.target.matches('#scopeNotes, .repair-scope-textarea')) syncPrintMirror(e.target);
+});
+// A reload or back navigation can restore a textarea's text without firing input
+window.addEventListener('pageshow', syncAllPrintMirrors);
 
 /* -- Deposit Calculator --------------------------------- */
 function updateDeposit() {
@@ -1032,7 +1025,7 @@ function calcSectionCost(bodyId) {
   return total;
 }
 
-/* -- Auth (stub - replace with real backend) -- */
+/* -- Auth (real Supabase auth; see auth.js) -- */
 /* doLogin / doLogout / doSignup / doGoogleLogin are defined in auth.js */
 
 /* -- Auth tab switcher -- */
@@ -1052,6 +1045,7 @@ function saveDraft() {
       alert('Save failed: ' + result.error.message);
     } else {
       alert('Estimate saved: ' + data.estimateNumber);
+      renderHistoryPreview('pro');
     }
   });
 }
@@ -1092,9 +1086,83 @@ function openLoadDraftModal() {
 
 function deleteSavedEstimate(id) {
   if (confirm('Delete this saved estimate?')) {
-    window.deleteEstimateById(id).then(function() { openLoadDraftModal(); });
+    window.deleteEstimateById(id).then(function() { openLoadDraftModal(); renderHistoryPreview('pro'); });
   }
 }
+
+/* ============================================================
+   ESTIMATE HISTORY PREVIEW (left column, last card)
+   The newest saved estimates, from the same loader the Load Estimate modal and
+   history.html use (loadEstimatesFromSupabase, auth.js). Gated the way
+   history.html is: signed out -> log in, free -> Pro feature, Pro -> the
+   list. The status on each row is the shared status select
+   (estimate-status.js), so changing it here saves exactly as it does on the
+   History page. Rows open in place, like Load Estimate.
+   ============================================================ */
+var HISTORY_PREVIEW_COUNT = 5;
+var _histPreviewSeq = 0;     // a newer refresh makes an older, slower one drop its result
+var _histPreviewRows = [];
+
+function renderHistoryPreview(tier) {
+  if (!document.getElementById('historyPreview')) return;
+  var loggedIn = false;
+  try { loggedIn = (typeof window.isLoggedIn === 'function') ? window.isLoggedIn() : false; } catch (e) {}
+  var seq = ++_histPreviewSeq;
+
+  function show(which) {
+    ['histPrevAuth', 'histPrevPro', 'histPrevEmpty', 'histPrevLoading', 'histPrevList'].forEach(function (id) {
+      document.getElementById(id).classList.toggle('d-none', id !== which);
+    });
+  }
+
+  // Logged out or free: never leave the last user's estimates on screen.
+  if (!loggedIn) { _histPreviewRows = []; show('histPrevAuth'); return; }
+  if (tier !== 'pro') { _histPreviewRows = []; show('histPrevPro'); return; }
+
+  show('histPrevLoading');
+  window.loadEstimatesFromSupabase().then(function (rows) {
+    if (seq !== _histPreviewSeq) return;
+    _histPreviewRows = (rows || []).slice(0, HISTORY_PREVIEW_COUNT);
+    if (!_histPreviewRows.length) { show('histPrevEmpty'); return; }
+    var list = document.getElementById('histPrevList');
+    list.innerHTML = '';
+    _histPreviewRows.forEach(function (est) {
+      var clientName = ((est.customer_first || '') + ' ' + (est.customer_last || '')).trim() || '\u2014';
+      var vessel = [est.boat_make, est.boat_model].filter(Boolean).join(' ');
+      var num = escHtml(est.estimate_number || '\u2014');
+      var li = document.createElement('li');
+      li.className = 'est-history-row';
+      li.setAttribute('data-id', est.id);
+      li.innerHTML =
+        '<a href="estimate.html?draft=' + est.id + '" class="history-est-link history-est-link--sm est-history-ref" data-id="' + est.id + '">' + num + '</a>' +
+        '<span class="est-history-client" title="' + escHtml(clientName + (vessel ? ' \u2014 ' + vessel : '')) + '">' + escHtml(clientName) + '</span>' +
+        '<span class="est-history-total">' + fmtCurrency(est.grand_total) + '</span>' +
+        estimateStatusSelectHtml(est.id, est.status || 'draft', num, 'updatePreviewStatus');
+      list.appendChild(li);
+    });
+    show('histPrevList');
+  });
+}
+
+/* A status chosen in the preview: the shared save, then keep the preview's own copy in step. */
+async function updatePreviewStatus(id, selectEl) {
+  var newStatus = await saveEstimateStatus(id, selectEl);
+  var row = _histPreviewRows.find(function (r) { return r.id === id; });
+  if (row) row.status = newStatus;
+}
+
+/* An estimate number opens that estimate here, the way Load Estimate does (a modified click still opens the link). */
+document.addEventListener('click', function (e) {
+  var link = e.target.closest ? e.target.closest('.est-history-ref') : null;
+  if (!link || e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  window.loadEstimateById(link.getAttribute('data-id')).then(function (data) {
+    if (!data) return;
+    loadDraft(data);
+    var top = document.getElementById('estimateInfoCard');
+    if (top && top.scrollIntoView) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
 
 function loadDraft(data) {
   // Restore header fields
@@ -1114,6 +1182,7 @@ function loadDraft(data) {
   document.getElementById('boatYear').value = data.boatYear || '';
   document.getElementById('boatHIN').value = data.boatHIN || '';
   document.getElementById('scopeNotes').value = data.scopeNotes || '';
+  syncPrintMirror(document.getElementById('scopeNotes'));
   document.getElementById('materialsMarkup').value = data.materialsMarkup || 40;
   // Restore materials
   document.getElementById('materialsBody').innerHTML = '';
@@ -1131,6 +1200,7 @@ function loadDraft(data) {
       var scopeEl = document.getElementById('repairScope' + taskCounter);
       if (scopeEl) {
         scopeEl.value = t.scope;
+        syncPrintMirror(scopeEl);
         scopeEl.style.display = 'block';
         var toggleBtn = scopeEl.closest('.repair-scope-wrap') && scopeEl.closest('.repair-scope-wrap').querySelector('.repair-scope-toggle');
         if (toggleBtn) toggleBtn.textContent = '\u2212 Hide scope note';
@@ -1203,57 +1273,11 @@ function collectEstimateData() {
     grandTotal: grandTotalValue,
     materials: materials,
     tasks: tasks,
-    company: (typeof getProfile === 'function' && getProfile()) ? (getProfile().company_name || 'Think & Engage LLC') : 'Think & Engage LLC',
+    company: (typeof getProfile === 'function' && getProfile()) ? (getProfile().company_name || '') : '',
     userEmail: (typeof getUser === 'function' && getUser()) ? getUser().email : null,
     tier: (typeof getProfile === 'function' && getProfile()) ? (getProfile().tier || 'free') : 'free',
     loggedAt: new Date().toISOString()
   };
-}
-
-/* -- Database logging (stub - wire to backend API) -- */
-function logEstimate() {
-  if (typeof isPro !== 'function' || !isPro()) {
-    openModal('upgradeModal'); return;
-  }
-  var data = collectEstimateData();
-  var preview = document.getElementById('logPreview');
-  preview.innerHTML =
-    '<strong>Estimate #:</strong> ' + escHtml(data.estimateNumber) + '<br/>' +
-    '<strong>Client:</strong> ' + escHtml(data.clientFirst + ' ' + data.clientLast) + '<br/>' +
-    '<strong>Vessel:</strong> ' + escHtml(data.boatYear + ' ' + data.boatMake + ' ' + data.boatModel) + '<br/>' +
-    '<strong>Total:</strong> ' + fmtCurrency(data.grandTotal) + '<br/>' +
-    '<strong>Company:</strong> ' + escHtml(data.company);
-  document.getElementById('logStatus').textContent = '';
-  openModal('logModal');
-}
-
-function confirmLog() {
-  var data = collectEstimateData();
-  var statusEl = document.getElementById('logStatus');
-  statusEl.textContent = 'Logging...';
-
-  /* -- BACKEND STUB --
-     Replace this fetch with your real Hostinger API endpoint.
-     The endpoint should:
-       1. Save the estimate JSON to your database
-       2. Create a Trello card in the correct board based on data.company
-          - Think & Engage LLC -> TE board, "Estimate Sent" column
-          - Daytona Marine Group -> DMG board, "Estimate Sent" column
-     Example:
-       fetch('https://chemcalc.co/api/log-estimate.php', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(data)
-       }).then(r => r.json()).then(res => { ... });
-  -- END STUB -- */
-
-  // Simulate success for now
-  setTimeout(function () {
-    statusEl.textContent = 'OK Logged successfully! Trello card will be created when backend is connected.';
-    statusEl.style.color = '#7ed47e';
-    // Also save to localStorage as backup
-    localStorage.setItem('est_log_' + data.estimateNumber, JSON.stringify(data));
-  }, 800);
 }
 
 /* -- Export / Share -- */
@@ -1272,23 +1296,12 @@ function exportPDF() {
   var prevTitle = document.title;
   document.title = clientName + ' - ' + modePrefix + 'Estimate ' + estNum + ' - ' + today;
 
-  // Flatten numbered scope lines to comma-separated for print
-  var scopeOriginals = [];
-  document.querySelectorAll('.repair-scope-textarea, #scopeNotes').forEach(function(ta) {
-    scopeOriginals.push({ el: ta, val: ta.value });
-    if (ta.value.trim()) {
-      ta.value = ta.value
-        .split('\n')
-        .map(function(line) { return line.replace(/^\d+\.\s*/, '').trim(); })
-        .filter(function(line) { return line.length > 0; })
-        .join(', ');
-    }
-  });
+  // The scope notes print exactly as typed (numbered lines stay numbered lines); what prints is the
+  // mirror, so make sure it matches the textareas right now.
+  syncAllPrintMirrors();
 
   function afterPrint() {
     document.title = prevTitle;
-    // Restore original scope text
-    scopeOriginals.forEach(function(o) { o.el.value = o.val; });
     window.removeEventListener('afterprint', afterPrint);
   }
   window.addEventListener('afterprint', afterPrint);
@@ -1351,6 +1364,7 @@ function newEstimate() {
     document.getElementById('boatYear').value = '';
     document.getElementById('boatHIN').value = '';
     document.getElementById('scopeNotes').value = '';
+    syncPrintMirror(document.getElementById('scopeNotes'));
     document.getElementById('materialsBody').innerHTML = '';
     document.getElementById('tasksContainer').innerHTML = '';
     taskCounter = 0;
@@ -1452,23 +1466,15 @@ function tsApplyPreset(idx) {
   if (!preset) return;
   closeModal('taskStarterModal');
   addRepairTask(preset.name, preset.taskRows);
+  // Remember which steps this task came from. addRepairTask already incremented taskCounter, so it is the new card's id.
+  // "Save as Template" falls back to these when the user has not written a note of their own on the task.
+  var presetSteps = presetScopeSteps(preset);
+  var presetCard = document.getElementById('repairCard' + taskCounter);
+  if (presetCard && presetSteps) presetCard.dataset.presetScope = presetSteps;
   mergePresetMaterials(preset);
-  // Populate scope textarea with steps
-  if (preset.scopeSteps && preset.scopeSteps.length) {
-    var taskId = taskCounter; // addRepairTask already incremented it
-    var scopeEl = document.getElementById('repairScope' + taskId);
-    if (scopeEl) {
-      scopeEl.value = preset.scopeSteps.map(function(s, i) {
-        return (i + 1) + '. ' + s;
-      }).join('\n');
-      // Show the scope textarea
-      var toggle = scopeEl.previousElementSibling;
-      if (toggle && toggle.classList.contains('repair-scope-toggle')) {
-        scopeEl.style.display = 'block';
-        toggle.textContent = '- Hide scope note';
-      }
-    }
-  }
+  // The preset's scope steps go into the one Scope of Work box at the bottom of the page, the same text the
+  // template dropdown inserts. The task's own "+ Add scope of work note" stays empty unless the user adds one.
+  appendPresetScope(preset);
 }
 
 /* -- Merge preset materials into existing sections -------- */
@@ -1562,6 +1568,7 @@ function tsApplyUserTemplate(id) {
     var scopeEl = document.getElementById('repairScope' + taskId);
     if (scopeEl) {
       scopeEl.value = t.scope_steps;
+      syncPrintMirror(scopeEl);
       var toggle = scopeEl.previousElementSibling;
       if (toggle && toggle.classList.contains('repair-scope-toggle')) {
         scopeEl.style.display = 'block';
@@ -1593,9 +1600,11 @@ async function saveTaskAsTemplate(cardId) {
     rows.push({ name: n ? n.value : '', hours: parseFloat(h ? h.value : 0) || 0 });
   });
 
-  // Collect scope text
+  // Collect scope text: the user's own note on this task wins. A task that came from a preset has no note of its own (its steps
+  // went into the Scope of Work box), so with no note the template carries that preset's steps instead of saving blank scope.
   var scopeEl = document.getElementById('repairScope' + cardId);
   var scopeText = scopeEl ? scopeEl.value.trim() : '';
+  if (!scopeText) scopeText = card.dataset.presetScope || '';
 
   // Duplicate check
   var existing = _userTemplates.find(function(t) {

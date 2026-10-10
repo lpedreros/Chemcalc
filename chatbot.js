@@ -22,9 +22,9 @@
     const HISTORY_KEY = 'chatbot_history';
 
     function isProUser() {
-      // 1. Check the global currentProfile set by auth.js (estimate.html)
+      // 1. Check the global currentProfile set by auth.js (estimate.html and history.html)
       if (typeof currentProfile !== 'undefined' && currentProfile && currentProfile.tier === 'pro') return true;
-      // 2. Check sessionStorage tier set by global-account-modal.js (all pages)
+      // 2. Check sessionStorage tier set by global-auth.js (all pages)
       if (sessionStorage.getItem('chemcalc_user_tier') === 'pro') return true;
       // 3. Fallback: check the tier-label element that auth.js updates
       var label = document.getElementById('tierLabel');
@@ -155,7 +155,8 @@
         document.getElementById('chatbot-window').style.display = 'none';
     }
 
-    // Load affiliate links data from Supabase, fallback to local file
+    // Load affiliate links data from Supabase. The static-file fallback below
+    // no longer finds any data (see the note on it).
     async function loadAffiliateLinks() {
         // Try Supabase first if the client is available
         if (typeof _sb !== 'undefined' && _sb !== null) {
@@ -184,7 +185,9 @@
             }
         }
 
-        // Fallback: load from static affiliate_links.js
+        // Legacy fallback: parses a hardcoded `const affiliateLinksData = {...}`
+        // out of /affiliate_links.js. That file is now just a Supabase loader (no
+        // hardcoded data), so this regex finds no match and nothing is loaded here.
         try {
             console.log('Falling back to static affiliate_links.js');
             const response = await fetch('/affiliate_links.js');
