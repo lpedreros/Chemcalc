@@ -136,9 +136,9 @@
   ];
 
   var TRUST = [
-    { calculator: 'Awlgrip', claim: 'Checked line by line against the real spec sheets', detail: 'Mix ratio, coverage, and accelerator dose all come straight from Awlgrip\'s own published data — not a label, not a guess.' },
+    { calculator: 'Awlgrip', claim: 'Checked line by line against the real spec sheets', detail: 'Mix ratio, coverage, and accelerator dose all come straight from Awlgrip\'s own published data.' },
     { calculator: 'Fiberglass', claim: 'Tested against a real resin pour', detail: 'Our hand-layup ratios were checked against an actual pour, not just worked out on paper — within about a cup of a gallon of what the cloth actually took.' },
-    { calculator: 'Epifanes', claim: 'Recoat time and pot life straight from the spec sheet', detail: "Both figures come directly from Epifanes' own documentation, not a rule of thumb." },
+    { calculator: 'Epifanes', claim: 'Recoat time and pot life straight from the spec sheet', detail: "Both figures come directly from Epifanes' own documentation." },
     { calculator: 'MEKP', claim: 'Temperature bands hand-validated', detail: 'Checked against real manufacturer data, band by band — not one blanket number for every condition.' },
     { calculator: 'Alexseal', claim: 'Links straight to the manufacturer\'s own paperwork', detail: "Every Alexseal product in the calculator links back to Alexseal's real spec sheet library, so you can check the numbers yourself." }
   ];
