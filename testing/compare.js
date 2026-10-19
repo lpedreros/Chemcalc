@@ -66,7 +66,7 @@
         { feature: 'How much it\'ll cover', chemcalc: "Gives you a real coverage estimate, so you know roughly how many coats you'll need" },
         { feature: 'Accelerator (hardener speed)', chemcalc: 'Pick Pro-Cure X-98 or X-138 and it shows you the dose, max working temp, and cure time side by side' },
         { feature: 'Heads-up on gotchas', chemcalc: 'Tells you the gotchas for whichever product you picked (for example, Awlcraft SE: no accelerator needed)' },
-        { feature: 'Can you trust the numbers', chemcalc: "Checked against the real spec sheets — we've already caught and fixed 2 mistakes" }
+        { feature: 'Can you trust the numbers', chemcalc: 'Checked line by line against the real spec sheets — mix, coverage, and accelerator dose all come straight from Awlgrip\'s own data' }
       ]
     },
     {
@@ -88,7 +88,7 @@
         { feature: 'How guys actually mix it', chemcalc: 'Straight 2:1 by volume — tells you exactly how much of each you need' },
         { feature: 'Still need to measure it yourself?', chemcalc: 'Yes — the calculator gets you the right amounts, but you still need a scale, cup, or marked stick to pour it out' },
         { feature: 'Thinning guidance', chemcalc: 'Tells you how much to thin it, specific to the product and method you picked' },
-        { feature: 'Can you trust the numbers', chemcalc: 'Checked against the real spec sheet — recoat time and pot life both corrected to the actual figures' },
+        { feature: 'Can you trust the numbers', chemcalc: 'Checked against the real spec sheet — recoat time and pot life both taken straight from it, not estimated' },
         { feature: "Honest about what's not built yet", chemcalc: 'Skipped Polyurethane Primer on purpose — waiting on a straight answer from the manufacturer instead of guessing' }
       ]
     },
@@ -136,11 +136,11 @@
   ];
 
   var TRUST = [
-    { calculator: 'Awlgrip', claim: 'Caught and fixed 2 mistakes', detail: 'Every ratio was checked against the real spec sheets, and two errors were corrected along the way.' },
-    { calculator: 'Fiberglass', claim: 'Checked against a real test pour', detail: 'Our hand-layup ratios landed within about a cup of a gallon of what the cloth actually took.' },
-    { calculator: 'Epifanes', claim: 'Skipped a product on purpose', detail: "Polyurethane Primer isn't in the calculator yet; we're waiting on a straight answer from the manufacturer instead of guessing." },
-    { calculator: 'Epifanes', claim: 'Recoat time and pot life corrected', detail: 'Both checked against the real spec sheet and fixed to the actual figures.' },
-    { calculator: 'MEKP', claim: 'Hand-validated temperature bands', detail: 'Checked against real manufacturer data, band by band.' }
+    { calculator: 'Awlgrip', claim: 'Checked line by line against the real spec sheets', detail: 'Mix ratio, coverage, and accelerator dose all come straight from Awlgrip\'s own published data — not a label, not a guess.' },
+    { calculator: 'Fiberglass', claim: 'Tested against a real resin pour', detail: 'Our hand-layup ratios were checked against an actual pour, not just worked out on paper — within about a cup of a gallon of what the cloth actually took.' },
+    { calculator: 'Epifanes', claim: 'Recoat time and pot life straight from the spec sheet', detail: "Both figures come directly from Epifanes' own documentation, not a rule of thumb." },
+    { calculator: 'MEKP', claim: 'Temperature bands hand-validated', detail: 'Checked against real manufacturer data, band by band — not one blanket number for every condition.' },
+    { calculator: 'Alexseal', claim: 'Links straight to the manufacturer\'s own paperwork', detail: "Every Alexseal product in the calculator links back to Alexseal's real spec sheet library, so you can check the numbers yourself." }
   ];
 
   /* ---------- tiny DOM helpers ---------- */
