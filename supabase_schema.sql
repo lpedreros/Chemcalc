@@ -18,7 +18,10 @@ create table if not exists public.profiles (
   stripe_subscription_id text,
   subscription_status text default 'inactive',  -- 'active' | 'inactive' | 'canceled'
 
-  -- Trello integration (per-user board/list the estimator sends cards to)
+  -- Trello integration (per-user board/list the estimator sends cards to).
+  -- The real Trello key/token live in Supabase Vault, referenced by trello_api_key_id / trello_token_id
+  -- (below). trello_api_key / trello_token are legacy plaintext columns, no longer used; browser roles
+  -- have no access to them.
   trello_api_key    text,
   trello_token      text,
   trello_board_id   text,
@@ -36,7 +39,13 @@ create table if not exists public.profiles (
   biz_prefix   text,
   biz_logo_url text,
 
-  beta_tester boolean default false
+  beta_tester boolean not null default false,
+  biz_custom_terms text,
+
+  -- Column order differs from the live table (live has trello_connected before the two id columns).
+  trello_api_key_id uuid,
+  trello_token_id uuid,
+  trello_connected boolean generated always as (trello_api_key_id is not null and trello_token_id is not null) stored
 );
 
 -- Enable Row Level Security
@@ -44,17 +53,26 @@ alter table public.profiles enable row level security;
 
 -- Column-level grants (service_role keeps full access by default; everything
 -- else is locked down to match live privileges -- verified via
--- information_schema.column_privileges)
+-- pg_class.relacl / pg_attribute.attacl after Migration B was applied on 2026-10-20)
 revoke all on public.profiles from anon, authenticated;
 
-grant select on public.profiles to anon, authenticated;
+-- anon gets nothing. authenticated can read 28 of the 30 columns: every column EXCEPT the two legacy plaintext
+-- Trello columns (trello_api_key, trello_token). So "select *" on profiles FAILS for authenticated (42501): list the
+-- columns. Any future profiles column the browser must read needs its own "grant select (column)" to authenticated,
+-- added in the same migration that adds the column.
+grant select (
+  id, created_at, email, full_name, company_name, estimate_prefix, logo_url, tier,
+  stripe_customer_id, stripe_subscription_id, subscription_status,
+  trello_board_id, trello_board_name, trello_list_id, trello_list_name,
+  biz_name, biz_tagline, biz_phone, biz_email, biz_website, biz_address, biz_prefix, biz_logo_url,
+  beta_tester, biz_custom_terms, trello_connected, trello_api_key_id, trello_token_id
+) on public.profiles to authenticated;
 
 grant update (
   full_name, company_name, estimate_prefix, logo_url,
-  trello_api_key, trello_token, trello_board_id, trello_board_name,
-  trello_list_id, trello_list_name,
+  trello_board_id, trello_board_name, trello_list_id, trello_list_name,
   biz_name, biz_tagline, biz_phone, biz_email, biz_website, biz_address,
-  biz_prefix, biz_logo_url
+  biz_prefix, biz_logo_url, biz_custom_terms
 ) on public.profiles to authenticated;
 
 -- Users can only read/update their own profile

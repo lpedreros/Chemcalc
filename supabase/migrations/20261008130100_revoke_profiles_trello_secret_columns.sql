@@ -1,7 +1,10 @@
 -- ============================================================================
--- PROPOSED, NOT APPLIED. Step B of 2 for "Trello credentials server-side". THIS ONE BREAKS OLD CLIENTS, so read the
--- ORDER section before running it. Project rnrzjlfpwxzomupnxikt (shared by testing.chemcalc.co AND chemcalc.co).
+-- APPLIED on 2026-10-20 to project rnrzjlfpwxzomupnxikt (shared by testing.chemcalc.co AND chemcalc.co). Step B of 2 for
+-- "Trello credentials server-side". Tracked live as version 20261020210400; this file keeps its original name
+-- (20261008130100), so the version in the migrations table differs from the filename. The post-apply checks and the
+-- site QA passed. The SQL below is unchanged from what was proposed; only these comments were updated afterwards.
 -- Migration name: revoke_profiles_trello_secret_columns
+-- This change BREAKS any client that selects * from profiles (see CONSEQUENCES).
 --
 -- WHY: profiles.trello_api_key and profiles.trello_token are readable and writable by every signed-in user, and a
 -- request through the Supabase client returns them in plaintext. After this migration only service_role (the `trello`
@@ -25,17 +28,17 @@
 --
 -- CONSEQUENCES, deliberately checked by the pre-flight where the database can check them:
 --   * `select *` on profiles now FAILS for authenticated (42501), because * includes the two secrets. Every reader must
---     list its columns. testing/auth.js does after the client change; the PRODUCTION auth.js (repo root) still uses
---     select('*') and must be changed first.
+--     list its columns. Since the 2026-10-10 production cutover, both production (repo root) and testing/ auth.js
+--     select an explicit column list; no select('*') on profiles remains in the client.
 --   * Every FUTURE profiles column the browser must read needs its own GRANT SELECT (column), exactly like the UPDATE
 --     rule from the biz_custom_terms incident. Add it in the same migration that adds the column.
 --   * The pre-flight refuses to run if profiles has any column this file does not know about, so a column added since
 --     this was written cannot silently lose browser access.
 --
--- ORDER (do not skip): A (20261008130000 add_profiles_trello_connected) -> deploy the `trello` function -> ship the new
--- testing client and QA it -> port the same client change to PRODUCTION (repo root: auth.js, trello.js, estimate.js,
--- global-account-modal.js) and release it -> THIS migration -> post-apply checks below. Tabs left open on the old
--- client keep running old JS until reloaded; their Trello calls/saves will fail after this until they reload.
+-- ORDER (all steps were completed in this order): A (20261008130000 add_profiles_trello_connected) -> deploy the
+-- `trello` function -> ship the new testing client and QA it -> port the same client change to PRODUCTION (repo root:
+-- auth.js, trello.js, estimate.js, global-account-modal.js) and release it -> THIS migration -> post-apply checks below.
+-- Tabs left open on the old client keep running old JS until reloaded; their Trello calls/saves fail until they reload.
 -- ============================================================================
 begin;
 
@@ -189,6 +192,6 @@ commit;
 --   grant select on public.profiles to anon, authenticated;
 --   grant update (trello_api_key, trello_token) on public.profiles to authenticated;
 --
--- Also update supabase_schema.sql ("grant select on public.profiles to anon, authenticated") when this is applied, so the
--- reference file does not describe the old state.
+-- supabase_schema.sql (repo root and testing/) was updated in the same change as this comment edit, so the reference
+-- file no longer describes the old state.
 -- ----------------------------------------------------------------------------
