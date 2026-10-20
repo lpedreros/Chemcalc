@@ -491,6 +491,25 @@
     </div>
   </div>
 
+  <!-- ===== HOW IT WORKS: the same "How to Use" text as the Help (?) dialog, shown on the page so it is readable without opening
+       the dialog and without JavaScript. Keep it identical to #helpContentGuest: tools/verify/help_parity.py checks. ===== -->
+  <section class="mp-card mp-card--roomy mp-prose calc-howto" id="how-it-works" aria-labelledby="howItWorksTitle">
+    <h2 id="howItWorksTitle">How to Use the MEKP Calculator</h2>
+    <p>MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+    <ol>
+      <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+      <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+      <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+      <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+    </ol>
+    <h3>Key facts</h3>
+    <ul>
+      <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+      <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2.5% from 60&ndash;65&deg;F and 3% below 60&deg;F to ensure full cure.</li>
+      <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+    </ul>
+  </section>
+
   <!-- Tips & Safety / Other Calculators -->
   <!-- Per-link description + arrow icon match ResourceCard.tsx / data/resources.ts
        exactly (detail copy quoted verbatim from data/resources.ts); labels and

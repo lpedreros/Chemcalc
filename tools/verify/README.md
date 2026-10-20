@@ -16,6 +16,7 @@ Checks for proving that a change to the site's HTML/CSS changed only what you me
 | `func.html` + `func_compare.py` | Drives each calculator with scripted inputs and compares what it displays (text, visible elements, slider positions) between two trees. |
 | `css_checks.py` | Static checks, no browser: `integrity`, `dead`, `orphans`, `inventory` (see below). |
 | `text_parity.py` | Proves page text and links are verbatim between two revisions. |
+| `help_parity.py` | Proves each calculator page's visible "How it works" card (`#how-it-works`) matches its Help (?) dialog word for word. Run it after editing either copy. |
 | `patchlib.py` | CRLF-safe scripted edits that stop unless a pattern matches exactly once. |
 
 ## Before/after visual check

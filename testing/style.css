@@ -5155,7 +5155,8 @@ body,
 }
 .mp-prose h2 + h3{margin-top:.25rem;}
 
-.mp-prose ul{margin:0 0 .85rem;padding-left:1.25rem;}
+.mp-prose ul,
+.mp-prose ol{margin:0 0 .85rem;padding-left:1.25rem;}
 .mp-prose li{
   font-size:.95rem;line-height:1.65;color:var(--chrome-ink-600);margin:0 0 .5rem;
 }
@@ -6481,3 +6482,14 @@ h2.trello-setup-title{
 @media print{
   .cmp-modal{display:none !important;}
 }
+
+/* ============================================================
+   CALCULATOR "HOW IT WORKS" CARD (.calc-howto)
+   The visible copy of each calculator's "How to Use" help text, between the
+   calculator and the Tips/Other Calculators cards. The card itself is .mp-card
+   .mp-card--roomy .mp-prose (SHARED SITE COMPONENTS); this only spaces it like
+   the .mp-resources-grid that follows it.
+   ============================================================ */
+.calc-howto{margin-top:2rem;}
+.calc-howto > p{max-width:48rem;}
+.calc-howto > h3{margin-top:1.5rem;}
