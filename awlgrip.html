@@ -51,36 +51,36 @@
     "mainEntity": {
       "@type": "HowTo",
       "name": "How to Use the Awlgrip Mix Calculator",
-      "description": "Calculate the correct mix ratios for Awlgrip Topcoat, Awlcraft 2000, or 545 Epoxy Primer.",
+      "description": "Calculate the correct mix ratios for Awlgrip Topcoat, Awlcraft 2000/3000, 545 Epoxy Primer, Awlcraft SE, or Awlgrip HDT Clear.",
       "step": [
         {
           "@type": "HowToStep",
-          "name": "Select Measurement System",
-          "text": "Choose between Imperial (ft², oz, qt, gal) or Metric (m², mL, L) units.",
+          "name": "Select measurement system",
+          "text": "Imperial (ft², oz, qt, gal) or Metric (m², mL, L).",
           "url": "https://chemcalc.co/awlgrip.html#unitSystemCard"
         },
         {
           "@type": "HowToStep",
-          "name": "Specify Coating Amount",
-          "text": "Select whether you want to input the surface area/paint volume directly or calculate the area from length and width. Enter the required values and select the units.",
-          "url": "https://chemcalc.co/awlgrip.html#inputMethodCard"
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Select Application Method",
-          "text": "Choose between Spray or Roll/Brush application. This affects the reducer percentage.",
-          "url": "https://chemcalc.co/awlgrip.html#inputMethodCard"
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Select Product Type",
-          "text": "Choose the specific product: Awlcraft 2000 Topcoat, Awlgrip Topcoat, or 545 Epoxy Primer. This determines the base mix ratios.",
+          "name": "Select your product line",
+          "text": "Awlcraft 2000/3000 Topcoat, Awlgrip Topcoat, 545 Epoxy Primer, Awlcraft SE Basecoat, or Awlgrip HDT Clear. Choosing Awlcraft 2000/3000 adds two controls to this card: a reducer percentage slider (15–33%) and a Pro-Cure accelerator choice.",
           "url": "https://chemcalc.co/awlgrip.html#paintTypeCard"
         },
         {
           "@type": "HowToStep",
-          "name": "View Results",
-          "text": "The calculator automatically displays the required amounts of Paint Base, Converter/Catalyst, and Reducer based on your inputs. It also provides an estimated coverage area if you entered a paint volume.",
+          "name": "Enter your coating amount",
+          "text": "Give a single area or volume figure, or enter length × width and let the calculator work out the area. Set your input units and the units you want results in.",
+          "url": "https://chemcalc.co/awlgrip.html#inputMethodCard"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Choose an application method",
+          "text": "Spray or Roll/Brush, in the same card. Awlcraft 2000/3000, Awlcraft SE and HDT Clear are spray-only, so Roll/Brush is disabled for those.",
+          "url": "https://chemcalc.co/awlgrip.html#inputMethodCard"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Read the result",
+          "text": "Exact base, converter and reducer amounts, with the AkzoNobel part number for each. Results update as you type.",
           "url": "https://chemcalc.co/awlgrip.html#resultsCard"
         }
       ]
@@ -318,6 +318,9 @@
   <h1 class="mp-hero-title">Awlgrip Coatings Calculator</h1>
   <p class="mp-hero-tagline">Awlgrip Topcoat &middot; Awlcraft 2000/3000 &middot; 545 Epoxy Primer &middot; Awlcraft SE &middot; Awlgrip HDT Clear</p>
   <p class="mp-hero-copy">Set your surface area or paint volume, pick spray or roll/brush application, and choose your product line — get exact base, converter, and reducer amounts, plus estimated coverage, before you crack a can.</p>
+  <div class="mp-hero-actions">
+    <button type="button" class="mp-btn mp-btn--ghost" data-compare-open="awlgrip" aria-haspopup="dialog">How we compare</button>
+  </div>
 </div>
 <main class="container mp-calc-app d-print-none">
   <div class="mp-split mp-grid">
@@ -580,6 +583,27 @@
       </section>
     </div>
   </div>
+  <!-- ===== HOW IT WORKS: the same "How to Use" text as the Help (?) dialog, shown on the page so it is readable without opening
+       the dialog and without JavaScript. Keep it identical to #helpContentGuest: tools/verify/help_parity.py checks. ===== -->
+  <section class="mp-card mp-card--roomy mp-prose calc-howto" id="how-it-works" aria-labelledby="howItWorksTitle">
+    <h2 id="howItWorksTitle">How to Use the Awlgrip Paint Mix Calculator</h2>
+    <p>Awlgrip topcoats require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
+    <ol>
+      <li><strong>Select measurement system</strong> &mdash; Imperial (ft&sup2;, oz, qt, gal) or Metric (m&sup2;, mL, L).</li>
+      <li><strong>Select your product line</strong> &mdash; Awlcraft 2000/3000 Topcoat, Awlgrip Topcoat, 545 Epoxy Primer, Awlcraft SE Basecoat, or Awlgrip HDT Clear. Choosing Awlcraft 2000/3000 adds two controls to this card: a reducer percentage slider (15&ndash;33%) and a Pro-Cure accelerator choice.</li>
+      <li><strong>Enter your coating amount</strong> &mdash; Give a single area or volume figure, or enter length &times; width and let the calculator work out the area. Set your input units and the units you want results in.</li>
+      <li><strong>Choose an application method</strong> &mdash; Spray or Roll/Brush, in the same card. Awlcraft 2000/3000, Awlcraft SE and HDT Clear are spray-only, so Roll/Brush is disabled for those.</li>
+      <li><strong>Read the result</strong> &mdash; Exact base, converter and reducer amounts, with the AkzoNobel part number for each. Results update as you type.</li>
+    </ol>
+    <h3>Key facts</h3>
+    <ul>
+      <li><strong>Reducer is per-product, not one number:</strong> Awlgrip Topcoat 25% spraying / 20% rolling; Awlcraft 2000/3000 anywhere from 15&ndash;33%, which you set yourself; 545 Primer 25% spraying / 10% rolling; Awlcraft SE a fixed 50%.</li>
+      <li><strong>Spray and brush use different converters:</strong> Awlgrip Topcoat takes Awlcat #2 (G3010) for spray and Awlcat #3 (H3002) Brushing Converter for roll/brush &mdash; two separate products, not one at a different ratio.</li>
+      <li><strong>Picking a reducer:</strong> T0001 Fast, T0002 Very Fast, T0003 Standard, T0005 Hot Weather for spraying; T0031 Brushing Reducer for roll and brush work.</li>
+      <li><strong>Accelerator, Awlcraft 2000/3000 only:</strong> Pro-Cure X-98 and X-138 are both approved for this line. X-98 cures faster on a shorter working window; X-138 gives you more time. Never use either above 85&deg;F, and X-98 not above 75&deg;F.</li>
+    </ul>
+  </section>
+
   <!-- Tips & Safety / Other Calculators -->
   <div class="mp-resources-grid d-print-none">
     <section class="mp-card mp-card--flat mp-resource-card">
@@ -887,6 +911,7 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="main.js"></script>
+<script src="/compare.js"></script>
 <script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->

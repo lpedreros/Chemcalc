@@ -62,7 +62,7 @@
         {
           "@type": "HowToStep",
           "name": "Adjust MEKP Percentage (Optional)",
-          "text": "Optionally, check the box if using Duratec 904-001 (locks MEKP at 2%) or use the slider to set a custom percentage between 1% and 3%. Otherwise, the calculator uses a percentage based on temperature.",
+          "text": "Optionally, check the box if using Duratec 904-001 (locks MEKP at 2%) or use the slider to set a custom percentage between 1% and 3%. Otherwise, the calculator uses the slider percentage and shows the temperature-based recommendation next to it.",
           "url": "https://chemcalc.co/mekpcalc.html#customPercentage"
         },
         {
@@ -308,6 +308,9 @@
   <h1 class="mp-hero-title">MEKP Calculator</h1>
   <p class="mp-hero-tagline">For Polyester Resins &amp; Gelcoats</p>
   <p class="mp-hero-copy">Enter your batch volume and shop temperature to get an exact catalyst measurement in ccs and drops — the numbers pros and first-time repairers can both work from.</p>
+  <div class="mp-hero-actions">
+    <button type="button" class="mp-btn mp-btn--ghost" data-compare-open="mekp" aria-haspopup="dialog">How we compare</button>
+  </div>
 </div>
 <main class="container mp-calc-app d-print-none">
   <div class="mp-split mp-grid">
@@ -488,6 +491,25 @@
     </div>
   </div>
 
+  <!-- ===== HOW IT WORKS: the same "How to Use" text as the Help (?) dialog, shown on the page so it is readable without opening
+       the dialog and without JavaScript. Keep it identical to #helpContentGuest: tools/verify/help_parity.py checks. ===== -->
+  <section class="mp-card mp-card--roomy mp-prose calc-howto" id="how-it-works" aria-labelledby="howItWorksTitle">
+    <h2 id="howItWorksTitle">How to Use the MEKP Calculator</h2>
+    <p>MEKP (Methyl Ethyl Ketone Peroxide) is the catalyst used to cure polyester and vinyl ester resins. Getting the ratio right is critical &mdash; too little and it won&rsquo;t cure; too much and it cures too fast or becomes brittle.</p>
+    <ol>
+      <li><strong>Enter resin volume</strong> &mdash; Type the amount of resin you&rsquo;re mixing in the volume field and select your unit (oz, qt, gal, mL, L).</li>
+      <li><strong>Enter temperature</strong> &mdash; The calculator adjusts the recommended MEKP % based on ambient temperature.</li>
+      <li><strong>Check Duratec (if applicable)</strong> &mdash; Locks MEKP at 2% for Duratec 904-001 Hi-Gloss Additive.</li>
+      <li><strong>Read the result</strong> &mdash; Results update automatically. You&rsquo;ll see the MEKP amount in both CCs and drops.</li>
+    </ol>
+    <h3>Key facts</h3>
+    <ul>
+      <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
+      <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2.5% from 60&ndash;65&deg;F and 3% below 60&deg;F to ensure full cure.</li>
+      <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
+    </ul>
+  </section>
+
   <!-- Tips & Safety / Other Calculators -->
   <!-- Per-link description + arrow icon match ResourceCard.tsx / data/resources.ts
        exactly (detail copy quoted verbatim from data/resources.ts); labels and
@@ -617,7 +639,7 @@
       </ol>
       <ul class="help-modal-bullets">
         <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
-        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2.5% from 60&ndash;65&deg;F and 3% below 60&deg;F to ensure full cure.</li>
         <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
       </ul>
       <div class="help-modal-cta-box">
@@ -637,7 +659,7 @@
       </ol>
       <ul class="help-modal-bullets">
         <li><strong>Hot weather (&gt;85&deg;F):</strong> Use 1% to extend pot life.</li>
-        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2% to ensure full cure.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Use 2.5% from 60&ndash;65&deg;F and 3% below 60&deg;F to ensure full cure.</li>
         <li><strong>Never exceed 3%</strong> &mdash; excess MEKP weakens the final laminate.</li>
       </ul>
       <div class="help-modal-cta-box">
@@ -651,7 +673,7 @@
       <ul class="help-modal-bullets">
         <li><strong>Standard ratio:</strong> 1.5% MEKP by volume of resin.</li>
         <li><strong>Hot weather (&gt;85&deg;F):</strong> Drop to 1% to extend pot life.</li>
-        <li><strong>Cold weather (&lt;65&deg;F):</strong> Increase to 2% for full cure.</li>
+        <li><strong>Cold weather (&lt;65&deg;F):</strong> Increase to 2.5% from 60&ndash;65&deg;F and 3% below 60&deg;F for full cure.</li>
         <li><strong>Duratec 904-001:</strong> Use 2% for a tack-free finish coat.</li>
         <li><strong>Never exceed 3%</strong> &mdash; excess catalyst weakens the laminate.</li>
         <li><strong>Email results</strong> &mdash; Use the &ldquo;Email Me Results&rdquo; button to send a copy to yourself or your client.</li>
@@ -805,6 +827,7 @@
   });
 </script>
 <script src="main.js"></script>
+<script src="/compare.js"></script>
 <script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->

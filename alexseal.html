@@ -312,6 +312,9 @@
   <h1 class="mp-hero-title">Alexseal Yacht Coatings Calculator</h1>
   <p class="mp-hero-tagline">Premium Topcoat 501 &middot; Finish Primer 442 &middot; Protective Primer 161</p>
   <p class="mp-hero-copy">Set your surface area or paint volume, pick spray or brush/roll application, and choose your product — get exact base, converter, and reducer amounts, plus accelerator dosing and estimated coverage, before you crack a can.</p>
+  <div class="mp-hero-actions">
+    <button type="button" class="mp-btn mp-btn--ghost" data-compare-open="alexseal" aria-haspopup="dialog">How we compare</button>
+  </div>
 </div>
 <main class="container mp-calc-app d-print-none">
   <div class="mp-split mp-grid">
@@ -517,6 +520,29 @@
       </section>
     </div>
   </div>
+  <!-- ===== HOW IT WORKS: the same "How to Use" text as the Help (?) dialog, shown on the page so it is readable without opening
+       the dialog and without JavaScript. Keep it identical to #helpContentGuest: tools/verify/help_parity.py checks. ===== -->
+  <section class="mp-card mp-card--roomy mp-prose calc-howto" id="how-it-works" aria-labelledby="howItWorksTitle">
+    <h2 id="howItWorksTitle">How to Use the Alexseal Paint Mix Calculator</h2>
+    <p>Alexseal topcoats and primers require precise mixing of base, converter, and reducer. Wrong ratios cause poor adhesion, slow cure, or a cloudy finish. This calculator gives you the exact amounts for your batch size.</p>
+    <ol>
+      <li><strong>Select measurement system</strong> &mdash; Imperial (ft&sup2;, oz, qt, gal) or Metric (m&sup2;, mL, L).</li>
+      <li><strong>Select your product</strong> &mdash; Premium Topcoat 501, Finish Primer 442, or Protective Primer 161. Each sets its own base:converter ratio, reducer range, and whether an accelerator applies.</li>
+      <li><strong>Adjust the reducer percentage</strong> &mdash; every product has its own range; Premium Topcoat 501's range also changes between Spray and Brush/Roll.</li>
+      <li><strong>Add an accelerator, if applicable</strong> &mdash; Premium Topcoat 501's A5035 is spray-only; Finish Primer 442's A4429 works with either method and replaces the separate reducer amount when used. Protective Primer 161 has no accelerator.</li>
+      <li><strong>Enter your coating amount</strong> &mdash; Give a single area or volume figure, or enter length &times; width and let the calculator work out the area. Set your input units and the units you want results in.</li>
+      <li><strong>Choose an application method</strong> &mdash; Spray or Brush/Roll. All three products support both.</li>
+      <li><strong>Read the result</strong> &mdash; Exact base, converter, reducer, and (where applicable) accelerator amounts. Results update as you type.</li>
+    </ol>
+    <h3>Key facts</h3>
+    <ul>
+      <li><strong>Premium Topcoat 501:</strong> Spray 1:1 base:converter (C5051) + 30&ndash;37.5% reducer. Brush/Roll 2:1 base:converter (C5012) + 16&ndash;33% reducer &mdash; a different converter product, not just a different ratio.</li>
+      <li><strong>Finish Primer 442:</strong> 1:1 base:converter (C4427) + 15&ndash;25% reducer. Not recommended directly on metal &mdash; use Protective Primer 161 as a first coat on steel or aluminum.</li>
+      <li><strong>Protective Primer 161:</strong> 6:1 base:converter (C1617) + 5&ndash;10% reducer (up to 25% for special application). No accelerator.</li>
+      <li><strong>Coverage figures are factory ratings, used directly</strong> &mdash; not multiplied by a coat count. "Recommended coats" is shown as guidance text only.</li>
+    </ul>
+  </section>
+
   <!-- Tips & Safety / Other Calculators -->
   <div class="mp-resources-grid d-print-none">
     <section class="mp-card mp-card--flat mp-resource-card">
@@ -831,6 +857,7 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="main.js"></script>
+<script src="/compare.js"></script>
 <script src="feedback.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
 
 <!-- BoatMD Chatbot (global — loads on every page) -->

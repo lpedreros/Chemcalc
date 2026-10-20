@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How We Compare: ChemCalc vs. Other Marine Repair Calculators | ChemCalc</title>
+  <meta name="description" content="See how each ChemCalc calculator compares with anything else we could find online: MEKP, Awlgrip, Epifanes, fiberglass cloth and Alexseal. Where no other tool exists, we say so.">
+  <meta name="keywords" content="ChemCalc comparison, marine repair calculator comparison, MEKP calculator, Awlgrip calculator, Epifanes calculator, Alexseal calculator, fiberglass resin calculator">
+  <link rel="canonical" href="https://chemcalc.co/compare.html">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="How We Compare: ChemCalc vs. Other Marine Repair Calculators | ChemCalc">
+  <meta property="og:description" content="See how each ChemCalc calculator compares with anything else we could find online: MEKP, Awlgrip, Epifanes, fiberglass cloth and Alexseal. Where no other tool exists, we say so.">
+  <meta property="og:url" content="https://chemcalc.co/compare.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How We Compare: ChemCalc vs. Other Marine Repair Calculators | ChemCalc">
+  <meta name="twitter:description" content="See how each ChemCalc calculator compares with anything else we could find online: MEKP, Awlgrip, Epifanes, fiberglass cloth and Alexseal. Where no other tool exists, we say so.">
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg">
+
+  <!-- JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "How We Compare: ChemCalc vs. Other Marine Repair Calculators | ChemCalc",
+    "url": "https://chemcalc.co/compare.html",
+    "description": "See how each ChemCalc calculator compares with anything else we could find online: MEKP, Awlgrip, Epifanes, fiberglass cloth and Alexseal. Where no other tool exists, we say so."
+  }
+  </script>
+
+<!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<script src="/global-account-modal.js"></script>
+	<!-- #BeginLibraryItem "/Library/head-common.lbi" -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- ============================================================
+     Common head resources -- loaded on every real page. Kept in sync
+     by sync_library.py's marker-based auto-discovery (run from
+     \testing\): it reads this file and replaces everything between
+     the #BeginLibraryItem "/Library/head-common.lbi" / #EndLibraryItem
+     markers on every page that has them -- the same mechanism as
+     every other .lbi (nav.lbi, Footer.lbi, etc.), no separate page
+     list to maintain. To update sitewide: edit ONLY this file, then
+     re-run `python3 sync_library.py`. Never hand-edit the marked
+     block on an individual page -- the next sync will overwrite it.
+
+     DO NOT put page-specific meta (title, description, OG/Twitter,
+     canonical, JSON-LD schema, robots) or page-only assets (calculator
+     CSS/JS, qrcode.min.js, affiliate-click-tracker.js, the Estimator's
+     own scripts) here -- those stay outside the markers, per page.
+     print_style_fix_v4.css and chatbot_styles.css used to belong on
+     this list too, but both are gone as of 2026-09-16 (commit
+     6529dd1) -- folded into style.css, whose one shared link is
+     already above in this file, so neither needs a link of its own
+     anymore, page-specific or otherwise.
+
+     DELIBERATELY NOT included here, even though every other page
+     shares them, because they are not actually safe to force onto
+     every page uniformly:
+       - Bootstrap CSS: 18 of 19 pages use 4.5.2 (stackpath CDN), but
+         estimate.html runs on Bootstrap 5.3.0 (jsdelivr) with no
+         jQuery/Popper -- a real, load-bearing difference, not drift.
+         Stays page-specific everywhere.
+       - global-account-modal.js: loaded on every page, but not always
+         from <head> -- estimate.html loads it near the end of <body>
+         instead (its own loginModal/bizInfoModal markup was already
+         removed in favor of the ones it injects -- a completed
+         migration, not a gap). Left where it is rather than moved into
+         head, to avoid touching that page's script order. Stays
+         page-specific everywhere; cookie.html/privacy.html/terms.html/
+         trello-setup.html were genuinely missing it anywhere on the
+         page (a real "Log In" dead link) and got it added directly,
+         once, outside their markers.
+     ============================================================ -->
+
+<!-- Web app manifest ("Add to Home Screen") -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="/images/Think-and-Engage-Logo1c-Black-Seal.png">
+
+<!-- Apple touch icon (iOS "Add to Home Screen") -- independent of
+     manifest.json's own icons array, and previously wired up only on
+     clothcalc.html (a one-off guess, "Assuming same image for apple
+     touch icon", pointing at the browser-tab favicon PNG). Moved here
+     as the single sitewide source, pointing at the dedicated 180x180
+     icon rendered onto white for this purpose (see testing/icons/). -->
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+
+<!-- Google Fonts: Inter + IBM Plex Mono -- used by the sitewide dark
+     header/footer/floating-action chrome and by mekpcalc.css. Approved
+     design: Magic Patterns (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw).
+     style.css no longer @imports these itself now that this link is
+     finally live on every real page (see style.css's top-of-file
+     comment) -- loading both would double-fetch the same stylesheet. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<!-- Site stylesheet -->
+<link rel="stylesheet" href="/style.css">
+
+<!-- Chatbot styles -- chatbot.js/Library/Chatbot.lbi loads on every
+     page, so its stylesheet needs to as well (it was missing on 7
+     pages before this). -->
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DTECSH4N52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DTECSH4N52');
+</script>
+
+<!-- Meta Pixel -->
+<script src="/meta-pixel.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/global-auth.js"></script>
+<!-- #EndLibraryItem -->
+</head>
+<body class="mp-canvas"><!-- #BeginLibraryItem "/Library/icons.lbi" --><!-- ============================================================
+     Shared icon sprite (Phase 0 design system, ChemCalc_FullSite_Blueprint.md)
+     Inline SVG symbols, no icon-library dependency. Translated from the
+     lucide-react icons used by the Magic Patterns MEKP Calculator artifact
+     (https://www.magicpatterns.com/c/igj1coepi9s4kwq41co9iw). Built once,
+     included sitewide so future phases can reuse it without redefining.
+
+     Usage: <svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-NAME"/></svg>
+
+     Currently wired up: icon-flask (Library/nav.lbi brand badge),
+     icon-menu / icon-x (Library/nav.lbi mobile toggle), icon-heart-handshake
+     (Library/Footer.lbi Donate button). The rest (user, printer,
+     thermometer, beaker, percent, ruler, star, search, chevron-down,
+     message-circle) are pre-built here for later phases (calculator pages,
+     estimator, account UI) -- not yet referenced anywhere.
+     ============================================================ -->
+<svg aria-hidden="true" class="svg-sprite-hidden" focusable="false">
+  <symbol id="icon-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3h6"/><path d="M10 3v6.5L4.5 19a1 1 0 0 0 .87 1.5h13.26a1 1 0 0 0 .87-1.5L14 9.5V3"/><path d="M6.5 15h11"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+  </symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+  </symbol>
+  <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+  </symbol>
+  <symbol id="icon-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+  </symbol>
+  <symbol id="icon-beaker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h12"/><path d="M7 3v7l-4.3 7.6A1 1 0 0 0 3.6 19h16.8a1 1 0 0 0 .9-1.4L17 10V3"/><path d="M6.5 14h11"/>
+  </symbol>
+  <symbol id="icon-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+  </symbol>
+  <symbol id="icon-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 17 17 3l4 4L7 21Z"/><path d="m14.5 5.5 2 2"/><path d="m11.5 8.5 2 2"/><path d="m8.5 11.5 2 2"/><path d="m5.5 14.5 2 2"/>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </symbol>
+  <symbol id="icon-message-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </symbol>
+  <symbol id="icon-heart-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/><path d="m12 5-3 3 3 3-2 2"/>
+  </symbol>
+  <!-- Added 2026-10-03 for contact.html (Magic Patterns Contact page); translated from lucide-react the same way as the symbols above. -->
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </symbol>
+  <symbol id="icon-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+  </symbol>
+  <symbol id="icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+  </symbol>
+  <!-- Added 2026-10-03 for history.html (Magic Patterns Estimate History page); lucide-react translations, same pattern as above. -->
+  <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/><path d="M12 5v14"/>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+  </symbol>
+  <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+  </symbol>
+  <symbol id="icon-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+  </symbol>
+  <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
+  </symbol>
+</svg>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/nav.lbi" --><header class="header site-header-dark d-print-none">
+  <div class="site-header-inner">
+    <a href="/index.html" class="site-brand">
+      <span class="site-brand-badge" aria-hidden="true"><svg width="20" height="20"><use href="#icon-flask"/></svg></span>
+      <span class="site-brand-text">
+        <span class="site-brand-name">ChemCalc</span>
+        <span class="site-brand-tagline">A Think &amp; Engage Brand</span>
+      </span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" onclick="this.classList.toggle('is-open')">
+      <svg class="icon-menu" width="20" height="20" aria-hidden="true"><use href="#icon-menu"/></svg>
+      <svg class="icon-close" width="20" height="20" aria-hidden="true"><use href="#icon-x"/></svg>
+    </button>
+    <nav id="mainNav" class="nav" aria-label="Primary">
+      <a href="/index.html">Home</a>
+	<a href="/calculators.html">Calculators</a>
+      <a href="/estimate.html">Estimator</a>
+      <a href="/services.html">Services</a>
+      <a href="/kits.html">Kits</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/history.html" id="navHistoryLink" class="d-none">History</a>
+      <span id="navAuthIndicator" class="nav-auth-indicator"></span>
+    </nav>
+  </div>
+</header>
+<!-- #EndLibraryItem --><!-- Main Content Section -->
+<!-- Title band -->
+<div class="mp-hero mp-hero--overlap d-print-none">
+  <div class="mp-hero-split">
+    <div>
+      <h1 class="mp-hero-title">ChemCalc vs. everybody else, calculator by calculator</h1>
+      <p class="mp-hero-tagline">How we stack up</p>
+      <p class="mp-hero-copy">We sent our team to search the internet for anything like our calculators. Here's what we found, one chart per calculator.</p>
+    </div>
+    <div class="mp-hero-aside cmp-stat">
+      <p class="cmp-stat-figure"><span class="cmp-stat-num" data-cmp-count>3</span><span class="cmp-stat-of" data-cmp-total>of 5</span></p>
+      <p class="cmp-stat-lead">have no equivalent anywhere &mdash; not even from the manufacturer.</p>
+      <p class="cmp-stat-rest" data-cmp-rest>The other 2 face one generic tool each.</p>
+      <p class="cmp-stat-checked" data-cmp-checked>Last checked October 2026</p>
+    </div>
+  </div>
+</div>
+  <main class="container cmp-app d-print-none">
+    <!-- The jump cards, the chart sections and the proof list below are PRE-RENDERED from compare.js by tools/build_compare.mjs (run it after editing the copy; --check verifies). -->
+    <nav aria-label="Comparison charts">
+      <ul class="cmp-jump-grid" id="cmpJump"><!-- cmp-prerender:jump -->
+<li><a class="mp-card mp-card--stack mp-card--link cmp-jump" href="#mekp"><span class="cmp-jump-name">MEKP</span><span class="cmp-badge">Generic percentage tool</span><span class="cmp-jump-go">View chart<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-jump-arrow"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></span></a></li>
+<li><a class="mp-card mp-card--stack mp-card--link cmp-jump" href="#awlgrip"><span class="cmp-jump-name">Awlgrip</span><span class="cmp-badge cmp-badge--solo">No calculator exists</span><span class="cmp-jump-go">View chart<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-jump-arrow"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></span></a></li>
+<li><a class="mp-card mp-card--stack mp-card--link cmp-jump" href="#epifanes"><span class="cmp-jump-name">Epifanes</span><span class="cmp-badge cmp-badge--solo">No calculator exists</span><span class="cmp-jump-go">View chart<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-jump-arrow"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></span></a></li>
+<li><a class="mp-card mp-card--stack mp-card--link cmp-jump" href="#fiberglass"><span class="cmp-jump-name">Fiberglass</span><span class="cmp-badge">One supplier tool</span><span class="cmp-jump-go">View chart<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-jump-arrow"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></span></a></li>
+<li><a class="mp-card mp-card--stack mp-card--link cmp-jump" href="#alexseal"><span class="cmp-jump-name">Alexseal</span><span class="cmp-badge cmp-badge--solo">No calculator exists</span><span class="cmp-jump-go">View chart<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-jump-arrow"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></span></a></li>
+<!-- /cmp-prerender:jump --></ul>
+    </nav>
+
+    <div class="cmp-sections" id="cmpSections"><!-- cmp-prerender:sections -->
+<section class="cmp-section" id="mekp" aria-labelledby="mekp-heading"><div class="cmp-section-head"><div class="cmp-section-text"><h2 class="cmp-section-title" id="mekp-heading">MEKP Calculator</h2><p class="cmp-section-intro">The closest thing we found to real competition is a generic online percentage calculator. It says right on the page that it's not a safe way to pick your mix rate.</p></div><a class="cmp-open-link" href="mekpcalc.html">Open the calculator<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-open-arrow"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><div class="cmp-chart"><div class="cmp-table-wrap"><table class="cmp-table"><caption class="sr-only">MEKP Calculator: ChemCalc compared with closest competitor</caption><thead><tr><th scope="col">Feature</th><th class="cmp-col-us" scope="col">ChemCalc</th><th scope="col">Closest competitor</th></tr></thead><tbody><tr><th class="cmp-feature" scope="row">Is there a calculator at all</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Yes</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="sr-only">Has it: </span><span class="cmp-cell-text">Yes — but a major MEKP supplier themselves only publish a static chart, not a tool</span></span></td></tr><tr><th class="cmp-feature" scope="row">Resin types</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Polyester, vinylester, and gelcoat — one calculator covers all three</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Gelcoat only, no resin-type choice</span></span></td></tr><tr><th class="cmp-feature" scope="row">Does temperature matter here?</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Yes — tells you what band you're in and adjusts for it, °F or °C, your choice</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Not used at all — the page says so directly</span></span></td></tr><tr><th class="cmp-feature" scope="row">Known brands built in</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Duratec support built in</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">None — you need to already know your target percentage</span></span></td></tr><tr><th class="cmp-feature" scope="row">Safety guidance</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Gives you a heads-up based on the temperature band you're in</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Comes with a disclaimer that it doesn't establish a safe mix rate</span></span></td></tr><tr><th class="cmp-feature" scope="row">Can you trust the numbers</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Checked against real manufacturer data, with hand-validated temperature bands</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Plain arithmetic, no manufacturer data behind it</span></span></td></tr></tbody></table></div></div></section>
+<section class="cmp-section" id="awlgrip" aria-labelledby="awlgrip-heading"><div class="cmp-section-head"><div class="cmp-section-text"><h2 class="cmp-section-title" id="awlgrip-heading">Awlgrip Coatings Calculator</h2><p class="cmp-section-intro">We checked — nobody has built a mixing calculator for these products. The manufacturer's only tool is a color-matching guide for distributors, not something that tells you how much to mix.</p></div><a class="cmp-open-link" href="awlgrip.html">Open the calculator<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-open-arrow"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><div class="cmp-chart"><div class="cmp-uncontested"><div class="cmp-banner"><span class="cmp-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path><path d="m13.5 8.5-5 5"></path><path d="m8.5 8.5 5 5"></path></svg></span><div><p class="cmp-banner-title">No mixing calculator exists</p><p class="cmp-banner-detail">The manufacturer's only tool is a color-matching guide for distributors.</p></div></div><div class="cmp-list-body"><h3 class="cmp-list-title">What ChemCalc does</h3><ul class="cmp-list"><li class="cmp-list-row"><span class="cmp-list-feature">How you tell it what you're covering</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Does the math for you — and lets you choose how: the actual area, the total volume to mix, or just width × height</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Products covered</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">6 Awlgrip products — Topcoat, Awlcraft 2000/3000, 545 Epoxy Primer, Awlcraft SE, HDT Clear</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Spray vs. brush/roll</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Changes the mix automatically depending on how you're applying it</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Units</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Imperial or metric, your choice</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">How much it'll cover</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Gives you a real coverage estimate, so you know roughly how many coats you'll need</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Accelerator (hardener speed)</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Pick Pro-Cure X-98 or X-138 and it shows you the dose, max working temp, and cure time side by side</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Heads-up on gotchas</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Tells you the gotchas for whichever product you picked (for example, Awlcraft SE: no accelerator needed)</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Can you trust the numbers</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Checked line by line against the real spec sheets — mix, coverage, and accelerator dose all come straight from Awlgrip's own data</span></span></li></ul></div></div></div><div class="cmp-note-row"><p class="cmp-brand-note"><strong>Independent &amp; unofficial</strong> — ChemCalc isn't affiliated with or endorsed by the maker of Awlgrip.</p></div></section>
+<section class="cmp-section" id="epifanes" aria-labelledby="epifanes-heading"><div class="cmp-section-head"><div class="cmp-section-text"><h2 class="cmp-section-title" id="epifanes-heading">Epifanes Polyurethane Paint &amp; Varnish Calculator</h2><p class="cmp-section-intro">Nobody has built a calculator for mixing Epifanes products — not Epifanes, not anybody else.</p></div><a class="cmp-open-link" href="epifanespoly.html">Open the calculator<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-open-arrow"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><div class="cmp-chart"><div class="cmp-uncontested"><div class="cmp-banner"><span class="cmp-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path><path d="m13.5 8.5-5 5"></path><path d="m8.5 8.5 5 5"></path></svg></span><div><p class="cmp-banner-title">No mixing calculator exists</p><p class="cmp-banner-detail">Not from Epifanes, not from anybody else.</p></div></div><div class="cmp-list-body"><h3 class="cmp-list-title">What ChemCalc does</h3><ul class="cmp-list"><li class="cmp-list-row"><span class="cmp-list-feature">Is there a calculator at all</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Yes</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Products covered</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">6 products — Clear Gloss, Clear Satin, Colour/Yacht Coating, in both Standard and Speedcoat</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Application method</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Brush/roll or spray for Standard; spray-only for Speedcoat</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">How guys actually mix it</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Straight 2:1 — specified by weight, with the calculator giving you the volume equivalent so you know exactly how much of each you need</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Still need to measure it yourself?</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Yes — the calculator gets you the right amounts, but you still need a scale, cup, or marked stick to pour it out</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Thinning guidance</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Tells you how much to thin it, specific to the product and method you picked</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Can you trust the numbers</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Checked against the real spec sheet — recoat time and pot life both taken straight from it, not estimated</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Honest about what's not built yet</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Skipped Polyurethane Primer on purpose — waiting on a straight answer from the manufacturer instead of guessing</span></span></li></ul></div></div></div><div class="cmp-note-row"><p class="cmp-brand-note"><strong>Independent &amp; unofficial</strong> — ChemCalc isn't affiliated with or endorsed by the maker of Epifanes.</p></div></section>
+<section class="cmp-section" id="fiberglass" aria-labelledby="fiberglass-heading"><div class="cmp-section-head"><div class="cmp-section-text"><h2 class="cmp-section-title" id="fiberglass-heading">Fiberglass Cloth Saturation Calculator</h2><p class="cmp-section-intro">The closest real competitor we found is a materials calculator from a fiberglass supply company. Everyone else just publishes a static chart or a rule of thumb.</p></div><a class="cmp-open-link" href="clothcalc.html">Open the calculator<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-open-arrow"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><div class="cmp-chart"><div class="cmp-table-wrap"><table class="cmp-table"><caption class="sr-only">Fiberglass Cloth Saturation Calculator: ChemCalc compared with closest competitor</caption><thead><tr><th scope="col">Feature</th><th class="cmp-col-us" scope="col">ChemCalc</th><th scope="col">Closest competitor</th></tr></thead><tbody><tr><th class="cmp-feature" scope="row">Is there a calculator at all</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Yes</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="sr-only">Has it: </span><span class="cmp-cell-text">Yes, genuinely interactive</span></span></td></tr><tr><th class="cmp-feature" scope="row">Resin type</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Pick polyester, vinylester, or epoxy — the math changes for each</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">One fixed ratio no matter what resin you're using</span></span></td></tr><tr><th class="cmp-feature" scope="row">Materials covered</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Mat, woven roving, combo mat, cloth, carbon fiber, Kevlar</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Only their own fabric lineup</span></span></td></tr><tr><th class="cmp-feature" scope="row">Where the ratio comes from</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Real hand-layup practice — checked against an actual test pour, within about a cup of a gallon</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">A fixed multiplier, with no supporting numbers shown on their page</span></span></td></tr><tr><th class="cmp-feature" scope="row">Does temperature matter here?</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Yes — same temperature guidance as our MEKP calculator, by resin type</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Not mentioned</span></span></td></tr><tr><th class="cmp-feature" scope="row">Epoxy-specific help</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Tells you fast vs. slow hardener and steers you to the right product for natural-wood finishing</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Not mentioned</span></span></td></tr><tr><th class="cmp-feature" scope="row">What you get at the end</th><td class="cmp-col-us" data-label="ChemCalc"><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Full resin-to-hardener breakdown for epoxy; straight resin amount for polyester/vinylester</span></span></td><td class="cmp-col-them" data-label="Closest competitor"><span class="cmp-cell cmp-cell--them"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M5 12h14"></path></svg><span class="sr-only">Lacks it: </span><span class="cmp-cell-text">Just one resin number</span></span></td></tr></tbody></table></div></div></section>
+<section class="cmp-section" id="alexseal" aria-labelledby="alexseal-heading"><div class="cmp-section-head"><div class="cmp-section-text"><h2 class="cmp-section-title" id="alexseal-heading">Alexseal Yacht Coatings Calculator</h2><p class="cmp-section-intro">Nobody has built a calculator for mixing Alexseal products — not the manufacturer, not any retailer, not anybody. Same story as Epifanes.</p></div><a class="cmp-open-link" href="alexseal.html">Open the calculator<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-open-arrow"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><div class="cmp-chart"><div class="cmp-uncontested"><div class="cmp-banner"><span class="cmp-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path><path d="m13.5 8.5-5 5"></path><path d="m8.5 8.5 5 5"></path></svg></span><div><p class="cmp-banner-title">No mixing calculator exists</p><p class="cmp-banner-detail">Not from the manufacturer, not from any retailer, not anybody.</p></div></div><div class="cmp-list-body"><h3 class="cmp-list-title">What ChemCalc does</h3><ul class="cmp-list"><li class="cmp-list-row"><span class="cmp-list-feature">How you tell it what you're covering</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Does the math for you — and lets you choose how: the actual area, the total volume to mix, or just width × height</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Products covered</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">3 products — Premium Topcoat 501, Finish Primer 442, Protective Primer 161</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Accelerator (hardener speed)</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Shows the right accelerator for each product — and doesn't show one at all for the one product that doesn't use it</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Mixing ratio</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Exact ratio for the product and method you picked, calculated live</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">How much it'll cover</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Shows real coverage numbers as a reference, not something we quietly bake into the math for you</span></span></li><li class="cmp-list-row"><span class="cmp-list-feature">Finding the manufacturer's own paperwork</span><span class="cmp-cell cmp-cell--us"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="cmp-cell-icon"><path d="M20 6 9 17l-5-5"></path></svg><span class="cmp-cell-text">Links straight to their real spec sheet library</span></span></li></ul></div></div></div><div class="cmp-note-row"><p class="cmp-brand-note"><strong>Independent &amp; unofficial</strong> — ChemCalc isn't affiliated with or endorsed by the maker of Alexseal.</p></div></section>
+<!-- /cmp-prerender:sections --></div>
+
+    <section class="mp-panel cmp-trust" aria-labelledby="cmpTrustHeading">
+      <div class="cmp-trust-intro">
+        <h2 class="mp-panel-title" id="cmpTrustHeading">Why you can trust the numbers</h2>
+        <p class="cmp-trust-copy">Being first doesn't mean much if the math is wrong. Every calculator is checked against the manufacturer's own data, line by line, before it ever reaches you.</p>
+      </div>
+      <ul class="cmp-trust-list" id="cmpTrust"><!-- cmp-prerender:trust -->
+<li class="cmp-trust-row"><span class="cmp-trust-calc">Awlgrip</span><span class="cmp-trust-body"><span class="cmp-trust-claim">Checked line by line against the real spec sheets</span><span class="cmp-trust-detail">Mix ratio, coverage, and accelerator dose all come straight from Awlgrip's own published data.</span></span></li>
+<li class="cmp-trust-row"><span class="cmp-trust-calc">Fiberglass</span><span class="cmp-trust-body"><span class="cmp-trust-claim">Tested against a real resin pour</span><span class="cmp-trust-detail">Our hand-layup ratios were checked against an actual pour, not just worked out on paper — within about a cup of a gallon of what the cloth actually took.</span></span></li>
+<li class="cmp-trust-row"><span class="cmp-trust-calc">Epifanes</span><span class="cmp-trust-body"><span class="cmp-trust-claim">Recoat time and pot life straight from the spec sheet</span><span class="cmp-trust-detail">Both figures come directly from Epifanes' own documentation.</span></span></li>
+<li class="cmp-trust-row"><span class="cmp-trust-calc">MEKP</span><span class="cmp-trust-body"><span class="cmp-trust-claim">Temperature bands hand-validated</span><span class="cmp-trust-detail">Checked against real manufacturer data, band by band — not one blanket number for every condition.</span></span></li>
+<li class="cmp-trust-row"><span class="cmp-trust-calc">Alexseal</span><span class="cmp-trust-body"><span class="cmp-trust-claim">Links straight to the manufacturer's own paperwork</span><span class="cmp-trust-detail">Every Alexseal product in the calculator links back to Alexseal's real spec sheet library, so you can check the numbers yourself.</span></span></li>
+<!-- /cmp-prerender:trust --></ul>
+    </section>
+
+  </main><!-- #BeginLibraryItem "/Library/Footer.lbi" --><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Donate — top of the bottom-right floating-action cluster (with the
+     BoatMD chat toggle from chatbot_styles.css and the page Help button
+     from Library/HelpButton.lbi below it; see --chrome-fab-right and
+     .fab-donate in style.css). Trigger + modal chrome restyled to tokens
+     only — the PayPal form fields below are unchanged. -->
+<button id="donateButton" class="fab-donate d-print-none" data-toggle="modal" data-target="#donationModal">
+  <svg width="16" height="16" aria-hidden="true"><use href="#icon-heart-handshake"/></svg>
+  <span class="fab-donate-label">Donate</span>
+</button>
+
+<!-- Donation Modal (PayPal snippet unchanged) -->
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="donationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content fab-donate-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="donationModalLabel">Support ChemCalc</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p> Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence. </p>
+        <p> Your support goes toward site development, content updates, and continuous improvement of our services. </p>
+        <hr>
+        <div class="donation-options">
+          <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <input type="hidden" name="business" value="MRVYZ5WXYR6SC" />
+            <input type="hidden" name="no_recurring" value="0" />
+            <input type="hidden" name="item_name" value="Fuel our mission! Donate now to keep ChemCalc thriving and empower marine repair excellence." />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Section -->
+<footer class="footer site-footer-dark">
+  <div class="site-footer-inner">
+    <div class="site-footer-brand">
+      <span class="site-footer-badge" aria-hidden="true">T&amp;E</span>
+      <span class="site-footer-brand-text">
+        <span class="site-footer-brand-name">Think &amp; Engage</span>
+        Parent brand of ChemCalc
+      </span>
+    </div>
+    <div class="legal-links mb-2">
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/cookie.html">Cookie Policy</a>
+    </div>
+    <p class="mb-2">&copy; <span id="currentYear">2026</span> ChemCalc. All rights reserved.</p>
+  </div>
+</footer>
+<!-- #EndLibraryItem --><!-- Bootstrap JS (with Popper.js and jQuery) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Custom JS -->
+<script src="main.js"></script>
+<script src="/compare.js"></script><!-- #BeginLibraryItem "/Library/Chatbot.lbi" -->
+
+<!-- BoatMD Chatbot (global — loads on every page) -->
+<script src="/chatbot.js"></script>
+<!-- #EndLibraryItem --><!-- #BeginLibraryItem "/Library/global-scripts.lbi" --><!-- Global Nav & Page Scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 1. Hide current page link from nav
+    // Build the current page path to match root-relative hrefs (e.g. /index.html)
+    var currentPath = window.location.pathname;
+    // Normalise bare domain root to /index.html
+    if (currentPath === "/" || currentPath === "") currentPath = "/index.html";
+    var navLinks = document.querySelectorAll("#mainNav a");
+    navLinks.forEach(function(link) {
+        if (link.getAttribute("href") === currentPath) {
+            link.style.display = "none";
+        }
+    });
+
+    // 2. Mobile menu toggle
+    // data-bound prevents double-binding if a page already has its own toggle handler
+    var menuToggle = document.getElementById("menuToggle");
+    var mainNav = document.getElementById("mainNav");
+    if (menuToggle && mainNav && !menuToggle.hasAttribute("data-bound")) {
+        menuToggle.setAttribute("data-bound", "true");
+        menuToggle.addEventListener("click", function() {
+            mainNav.classList.toggle("active");
+        });
+    }
+
+});
+</script>
+<!-- #EndLibraryItem --></body>
+</html>
