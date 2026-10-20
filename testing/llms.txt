@@ -1,0 +1,27 @@
+# ChemCalc
+
+> ChemCalc (chemcalc.co) is a set of free online calculators for marine repair and boat building: catalyst, paint and laminating-resin mixing. It also lists curated repair materials and offers marine repair services. A Think & Engage brand.
+
+The calculators are interactive and run in the browser, so their results appear only after JavaScript runs. The calculator and safety pages also carry their key facts (ratios, limits, guidelines) as static text and as JSON-LD. Calculator output is reference information; confirm against the manufacturer's technical data sheet.
+
+## Calculators
+
+- [MEKP Calculator](https://chemcalc.co/mekpcalc.html): Calculates how much MEKP catalyst to add to polyester and vinyl ester resins and gelcoats from the resin volume and ambient temperature, shown in cc and drops. Has a Duratec 904-001 option that locks MEKP at 2%.
+- [Awlgrip Coatings Calculator](https://chemcalc.co/awlgrip.html): Calculates base, converter and reducer amounts, with the part number for each, for Awlcraft 2000/3000 Topcoat, Awlgrip Topcoat, 545 Epoxy Primer, Awlcraft SE Basecoat and Awlgrip HDT Clear. Covers spray and roll/brush application, in imperial or metric units.
+- [Epifanes Polyurethane Paint & Varnish Calculator](https://chemcalc.co/epifanespoly.html): Calculates base and hardener amounts, with thinning guidance, for the six Epifanes Poly-urethane products, standard or PU Speedcoat, by brush/roll or spray.
+- [Fiberglass Cloth Saturation Calculator](https://chemcalc.co/clothcalc.html): Calculates the resin and hardener needed to wet out fiberglass, carbon fiber and Kevlar cloth, from the area, the cloth layers, the resin system (polyester, vinylester or epoxy) and the temperature.
+- [Alexseal Yacht Coatings Calculator](https://chemcalc.co/alexseal.html): Calculates base, converter, reducer and, where one applies, accelerator amounts for Alexseal Premium Topcoat 501, Finish Primer 442 and Protective Primer 161, for spray or brush/roll application.
+
+## Materials and services
+
+- [Marine Repair Kits & Boat Building Supplies](https://chemcalc.co/kits.html): A searchable, filterable list of curated marine repair kits, fiberglass supplies, Awlgrip paint, epoxy and tools. Each item links to Amazon or the supplier through affiliate links, and a custom kit can be requested.
+- [Services](https://chemcalc.co/services.html): Professional repair services, training and tele-guiding, kit subscriptions, custom fabrication and custom vinyl lettering.
+
+## Safety guidelines
+
+- [Awlgrip Topcoats Safety Guidelines](https://chemcalc.co/awlgrip-safety.html): Handling and storage, first aid, personal protection, fire fighting, accidental release and disposal guidance for Awlgrip topcoats.
+- [MEKP Safety Guidelines](https://chemcalc.co/mekp-safety.html): Handling and storage, first aid, personal protection, fire fighting, storage and disposal, and special notes for MEKP.
+
+## Comparison
+
+- [How We Compare](https://chemcalc.co/compare.html): Charts comparing each ChemCalc calculator with the closest alternative found online, with a note where no other tool exists.
