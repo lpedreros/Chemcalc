@@ -6,8 +6,13 @@
    drift between them:
      1. compare.html -- the full index: hero numbers, a jump card per
         calculator, one chart section per calculator, the trust panel.
-        The page ships empty containers (#cmpJump, #cmpSections, #cmpTrust)
-        and the figures in the hero box; this file fills them.
+        The page is shipped PRE-RENDERED: tools/build_compare.mjs runs this
+        file against a small DOM stand-in and writes the result into
+        compare.html between <!-- cmp-prerender:... --> markers (so crawlers
+        that do not run JavaScript read the full page). After editing the
+        copy below, run `node tools/build_compare.mjs`; `--check` fails if
+        compare.html is out of date. In the browser, a container that already
+        has content is not redrawn.
      2. Each calculator page -- a hero button
         <button class="mp-btn mp-btn--ghost" data-compare-open="SLUG"> opens a
         dialog showing that one calculator's chart. The dialog is built on
@@ -277,10 +282,14 @@
   }
 
   /* ---------- compare.html ---------- */
-  function renderIndexPage() {
-    var jump = document.getElementById('cmpJump');
-    var sections = document.getElementById('cmpSections');
-    var trust = document.getElementById('cmpTrust');
+  // Fills the three containers of compare.html. A container that already has content is left alone: the page is
+  // shipped pre-rendered by tools/build_compare.mjs (which runs this very function), so crawlers that do not run
+  // JavaScript see the full page; this only fills a container that was shipped empty.
+  // `targets` ({jump, sections, trust}) lets tests render into detached containers.
+  function renderIndexPage(targets) {
+    var jump = targets ? targets.jump : document.getElementById('cmpJump');
+    var sections = targets ? targets.sections : document.getElementById('cmpSections');
+    var trust = targets ? targets.trust : document.getElementById('cmpTrust');
     if (!jump && !sections && !trust) return;
 
     var uncontested = COMPARISONS.filter(function (c) { return c.kind === 'uncontested'; }).length;
@@ -290,7 +299,7 @@
     setText('[data-cmp-rest]', 'The other ' + (total - uncontested) + ' face one generic tool each.');
     setText('[data-cmp-checked]', 'Last checked ' + LAST_CHECKED);
 
-    if (jump) {
+    if (jump && !jump.children.length) {
       COMPARISONS.forEach(function (c) {
         var a = el('a', 'mp-card mp-card--stack mp-card--link cmp-jump');
         a.href = '#' + c.slug;
@@ -305,7 +314,7 @@
       });
     }
 
-    if (sections) {
+    if (sections && !sections.children.length) {
       COMPARISONS.forEach(function (c) {
         var s = el('section', 'cmp-section');
         s.id = c.slug;
@@ -334,7 +343,7 @@
       });
     }
 
-    if (trust) {
+    if (trust && !trust.children.length) {
       TRUST.forEach(function (t) {
         var li = el('li', 'cmp-trust-row');
         li.appendChild(el('span', 'cmp-trust-calc', t.calculator));
@@ -347,7 +356,7 @@
     }
 
     // The sections did not exist when the browser first tried to follow a #mekp style link.
-    if (location.hash.length > 1) {
+    if (!targets && location.hash.length > 1) {
       var target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
       if (target) target.scrollIntoView();
     }
@@ -467,5 +476,5 @@
   else init();
 
   // For tests and debugging.
-  window.ChemCalcCompare = { comparisons: COMPARISONS, trust: TRUST, lastChecked: LAST_CHECKED, open: openModal, close: closeModal };
+  window.ChemCalcCompare = { comparisons: COMPARISONS, trust: TRUST, lastChecked: LAST_CHECKED, open: openModal, close: closeModal, renderInto: renderIndexPage };
 }());
