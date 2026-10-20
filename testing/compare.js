@@ -85,7 +85,7 @@
         { feature: 'Is there a calculator at all', chemcalc: 'Yes' },
         { feature: 'Products covered', chemcalc: '6 products — Clear Gloss, Clear Satin, Colour/Yacht Coating, in both Standard and Speedcoat' },
         { feature: 'Application method', chemcalc: 'Brush/roll or spray for Standard; spray-only for Speedcoat' },
-        { feature: 'How guys actually mix it', chemcalc: 'Straight 2:1 by volume — tells you exactly how much of each you need' },
+        { feature: 'How guys actually mix it', chemcalc: 'Straight 2:1 — specified by weight, with the calculator giving you the volume equivalent so you know exactly how much of each you need' },
         { feature: 'Still need to measure it yourself?', chemcalc: 'Yes — the calculator gets you the right amounts, but you still need a scale, cup, or marked stick to pour it out' },
         { feature: 'Thinning guidance', chemcalc: 'Tells you how much to thin it, specific to the product and method you picked' },
         { feature: 'Can you trust the numbers', chemcalc: 'Checked against the real spec sheet — recoat time and pot life both taken straight from it, not estimated' },
