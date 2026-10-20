@@ -33,15 +33,33 @@
     "url": "https://chemcalc.co/contact.html",
     "description": "Contact ChemCalc for questions about marine repair services, training, custom kits, or calculator usage. Fill out our form for a prompt response.",
     "mainEntity": {
+      "@type": "Organization",
+      "@id": "https://chemcalc.co/#organization",
+      "name": "ChemCalc",
+      "url": "https://chemcalc.co/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://chemcalc.co/images/Think-and-Engage-Logo1c-Black-Seal.png",
+        "width": 361,
+        "height": 361
+      },
+      "description": "Marine repair calculators, curated repair kits, expert advice, training, and marine repair services.",
+      "parentOrganization": {
         "@type": "Organization",
-        "name": "ChemCalc",
-        "url": "https://chemcalc.co/",
-        "logo": "https://chemcalc.co/images/Think-and-Engage-Logo1c-White-Seal.png",
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "Customer Service",
-            "url": "https://chemcalc.co/contact.html"
-        }
+        "@id": "https://chemcalc.co/#parent",
+        "name": "Think & Engage, LLC",
+        "sameAs": [
+          "https://www.facebook.com/thinkandengage"
+        ]
+      },
+      "sameAs": [
+        "https://www.amazon.com/shop/chemcalc"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "url": "https://chemcalc.co/contact.html"
+      }
     }
   }
   </script>

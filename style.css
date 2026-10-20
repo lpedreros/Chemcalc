@@ -6493,3 +6493,7 @@ h2.trello-setup-title{
 .calc-howto{margin-top:2rem;}
 .calc-howto > p{max-width:48rem;}
 .calc-howto > h3{margin-top:1.5rem;}
+.calc-howto .calc-byline{
+  margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--chrome-paper-line);
+  font-size:.85rem;line-height:1.5;color:var(--chrome-ink-600);
+}

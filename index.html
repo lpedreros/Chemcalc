@@ -25,10 +25,73 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "ChemCalc",
-    "url": "https://chemcalc.co/",
-    "description": "ChemCalc provides advanced chemical calculators, curated marine repair kits, and expert repair guides to help you achieve quality boat repairs and maintenance."
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://chemcalc.co/#website",
+        "name": "ChemCalc",
+        "url": "https://chemcalc.co/",
+        "inLanguage": "en-US",
+        "description": "ChemCalc provides advanced chemical calculators, curated marine repair kits, and expert repair guides to help you achieve quality boat repairs and maintenance.",
+        "publisher": {
+          "@type": "Organization",
+          "@id": "https://chemcalc.co/#organization",
+          "name": "ChemCalc",
+          "url": "https://chemcalc.co/"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://chemcalc.co/#organization",
+        "name": "ChemCalc",
+        "url": "https://chemcalc.co/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://chemcalc.co/images/Think-and-Engage-Logo1c-Black-Seal.png",
+          "width": 361,
+          "height": 361
+        },
+        "description": "Marine repair calculators, curated repair kits, expert advice, training, and marine repair services.",
+        "parentOrganization": {
+          "@type": "Organization",
+          "@id": "https://chemcalc.co/#parent",
+          "name": "Think & Engage, LLC",
+          "sameAs": [
+            "https://www.facebook.com/thinkandengage"
+          ]
+        },
+        "sameAs": [
+          "https://www.amazon.com/shop/chemcalc"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "url": "https://chemcalc.co/contact.html"
+        },
+        "founder": {
+          "@type": "Person",
+          "@id": "https://chemcalc.co/#founder",
+          "name": "Leonardo Williams",
+          "jobTitle": "Founder",
+          "url": "https://chemcalc.co/about.html",
+          "description": "Founder of ChemCalc and an experienced boat restoration specialist.",
+          "worksFor": {
+            "@id": "https://chemcalc.co/#organization"
+          },
+          "knowsAbout": [
+            "Fiberglass and composites",
+            "Divinycell, Coosa and Starboard",
+            "Nidacore and wood construction",
+            "Chemical calculations for marine repair",
+            "Custom fabrication",
+            "Vinyl lettering"
+          ],
+          "sameAs": [
+            "https://www.linkedin.com/in/mrleho"
+          ]
+        }
+      }
+    ]
   }
   </script>
 
