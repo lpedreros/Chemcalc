@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 help_parity.py -- prove each calculator page's visible "How it works" card (#how-it-works) says exactly what the
-page's Help (?) dialog says (#helpContentGuest): same title, intro, steps and key facts, word for word.
+page's Help (?) dialog says (#helpContentGuest): same title, intro, steps and key facts, word for word;
+and that the byline (author and "Last reviewed" date) matches the page's JSON-LD.
 
 The card exists so the explanation is readable on the page, and by crawlers that do not run JavaScript, instead of only
 inside a hidden dialog. Two copies of text drift, so this fails loudly when they differ.
@@ -56,6 +57,23 @@ def card_copy(s):
     }
 
 
+def byline_problem(s):
+    """The visible "Last reviewed" date and author must match the page's own JSON-LD (dateModified, author)."""
+    import json
+    card = s[s.index('id="how-it-works"'):]
+    card = card[:card.index('</section>')]
+    m = re.search(r'<p class="calc-byline">Written by <a href="about.html">(.*?)</a>.*?<time datetime="(\d{4}-\d{2}-\d{2})">', card, re.S)
+    if not m:
+        return 'missing (no .calc-byline in the How to Use card)'
+    block = re.search(r'<script type="application/ld\+json">(.*?)</script>', s, re.S).group(1)
+    data = json.loads(block)
+    if data.get('dateModified') != m.group(2):
+        return f'date differs: visible {m.group(2)} vs JSON-LD dateModified {data.get("dateModified")}'
+    if data.get('author', {}).get('name') != text(m.group(1)):
+        return f'author differs: visible {text(m.group(1))} vs JSON-LD {data.get("author", {}).get("name")}'
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--pages', default=','.join(PAGES))
@@ -68,6 +86,11 @@ def main():
             continue
         h, c = help_copy(s), card_copy(s)
         diffs = [k for k in h if h[k] != c[k]]
+        by = byline_problem(s)
+        if by:
+            bad += 1
+            print(f'{page}: BYLINE {by}')
+            continue
         if diffs:
             bad += 1
             print(f'{page}: DIFFERS in {", ".join(diffs)}')
