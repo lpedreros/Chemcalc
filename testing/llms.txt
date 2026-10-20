@@ -11,7 +11,7 @@ ChemCalc has five free calculators that need no account, with amounts checked ag
 - [Fiberglass Cloth Saturation Calculator](https://chemcalc.co/clothcalc.html): Resin amounts for fiberglass, carbon fiber or Kevlar laminates, based on area, layers, material type, resin system (polyester, vinylester or epoxy) and temperature.
 - [Epifanes Polyurethane Paint & Varnish Calculator](https://chemcalc.co/epifanespoly.html): Mix amounts, with thinning guidance, for all six Epifanes Poly-urethane products (Clear Gloss, Clear Satin and Colour, standard and PU Speedcoat). Every product mixes 2:1, specified by weight and given as the volume equivalent.
 - [Alexseal Yacht Coatings Calculator](https://chemcalc.co/alexseal.html): Mix amounts (base, converter, reducer and accelerator) for Alexseal Premium Topcoat 501, Finish Primer 442 and Protective Primer 161, for spray or brush/roll application, with estimated coverage.
-- [How We Compare](https://chemcalc.co/compare.html): How each ChemCalc calculator compares with the other tools found online, and where no other tool exists.
+- [How We Compare](https://chemcalc.co/compare.html): How each ChemCalc calculator compares with the other tools found online, and where we didn't find another tool.
 
 ## Kits, Materials & Safety
 

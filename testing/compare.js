@@ -38,17 +38,16 @@
       shortName: 'MEKP',
       href: 'mekpcalc.html',
       kind: 'contested',
-      competitorLabel: 'Closest competitor',
-      verdictLabel: 'Generic percentage tool',
+      competitorLabel: 'Other tools',
+      verdictLabel: 'Several tools',
       brand: null,
-      intro: "The closest thing we found to real competition is a generic online percentage calculator. It says right on the page that it's not a safe way to pick your mix rate.",
+      intro: "We found several real calculators for this, from different sources. None of them adjust for temperature or change their math by resin type. Most carry a liability disclaimer; one grounds its numbers in a named product's data sheet and adds real safety guidance.",
       rows: [
-        { feature: 'Is there a calculator at all', chemcalc: 'Yes', competitor: 'Yes — but a major MEKP supplier themselves only publish a static chart, not a tool', verdict: 'yes' },
-        { feature: 'Resin types', chemcalc: 'Polyester, vinylester, and gelcoat — one calculator covers all three', competitor: 'Gelcoat only, no resin-type choice', verdict: 'no' },
-        { feature: 'Does temperature matter here?', chemcalc: "Yes — tells you what band you're in and adjusts for it, °F or °C, your choice", competitor: 'Not used at all — the page says so directly', verdict: 'no' },
-        { feature: 'Known brands built in', chemcalc: 'Duratec support built in', competitor: 'None — you need to already know your target percentage', verdict: 'no' },
-        { feature: 'Safety guidance', chemcalc: "Gives you a heads-up based on the temperature band you're in", competitor: "Comes with a disclaimer that it doesn't establish a safe mix rate", verdict: 'no' },
-        { feature: 'Can you trust the numbers', chemcalc: 'Checked against real manufacturer data, with hand-validated temperature bands', competitor: 'Plain arithmetic, no manufacturer data behind it', verdict: 'no' }
+        { feature: 'Is there a calculator at all', chemcalc: 'Yes', competitor: "Yes — though one major supplier's page is still just a static chart, not a tool", verdict: 'yes' },
+        { feature: 'Resin types', chemcalc: 'Polyester, vinylester, and gelcoat — one calculator covers all three', competitor: "None of them change the math by resin type — either there's no type to pick, or picking one doesn't change the formula", verdict: 'no' },
+        { feature: 'Does temperature matter here?', chemcalc: "Yes — tells you what band you're in and adjusts for it, °F or °C, your choice", competitor: 'No temperature input on any of them', verdict: 'no' },
+        { feature: 'Safety guidance', chemcalc: "Gives you a heads-up based on the temperature band you're in", competitor: "At most, general safety information or a liability disclaimer — none tie it to your specific result", verdict: 'no' },
+        { feature: 'Can you trust the numbers', chemcalc: 'Checked against real manufacturer data, with hand-validated temperature bands', competitor: "Mostly plain arithmetic — one tool cites a single product's data sheet, none show more than that", verdict: 'no' }
       ]
     },
     {
@@ -58,11 +57,11 @@
       href: 'awlgrip.html',
       kind: 'uncontested',
       competitorLabel: 'Everyone else',
-      verdictLabel: 'No calculator exists',
+      verdictLabel: 'No calculator found',
       brand: 'Awlgrip',
-      noToolHeadline: 'No mixing calculator exists',
-      noToolDetail: "The manufacturer's only tool is a color-matching guide for distributors.",
-      intro: "We checked — nobody has built a mixing calculator for these products. The manufacturer's only tool is a color-matching guide for distributors, not something that tells you how much to mix.",
+      noToolHeadline: "We didn't find a mixing calculator",
+      noToolDetail: "The only official tool we found is a color-matching guide for distributors.",
+      intro: "We checked and didn't find a mixing calculator for these products. The only official tool we found is a color-matching guide for distributors — it doesn't tell you how much to mix.",
       rows: [
         { feature: "How you tell it what you're covering", chemcalc: 'Does the math for you — and lets you choose how: the actual area, the total volume to mix, or just width × height' },
         { feature: 'Products covered', chemcalc: '6 Awlgrip products — Topcoat, Awlcraft 2000/3000, 545 Epoxy Primer, Awlcraft SE, HDT Clear' },
@@ -81,11 +80,11 @@
       href: 'epifanespoly.html',
       kind: 'uncontested',
       competitorLabel: 'Everyone else',
-      verdictLabel: 'No calculator exists',
+      verdictLabel: 'No calculator found',
       brand: 'Epifanes',
-      noToolHeadline: 'No mixing calculator exists',
-      noToolDetail: 'Not from Epifanes, not from anybody else.',
-      intro: 'Nobody has built a calculator for mixing Epifanes products — not Epifanes, not anybody else.',
+      noToolHeadline: "We didn't find a mixing calculator",
+      noToolDetail: "We didn't find one from any source.",
+      intro: "We looked and didn't find a calculator for mixing Epifanes products from any source.",
       rows: [
         { feature: 'Is there a calculator at all', chemcalc: 'Yes' },
         { feature: 'Products covered', chemcalc: '6 products — Clear Gloss, Clear Satin, Colour/Yacht Coating, in both Standard and Speedcoat' },
@@ -103,18 +102,16 @@
       shortName: 'Fiberglass',
       href: 'clothcalc.html',
       kind: 'contested',
-      competitorLabel: 'Closest competitor',
-      verdictLabel: 'One supplier tool',
+      competitorLabel: 'Other tools',
+      verdictLabel: 'Several supplier tools',
       brand: null,
-      intro: 'The closest real competitor we found is a materials calculator from a fiberglass supply company. Everyone else just publishes a static chart or a rule of thumb.',
+      intro: "We found several real, interactive fiberglass materials calculators — from fabric suppliers and a major boat-supply brand. None of them adjust for resin type or temperature.",
       rows: [
         { feature: 'Is there a calculator at all', chemcalc: 'Yes', competitor: 'Yes, genuinely interactive', verdict: 'yes' },
-        { feature: 'Resin type', chemcalc: 'Pick polyester, vinylester, or epoxy — the math changes for each', competitor: "One fixed ratio no matter what resin you're using", verdict: 'no' },
-        { feature: 'Materials covered', chemcalc: 'Mat, woven roving, combo mat, cloth, carbon fiber, Kevlar', competitor: 'Only their own fabric lineup', verdict: 'no' },
-        { feature: 'Where the ratio comes from', chemcalc: 'Real hand-layup practice — checked against an actual test pour, within about a cup of a gallon', competitor: 'A fixed multiplier, with no supporting numbers shown on their page', verdict: 'no' },
-        { feature: 'Does temperature matter here?', chemcalc: 'Yes — same temperature guidance as our MEKP calculator, by resin type', competitor: 'Not mentioned', verdict: 'no' },
-        { feature: 'Epoxy-specific help', chemcalc: 'Tells you fast vs. slow hardener and steers you to the right product for natural-wood finishing', competitor: 'Not mentioned', verdict: 'no' },
-        { feature: 'What you get at the end', chemcalc: 'Full resin-to-hardener breakdown for epoxy; straight resin amount for polyester/vinylester', competitor: 'Just one resin number', verdict: 'no' }
+        { feature: 'Resin type', chemcalc: 'Pick polyester, vinylester, or epoxy — the math changes for each', competitor: "None let you pick a resin type — the math doesn't change for polyester, vinylester, or epoxy", verdict: 'no' },
+        { feature: 'Where the ratio comes from', chemcalc: 'Real hand-layup practice — checked against an actual test pour, within about a cup of a gallon', competitor: "At most a fixed multiplier — none show the real-world test or data behind their number the way we do", verdict: 'no' },
+        { feature: 'Does temperature matter here?', chemcalc: 'Yes — same temperature guidance as our MEKP calculator, by resin type', competitor: "No temperature input anywhere — at most a passing mention, never something you can adjust", verdict: 'no' },
+        { feature: 'What you get at the end', chemcalc: 'Full resin-to-hardener breakdown for epoxy; straight resin amount for polyester/vinylester', competitor: "None change what they give you based on resin type — the output is the same no matter what you're using", verdict: 'no' }
       ]
     },
     {
@@ -124,11 +121,11 @@
       href: 'alexseal.html',
       kind: 'uncontested',
       competitorLabel: 'Everyone else',
-      verdictLabel: 'No calculator exists',
+      verdictLabel: 'No calculator found',
       brand: 'Alexseal',
-      noToolHeadline: 'No mixing calculator exists',
-      noToolDetail: 'Not from the manufacturer, not from any retailer, not anybody.',
-      intro: 'Nobody has built a calculator for mixing Alexseal products — not the manufacturer, not any retailer, not anybody. Same story as Epifanes.',
+      noToolHeadline: "We didn't find a mixing calculator",
+      noToolDetail: "We didn't find one from any source.",
+      intro: "We looked and didn't find a calculator for mixing Alexseal products from any source. Same story as Epifanes.",
       rows: [
         { feature: "How you tell it what you're covering", chemcalc: 'Does the math for you — and lets you choose how: the actual area, the total volume to mix, or just width × height' },
         { feature: 'Products covered', chemcalc: '3 products — Premium Topcoat 501, Finish Primer 442, Protective Primer 161' },
@@ -296,7 +293,7 @@
     var total = COMPARISONS.length;
     setText('[data-cmp-count]', String(uncontested));
     setText('[data-cmp-total]', 'of ' + total);
-    setText('[data-cmp-rest]', 'The other ' + (total - uncontested) + ' face one generic tool each.');
+    setText('[data-cmp-rest]', 'The other ' + (total - uncontested) + ' face several real tools each.');
     setText('[data-cmp-checked]', 'Last checked ' + LAST_CHECKED);
 
     if (jump && !jump.children.length) {
