@@ -284,8 +284,8 @@ function populatePrintHeader() {
 
   // Estimate meta
   var estNum = document.getElementById('estimateNumber').value;
-  var estDate = document.getElementById('estimateDate').value;
-  var estValid = document.getElementById('estimateValidUntil').value;
+  var estDate = getEstDate('estimateDate');
+  var estValid = getEstDate('estimateValidUntil');
   // Estimate name (optional — shown below REPAIR ESTIMATE title on PDF)
   var estNameEl = document.getElementById('estimateName');
   var estName   = estNameEl ? estNameEl.value.trim() : '';
@@ -296,7 +296,7 @@ function populatePrintHeader() {
   }
   setText('printEstNum',   estNum   ? 'Est. #' + estNum : '');
   setText('printEstDate',  estDate  ? 'Date: ' + estDate : '');
-  setText('printEstValid', estValid ? 'Valid: ' + estValid : '');
+  setText('printEstValid', estValid ? 'Valid until: ' + estValid : '');
 
   // Company info (pro): a Pro user with no business info gets blank fields, not whatever was drawn last
   if (isPro) {
@@ -385,6 +385,16 @@ function showHelp(id, iconEl) {
     el.style.top = (rect.bottom + 8) + 'px';
     el.style.right = (window.innerWidth - rect.right) + 'px';
     el.classList.add('help-popover--open');
+    // Keep it fully on screen (it is position:fixed, so the page cannot scroll it into view): below the icon if it fits,
+    // else above the icon, else clamped with an 8px margin. Horizontally it stays anchored to the icon's right edge.
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight, m = 8;
+    var pop = el.getBoundingClientRect();
+    var top = rect.bottom + 8;
+    if (top + pop.height + m > vh) top = rect.top - 8 - pop.height;
+    top = Math.max(m, Math.min(top, vh - pop.height - m));
+    var left = Math.max(m, Math.min(rect.right - pop.width, vw - pop.width - m));
+    el.style.top = top + 'px';
+    el.style.right = (window.innerWidth - (left + pop.width)) + 'px';
   }
 }
 document.addEventListener('click', function(e) {
@@ -395,8 +405,29 @@ document.addEventListener('click', function(e) {
   }
 });
 
+/* Summary rail (screen, 1024px and up): always sticky. style.css gives it top: min(6rem, --est-rail-fit). This sets --est-rail-fit
+   to (window height - rail height - 8px): when the rail fits that is larger than 6rem and nothing changes; when the rail is
+   taller than the window it is negative, which pins the rail's BOTTOM edge 8px above the window bottom so the Total and the
+   buttons stay on screen while the page scrolls. The custom property does not change the rail's height, so there is no
+   feedback loop. Cleared below 1024px, where the rail has no box. */
+function initRailMode() {
+  var rail = document.querySelector('.est-rail');
+  if (!rail || !window.matchMedia) return;
+  var wide = window.matchMedia('screen and (min-width: 1024px)');
+  function update() {
+    if (!wide.matches) { rail.style.removeProperty('--est-rail-fit'); return; }
+    var fit = (document.documentElement.clientHeight - rail.offsetHeight - 8) + 'px';
+    if (rail.style.getPropertyValue('--est-rail-fit') !== fit) rail.style.setProperty('--est-rail-fit', fit);
+  }
+  window.addEventListener('resize', update);
+  if (wide.addEventListener) wide.addEventListener('change', update);
+  if (window.ResizeObserver) new ResizeObserver(update).observe(rail);
+  update();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   initEstimate();
+  initRailMode();
   checkExpiry();
   // auth.js initializes session and calls setUserTier()
   if (typeof authInit === 'function') authInit();
@@ -409,9 +440,18 @@ document.addEventListener('DOMContentLoaded', function () {
       sessionStorage.removeItem('chemcalc_duplicate');
       try {
         var parsed = JSON.parse(dupData);
-        // Clear estimate number so a new one is generated
-        parsed.estimateNumber = null;
-        setTimeout(function(){ loadDraft(parsed); }, 200);
+        // Wait for the account (as ?draft= does) so a Pro user's business prefix is known when the new number is made;
+        // if the account is slow, setUserTier() swaps the EST- prefix when it does arrive.
+        whenAuthReady(function () {
+          var orig = parsed.estimateNumber;
+          var today = new Date();
+          var num = newEstimateNumber();
+          while (num === orig) num = newEstimateNumber();
+          parsed.estimateNumber = num;
+          parsed.estimateDate = formatDate(today);
+          parsed.estimateValidUntil = formatDate(addDays(today, 10));
+          loadDraft(parsed);
+        });
       } catch(e) { console.warn('Duplicate load failed:', e); }
     }
   }
@@ -450,15 +490,36 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof populateScopeSnippetOptions === 'function') populateScopeSnippetOptions();
 });
 
-function initEstimate() {
+/* New estimate number: EST-YYYYMMDD-#### (four random digits). newEstimateNumber() also applies a Pro user's business prefix. */
+function generateEstimateNumber() {
   var now = new Date();
-  var estNum = 'EST-' + now.getFullYear() +
+  return 'EST-' + now.getFullYear() +
     pad(now.getMonth() + 1) + pad(now.getDate()) + '-' +
     Math.floor(1000 + Math.random() * 9000);
-  document.getElementById('estimateNumber').value = estNum;
-  document.getElementById('estimateDate').value = formatDate(now);
-  var validUntil = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
-  document.getElementById('estimateValidUntil').value = formatDate(validUntil);
+}
+function newEstimateNumber() {
+  var num = generateEstimateNumber();
+  var isPro = (typeof window.isPro === 'function') ? window.isPro() : false;
+  var biz = isPro ? loadBusinessInfo() : null;
+  if (biz && biz.prefix) num = num.replace(/^[A-Z0-9]+-/, biz.prefix.toUpperCase() + '-');
+  return num;
+}
+
+/* Run fn once the account is loaded (polls up to 4 s, then runs anyway so a guest or a slow account never blocks the page). */
+function whenAuthReady(fn) {
+  var tries = 0;
+  var t = setInterval(function () {
+    tries++;
+    var ready = (typeof window.isLoggedIn === 'function' && window.isLoggedIn());
+    if (ready || tries > 40) { clearInterval(t); fn(); }
+  }, 100);
+}
+
+function initEstimate() {
+  var now = new Date();
+  document.getElementById('estimateNumber').value = newEstimateNumber();
+  setEstDate('estimateDate', formatDate(now));
+  setEstDate('estimateValidUntil', formatDate(addDays(now, 10)));
   // Populate print header once dates are set
   setTimeout(populatePrintHeader, 0);
   // Apply initial format so body classes are set correctly
@@ -466,15 +527,52 @@ function initEstimate() {
   initSortable();
 }
 
+/* The banner follows the dates: shown only once the valid-until day has fully passed (valid THROUGH the end of that day). */
 function checkExpiry() {
-  var validStr = document.getElementById('estimateValidUntil').value;
-  if (!validStr) return;
-  var parts = validStr.split('/');
-  if (parts.length !== 3) return;
-  var validDate = new Date(parts[2], parts[0] - 1, parts[1]);
-  if (new Date() > validDate) {
-    document.getElementById('expiryWarning').classList.remove('d-none');
+  var warn = document.getElementById('expiryWarning');
+  var p = parseMdy(getEstDate('estimateValidUntil'));
+  if (!p) { warn.classList.add('d-none'); return; }
+  var firstExpiredMoment = new Date(p.y, p.m - 1, p.d + 1);
+  warn.classList.toggle('d-none', new Date() < firstExpiredMoment);
+}
+
+/* -- Estimate date + valid-until: native date inputs (value YYYY-MM-DD) whose stored/printed/shared form stays MM/DD/YYYY -- */
+function parseMdy(s) {
+  var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s || '');
+  if (!m) return null;
+  var y = +m[3], mo = +m[1], d = +m[2];
+  var t = new Date(y, mo - 1, d);
+  if (y < 2000 || y > 2100 || t.getFullYear() !== y || t.getMonth() !== mo - 1 || t.getDate() !== d) return null;
+  return { y: y, m: mo, d: d };
+}
+function mdyToIso(s) {
+  var p = parseMdy(s);
+  return p ? p.y + '-' + pad(p.m) + '-' + pad(p.d) : '';
+}
+function isoToMdy(s) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+  if (!m) return '';
+  var mdy = m[2] + '/' + m[3] + '/' + m[1];
+  return parseMdy(mdy) ? mdy : '';
+}
+function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+function getEstDate(id) { return isoToMdy(document.getElementById(id).value); }
+function setEstDate(id, mdy) {
+  var el = document.getElementById(id);
+  el.value = mdyToIso(mdy);
+  el.setAttribute('data-good', el.value);   // last accepted value, restored if the user enters something invalid
+}
+/* onchange of either date input. Invalid or empty input reverts to the last good value. */
+function onEstDateChange(el) {
+  var mdy = isoToMdy(el.value);
+  if (!mdy) { el.value = el.getAttribute('data-good') || ''; return; }
+  el.setAttribute('data-good', el.value);
+  if (el.id === 'estimateDate') {
+    var p = parseMdy(mdy);
+    setEstDate('estimateValidUntil', formatDate(addDays(new Date(p.y, p.m - 1, p.d), 10)));
   }
+  checkExpiry();
+  populatePrintHeader();
 }
 
 /* -- View toggle -- */
@@ -489,9 +587,16 @@ function setView(view) {
 }
 
 /* -- Add material row -- */
-function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
+/* restoreRowMarkup is true only from loadDraft: a saved row keeps its own saved markup (0 included). Every other caller
+   (Add Item, preset merge) takes the global field's value. A blank or non-numeric global field falls back to 40; 0 is a real value. */
+function addRow(bodyId, markupId, subtotalId, sumId, prefill, restoreRowMarkup) {
   var tbody = document.getElementById(bodyId);
-  var markupPct = parseFloat(document.getElementById(markupId).value) || 40;
+  var markupPct = parseFloat(document.getElementById(markupId).value);
+  if (!isFinite(markupPct)) markupPct = 40;
+  if (restoreRowMarkup && prefill) {
+    var saved = parseFloat(prefill.markup);
+    if (isFinite(saved) && saved >= 0) markupPct = saved;
+  }
   var item = prefill || { name: '', cost: 0, qty: 1, source: 'wm', affKey: null };
 
   var tr = document.createElement('tr');
@@ -1167,8 +1272,8 @@ document.addEventListener('click', function (e) {
 function loadDraft(data) {
   // Restore header fields
   document.getElementById('estimateNumber').value = data.estimateNumber || '';
-  document.getElementById('estimateDate').value = data.estimateDate || '';
-  document.getElementById('estimateValidUntil').value = data.estimateValidUntil || '';
+  setEstDate('estimateDate', data.estimateDate || '');
+  setEstDate('estimateValidUntil', data.estimateValidUntil || '');
   document.getElementById('hourlyRate').value = data.hourlyRate || 100;
   if (document.getElementById('estimateName')) document.getElementById('estimateName').value = data.estimateName || '';
   if (document.getElementById('clientCompany')) document.getElementById('clientCompany').value = data.clientCompany || '';
@@ -1183,11 +1288,12 @@ function loadDraft(data) {
   document.getElementById('boatHIN').value = data.boatHIN || '';
   document.getElementById('scopeNotes').value = data.scopeNotes || '';
   syncPrintMirror(document.getElementById('scopeNotes'));
-  document.getElementById('materialsMarkup').value = data.materialsMarkup || 40;
+  var savedGlobalMarkup = parseFloat(data.materialsMarkup);
+  document.getElementById('materialsMarkup').value = isFinite(savedGlobalMarkup) ? savedGlobalMarkup : 40;
   // Restore materials
   document.getElementById('materialsBody').innerHTML = '';
   (data.materials || []).forEach(function (item) {
-    addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item);
+    addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item, true);
   });
 
   // Restore tasks
@@ -1214,7 +1320,22 @@ function loadDraft(data) {
 }
 
 /* -- Collect estimate data -- */
+/* A blank estimate number or date must never reach a save, share or Trello card: fill it the way a new estimate would. */
+function ensureEstimateHeader() {
+  var changed = false;
+  var numEl = document.getElementById('estimateNumber');
+  if (!numEl.value.trim()) { numEl.value = newEstimateNumber(); changed = true; }
+  if (!getEstDate('estimateDate')) { setEstDate('estimateDate', formatDate(new Date())); changed = true; }
+  if (!getEstDate('estimateValidUntil')) {
+    var p = parseMdy(getEstDate('estimateDate'));
+    setEstDate('estimateValidUntil', formatDate(addDays(new Date(p.y, p.m - 1, p.d), 10)));
+    changed = true;
+  }
+  if (changed) { checkExpiry(); populatePrintHeader(); }
+}
+
 function collectEstimateData() {
+  ensureEstimateHeader();
   var materials = [];
   document.querySelectorAll('#materialsBody tr').forEach(function (tr) {
     var nameEl = tr.querySelector('.item-name-input');
@@ -1255,8 +1376,8 @@ function collectEstimateData() {
   return {
     estimateName: document.getElementById('estimateName') ? document.getElementById('estimateName').value : '',
     estimateNumber: document.getElementById('estimateNumber').value,
-    estimateDate: document.getElementById('estimateDate').value,
-    estimateValidUntil: document.getElementById('estimateValidUntil').value,
+    estimateDate: getEstDate('estimateDate'),
+    estimateValidUntil: getEstDate('estimateValidUntil'),
     hourlyRate: document.getElementById('hourlyRate').value,
     clientCompany: document.getElementById('clientCompany') ? document.getElementById('clientCompany').value : '',
     clientFirst: document.getElementById('clientFirst').value,
@@ -1369,6 +1490,7 @@ function newEstimate() {
     document.getElementById('tasksContainer').innerHTML = '';
     taskCounter = 0;
     document.getElementById('materialsSubtotal').textContent = '$0.00';
+    document.getElementById('materialsMarkup').value = 40;
     document.getElementById('expiryWarning').classList.add('d-none');
     initEstimate();
     updateSummary();

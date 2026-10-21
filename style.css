@@ -1743,7 +1743,9 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
    (after the Scope card, before Terms) and Tab order is the order on screen:
    no `order` overrides, which would move them on screen but not for the
    keyboard. From 1024px the page is a 12-column grid: cards 7 columns (8
-   from 1280px), the rail 5 (4 from 1280px) and sticky. All of it is
+   from 1280px), the rail 5 (4 from 1280px) and always sticky (never with a
+   scrollbar of its own: a rail taller than the window pins its bottom edge
+   instead, see --est-rail-fit below). All of it is
    screen-only: a landscape sheet is 1056px wide, and print must not turn
    into columns. */
 .est-rail { display: contents; }
@@ -1752,10 +1754,13 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
   .est-container > * { grid-column: 1 / span 7; }
   .est-container > .est-rail {
     display: block; grid-column: 8 / span 5; grid-row: 1 / span 30;
-    position: sticky; top: 6rem; max-height: calc(100vh - 7.5rem); overflow-y: auto;
+    position: sticky; top: min(6rem, var(--est-rail-fit, 6rem));
     background: var(--chrome-ink-950); color: #ffffff;
     border-radius: 12px; box-shadow: var(--chrome-shadow-lift);
   }
+  /* --est-rail-fit is set by estimate.js initRailMode() to (window height - rail height - 8px). While the rail fits it is
+     larger than 6rem, so the rail sticks 6rem from the top. Taller than the window it goes negative, which pins the rail's
+     bottom edge 8px above the window bottom (Total and buttons stay on screen; the format toggle may sit above the window). */
 
   /* Format toggle: equal-width row, then Save/Load Draft under it */
   .est-rail .est-toolbar {
