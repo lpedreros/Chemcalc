@@ -556,9 +556,16 @@ function setView(view) {
 }
 
 /* -- Add material row -- */
-function addRow(bodyId, markupId, subtotalId, sumId, prefill) {
+/* restoreRowMarkup is true only from loadDraft: a saved row keeps its own saved markup (0 included). Every other caller
+   (Add Item, preset merge) takes the global field's value. A blank or non-numeric global field falls back to 40; 0 is a real value. */
+function addRow(bodyId, markupId, subtotalId, sumId, prefill, restoreRowMarkup) {
   var tbody = document.getElementById(bodyId);
-  var markupPct = parseFloat(document.getElementById(markupId).value) || 40;
+  var markupPct = parseFloat(document.getElementById(markupId).value);
+  if (!isFinite(markupPct)) markupPct = 40;
+  if (restoreRowMarkup && prefill) {
+    var saved = parseFloat(prefill.markup);
+    if (isFinite(saved) && saved >= 0) markupPct = saved;
+  }
   var item = prefill || { name: '', cost: 0, qty: 1, source: 'wm', affKey: null };
 
   var tr = document.createElement('tr');
@@ -1250,11 +1257,12 @@ function loadDraft(data) {
   document.getElementById('boatHIN').value = data.boatHIN || '';
   document.getElementById('scopeNotes').value = data.scopeNotes || '';
   syncPrintMirror(document.getElementById('scopeNotes'));
-  document.getElementById('materialsMarkup').value = data.materialsMarkup || 40;
+  var savedGlobalMarkup = parseFloat(data.materialsMarkup);
+  document.getElementById('materialsMarkup').value = isFinite(savedGlobalMarkup) ? savedGlobalMarkup : 40;
   // Restore materials
   document.getElementById('materialsBody').innerHTML = '';
   (data.materials || []).forEach(function (item) {
-    addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item);
+    addRow('materialsBody', 'materialsMarkup', 'materialsSubtotal', 'sumMaterials', item, true);
   });
 
   // Restore tasks
@@ -1451,6 +1459,7 @@ function newEstimate() {
     document.getElementById('tasksContainer').innerHTML = '';
     taskCounter = 0;
     document.getElementById('materialsSubtotal').textContent = '$0.00';
+    document.getElementById('materialsMarkup').value = 40;
     document.getElementById('expiryWarning').classList.add('d-none');
     initEstimate();
     updateSummary();
