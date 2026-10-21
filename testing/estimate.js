@@ -405,21 +405,19 @@ document.addEventListener('click', function(e) {
   }
 });
 
-/* Summary rail (screen, 1024px and up): sticky while it fits in the window, flowing with the page when it is taller, so it
-   never needs a scrollbar of its own and its buttons stay reachable. The rail's height does not depend on the mode,
-   so toggling the class cannot feed back into the measurement; the margin keeps it from flipping at the threshold. */
+/* Summary rail (screen, 1024px and up): always sticky. style.css gives it top: min(6rem, --est-rail-fit). This sets --est-rail-fit
+   to (window height - rail height - 8px): when the rail fits that is larger than 6rem and nothing changes; when the rail is
+   taller than the window it is negative, which pins the rail's BOTTOM edge 8px above the window bottom so the Total and the
+   buttons stay on screen while the page scrolls. The custom property does not change the rail's height, so there is no
+   feedback loop. Cleared below 1024px, where the rail has no box. */
 function initRailMode() {
   var rail = document.querySelector('.est-rail');
   if (!rail || !window.matchMedia) return;
   var wide = window.matchMedia('screen and (min-width: 1024px)');
   function update() {
-    if (!wide.matches) { rail.classList.remove('est-rail--flow'); return; }
-    var top = parseFloat(getComputedStyle(rail).top) || 96;
-    var avail = window.innerHeight - top - 8;
-    var h = rail.offsetHeight;
-    var flowing = rail.classList.contains('est-rail--flow');
-    if (!flowing && h > avail) rail.classList.add('est-rail--flow');
-    else if (flowing && h <= avail - 16) rail.classList.remove('est-rail--flow');
+    if (!wide.matches) { rail.style.removeProperty('--est-rail-fit'); return; }
+    var fit = (document.documentElement.clientHeight - rail.offsetHeight - 8) + 'px';
+    if (rail.style.getPropertyValue('--est-rail-fit') !== fit) rail.style.setProperty('--est-rail-fit', fit);
   }
   window.addEventListener('resize', update);
   if (wide.addEventListener) wide.addEventListener('change', update);
