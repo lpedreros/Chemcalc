@@ -8,6 +8,7 @@ var currentView = 'internal'; // 'internal' | 'customer'
 var currentPrintStyle = 'summary'; // 'summary' | 'itemized'
 var currentFormat = 'summary'; // 'summary' | 'itemized' | 'internal'
 var taskCounter = 0;
+var currentEstimateId = null; // database id of the saved estimate on screen (null = never saved); Save updates it
 var grandTotalValue = 0;
 
 /* setUserTier - called by auth.js after session loads */
@@ -467,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function () {
         clearInterval(_draftLoadInterval);
         window.loadEstimateById(draftId).then(function (data) {
           if (data) {
-            loadDraft(data);
+            loadDraft(data, draftId);
           } else {
             console.warn('Draft not found or access denied for id:', draftId);
           }
@@ -1142,14 +1143,23 @@ function switchAuthTab(tab) {
 }
 
 /* -- Save / Load drafts (Pro, Supabase) -- */
+/* The one save path (Save and Add to Trello): updates the saved estimate on screen, or inserts a new one and remembers its id. */
+function saveCurrentEstimate() {
+  var data = collectEstimateData();
+  return window.saveEstimateToSupabase(data, currentEstimateId).then(function (result) {
+    if (result && !result.error && result.data && result.data.id) currentEstimateId = result.data.id;
+    return result;
+  });
+}
+window.saveCurrentEstimate = saveCurrentEstimate;
+
 function saveDraft() {
   if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
-  var data = collectEstimateData();
-  window.saveEstimateToSupabase(data).then(function(result) {
+  saveCurrentEstimate().then(function(result) {
     if (result.error) {
       alert('Save failed: ' + result.error.message);
     } else {
-      alert('Estimate saved: ' + data.estimateNumber);
+      alert('Estimate saved: ' + document.getElementById('estimateNumber').value);
       renderHistoryPreview('pro');
     }
   });
@@ -1180,7 +1190,7 @@ function openLoadDraftModal() {
         item.addEventListener('click', function(e) {
           if (e.target.classList.contains('saved-item-del')) return;
           window.loadEstimateById(row.id).then(function(data) {
-            if (data) { loadDraft(data); closeModal('loadDraftModal'); }
+            if (data) { loadDraft(data, row.id); closeModal('loadDraftModal'); }
           });
         });
         list.appendChild(item);
@@ -1263,13 +1273,13 @@ document.addEventListener('click', function (e) {
   e.preventDefault();
   window.loadEstimateById(link.getAttribute('data-id')).then(function (data) {
     if (!data) return;
-    loadDraft(data);
+    loadDraft(data, link.getAttribute('data-id'));
     var top = document.getElementById('estimateInfoCard');
     if (top && top.scrollIntoView) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
-function loadDraft(data) {
+function loadDraft(data, estimateId) {
   // Restore header fields
   document.getElementById('estimateNumber').value = data.estimateNumber || '';
   setEstDate('estimateDate', data.estimateDate || '');
@@ -1317,6 +1327,7 @@ function loadDraft(data) {
   checkExpiry();
   updateSummary();
   populatePrintHeader();
+  currentEstimateId = estimateId || null;
 }
 
 /* -- Collect estimate data -- */
@@ -1492,6 +1503,7 @@ function newEstimate() {
     document.getElementById('materialsSubtotal').textContent = '$0.00';
     document.getElementById('materialsMarkup').value = 40;
     document.getElementById('expiryWarning').classList.add('d-none');
+    currentEstimateId = null;
     initEstimate();
     updateSummary();
   }

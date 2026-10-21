@@ -181,7 +181,10 @@ async function doLogout() {
 }
 
 /* ── Save estimate to Supabase ───────────────────────────── */
-async function saveEstimateToSupabase(payload) {
+/* Saves an estimate. With no existingId it inserts a new row. With an existingId it updates that row instead (never
+   touching user_id, status or the Trello link); if no row matched (deleted elsewhere) it inserts a new one, and a real
+   update error is returned as is so it can never turn into a duplicate. Returns { data: row, error } either way. */
+async function saveEstimateToSupabase(payload, existingId) {
   if (!currentUser) return { error: { message: 'Not logged in.' } };
 
   var matTotal  = (payload.materials || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
@@ -219,6 +222,15 @@ async function saveEstimateToSupabase(payload) {
     notes:           payload.scopeNotes || ''
   };
 
+  if (existingId) {
+    var updateRow = Object.assign({}, row);
+    delete updateRow.user_id;
+    delete updateRow.status;
+    var upd = await _sb.from('estimates').update(updateRow).eq('id', existingId).eq('user_id', currentUser.id).select();
+    if (upd.error) return { data: null, error: upd.error };
+    if (upd.data && upd.data.length) return { data: upd.data[0], error: null };
+    // no row matched (deleted in another tab, or not this user's): fall through to a normal insert
+  }
   return await _sb.from('estimates').insert(row).select().single();
 }
 
