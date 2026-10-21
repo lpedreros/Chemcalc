@@ -328,7 +328,7 @@
       <button class="help-icon" onclick="showHelp('helpEstimateInfo', this)" title="Help">?</button>
     </div>
     <div class="help-popover" id="helpEstimateInfo">
-      Auto-filled with a unique estimate number and today's date. Set your hourly rate here -- it applies to all labor tasks on this estimate. The valid-until date is calculated automatically.
+      Auto-filled with a unique estimate number and today's date, which you can change. Set your hourly rate here -- it applies to all labor tasks on this estimate. Valid Until is set to 10 days after the date and can be edited too.
     </div>
     <div class="row g-3 mb-2">
       <div class="col-md-12">
@@ -343,11 +343,11 @@
       </div>
       <div class="col-md-3">
         <label class="est-label">Date</label>
-        <input type="text" id="estimateDate" class="est-input" readonly />
+        <input type="date" id="estimateDate" class="est-input" min="2000-01-01" max="2100-12-31" onchange="onEstDateChange(this)" />
       </div>
       <div class="col-md-3">
         <label class="est-label">Valid Until</label>
-        <input type="text" id="estimateValidUntil" class="est-input" readonly />
+        <input type="date" id="estimateValidUntil" class="est-input" min="2000-01-01" max="2100-12-31" onchange="onEstDateChange(this)" />
       </div>
       <div class="col-md-3">
         <label class="est-label">Hourly Rate ($/hr)</label>

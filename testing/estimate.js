@@ -284,8 +284,8 @@ function populatePrintHeader() {
 
   // Estimate meta
   var estNum = document.getElementById('estimateNumber').value;
-  var estDate = document.getElementById('estimateDate').value;
-  var estValid = document.getElementById('estimateValidUntil').value;
+  var estDate = getEstDate('estimateDate');
+  var estValid = getEstDate('estimateValidUntil');
   // Estimate name (optional — shown below REPAIR ESTIMATE title on PDF)
   var estNameEl = document.getElementById('estimateName');
   var estName   = estNameEl ? estNameEl.value.trim() : '';
@@ -409,9 +409,18 @@ document.addEventListener('DOMContentLoaded', function () {
       sessionStorage.removeItem('chemcalc_duplicate');
       try {
         var parsed = JSON.parse(dupData);
-        // Clear estimate number so a new one is generated
-        parsed.estimateNumber = null;
-        setTimeout(function(){ loadDraft(parsed); }, 200);
+        // Wait for the account (as ?draft= does) so a Pro user's business prefix is known when the new number is made;
+        // if the account is slow, setUserTier() swaps the EST- prefix when it does arrive.
+        whenAuthReady(function () {
+          var orig = parsed.estimateNumber;
+          var today = new Date();
+          var num = newEstimateNumber();
+          while (num === orig) num = newEstimateNumber();
+          parsed.estimateNumber = num;
+          parsed.estimateDate = formatDate(today);
+          parsed.estimateValidUntil = formatDate(addDays(today, 10));
+          loadDraft(parsed);
+        });
       } catch(e) { console.warn('Duplicate load failed:', e); }
     }
   }
@@ -450,15 +459,36 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof populateScopeSnippetOptions === 'function') populateScopeSnippetOptions();
 });
 
-function initEstimate() {
+/* New estimate number: EST-YYYYMMDD-#### (four random digits). newEstimateNumber() also applies a Pro user's business prefix. */
+function generateEstimateNumber() {
   var now = new Date();
-  var estNum = 'EST-' + now.getFullYear() +
+  return 'EST-' + now.getFullYear() +
     pad(now.getMonth() + 1) + pad(now.getDate()) + '-' +
     Math.floor(1000 + Math.random() * 9000);
-  document.getElementById('estimateNumber').value = estNum;
-  document.getElementById('estimateDate').value = formatDate(now);
-  var validUntil = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
-  document.getElementById('estimateValidUntil').value = formatDate(validUntil);
+}
+function newEstimateNumber() {
+  var num = generateEstimateNumber();
+  var isPro = (typeof window.isPro === 'function') ? window.isPro() : false;
+  var biz = isPro ? loadBusinessInfo() : null;
+  if (biz && biz.prefix) num = num.replace(/^[A-Z0-9]+-/, biz.prefix.toUpperCase() + '-');
+  return num;
+}
+
+/* Run fn once the account is loaded (polls up to 4 s, then runs anyway so a guest or a slow account never blocks the page). */
+function whenAuthReady(fn) {
+  var tries = 0;
+  var t = setInterval(function () {
+    tries++;
+    var ready = (typeof window.isLoggedIn === 'function' && window.isLoggedIn());
+    if (ready || tries > 40) { clearInterval(t); fn(); }
+  }, 100);
+}
+
+function initEstimate() {
+  var now = new Date();
+  document.getElementById('estimateNumber').value = newEstimateNumber();
+  setEstDate('estimateDate', formatDate(now));
+  setEstDate('estimateValidUntil', formatDate(addDays(now, 10)));
   // Populate print header once dates are set
   setTimeout(populatePrintHeader, 0);
   // Apply initial format so body classes are set correctly
@@ -466,15 +496,52 @@ function initEstimate() {
   initSortable();
 }
 
+/* The banner follows the dates: shown only once the valid-until day has fully passed (valid THROUGH the end of that day). */
 function checkExpiry() {
-  var validStr = document.getElementById('estimateValidUntil').value;
-  if (!validStr) return;
-  var parts = validStr.split('/');
-  if (parts.length !== 3) return;
-  var validDate = new Date(parts[2], parts[0] - 1, parts[1]);
-  if (new Date() > validDate) {
-    document.getElementById('expiryWarning').classList.remove('d-none');
+  var warn = document.getElementById('expiryWarning');
+  var p = parseMdy(getEstDate('estimateValidUntil'));
+  if (!p) { warn.classList.add('d-none'); return; }
+  var firstExpiredMoment = new Date(p.y, p.m - 1, p.d + 1);
+  warn.classList.toggle('d-none', new Date() < firstExpiredMoment);
+}
+
+/* -- Estimate date + valid-until: native date inputs (value YYYY-MM-DD) whose stored/printed/shared form stays MM/DD/YYYY -- */
+function parseMdy(s) {
+  var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s || '');
+  if (!m) return null;
+  var y = +m[3], mo = +m[1], d = +m[2];
+  var t = new Date(y, mo - 1, d);
+  if (y < 2000 || y > 2100 || t.getFullYear() !== y || t.getMonth() !== mo - 1 || t.getDate() !== d) return null;
+  return { y: y, m: mo, d: d };
+}
+function mdyToIso(s) {
+  var p = parseMdy(s);
+  return p ? p.y + '-' + pad(p.m) + '-' + pad(p.d) : '';
+}
+function isoToMdy(s) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+  if (!m) return '';
+  var mdy = m[2] + '/' + m[3] + '/' + m[1];
+  return parseMdy(mdy) ? mdy : '';
+}
+function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+function getEstDate(id) { return isoToMdy(document.getElementById(id).value); }
+function setEstDate(id, mdy) {
+  var el = document.getElementById(id);
+  el.value = mdyToIso(mdy);
+  el.setAttribute('data-good', el.value);   // last accepted value, restored if the user enters something invalid
+}
+/* onchange of either date input. Invalid or empty input reverts to the last good value. */
+function onEstDateChange(el) {
+  var mdy = isoToMdy(el.value);
+  if (!mdy) { el.value = el.getAttribute('data-good') || ''; return; }
+  el.setAttribute('data-good', el.value);
+  if (el.id === 'estimateDate') {
+    var p = parseMdy(mdy);
+    setEstDate('estimateValidUntil', formatDate(addDays(new Date(p.y, p.m - 1, p.d), 10)));
   }
+  checkExpiry();
+  populatePrintHeader();
 }
 
 /* -- View toggle -- */
@@ -1167,8 +1234,8 @@ document.addEventListener('click', function (e) {
 function loadDraft(data) {
   // Restore header fields
   document.getElementById('estimateNumber').value = data.estimateNumber || '';
-  document.getElementById('estimateDate').value = data.estimateDate || '';
-  document.getElementById('estimateValidUntil').value = data.estimateValidUntil || '';
+  setEstDate('estimateDate', data.estimateDate || '');
+  setEstDate('estimateValidUntil', data.estimateValidUntil || '');
   document.getElementById('hourlyRate').value = data.hourlyRate || 100;
   if (document.getElementById('estimateName')) document.getElementById('estimateName').value = data.estimateName || '';
   if (document.getElementById('clientCompany')) document.getElementById('clientCompany').value = data.clientCompany || '';
@@ -1214,7 +1281,22 @@ function loadDraft(data) {
 }
 
 /* -- Collect estimate data -- */
+/* A blank estimate number or date must never reach a save, share or Trello card: fill it the way a new estimate would. */
+function ensureEstimateHeader() {
+  var changed = false;
+  var numEl = document.getElementById('estimateNumber');
+  if (!numEl.value.trim()) { numEl.value = newEstimateNumber(); changed = true; }
+  if (!getEstDate('estimateDate')) { setEstDate('estimateDate', formatDate(new Date())); changed = true; }
+  if (!getEstDate('estimateValidUntil')) {
+    var p = parseMdy(getEstDate('estimateDate'));
+    setEstDate('estimateValidUntil', formatDate(addDays(new Date(p.y, p.m - 1, p.d), 10)));
+    changed = true;
+  }
+  if (changed) { checkExpiry(); populatePrintHeader(); }
+}
+
 function collectEstimateData() {
+  ensureEstimateHeader();
   var materials = [];
   document.querySelectorAll('#materialsBody tr').forEach(function (tr) {
     var nameEl = tr.querySelector('.item-name-input');
@@ -1255,8 +1337,8 @@ function collectEstimateData() {
   return {
     estimateName: document.getElementById('estimateName') ? document.getElementById('estimateName').value : '',
     estimateNumber: document.getElementById('estimateNumber').value,
-    estimateDate: document.getElementById('estimateDate').value,
-    estimateValidUntil: document.getElementById('estimateValidUntil').value,
+    estimateDate: getEstDate('estimateDate'),
+    estimateValidUntil: getEstDate('estimateValidUntil'),
     hourlyRate: document.getElementById('hourlyRate').value,
     clientCompany: document.getElementById('clientCompany') ? document.getElementById('clientCompany').value : '',
     clientFirst: document.getElementById('clientFirst').value,
