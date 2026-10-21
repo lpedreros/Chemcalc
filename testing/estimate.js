@@ -296,7 +296,7 @@ function populatePrintHeader() {
   }
   setText('printEstNum',   estNum   ? 'Est. #' + estNum : '');
   setText('printEstDate',  estDate  ? 'Date: ' + estDate : '');
-  setText('printEstValid', estValid ? 'Valid: ' + estValid : '');
+  setText('printEstValid', estValid ? 'Valid until: ' + estValid : '');
 
   // Company info (pro): a Pro user with no business info gets blank fields, not whatever was drawn last
   if (isPro) {
@@ -385,6 +385,16 @@ function showHelp(id, iconEl) {
     el.style.top = (rect.bottom + 8) + 'px';
     el.style.right = (window.innerWidth - rect.right) + 'px';
     el.classList.add('help-popover--open');
+    // Keep it fully on screen (it is position:fixed, so the page cannot scroll it into view): below the icon if it fits,
+    // else above the icon, else clamped with an 8px margin. Horizontally it stays anchored to the icon's right edge.
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight, m = 8;
+    var pop = el.getBoundingClientRect();
+    var top = rect.bottom + 8;
+    if (top + pop.height + m > vh) top = rect.top - 8 - pop.height;
+    top = Math.max(m, Math.min(top, vh - pop.height - m));
+    var left = Math.max(m, Math.min(rect.right - pop.width, vw - pop.width - m));
+    el.style.top = top + 'px';
+    el.style.right = (window.innerWidth - (left + pop.width)) + 'px';
   }
 }
 document.addEventListener('click', function(e) {
@@ -395,8 +405,31 @@ document.addEventListener('click', function(e) {
   }
 });
 
+/* Summary rail (screen, 1024px and up): sticky while it fits in the window, flowing with the page when it is taller, so it
+   never needs a scrollbar of its own and its buttons stay reachable. The rail's height does not depend on the mode,
+   so toggling the class cannot feed back into the measurement; the margin keeps it from flipping at the threshold. */
+function initRailMode() {
+  var rail = document.querySelector('.est-rail');
+  if (!rail || !window.matchMedia) return;
+  var wide = window.matchMedia('screen and (min-width: 1024px)');
+  function update() {
+    if (!wide.matches) { rail.classList.remove('est-rail--flow'); return; }
+    var top = parseFloat(getComputedStyle(rail).top) || 96;
+    var avail = window.innerHeight - top - 8;
+    var h = rail.offsetHeight;
+    var flowing = rail.classList.contains('est-rail--flow');
+    if (!flowing && h > avail) rail.classList.add('est-rail--flow');
+    else if (flowing && h <= avail - 16) rail.classList.remove('est-rail--flow');
+  }
+  window.addEventListener('resize', update);
+  if (wide.addEventListener) wide.addEventListener('change', update);
+  if (window.ResizeObserver) new ResizeObserver(update).observe(rail);
+  update();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   initEstimate();
+  initRailMode();
   checkExpiry();
   // auth.js initializes session and calls setUserTier()
   if (typeof authInit === 'function') authInit();
