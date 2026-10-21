@@ -365,8 +365,11 @@ async function addToTrello() {
   // 0. Auto-save estimate to Supabase to get a shareable UUID
   var estimateUUID = null;
   try {
-    if (typeof saveEstimateToSupabase === 'function') {
-      var saveResult = await saveEstimateToSupabase((typeof collectEstimateData === 'function') ? collectEstimateData() : {});
+    if (typeof window.saveCurrentEstimate === 'function' || typeof saveEstimateToSupabase === 'function') {
+      // saveCurrentEstimate updates the saved estimate on screen (no duplicate row); the old call is only a fallback
+      var saveResult = (typeof window.saveCurrentEstimate === 'function')
+        ? await window.saveCurrentEstimate()
+        : await saveEstimateToSupabase((typeof collectEstimateData === 'function') ? collectEstimateData() : {});
       if (saveResult && saveResult.data && saveResult.data.id) {
         estimateUUID = saveResult.data.id;
       }

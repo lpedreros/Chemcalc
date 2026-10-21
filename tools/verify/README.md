@@ -18,6 +18,7 @@ Checks for proving that a change to the site's HTML/CSS changed only what you me
 | `text_parity.py` | Proves page text and links are verbatim between two revisions. |
 | `help_parity.py` | Proves each calculator page's visible "How it works" card (`#how-it-works`) matches its Help (?) dialog word for word. Run it after editing either copy. |
 | `patchlib.py` | CRLF-safe scripted edits that stop unless a pattern matches exactly once. |
+| `save_in_place_check.py` | Runs the real `auth.js`, `estimate.js` and `trello.js` in headless Chrome/Edge against a fake Supabase client that records every call (no live database, no sign-in). Checks that Save updates the estimate you opened instead of inserting a copy (T1-T12) plus six smoke checks on `estimate.html`. Stdlib only; serves `testing/` itself; `CHEMCALC_BROWSER` points at Chrome/Edge if it is not in a default location. Run it after touching the save path: `python tools/verify/save_in_place_check.py`. |
 
 ## Before/after visual check
 
