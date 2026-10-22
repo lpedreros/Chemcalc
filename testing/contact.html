@@ -293,6 +293,22 @@
         <p class="mp-card-text">The more you can tell us up front, the more accurate the first quote will be.</p>
 
         <div class="mp-fields">
+          <fieldset class="mp-field-card--wide contact-services" id="serviceGroup">
+            <legend class="mp-input-label">Which services are you asking about? <span aria-hidden="true">*</span></legend>
+            <div class="contact-services-list">
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Professional Repair Services" /><span>Professional Repair Services</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Training &amp; Tele-Guiding" /><span>Training &amp; Tele-Guiding</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Kit Subscriptions" /><span>Kit Subscriptions</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Custom Fabrication" /><span>Custom Fabrication</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Custom Vinyl Lettering" /><span>Custom Vinyl Lettering</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Custom Estimator" /><span>Custom Estimator</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Custom Link List" /><span>Custom Link List</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Assembled Kit Service" /><span>Assembled Kit Service</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Calculator Request" /><span>Calculator Request</span></label>
+              <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Other Question" /><span>Other Question</span></label>
+            </div>
+            <input type="hidden" id="servicesField" name="services" value="" />
+          </fieldset>
           <div>
             <label class="mp-input-label" for="name">First and Last Name <span aria-hidden="true">*</span></label>
             <input type="text" id="name" name="name" class="mp-select" required />
@@ -301,28 +317,32 @@
             <label class="mp-input-label" for="email">Email <span aria-hidden="true">*</span></label>
             <input type="email" id="email" name="email" class="mp-select" required />
           </div>
+          <div id="businessField" hidden>
+            <label class="mp-input-label" for="businessName">Business Name (optional)</label>
+            <input type="text" id="businessName" name="businessName" class="mp-select" disabled />
+          </div>
           <div>
-            <label class="mp-input-label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
+            <label class="mp-input-label" for="phone">Phone Number <span class="req-mark" data-for="phone" aria-hidden="true">*</span></label>
             <input type="tel" id="phone" name="phone" class="mp-select" required />
           </div>
           <div>
-            <label class="mp-input-label" for="boatDetails">Year, Make, and Model of the Boat <span aria-hidden="true">*</span></label>
+            <label class="mp-input-label" for="boatDetails">Year, Make, and Model of the Boat <span class="req-mark" data-for="boatDetails" aria-hidden="true">*</span></label>
             <input type="text" id="boatDetails" name="boatDetails" class="mp-select" required />
           </div>
-          <div>
-            <label class="mp-input-label" for="hin">HIN Number <span aria-hidden="true">*</span></label>
+          <div data-repair-only>
+            <label class="mp-input-label" for="hin">HIN Number <span class="req-mark" data-for="hin" aria-hidden="true">*</span></label>
             <input type="text" id="hin" name="hin" class="mp-select" required />
           </div>
-          <div>
-            <label class="mp-input-label" for="location">Boat Location Address <span aria-hidden="true">*</span></label>
+          <div data-repair-only>
+            <label class="mp-input-label" for="location">Boat Location Address <span class="req-mark" data-for="location" aria-hidden="true">*</span></label>
             <textarea id="location" name="location" class="mp-select" rows="2" required></textarea>
           </div>
           <div class="mp-field-card--wide">
-            <label class="mp-input-label" for="repairs">Short Description of the Repairs <span aria-hidden="true">*</span></label>
-            <textarea id="repairs" name="repairs" class="mp-select" rows="5" placeholder="Damage location, what you’ve already tried, and what a finished result looks like to you." required></textarea>
+            <label class="mp-input-label" for="message">Short Description of Your Request <span aria-hidden="true">*</span></label>
+            <textarea id="message" name="message" class="mp-select" rows="5" placeholder="Damage location, what you’ve already tried, and what a finished result looks like to you." required></textarea>
           </div>
-          <fieldset class="mp-field-card--wide">
-            <legend class="mp-input-label">Times Available on Fridays to Look at the Boat <span aria-hidden="true">*</span></legend>
+          <fieldset class="mp-field-card--wide" data-repair-only>
+            <legend class="mp-input-label">Times Available on Fridays to Look at the Boat <span class="req-mark" data-for="availabilityDate" aria-hidden="true">*</span></legend>
             <div class="mp-input-row">
               <div class="mp-input-group">
                 <label class="mp-input-label" for="availabilityDate">Date</label>
@@ -456,12 +476,42 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <!-- Custom JS -->
-<!-- Pre-fill contact form from URL params (broken link reports from estimator; custom link list and assembled kit requests from kits.html) -->
+<!-- Service picker: the checkboxes have no name; the hidden #servicesField carries the checked labels (page order, joined with "; ").
+     ?subject= values (one or more) pre-check boxes; "Broken Link Report" (from the estimator) hides the picker and keeps the old prefill.
+     Fields only a repair needs (HIN, location, Friday times) are hidden and disabled unless Professional Repair Services is checked,
+     and phone and boat details are required only then. Disabled or blank optional fields are not submitted. -->
 <script>
 (function() {
+  var TEXT = { chooseOne: 'Please choose at least one service.', optional: '(optional)' };
+  var REPAIR = 'Professional Repair Services', ESTIMATOR = 'Custom Estimator', BROKEN = 'Broken Link Report';
+  var SUBJECTS = {
+    'Inquiry about Repair Services': 'Professional Repair Services',
+    'Inquiry about Training & Tele-Guiding': 'Training & Tele-Guiding',
+    'Inquiry about Kit Subscriptions': 'Kit Subscriptions',
+    'Inquiry about Custom Fabrication': 'Custom Fabrication',
+    'Inquiry about Vinyl Lettering': 'Custom Vinyl Lettering',
+    'Inquiry about Custom Estimator': 'Custom Estimator',
+    'Custom Link List Request': 'Custom Link List',
+    'Assembled Kit Service Request': 'Assembled Kit Service',
+    'Calculator Request': 'Calculator Request'
+  };
+  var form = document.getElementById('contactForm');
+  var group = document.getElementById('serviceGroup');
+  var servicesField = document.getElementById('servicesField');
+  var message = document.getElementById('message');
+  var boxes = Array.prototype.slice.call(group.querySelectorAll('input[type="checkbox"]'));
+  var repairOnly = Array.prototype.slice.call(form.querySelectorAll('[data-repair-only]'));
+  var businessField = document.getElementById('businessField');
+  var businessName = document.getElementById('businessName');
+  var placeholder = message.getAttribute('placeholder');
+  var repairRequired = ['phone', 'boatDetails', 'hin', 'location', 'availabilityDate', 'availabilityTimeFrom', 'availabilityTimeTo'];
+
   var params = new URLSearchParams(window.location.search);
-  if (params.get('subject') === 'Broken Link Report') {
-    document.getElementById('repairs').value =
+  var subjects = params.getAll('subject').map(function(s) { return s.trim(); });
+  var brokenLink = subjects.indexOf(BROKEN) !== -1;
+
+  if (brokenLink) {
+    message.value =
       'BROKEN LINK REPORT\n\n' +
       'Product: ' + (params.get('product') || 'Unknown') + '\n' +
       'Aff Key: ' + (params.get('affKey') || 'Unknown') + '\n' +
@@ -469,19 +519,53 @@
       'Issue: ';
     if (params.get('name')) document.getElementById('name').value = params.get('name');
     if (params.get('email')) document.getElementById('email').value = params.get('email');
-    ['boatDetails','hin','location','availabilityDate','availabilityTimeFrom','availabilityTimeTo','phone'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.removeAttribute('required');
+  } else {
+    subjects.forEach(function(s) {
+      var label = SUBJECTS[s];
+      boxes.forEach(function(b) { if (label && b.value === label) b.checked = true; });
     });
-  } else if (params.get('subject') === 'Custom Link List Request') {
-    document.getElementById('repairs').value =
-      'CUSTOM LINK LIST REQUEST\n\n' +
-      'Project details: ';
-  } else if (params.get('subject') === 'Assembled Kit Service Request') {
-    document.getElementById('repairs').value =
-      'ASSEMBLED KIT SERVICE REQUEST\n\n' +
-      'Project details: ';
   }
+
+  function checkedLabels() { return boxes.filter(function(b) { return b.checked; }).map(function(b) { return b.value; }); }
+  function setDisabled(container, off) {
+    Array.prototype.forEach.call(container.querySelectorAll('input, select, textarea'), function(el) { el.disabled = off; });
+  }
+
+  function apply() {
+    var labels = checkedLabels();
+    var repair = labels.indexOf(REPAIR) !== -1;
+    var estimator = labels.indexOf(ESTIMATOR) !== -1;
+
+    group.hidden = brokenLink;
+    boxes.forEach(function(b) { b.disabled = brokenLink; });
+    boxes[0].setCustomValidity(!brokenLink && !labels.length ? TEXT.chooseOne : '');
+    servicesField.value = brokenLink ? BROKEN : labels.join('; ');
+
+    var showRepair = repair || brokenLink;
+    repairOnly.forEach(function(el) { el.hidden = !showRepair; setDisabled(el, !showRepair); });
+    ['phone', 'boatDetails'].forEach(function(id) { document.getElementById(id).disabled = false; });
+    repairRequired.forEach(function(id) { document.getElementById(id).required = repair && !brokenLink; });
+    Array.prototype.forEach.call(form.querySelectorAll('.req-mark'), function(mark) {
+      var needed = document.getElementById(mark.getAttribute('data-for')).required;
+      mark.textContent = needed ? '*' : TEXT.optional;
+      if (needed) mark.setAttribute('aria-hidden', 'true'); else mark.removeAttribute('aria-hidden');
+    });
+
+    businessField.hidden = !estimator || brokenLink;
+    businessName.disabled = businessField.hidden;
+
+    if (repair && placeholder) message.setAttribute('placeholder', placeholder); else message.removeAttribute('placeholder');
+  }
+
+  group.addEventListener('change', apply);
+  form.addEventListener('submit', function() {
+    apply();
+    Array.prototype.forEach.call(form.elements, function(el) {
+      if (el.name && el.name !== 'name' && el.name !== 'email' && el.name !== 'message' && el.name !== 'services' && !el.disabled && !String(el.value).trim()) el.disabled = true;
+    });
+  });
+  window.addEventListener('pageshow', function(e) { if (e.persisted) apply(); });
+  apply();
 })();
 </script>
 

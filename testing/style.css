@@ -6506,3 +6506,29 @@ h2.trello-setup-title{
   margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--chrome-paper-line);
   font-size:.85rem;line-height:1.5;color:var(--chrome-ink-600);
 }
+
+/* ---------- Contact form: service picker ---------- */
+.contact-services{border:0;padding:0;margin:0;min-width:0;}
+.contact-services-list{display:grid;gap:.5rem;}
+@media (min-width:576px){
+  .contact-services-list{grid-template-columns:1fr 1fr;}
+}
+.contact-check{
+  display:flex;align-items:center;gap:.75rem;min-height:44px;margin:0;padding:.5rem .9rem;
+  border:1px solid var(--chrome-paper-line);background:var(--chrome-paper-muted);border-radius:10px;
+  font-size:.9rem;font-weight:500;color:var(--chrome-ink-900);cursor:pointer;
+  transition:border-color .15s var(--chrome-ease-smooth),background-color .15s var(--chrome-ease-smooth);
+}
+.contact-check:has(.contact-check-input:checked){border-color:var(--chrome-signal-400);background:var(--chrome-signal-50);}
+.contact-check-input{
+  appearance:none;-webkit-appearance:none;
+  width:1.25rem;height:1.25rem;flex:none;margin:0;
+  border:2px solid var(--chrome-ink-500);border-radius:4px;background:#fff;
+  position:relative;cursor:pointer;
+}
+.contact-check-input:checked{background:var(--chrome-ink-900);border-color:var(--chrome-ink-900);}
+.contact-check-input:checked::after{
+  content:"";position:absolute;left:3px;top:-1px;width:6px;height:11px;
+  border:solid var(--chrome-signal-400);border-width:0 2px 2px 0;transform:rotate(40deg);
+}
+.contact-check-input:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
