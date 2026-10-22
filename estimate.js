@@ -778,7 +778,7 @@ function addRepairTask(taskName, taskList) {
 
   var rowsHtml = '';
   tasks.forEach(function (t) {
-    var rate = parseFloat(document.getElementById('hourlyRate').value) || 100;
+    var rate = hourlyRateOrDefault(document.getElementById('hourlyRate').value);
     var price = t.hours * rate;
     rowsHtml +=
       '<tr>' +
@@ -830,7 +830,7 @@ function addRepairTask(taskName, taskList) {
 }
 
 function calcTaskTotal(tasks) {
-  var rate = parseFloat(document.getElementById('hourlyRate').value) || 100;
+  var rate = hourlyRateOrDefault(document.getElementById('hourlyRate').value);
   var total = 0;
   tasks.forEach(function (t) { total += t.hours * rate; });
   return total;
@@ -839,7 +839,7 @@ function calcTaskTotal(tasks) {
 function recalcTask(id) {
   var table = document.getElementById('taskTable' + id);
   if (!table) return;
-  var rate = parseFloat(document.getElementById('hourlyRate').value) || 100;
+  var rate = hourlyRateOrDefault(document.getElementById('hourlyRate').value);
   var total = 0;
   var rows = table.querySelectorAll('tbody tr');
   rows.forEach(function (tr) {
@@ -865,7 +865,7 @@ function recalcAllTasks() {
 
 function addTaskRow(id) {
   var tbody = document.querySelector('#taskTable' + id + ' tbody');
-  var rate = parseFloat(document.getElementById('hourlyRate').value) || 100;
+  var rate = hourlyRateOrDefault(document.getElementById('hourlyRate').value);
   var tr = document.createElement('tr');
   // drag-handle column must match thead structure so SortableJS can grab the row
   tr.innerHTML =
@@ -1144,17 +1144,24 @@ function switchAuthTab(tab) {
 
 /* -- Save / Load drafts (Pro, Supabase) -- */
 /* The one save path (Save and Add to Trello): updates the saved estimate on screen, or inserts a new one and remembers its id. */
+var saveInFlight = null; // the running save's promise: a second Save (or Add to Trello) while it runs gets the same result, never a second row
 function saveCurrentEstimate() {
+  if (saveInFlight) return saveInFlight;
   var data = collectEstimateData();
-  return window.saveEstimateToSupabase(data, currentEstimateId).then(function (result) {
+  var p = window.saveEstimateToSupabase(data, currentEstimateId).then(function (result) {
     if (result && !result.error && result.data && result.data.id) currentEstimateId = result.data.id;
     return result;
   });
+  saveInFlight = p;
+  var done = function () { if (saveInFlight === p) saveInFlight = null; };
+  p.then(done, done); // success, error result or rejection: the next Save runs normally
+  return p;
 }
 window.saveCurrentEstimate = saveCurrentEstimate;
 
 function saveDraft() {
   if (!window.isPro || !window.isPro()) { openModal('upgradeModal'); return; }
+  if (saveInFlight) return; // a save is already running: ignore the second click
   saveCurrentEstimate().then(function(result) {
     if (result.error) {
       alert('Save failed: ' + result.error.message);
@@ -1284,7 +1291,7 @@ function loadDraft(data, estimateId) {
   document.getElementById('estimateNumber').value = data.estimateNumber || '';
   setEstDate('estimateDate', data.estimateDate || '');
   setEstDate('estimateValidUntil', data.estimateValidUntil || '');
-  document.getElementById('hourlyRate').value = data.hourlyRate || 100;
+  document.getElementById('hourlyRate').value = hourlyRateOrDefault(data.hourlyRate);
   if (document.getElementById('estimateName')) document.getElementById('estimateName').value = data.estimateName || '';
   if (document.getElementById('clientCompany')) document.getElementById('clientCompany').value = data.clientCompany || '';
   document.getElementById('clientFirst').value = data.clientFirst || '';

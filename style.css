@@ -1918,6 +1918,10 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
 .saved-item:hover { background: var(--chrome-paper-card); border-color: var(--chrome-ink-500); }
 .saved-item-meta { font-size: 0.78rem; color: var(--chrome-ink-500); }
 .saved-item-del { background: none; border: none; color: #e05252; font-size: 0.9rem; cursor: pointer; padding: 0.1rem 0.3rem; }
+/* Touch / narrow screens: the delete X is a real tap target (it sits next to a row that loads the estimate when tapped) */
+@media (max-width: 768px), (pointer: coarse) {
+  .saved-item-del { min-width: 44px; min-height: 44px; }
+}
 
 /* -- Plan cards -- */
 .plan-row { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 1rem; }
