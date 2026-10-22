@@ -39,9 +39,13 @@
 # testing.chemcalc.co serves the same pages as production, and robots.txt
 # (shared with production) allows everything, so the staging host could be
 # indexed alongside chemcalc.co. This sends noindex ONLY when the request host
-# starts with "testing." -- the production host is unaffected, so this file can
-# still be copied to the production root as-is.
+# starts with "testing." -- or when the request path starts with /testing/ (the
+# same folder is also reachable as chemcalc.co/testing/..., and that copy must not
+# be indexed either). Production URLs never start with /testing/, so the
+# production host is unaffected and this file can still be copied to the
+# production root as-is.
 <IfModule mod_headers.c>
   SetEnvIfNoCase Host "^testing\." STAGING_HOST=1
+  SetEnvIf Request_URI "^/testing(/|$)" STAGING_HOST=1
   Header set X-Robots-Tag "noindex, nofollow" env=STAGING_HOST
 </IfModule>
