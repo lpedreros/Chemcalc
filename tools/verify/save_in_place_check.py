@@ -274,6 +274,54 @@ def main():
         r2 = br.ev("window.saveCurrentEstimate()", True)
         check("T12 not logged in -> { error: { message: 'Not logged in.' } } from both save functions, no calls", r == {"error": {"message": "Not logged in."}} and r2 == {"error": {"message": "Not logged in."}} and len(calls()) == 0, [r, r2])
 
+        print("=== T13-T15: double-click guard ===")
+        page(); clear(); br.ev("proSaveDraft(); proSaveDraft(); 1"); time.sleep(0.8)
+        check("T13 two Saves in the same tick on a new estimate -> exactly 1 insert and 1 success alert", len(calls(op="insert")) == 1 and len(br.ev("window.__alerts")) == 1, [len(calls(op="insert")), br.ev("window.__alerts")])
+        clear(); save()
+        check("T13 ...and a later Save -> exactly 1 update on that id, 0 inserts", len(calls(op="update")) == 1 and len(calls(op="insert")) == 0, [len(calls(op="update")), len(calls(op="insert"))])
+        page(); clear()
+        r = br.ev("(async () => { const a = saveCurrentEstimate(), b = saveCurrentEstimate(); const [x, y] = await Promise.all([a, b]); return { same: a === b, xid: x.data && x.data.id, yid: y.data && y.data.id }; })()", True)
+        check("T14 saveCurrentEstimate() called again while a save runs (Add to Trello path) -> same promise and result, 1 insert", r["same"] and r["xid"] == r["yid"] and len(calls(op="insert")) == 1 and len(calls(op="update")) == 0, [r, len(calls(op="insert"))])
+        page(); br.ev("openLoadDraftModal(); 1"); time.sleep(0.8); br.ev("document.querySelector('#savedEstimatesList .saved-item').click(); 1"); time.sleep(1.0)
+        br.ev("window.__mock.updateMode = 'error'; 1"); save(); clear(); br.ev("window.__mock.updateMode = 'ok'; 1"); save()
+        check("T15 after an error result the in-flight flag is clear: the next Save runs normally (1 update)", len(calls(op="update")) == 1 and br.ev("window.__alerts") == ["Estimate saved: TE-20261007-1078"], [len(calls(op="update")), br.ev("window.__alerts")])
+        br.ev("window.__origSave = window.saveEstimateToSupabase; window.saveEstimateToSupabase = () => Promise.reject(new Error('network down')); saveCurrentEstimate().catch(() => 0); 1"); time.sleep(0.3)
+        br.ev("window.saveEstimateToSupabase = window.__origSave; 1"); clear(); save()
+        check("T15 after a rejected promise the flag is clear too: the next Save runs normally (1 update)", len(calls(op="update")) == 1, len(calls(op="update")))
+
+        print("=== T16-T20: hourly rate 0 stays 0 ===")
+        LAB = r"(() => Array.from(document.querySelector('.est-summary-card').innerText.matchAll(/\(Labor\)\s*\$([\d,]+\.\d\d)/g)).map(m => parseFloat(m[1].replace(/,/g, ''))))()"
+        def rate_case(val):
+            page(); fx = saved(); fx["hourlyRate"] = "100"
+            br.ev("loadDraft(%s); 1" % json.dumps(fx))
+            br.ev("(() => { const e = document.getElementById('hourlyRate'); e.value = %s; e.dispatchEvent(new Event('input', {bubbles: true})); return 1; })()" % json.dumps(val))
+            time.sleep(0.3); labor = br.ev(LAB); clear(); save()
+            ins = calls(op="insert")[0]["payload"]
+            return labor, ins, br.ev("collectEstimateData().hourlyRate")
+        labor, ins, hr = rate_case("0")
+        check("T16 hourly rate 0 -> every summary labor line $0.00, saved hourly_rate 0 and labor_total 0, collectEstimateData().hourlyRate '0'", labor == [0, 0, 0] and ins["hourly_rate"] == 0 and ins["labor_total"] == 0 and hr == "0", [labor, ins["hourly_rate"], ins["labor_total"], hr])
+        labor, ins, hr = rate_case("")
+        check("T17 blank rate -> labor at 100 (summary 250/200/100, saved labor_total 550)", labor == [250, 200, 100] and ins["labor_total"] == 550, [labor, ins["labor_total"], ins["hourly_rate"]])
+        labor, ins, hr = rate_case("85")
+        check("T18 rate 85 -> unchanged (summary 212.5/170/85, saved labor_total 467.5, hourly_rate 85)", labor == [212.5, 170, 85] and ins["labor_total"] == 467.5 and ins["hourly_rate"] == 85, [labor, ins["labor_total"], ins["hourly_rate"]])
+        page()
+        for val, want in (("0", [0, 0, 0]), ("100", [250, 200, 100])):
+            fx = saved(); fx["hourlyRate"] = val
+            br.ev("loadDraft(%s); 1" % json.dumps(fx)); time.sleep(0.3)
+            check("T19 estimate loaded with hourlyRate %r keeps it in the field and the summary" % val, br.ev("document.getElementById('hourlyRate').value") == val and br.ev(LAB) == want, [br.ev("document.getElementById('hourlyRate').value"), br.ev(LAB)])
+        page()
+        have_pdf = br.ev("typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined'")
+        if not have_pdf:
+            print("NOTE  T20 NOT TESTED: jsPDF did not load (no network?). Read instead: trello.js hourlyRateOrDefault at the 4 former '|| 100' sites")
+        else:
+            fx = saved(); fx["hourlyRate"] = "0"
+            br.ev("loadDraft(%s); 1" % json.dumps(fx))
+            br.ev("window.__pdf = []; const J = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF; const W = function (...a) { const d = new J(...a); const t = d.text.bind(d); d.text = (s, ...r) => { window.__pdf.push(String(s)); return t(s, ...r); }; return d; }; W.prototype = J.prototype; if (window.jspdf) window.jspdf.jsPDF = W; else window.jsPDF = W; 1")
+            br.ev("_generateEstimatePDF('summary').catch(e => window.__pdf.push('ERR ' + e.message)); 1"); time.sleep(2.5)
+            txt = br.ev("window.__pdf")
+            lines = [t for t in txt if "/hr" in t and " x " in t]
+            check("T20 trello.js PDF labor figures with rate 0 use $0/hr = $0.00 (summary style), not 100", bool(lines) and all("$0/hr" in t and "$0.00" in t for t in lines), lines[:3] or txt[:5])
+
         print("=== Smoke checks on estimate.html ===")
         page(); errs = [e for e in br.ev("window.__errs") if "presets" not in e.lower() and "affiliate" not in e.lower() and "supabase fetch" not in e.lower()]
         check("(a) page loads with no console errors", br.ev("!!document.getElementById('estimateNumber').value") and not errs, errs)

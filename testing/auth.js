@@ -184,14 +184,20 @@ async function doLogout() {
 /* Saves an estimate. With no existingId it inserts a new row. With an existingId it updates that row instead (never
    touching user_id, status or the Trello link); if no row matched (deleted elsewhere) it inserts a new one, and a real
    update error is returned as is so it can never turn into a duplicate. Returns { data: row, error } either way. */
+/* Hourly rate: a typed 0 is a real rate; only a blank or non-numeric value falls back to 100. */
+function hourlyRateOrDefault(v) {
+  var n = parseFloat(v);
+  return isNaN(n) ? 100 : n;
+}
+
 async function saveEstimateToSupabase(payload, existingId) {
   if (!currentUser) return { error: { message: 'Not logged in.' } };
 
   var matTotal  = (payload.materials || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
   var paintTotal = (payload.paint || []).reduce(function(s, r) { return s + ((r.qty || 1) * (r.cost || 0) * (1 + (r.markup || 0) / 100)); }, 0);
   // Labor is hours x hourly rate over every row of every task, summed per task like calcTaskTotal() in estimate.js.
-  // A blank, zero or non-numeric rate bills at 100 (not 0), the same fallback the page uses.
-  var laborRate  = parseFloat(payload.hourlyRate) || 100;
+  // A blank or non-numeric rate bills at 100; a rate of 0 stays 0 (hourlyRateOrDefault, the same fallback the page uses).
+  var laborRate  = hourlyRateOrDefault(payload.hourlyRate);
   var laborTotal = (payload.tasks || []).reduce(function(s, t) {
     var taskTotal = 0;
     (t.rows || []).forEach(function(r) { taskTotal += (parseFloat(r.hours) || 0) * laborRate; });

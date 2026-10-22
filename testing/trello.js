@@ -730,7 +730,7 @@ async function _generateEstimatePDF(printStyle) {
       y += 5;
 
       if (isItemized && task.rows && task.rows.some(function(r){ return r.name; })) {
-        var rate = parseFloat(d.hourlyRate) || 100;
+        var rate = hourlyRateOrDefault(d.hourlyRate);
         var taskRows = task.rows
           .filter(function(r){ return r.name; })
           .map(function(r){
@@ -745,7 +745,7 @@ async function _generateEstimatePDF(printStyle) {
         );
       } else {
         // Summary: just show total hours and cost
-        var rate2 = parseFloat(d.hourlyRate) || 100;
+        var rate2 = hourlyRateOrDefault(d.hourlyRate);
         var totalHrs = (task.rows || []).reduce(function(s, r){ return s + (r.hours || 0); }, 0);
         pdf.setFontSize(9); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(68, 68, 68);
         pdf.text(totalHrs.toFixed(1) + ' hrs  x  $' + rate2 + '/hr  =  ' + fmt(totalHrs * rate2), ML, y);
@@ -795,7 +795,7 @@ async function _generateEstimatePDF(printStyle) {
     var matTotal  = (d.materials || []).reduce(function(s,r){ return s + r.cost*(1+(r.markup||0)/100)*(r.qty||1); }, 0);
     var paintTotal = (d.paint || []).reduce(function(s,r){ return s + r.cost*(1+(r.markup||0)/100)*(r.qty||1); }, 0);
     var laborTotal = (d.tasks || []).reduce(function(s, task){
-      var rate = parseFloat(d.hourlyRate) || 100;
+      var rate = hourlyRateOrDefault(d.hourlyRate);
       return s + (task.rows || []).reduce(function(ts, r){ return ts + (r.hours || 0) * rate; }, 0);
     }, 0);
     if (matTotal  > 0) summaryRow('Materials',      fmt(matTotal));
@@ -807,7 +807,7 @@ async function _generateEstimatePDF(printStyle) {
     // Customer summary: per-task lines
     (d.tasks || []).forEach(function(task){
       if (!task.name) return;
-      var rate = parseFloat(d.hourlyRate) || 100;
+      var rate = hourlyRateOrDefault(d.hourlyRate);
       var total = (task.rows || []).reduce(function(s,r){ return s + (r.hours||0)*rate; }, 0);
       summaryRow(task.name, fmt(total));
     });
