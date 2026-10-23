@@ -59,7 +59,8 @@
     '/mekpcalc.html': 'MEKP',
     '/clothcalc.html': 'Fiberglass Cloth',
     '/awlgrip.html': 'Awlgrip',
-    '/epifanespoly.html': 'Epifanes'
+    '/epifanespoly.html': 'Epifanes',
+    '/alexseal.html': 'Alexseal'
   };
 
   function getCurrentCalculator() {
