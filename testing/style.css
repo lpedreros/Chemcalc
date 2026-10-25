@@ -2249,6 +2249,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
   /* PRO: show logo, hide ChemCalc brand */
   body.pro-user .print-logo-img { display: block !important; }
+  /* A Pro user with no logo prints no image */
+  body.pro-user .print-logo-img:not([src]) { display: none !important; }
   body.pro-user .free-only-print { display: none !important; }
   body.pro-user .pro-only-print  { display: flex !important; }
   body.pro-user .print-chemcalc-url { display: none !important; }

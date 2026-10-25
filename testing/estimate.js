@@ -310,9 +310,9 @@ function populatePrintHeader() {
     setText('printCompanyAddress', co.address || '');
     // Logo
     var logoEl = document.getElementById('printLogoImg');
-    if (logoEl && co.logoUrl) {
-      logoEl.src = co.logoUrl;
-      logoEl.style.display = '';
+    if (logoEl) {
+      if (co.logoUrl) logoEl.src = co.logoUrl;
+      else logoEl.removeAttribute('src');
     }
   }
 
