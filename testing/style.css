@@ -1339,6 +1339,7 @@ h1 {
   .view-toggle-wrap { max-width: 100%; }
   .view-toggle-wrap .btn-view-toggle { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
 }
+.est-format-help { flex: 1 1 100%; margin: 0; font-size: 0.78rem; line-height: 1.4; color: var(--chrome-ink-600); }
 
 /* Report broken link button (next to Buy) */
 .btn-report-link {
@@ -1775,6 +1776,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
     clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
   }
   .est-rail .view-toggle-wrap { width: 100%; gap: 0.25rem; padding: 0; background: transparent; border: 0; border-radius: 0; }
+  .est-rail .est-format-help { margin-top: 0.5rem; color: rgba(255, 255, 255, 0.65); }
   .est-rail .btn-view-toggle {
     flex: 1 1 auto; padding: 0.5rem 0.75rem; border-radius: 6px; white-space: nowrap;
     font-size: 0.8125rem; color: rgba(255, 255, 255, 0.55);
