@@ -73,7 +73,7 @@ export function createWorld() {
       if (w.fail.restStatus) return json(w.fail.restStatus, { message: 'boom' });
       const uid = (u.searchParams.get('id') || '').replace(/^eq\./, '');
       const row = w.profiles.get(uid);
-      if (method === 'GET') return json(200, row ? [{ trello_api_key: row.trello_api_key ?? null, trello_token: row.trello_token ?? null }] : []);
+      if (method === 'GET') return json(200, row ? [{ tier: row.tier ?? null, subscription_status: row.subscription_status ?? null, trello_api_key: row.trello_api_key ?? null, trello_token: row.trello_token ?? null }] : []);
       if (method === 'PATCH') {
         if (!row) return json(200, []);
         Object.assign(row, JSON.parse(init.body));

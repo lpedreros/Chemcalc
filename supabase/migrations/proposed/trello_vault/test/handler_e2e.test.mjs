@@ -32,6 +32,7 @@ async function vaultWorld({ connected = [UID_A], withNoProfileUser = true } = {}
   const db = await freshDb({ rows: seed, noProfileUser: withNoProfileUser });
   const m = await runScript(db, MIGRATION);
   assert.ok(m.ok, m.message);
+  await db.query("update public.profiles set tier = 'pro'");   // the handler now checks the plan first; the fake world's profiles are Pro too
   const w = createWorld();
   if (withNoProfileUser) w.sessions.set('tokNP', UID_NP);
   w.db = db;
@@ -56,6 +57,12 @@ async function vaultWorld({ connected = [UID_A], withNoProfileUser = true } = {}
         const rows = await asRole(db, 'service_role', async (tx) => (await tx.query(fn.sql, fn.args.map((a) => body[a]))).rows, null);
         return ok(200, fn.setof ? rows : rows[0].r);   // PostgREST: table function -> array of rows; scalar function -> the bare value
       } catch (e) { return pgrstError(e); }
+    }
+    if (u.pathname === '/rest/v1/profiles' && method === 'GET') {   // the plan lookup: select=tier,subscription_status for one id
+      const uid = (u.searchParams.get('id') || '').replace(/^eq\./, '');
+      assert.equal(u.searchParams.get('select'), 'tier,subscription_status');
+      const rows = await asRole(db, 'service_role', async (tx) => (await tx.query('select tier, subscription_status from public.profiles where id = $1::uuid', [uid])).rows, null);
+      return ok(200, rows);
     }
     if (u.pathname === '/rest/v1/profiles' && method === 'PATCH') {
       const uid = (u.searchParams.get('id') || '').replace(/^eq\./, '');
@@ -90,6 +97,14 @@ const make = (handle, w) => (body, { token = 'tokA', origin = 'https://testing.c
     body: raw ?? JSON.stringify(body),
   }), { env: ENV, fetch: w.fetch }).then(async (r) => ({ status: r.status, body: await r.json().catch(() => null) }));
 const quiet = () => { logged = []; console.error = (...a) => logged.push(a.map(String).join(' ')); };
+
+/* The plan check (requirePro) runs first and fails closed, so on these steps the Vault handler intentionally answers 403 pro_check_failed
+   where the pre-Vault handler (which has no plan check) answered 404 no_profile / 500 db_error / 503. Everything else must be identical. */
+const DENIED_PLAN_CHECK = { status: 403, body: { error: 'We could not check your plan. Please try again.', code: 'pro_check_failed' } };
+const PLAN_CHECK_DIFFERS = new Set([
+  'boards (signed in, no profile row)', 'connect (signed in, no profile row)',
+  'database answers 500 (read)', 'database answers 500 (connect)', 'database unreachable (read)',
+]);
 
 /* The scripted conversation. Each step gets (call, w) and returns what to compare. */
 const STEPS = [
@@ -130,16 +145,25 @@ test('PARITY: the Vault handler answers every scripted request exactly like the 
   const callMem = make(handleOriginal, mem);
   const callVlt = make(handleVault, vlt);
   let compared = 0;
+  const trelloCalls = (w) => w.calls.filter((c) => c.url.includes('api.trello.com')).map((c) => c.method + ' ' + new URL(c.url).pathname);
+  const memTraffic = [], vltTraffic = [];
+  let memSeen = 0, vltSeen = 0;
   for (const [name, step] of STEPS) {
     const a = await step(callMem, mem);
     const b = await step(callVlt, vlt);
-    assert.deepEqual(b, a, `step "${name}" differs`);
+    const differs = PLAN_CHECK_DIFFERS.has(name);
+    if (differs) assert.deepEqual(b, DENIED_PLAN_CHECK, `step "${name}" should be denied by the plan check`);
+    else assert.deepEqual(b, a, `step "${name}" differs`);
+    const m = trelloCalls(mem), v = trelloCalls(vlt);
+    if (differs) assert.deepEqual(v.slice(vltSeen), [], `step "${name}" reached Trello after a denied plan check`);   // denied: Trello is never called
+    else memTraffic.push(...m.slice(memSeen));
+    vltTraffic.push(...v.slice(vltSeen));
+    memSeen = m.length; vltSeen = v.length;
     compared += 1;
   }
   assert.equal(compared, STEPS.length);
-  // Trello saw the same traffic from both
-  const trelloCalls = (w) => w.calls.filter((c) => c.url.includes('api.trello.com')).map((c) => c.method + ' ' + new URL(c.url).pathname);
-  assert.deepEqual(trelloCalls(vlt), trelloCalls(mem));
+  // Trello saw the same traffic from both (apart from the steps the plan check now stops before Trello)
+  assert.deepEqual(vltTraffic, memTraffic);
   assert.deepEqual(vlt.cards, mem.cards);
   assert.deepEqual(vlt.revoked, mem.revoked);
 });
@@ -253,7 +277,122 @@ test('the Vault handler differs from the pre-Vault one only where the credential
   const section = (lines, from, to) => lines.slice(lines.findIndex((l) => l.includes(from)), lines.findIndex((l) => l.includes(to))).join('\n');
   assert.equal(section(b, '/* ---------- Trello ---------- */', '/* ---------- actions ---------- */'), section(a, '/* ---------- Trello ---------- */', '/* ---------- actions ---------- */'));
   const tail = (lines) => lines.slice(lines.findIndex((l) => l.includes('/* ---------- entry ---------- */'))).join('\n');
-  assert.equal(tail(b), tail(a));
+  // the one intended difference: the plan check (requirePro) between the markers
+  const withoutPlanCheck = (text) => text.replace(/ *\/\/ --- plan check \(Pro\) ---\n[\s\S]*?\/\/ --- end plan check ---\n\n?/, '');
+  assert.ok(tail(b).includes('--- plan check (Pro) ---') && !tail(a).includes('plan check'));
+  assert.equal(withoutPlanCheck(tail(b)), tail(a));
   const head = (lines) => lines.slice(lines.findIndex((l) => l.includes('export interface Env')), lines.findIndex((l) => l.includes('/* ---------- small helpers ---------- */'))).join('\n');
   assert.equal(head(b), head(a));
+});
+
+/* ---------- the plan check (Pro) ---------- */
+const PRO_REQUIRED = { status: 403, body: { error: 'Trello needs a Pro plan.', code: 'pro_required' } };
+const setPlan = (w, uid, tier, status) => w.db.query('update public.profiles set tier = $2, subscription_status = $3 where id = $1::uuid', [uid, tier, status]);
+const ACTIONS = [
+  { action: 'connect', apiKey: KEY_A, token: TOK_A },
+  { action: 'boards' },
+  { action: 'lists', boardId: 'boardA001' },
+  { action: 'card', idList: 'listA001', name: 'EST-1 - Client | Vessel', desc: 'x' },
+];
+
+test('PLAN: a Free user is denied connect, boards, lists and card with 403 pro_required, and nothing is read, stored or sent to Trello', async () => {
+  quiet();
+  for (const [tier, status] of [['free', null], ['free', 'inactive'], ['free', 'canceled'], ['free', 'past_due'], [null, null], ['PRO', null], ['', 'ACTIVE']]) {
+    const vlt = await vaultWorld();
+    await setPlan(vlt, UID_A, tier, status);
+    const call = make(handleVault, vlt);
+    for (const body of ACTIONS) assert.deepEqual(await call(body), PRO_REQUIRED, `${body.action} for tier=${tier} status=${status}`);
+    assert.equal(vlt.calls.filter((c) => c.url.includes('api.trello.com')).length, 0, 'Trello was called for a denied user');
+    assert.equal(vlt.restCalls.filter((c) => c.url.includes('/rpc/')).length, 0, 'the credentials were touched for a denied user');
+  }
+});
+
+test('PLAN: tier = pro is allowed on all four actions', async () => {
+  quiet();
+  const vlt = await vaultWorld();
+  await setPlan(vlt, UID_A, 'pro', null);
+  const call = make(handleVault, vlt);
+  for (const body of ACTIONS) assert.equal((await call(body)).status, 200, body.action);
+});
+
+test('PLAN: subscription_status = active is allowed even when tier is not pro', async () => {
+  quiet();
+  const vlt = await vaultWorld();
+  await setPlan(vlt, UID_A, 'free', 'active');
+  const call = make(handleVault, vlt);
+  for (const body of ACTIONS) assert.equal((await call(body)).status, 200, body.action);
+});
+
+test('PLAN: a failed lookup is a denial (fail closed): database error, unreachable, no profile row, and an unexpected answer', async () => {
+  quiet();
+  const vlt = await vaultWorld();
+  const call = make(handleVault, vlt);
+  vlt.fail.restStatus = 500;
+  for (const body of ACTIONS) assert.deepEqual(await call(body), DENIED_PLAN_CHECK, 'status 500: ' + body.action);
+  vlt.fail.restStatus = 0; vlt.fail.restThrow = true;
+  for (const body of ACTIONS) assert.deepEqual(await call(body), DENIED_PLAN_CHECK, 'unreachable: ' + body.action);
+  vlt.fail.restThrow = false;
+  for (const body of ACTIONS) assert.deepEqual(await call(body, { token: 'tokNP' }), DENIED_PLAN_CHECK, 'no profile row: ' + body.action);
+  // an answer that is not exactly one row
+  const w = createWorld();
+  const plan = { answer: null };
+  w.fetch = ((orig) => async (input, init) => {
+    if (String(input).includes('/rest/v1/profiles') && (init?.method ?? 'GET') === 'GET') return new Response(JSON.stringify(plan.answer), { status: 200 });
+    return orig(input, init);
+  })(w.fetch);
+  const call2 = make(handleVault, w);
+  for (const answer of [null, [], {}, 'pro', [{}, {}], [null], [{ tier: 'pro' }, { tier: 'pro' }]]) {
+    plan.answer = answer;
+    assert.deepEqual(await call2({ action: 'boards' }), DENIED_PLAN_CHECK, JSON.stringify(answer));
+  }
+  plan.answer = [{ tier: 'pro' }];
+  assert.equal((await call2({ action: 'boards' })).status, 200);   // exactly one row, tier pro: allowed
+});
+
+test('PLAN: disconnect is never blocked: a Free user can remove their stored credentials, and no plan lookup is made for it', async () => {
+  quiet();
+  const vlt = await vaultWorld();
+  await setPlan(vlt, UID_A, 'free', 'canceled');
+  const call = make(handleVault, vlt);
+  assert.equal((await call({ action: 'boards' })).status, 403);
+  const before = vlt.restCalls.length;
+  const r = await call({ action: 'disconnect' });
+  assert.equal(r.status, 200);
+  assert.equal(vlt.restCalls.slice(before).filter((c) => c.method === 'GET' && c.url.includes('/rest/v1/profiles')).length, 0, 'disconnect made a plan lookup');
+  const after = await vlt.db.query('select trello_connected from public.profiles where id = $1', [UID_A]);
+  assert.equal(after.rows[0].trello_connected, false);   // the credentials really are gone
+});
+
+test('PLAN: the check is made for the verified user only (the body\'s userId is ignored) and before the action runs', async () => {
+  quiet();
+  const vlt = await vaultWorld({ connected: [UID_A, UID_B] });
+  await setPlan(vlt, UID_A, 'free', null);   // A is Free, B is Pro
+  const call = make(handleVault, vlt);
+  assert.deepEqual(await call({ action: 'boards', userId: UID_B, user_id: UID_B }, { token: 'tokA' }), PRO_REQUIRED);   // pretending to be B does not help A
+  assert.equal((await call({ action: 'boards', userId: UID_A }, { token: 'tokB' })).status, 200);                     // and B is not held back by A's plan
+  const lookups = vlt.restCalls.filter((c) => c.method === 'GET' && c.url.includes('/rest/v1/profiles'));
+  assert.ok(lookups[0].url.includes('id=eq.' + UID_A) && !lookups[0].url.includes(UID_B));
+  assert.ok(lookups[1].url.includes('id=eq.' + UID_B) && !lookups[1].url.includes(UID_A));
+});
+
+test('PLAN: identity still comes first: no token / the anon key is 401 as before, and no plan lookup happens', async () => {
+  quiet();
+  const vlt = await vaultWorld();
+  const call = make(handleVault, vlt);
+  const none = await call({ action: 'boards' }, { token: null });
+  const anon = await call({ action: 'boards' }, { token: ANON_KEY });
+  assert.deepEqual(none, { status: 401, body: { error: 'Please sign in again to use Trello.', code: 'unauthorized' } });
+  assert.deepEqual(anon, none);
+  assert.equal(vlt.restCalls.length, 0);
+});
+
+test('PLAN: unknown actions and bad bodies are answered as before (400), a denied Free user never reaches validation of connect/lists/card fields', async () => {
+  quiet();
+  const vlt = await vaultWorld();
+  const call = make(handleVault, vlt);
+  assert.equal((await call({ action: 'nope' })).status, 400);
+  assert.equal((await call(null, { raw: '{not json' })).status, 400);
+  await setPlan(vlt, UID_A, 'free', null);
+  assert.equal((await call({ action: 'nope' })).status, 400);                       // unknown action: no plan lookup needed
+  assert.deepEqual(await call({ action: 'connect', apiKey: 'x', token: 'y' }), PRO_REQUIRED);   // Free + malformed: the plan answer comes first
 });

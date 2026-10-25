@@ -21,6 +21,7 @@ const call = (body, { token = 'tokA', origin = 'https://testing.chemcalc.co', me
 const noSecrets = (text, label) => { for (const s of SECRETS) assert.ok(!text.includes(s), `${label} leaked a credential`); };
 const upstream = () => w.calls.filter((c) => c.url.includes('api.trello.com'));
 const rows = () => w.calls.filter((c) => c.url.includes('/rest/v1/'));
+const profileLookups = () => rows().filter((c) => c.method === 'GET' && c.url.includes('/rest/v1/profiles'));   // the Pro-plan check the handler makes first
 const rpcCalls = (fn) => rows().filter((c) => c.url.endsWith('/rpc/' + fn));   // the Vault SQL functions the handler calls (credentials never ride a profiles request)
 
 /* ---------- CORS ---------- */
@@ -73,7 +74,8 @@ test('Auth unreachable -> 503, not a crash and not a pass', async () => {
 test('a user id sent in the body is ignored: the verified session decides whose credentials are used', async () => {
   const r = await call({ action: 'boards', userId: UID_B, id: UID_B, user_id: UID_B });
   assert.equal(r.status, 200);
-  assert.equal(JSON.parse(rows()[0].body).p_user_id, UID_A);   // the verified session's id went to the database, not the body's
+  assert.equal(JSON.parse(rpcCalls('trello_read_credentials')[0].body).p_user_id, UID_A);   // the verified session's id went to the database, not the body's
+  assert.ok(profileLookups()[0].url.includes('id=eq.' + UID_A) && !profileLookups()[0].url.includes(UID_B));   // ...and so did the plan check
   assert.ok(upstream()[0].url.includes(KEY_A) && !upstream()[0].url.includes(KEY_B));
   assert.deepEqual((await r.json()).boards.map((b) => b.id), ['boardA001', 'boardA002']);
 });
@@ -105,9 +107,11 @@ test('boards: not connected -> 409 not_connected and Trello is never called', as
   assert.equal((await r.json()).code, 'not_connected');
   assert.equal(upstream().length, 0);
 });
-test('boards: profile row missing -> 409, not a crash', async () => {
+test('boards: profile row missing -> 403 pro_check_failed (the plan check fails closed), not a crash', async () => {
   w.profiles.delete(UID_A);
-  assert.equal((await call({ action: 'boards' })).status, 409);
+  const r = await call({ action: 'boards' });
+  assert.equal(r.status, 403);
+  assert.equal((await r.json()).code, 'pro_check_failed');
 });
 test('lists: same Trello call, id+name only', async () => {
   const r = await call({ action: 'lists', boardId: 'boardA001' });
@@ -124,7 +128,7 @@ test('lists: a board id that is not a plain id (path tricks, empty, long) -> 400
     const r = await call({ action: 'lists', boardId });
     assert.equal(r.status, 400, String(boardId));
   }
-  assert.equal(w.calls.filter((c) => !c.url.includes('/auth/v1/user')).length, 0);
+  assert.equal(w.calls.filter((c) => !c.url.includes('/auth/v1/user') && !profileLookups().includes(c)).length, 0);   // only Auth and the plan lookup
 });
 test('card: same POST /1/cards form body; the response is just { card: { id } }', async () => {
   const r = await call({ action: 'card', idList: 'listA001', name: 'EST-1 — Ada | Robalo', desc: '**Total:** $5\n- task (1.0 hrs)' });
@@ -171,10 +175,10 @@ test('a thrown fetch error that names the Trello URL (key and token inside) neve
   noSecrets(logged.join('\n'), 'server log');
   assert.ok(logged.length > 0, 'the failure was logged (without secrets)');
 });
-test('database error -> 500 db_error, no secrets in log or response', async () => {
+test('database error -> the plan check fails closed (403 pro_check_failed), no secrets in log or response', async () => {
   w.fail.restStatus = 500;
   const r = await call({ action: 'boards' });
-  assert.equal(r.status, 500);
+  assert.equal(r.status, 403);
   noSecrets(await r.text() + logged.join('\n'), 'db failure');
 });
 
@@ -203,17 +207,18 @@ test('connect: Trello rejects the pair -> 400 invalid_credentials and NOTHING is
   assert.equal(rpcCalls('trello_store_credentials').length, 0);
   assert.equal(w.profiles.get(UID_A).trello_token, TOK_A);
 });
-test('connect: malformed key/token -> 400 before any network call (beyond Auth)', async () => {
+test('connect: malformed key/token -> 400 before any network call (beyond Auth and the plan lookup)', async () => {
   for (const b of [{ apiKey: '', token: 'x'.repeat(20) }, { apiKey: 'short', token: 'x'.repeat(20) }, { apiKey: 'k'.repeat(20), token: 'bad token with spaces!' }, { apiKey: 'k'.repeat(300), token: 't'.repeat(20) }, {}, { apiKey: 5, token: 6 }]) {
     assert.equal((await call({ action: 'connect', ...b })).status, 400);
   }
-  assert.equal(w.calls.filter((c) => !c.url.includes('/auth/v1/user')).length, 0);
+  assert.equal(w.calls.filter((c) => !c.url.includes('/auth/v1/user') && !profileLookups().includes(c)).length, 0);
 });
-test('connect: no profile row for the caller -> 404, nothing stored', async () => {
+test('connect: no profile row for the caller -> 403 pro_check_failed, nothing stored', async () => {
   w.profiles.delete(UID_A);
   const k = 'NEWKEYNEWKEY1111222233334444'; const t = 'NEWTOKENNEWTOKEN11112222333344445555';
   w.accounts.set(`${k}|${t}`, { boards: [], lists: {} });
-  assert.equal((await call({ action: 'connect', apiKey: k, token: t })).status, 404);
+  assert.equal((await call({ action: 'connect', apiKey: k, token: t })).status, 403);
+  assert.equal(rpcCalls('trello_store_credentials').length, 0);
 });
 
 /* ---------- disconnect ---------- */

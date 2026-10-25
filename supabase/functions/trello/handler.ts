@@ -16,6 +16,10 @@
      card        { idList, name, desc } POST /1/cards
      disconnect  {}                     delete the caller's Vault secrets, clear the four board/list columns, then revoke the token at Trello
 
+   PLAN: Trello is a Pro feature. After the identity check, connect / boards / lists / card also require the caller's profile to be
+   Pro (tier 'pro' OR subscription_status 'active'); anything else is 403 pro_required, and a failed lookup is 403 pro_check_failed
+   (fail closed). disconnect is never blocked, so a lapsed user can still remove the stored credentials.
+
    IDENTITY: the caller is whoever Supabase Auth says owns the Bearer token (GET /auth/v1/user).
    Nothing in the request body is ever used to choose whose credentials are read or written.
    (verify_jwt = true on the gateway is NOT enough on its own: the public anon key is also a
@@ -119,6 +123,31 @@ async function verifiedUserId(req: Request, d: Deps): Promise<string> {
     throw new HttpError(401, 'unauthorized', 'Please sign in again to use Trello.');
   }
   return user.id.toLowerCase();
+}
+
+const PRO_REQUIRED_MESSAGE = 'Trello needs a Pro plan.';
+const PRO_CHECK_FAILED_MESSAGE = 'We could not check your plan. Please try again.';
+
+// The server-side plan check (the page hides Trello from Free users, but the page is not a security boundary). Pro = tier 'pro' or an
+// active subscription. Fails closed: a lookup error, a missing profile row or an unexpected answer is a denial, never a pass.
+async function requirePro(d: Deps, uid: string): Promise<void> {
+  let res: Response;
+  try {
+    res = await rest(d, `profiles?id=eq.${uid}&select=tier,subscription_status`);
+  } catch (e) {
+    console.error('trello: plan lookup failed:', (e as Error).name);
+    throw new HttpError(403, 'pro_check_failed', PRO_CHECK_FAILED_MESSAGE);
+  }
+  if (!res.ok) {
+    console.error('trello: plan lookup status', res.status);
+    throw new HttpError(403, 'pro_check_failed', PRO_CHECK_FAILED_MESSAGE);
+  }
+  const rows = await res.json().catch(() => null) as Array<{ tier?: unknown; subscription_status?: unknown }> | null;
+  if (!Array.isArray(rows) || rows.length !== 1 || !rows[0] || typeof rows[0] !== 'object') {
+    throw new HttpError(403, 'pro_check_failed', PRO_CHECK_FAILED_MESSAGE);
+  }
+  if (rows[0].tier === 'pro' || rows[0].subscription_status === 'active') return;
+  throw new HttpError(403, 'pro_required', PRO_REQUIRED_MESSAGE);
 }
 
 function rest(d: Deps, path: string, init: RequestInit = {}): Promise<Response> {
@@ -327,6 +356,10 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
     try { body = JSON.parse(text); } catch { throw new HttpError(400, 'bad_request', 'Invalid request.'); }
     if (!body || typeof body !== 'object' || Array.isArray(body)) throw new HttpError(400, 'bad_request', 'Invalid request.');
     const b = body as Record<string, unknown>;
+
+    // --- plan check (Pro) ---
+    if (b.action === 'connect' || b.action === 'boards' || b.action === 'lists' || b.action === 'card') await requirePro(d, uid);
+    // --- end plan check ---
 
     let result: unknown;
     switch (b.action) {
