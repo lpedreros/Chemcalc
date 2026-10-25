@@ -3783,6 +3783,8 @@ body,
 .mp-affiliate-list li{margin-bottom:.4rem;}
 .mp-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
 .mp-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
+.mp-kits-bridge{margin:.9rem 0 0;font-size:.85rem;line-height:1.5;color:rgba(255,255,255,.7);}
+.mp-kits-bridge a{color:var(--chrome-signal-400);font-weight:600;text-decoration:underline;}
 
 /* Materials-display bucket-section headings (MEKP/ClothCalc/Awlgrip only).
    The class is emitted only by material-selection.js's
