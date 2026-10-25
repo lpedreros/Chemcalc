@@ -483,7 +483,11 @@
      and phone and boat details are required only then. Disabled or blank optional fields are not submitted. -->
 <script>
 (function() {
-  var TEXT = { chooseOne: 'Please choose at least one service.', optional: '(optional)' };
+  var TEXT = {
+    chooseOne: 'Please choose at least one service.',
+    optional: '(optional)',
+    estimatorPrompt: 'Optional: your industry, how you quote jobs today, team size or quote volume, and the first workflow you would like to improve.'
+  };
   var REPAIR = 'Professional Repair Services', ESTIMATOR = 'Custom Estimator', BROKEN = 'Broken Link Report';
   var SUBJECTS = {
     'Inquiry about Repair Services': 'Professional Repair Services',
@@ -558,7 +562,9 @@
     businessField.hidden = !estimator || brokenLink;
     businessName.disabled = businessField.hidden;
 
-    if (repair && placeholder) message.setAttribute('placeholder', placeholder); else message.removeAttribute('placeholder');
+    if (repair && placeholder) message.setAttribute('placeholder', placeholder);
+    else if (estimator && !brokenLink) message.setAttribute('placeholder', TEXT.estimatorPrompt);
+    else message.removeAttribute('placeholder');
   }
 
   group.addEventListener('change', apply);
