@@ -6550,3 +6550,4 @@ h2.trello-setup-title{
   border:solid var(--chrome-signal-400);border-width:0 2px 2px 0;transform:rotate(40deg);
 }
 .contact-check-input:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
+.form-error{margin:0;font-size:.85rem;font-weight:600;color:#b42318;}
