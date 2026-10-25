@@ -308,6 +308,7 @@
               <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Other Question" /><span>Other Question</span></label>
             </div>
             <input type="hidden" id="servicesField" name="services" value="" />
+            <input type="hidden" id="sourceField" name="source" value="" />
           </fieldset>
           <div>
             <label class="mp-input-label" for="name">First and Last Name <span aria-hidden="true">*</span></label>
@@ -507,6 +508,9 @@
   var repairRequired = ['phone', 'boatDetails', 'hin', 'location', 'availabilityDate', 'availabilityTimeFrom', 'availabilityTimeTo'];
 
   var params = new URLSearchParams(window.location.search);
+  var sourceField = document.getElementById('sourceField');
+  var source = params.get('source');
+  if (sourceField && source && /^[a-z0-9-]{1,40}$/.test(source)) sourceField.value = source;
   var subjects = params.getAll('subject').map(function(s) { return s.trim(); });
   var brokenLink = subjects.indexOf(BROKEN) !== -1;
 
