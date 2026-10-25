@@ -302,10 +302,15 @@
   <div id="search-container" class="kits-search-container">
     <input type="text" id="search-input" placeholder="Search recommended materials by name, description, or tag...">
   </div>
+  <div class="kits-filter-bar">
+    <button type="button" id="filter-toggle" class="kits-filter-toggle" aria-expanded="false" aria-controls="filter-buttons">Filters (0)</button>
+    <button type="button" id="filter-clear" class="kits-filter-clear" hidden>Clear filters</button>
+  </div>
   <div id="filter-buttons" class="kits-filter-buttons">
     <button class="filter-btn btn btn-outline-secondary active" data-filter="all">Show All</button>
     <!-- Filter buttons will be dynamically populated by JavaScript -->
   </div>
+  <p id="kits-count" class="kits-count" role="status" aria-live="polite"></p>
 </div>
 
 <!-- Repair Kits List Section -->

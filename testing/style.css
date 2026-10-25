@@ -5834,7 +5834,9 @@ h2.trello-setup-title{
 
 .kits-filter-buttons{text-align:center;}
 
-.filter-btn{
+.filter-btn,
+.kits-filter-toggle,
+.kits-filter-clear{
   background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);
   border:1px solid rgba(255,255,255,.12);padding:.5em 1em;margin:.25em;
   cursor:pointer;font-size:.85rem;font-weight:600;border-radius:999px;
@@ -5842,9 +5844,15 @@ h2.trello-setup-title{
   transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth),border-color .15s var(--chrome-ease-smooth);
 }
 .filter-btn:hover,
-.filter-btn.active{
+.filter-btn.active,
+.kits-filter-toggle:hover,
+.kits-filter-clear:hover,
+.kits-filter-toggle[aria-expanded="true"]{
   background:var(--chrome-signal-400);color:var(--chrome-ink-950);border-color:var(--chrome-signal-400);
 }
+.kits-filter-toggle,
+.kits-filter-clear{display:none;}
+.kits-count{margin:.6rem 0 0;font-size:.82rem;color:rgba(255,255,255,.75);text-align:center;}
 
 /* ---------- Product list panel ---------- */
 .kits-product-panel{
@@ -5894,6 +5902,11 @@ h2.trello-setup-title{
 @media (max-width:575.98px){
   .kits-custom-title{font-size:1.2rem;}
   .kits-toolbar{padding:.85rem 1rem;}
+  .kits-filter-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:.25rem;}
+  .kits-filter-toggle,
+  .kits-filter-clear:not([hidden]){display:inline-block;min-height:44px;}
+  .kits-filter-buttons:not(.is-open){display:none;}
+  .kits-toolbar:has(.kits-filter-buttons.is-open){position:static;}
   /* The first custom-services card renders high enough in the initial
      viewport (scroll 0, 375px) that its right edge would sit under the fixed
      floating cluster's column (#chemcalc-chatbot/.fab-donate/.help-float-btn,
