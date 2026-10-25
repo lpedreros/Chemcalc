@@ -15,6 +15,7 @@ var _trelloListId    = '';
 var _trelloListName  = '';
 
 var _trelloAuthWindow = null;
+var _trelloAuthTimer = null;  // the interval that waits for the Trello popup
 
 /* -- Initialise from saved profile --------------------------
    Called by populateBizInfoModal() in estimate.js with the profile from getProfile().
@@ -86,27 +87,51 @@ function trelloAuthorize() {
   var w = 600, h = 700;
   var left = Math.round((screen.width  - w) / 2);
   var top  = Math.round((screen.height - h) / 2);
+  if (_trelloAuthTimer) { clearInterval(_trelloAuthTimer); _trelloAuthTimer = null; } // pressing Authorize again starts clean
   _trelloAuthWindow = window.open(
     authUrl,
     'TrelloAuth',
     'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top
   );
 
+  // A blocked popup: nothing to wait for, so no timer and no "Waiting" message
+  if (!_trelloAuthWindow || _trelloAuthWindow.closed) {
+    _trelloAuthWindow = null;
+    _trelloKey = '';
+    _trelloSetStatus('Your browser blocked the Trello window. Allow pop-ups for this site, then press Authorize again.', true);
+    return;
+  }
+
+  // The wait ends on a token, a closed popup, or after 5 minutes
+  function stopWaiting(failureMessage) {
+    clearInterval(_trelloAuthTimer);
+    _trelloAuthTimer = null;
+    _trelloAuthWindow = null;
+    if (failureMessage) _trelloSetStatus(failureMessage, true);
+  }
+  var startedAt = Date.now();
+
   // Poll until the popup navigates back to our domain with #token=...
-  var poll = setInterval(function () {
+  _trelloAuthTimer = setInterval(function () {
+    var popup = _trelloAuthWindow;
+    if (!popup) { stopWaiting(); return; }
     try {
-      var hash = _trelloAuthWindow.location.hash;
+      var hash = popup.location.hash;
       if (hash && hash.indexOf('token=') !== -1) {
-        clearInterval(poll);
         var token = hash.replace('#token=', '').split('&')[0];
-        _trelloAuthWindow.close();
+        popup.close();
+        stopWaiting();
         _trelloOnTokenReceived(token);
+        return;
       }
     } catch (e) {
       // Cross-origin — popup is still on trello.com, keep polling
     }
-    if (_trelloAuthWindow && _trelloAuthWindow.closed) {
-      clearInterval(poll);
+    if (popup.closed) {
+      stopWaiting('The Trello window closed before authorization finished. Press Authorize to try again.');
+    } else if (Date.now() - startedAt > 5 * 60 * 1000) {
+      try { popup.close(); } catch (e) { /* already gone */ }
+      stopWaiting('Trello authorization timed out. Press Authorize to try again.');
     }
   }, 500);
 
