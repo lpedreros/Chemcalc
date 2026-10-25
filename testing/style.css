@@ -3956,6 +3956,11 @@ body,
   outline: 2px solid var(--chrome-signal-400);
   outline-offset: 2px;
 }
+.site-header-dark .nav a[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: inset 0 -2px 0 var(--chrome-signal-400);
+}
 .site-header-dark .nav-auth-indicator {
   margin-left: auto;
   font-size: 0.85rem;

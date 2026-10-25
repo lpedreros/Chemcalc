@@ -463,7 +463,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. Hide current page link from nav
+    // 1. Mark the current page's link in the nav (aria-current; style.css shows it as active)
     // Build the current page path to match root-relative hrefs (e.g. /index.html)
     var currentPath = window.location.pathname;
     // Normalise bare domain root to /index.html
@@ -471,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var navLinks = document.querySelectorAll("#mainNav a");
     navLinks.forEach(function(link) {
         if (link.getAttribute("href") === currentPath) {
-            link.style.display = "none";
+            link.setAttribute("aria-current", "page");
         }
     });
 
@@ -487,7 +487,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-</script>
-<!-- #EndLibraryItem --></body>
+</script><!-- #EndLibraryItem --></body>
 </html>
 
