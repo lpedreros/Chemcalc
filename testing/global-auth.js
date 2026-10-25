@@ -57,6 +57,15 @@
       .replace(/"/g, '&quot;');
   }
 
+  // ── 3b. Show the History link to Pro users ───────────────────────────────
+  // Every page's nav carries <a id="navHistoryLink" class="d-none"> (History is a Pro page). Only estimate.js used to
+  // un-hide it, so Pro users saw it on the estimator alone. This file already resolves the Pro state on every page and
+  // on every auth change, so the link is shown or hidden here. Null-safe: awlgrip-safety.html has no nav.
+  function updateHistoryLink(isPro) {
+    var link = document.getElementById('navHistoryLink');
+    if (link) link.classList.toggle('d-none', !isPro);
+  }
+
   // ── 4. Apply a resolved (user, profile) pair sitewide ────────────────────
   // Shared by the initial getAuthState() read and every later
   // chemcalc:authchange event, so both paths stay identical. autofillEmailFields
@@ -66,8 +75,10 @@
   // el.value = null via ToString, it doesn't clear the field).
   function applyAuthState(user, profile) {
     updateIndicator(user, profile);
+    var isPro = !!(user && profile && (profile.tier === 'pro' || profile.subscription_status === 'active'));
+    updateHistoryLink(isPro);
     if (user) {
-      sessionStorage.setItem('chemcalc_user_tier', (profile && (profile.tier === 'pro' || profile.subscription_status === 'active')) ? 'pro' : 'free');
+      sessionStorage.setItem('chemcalc_user_tier', isPro ? 'pro' : 'free');
       autofillEmailFields(user.email);
     } else {
       sessionStorage.setItem('chemcalc_user_tier', 'guest');
