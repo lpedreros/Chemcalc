@@ -273,6 +273,10 @@ function applyFilters() {
 async function updateStatus(id, selectEl) {
   // Recolors both copies of the select (desktop table + mobile list) and saves it.
   var newStatus = await saveEstimateStatus(id, selectEl);
+  if (newStatus === null) {  // not saved: the selects are back on the old status, so leave the cache and stats alone
+    showEstimateStatusError(document.querySelector('.history-toolbar'), 'afterend');
+    return;
+  }
 
   // Update local cache
   var est = _allEstimates.find(function(e){ return e.id === id; });

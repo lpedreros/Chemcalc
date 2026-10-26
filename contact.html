@@ -155,7 +155,7 @@
 <script src="/meta-pixel.js"></script>
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="/supabase-client.js"></script>
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
@@ -293,7 +293,7 @@
         <p class="mp-card-text">The more you can tell us up front, the more accurate the first quote will be.</p>
 
         <div class="mp-fields">
-          <fieldset class="mp-field-card--wide contact-services" id="serviceGroup">
+          <fieldset class="mp-field-card--wide contact-services" id="serviceGroup" aria-describedby="serviceError">
             <legend class="mp-input-label">Which services are you asking about? <span aria-hidden="true">*</span></legend>
             <div class="contact-services-list">
               <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Professional Repair Services" /><span>Professional Repair Services</span></label>
@@ -308,7 +308,9 @@
               <label class="contact-check"><input type="checkbox" class="contact-check-input" value="Other Question" /><span>Other Question</span></label>
             </div>
             <input type="hidden" id="servicesField" name="services" value="" />
+            <input type="hidden" id="sourceField" name="source" value="" />
           </fieldset>
+          <p id="serviceError" class="mp-field-card--wide form-error" role="alert" hidden></p>
           <div>
             <label class="mp-input-label" for="name">First and Last Name <span aria-hidden="true">*</span></label>
             <input type="text" id="name" name="name" class="mp-select" required />
@@ -482,7 +484,11 @@
      and phone and boat details are required only then. Disabled or blank optional fields are not submitted. -->
 <script>
 (function() {
-  var TEXT = { chooseOne: 'Please choose at least one service.', optional: '(optional)' };
+  var TEXT = {
+    chooseOne: 'Please choose at least one service.',
+    optional: '(optional)',
+    estimatorPrompt: 'Optional: your industry, how you quote jobs today, team size or quote volume, and the first workflow you would like to improve.'
+  };
   var REPAIR = 'Professional Repair Services', ESTIMATOR = 'Custom Estimator', BROKEN = 'Broken Link Report';
   var SUBJECTS = {
     'Inquiry about Repair Services': 'Professional Repair Services',
@@ -507,6 +513,9 @@
   var repairRequired = ['phone', 'boatDetails', 'hin', 'location', 'availabilityDate', 'availabilityTimeFrom', 'availabilityTimeTo'];
 
   var params = new URLSearchParams(window.location.search);
+  var sourceField = document.getElementById('sourceField');
+  var source = params.get('source');
+  if (sourceField && source && /^[a-z0-9-]{1,40}$/.test(source)) sourceField.value = source;
   var subjects = params.getAll('subject').map(function(s) { return s.trim(); });
   var brokenLink = subjects.indexOf(BROKEN) !== -1;
 
@@ -554,10 +563,19 @@
     businessField.hidden = !estimator || brokenLink;
     businessName.disabled = businessField.hidden;
 
-    if (repair && placeholder) message.setAttribute('placeholder', placeholder); else message.removeAttribute('placeholder');
+    if (repair && placeholder) message.setAttribute('placeholder', placeholder);
+    else if (estimator && !brokenLink) message.setAttribute('placeholder', TEXT.estimatorPrompt);
+    else message.removeAttribute('placeholder');
   }
 
   group.addEventListener('change', apply);
+
+  // The "choose a service" requirement also shows as a visible message under the group (the browser tooltip stays as the fallback)
+  var serviceError = document.getElementById('serviceError');
+  boxes[0].addEventListener('invalid', function() {
+    if (!brokenLink && !checkedLabels().length) { serviceError.textContent = TEXT.chooseOne; serviceError.hidden = false; }
+  });
+  group.addEventListener('change', function() { serviceError.hidden = true; serviceError.textContent = ''; });
   form.addEventListener('submit', function() {
     apply();
     Array.prototype.forEach.call(form.elements, function(el) {
@@ -649,7 +667,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. Hide current page link from nav
+    // 1. Mark the current page's link in the nav (aria-current; style.css shows it as active)
     // Build the current page path to match root-relative hrefs (e.g. /index.html)
     var currentPath = window.location.pathname;
     // Normalise bare domain root to /index.html
@@ -657,7 +675,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var navLinks = document.querySelectorAll("#mainNav a");
     navLinks.forEach(function(link) {
         if (link.getAttribute("href") === currentPath) {
-            link.style.display = "none";
+            link.setAttribute("aria-current", "page");
         }
     });
 
@@ -673,6 +691,5 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-</script>
-<!-- #EndLibraryItem --></body>
+</script><!-- #EndLibraryItem --></body>
 </html>

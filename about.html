@@ -13,13 +13,13 @@
   <meta property="og:description" content="Learn about ChemCalc, your resource for marine repair calculators, expert advice, and training, founded by an experienced boat restoration specialist." />
   <meta property="og:url" content="https://chemcalc.co/about.html" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og-about.jpg" /> <!-- Placeholder for specific About page OG image -->
+  <meta property="og:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
 
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="About ChemCalc | Expert Marine Repair & Calculator Resource" />
   <meta name="twitter:description" content="Learn about ChemCalc, your resource for marine repair calculators, expert advice, and training, founded by an experienced boat restoration specialist." />
-  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og-about.jpg" /> <!-- Placeholder for specific About page Twitter image -->
+  <meta name="twitter:image" content="https://chemcalc.co/images/chemcalc-og.jpg" />
 
   <!-- JSON-LD Schema Markup -->
   <script type="application/ld+json">
@@ -174,7 +174,7 @@
 <script src="/meta-pixel.js"></script>
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="/supabase-client.js"></script>
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
@@ -430,7 +430,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. Hide current page link from nav
+    // 1. Mark the current page's link in the nav (aria-current; style.css shows it as active)
     // Build the current page path to match root-relative hrefs (e.g. /index.html)
     var currentPath = window.location.pathname;
     // Normalise bare domain root to /index.html
@@ -438,7 +438,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var navLinks = document.querySelectorAll("#mainNav a");
     navLinks.forEach(function(link) {
         if (link.getAttribute("href") === currentPath) {
-            link.style.display = "none";
+            link.setAttribute("aria-current", "page");
         }
     });
 
@@ -454,7 +454,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-</script>
-<!-- #EndLibraryItem --></body>
+</script><!-- #EndLibraryItem --></body>
 </html>
 

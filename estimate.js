@@ -310,9 +310,9 @@ function populatePrintHeader() {
     setText('printCompanyAddress', co.address || '');
     // Logo
     var logoEl = document.getElementById('printLogoImg');
-    if (logoEl && co.logoUrl) {
-      logoEl.src = co.logoUrl;
-      logoEl.style.display = '';
+    if (logoEl) {
+      if (co.logoUrl) logoEl.src = co.logoUrl;
+      else logoEl.removeAttribute('src');
     }
   }
 
@@ -1269,6 +1269,7 @@ function renderHistoryPreview(tier) {
 /* A status chosen in the preview: the shared save, then keep the preview's own copy in step. */
 async function updatePreviewStatus(id, selectEl) {
   var newStatus = await saveEstimateStatus(id, selectEl);
+  if (newStatus === null) { showEstimateStatusError(document.getElementById('histPrevList'), 'beforebegin'); return; }
   var row = _histPreviewRows.find(function (r) { return r.id === id; });
   if (row) row.status = newStatus;
 }

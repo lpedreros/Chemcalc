@@ -132,7 +132,7 @@
 <script src="/meta-pixel.js"></script>
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="/supabase-client.js"></script>
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
@@ -143,7 +143,7 @@
 <div class="print-header-block d-none">
   <!-- Left: logo (pro) or ChemCalc branding (free) -->
   <div class="print-header-left">
-    <img id="printLogoImg" src="logo-black.svg" alt="Company Logo" class="print-logo-img" onerror="this.style.display='none'" />
+    <img id="printLogoImg" alt="Company Logo" class="print-logo-img" onerror="this.removeAttribute('src')" />
     <div class="print-chemcalc-brand free-only-print">
       <span class="print-brand-name">ChemCalc</span>
       <span class="print-brand-sub">Marine Repair Estimator</span>
@@ -527,6 +527,7 @@
             Internal Copy
           </button>
         </div>
+        <p class="est-format-help d-print-none">Before you print or share: Summary = client totals; Internal Copy = your working copy.</p>
       </div>
       <!-- Save Estimate / Load Estimate (Pro) -->
       <div class="toolbar-group">
@@ -914,7 +915,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. Hide current page link from nav
+    // 1. Mark the current page's link in the nav (aria-current; style.css shows it as active)
     // Build the current page path to match root-relative hrefs (e.g. /index.html)
     var currentPath = window.location.pathname;
     // Normalise bare domain root to /index.html
@@ -922,7 +923,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var navLinks = document.querySelectorAll("#mainNav a");
     navLinks.forEach(function(link) {
         if (link.getAttribute("href") === currentPath) {
-            link.style.display = "none";
+            link.setAttribute("aria-current", "page");
         }
     });
 
@@ -938,8 +939,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-</script>
-<!-- #EndLibraryItem --><!-- Leftover from contact.html: pre-fills a contact form from URL params, but this page has no #repairs field, so the block below does nothing useful here (and would throw if opened with ?subject=Broken Link Report) -->
+</script><!-- #EndLibraryItem --><!-- Leftover from contact.html: pre-fills a contact form from URL params, but this page has no #repairs field, so the block below does nothing useful here (and would throw if opened with ?subject=Broken Link Report) -->
 <script>
 (function() {
   var params = new URLSearchParams(window.location.search);

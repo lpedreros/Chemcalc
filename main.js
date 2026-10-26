@@ -2,6 +2,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const productListContainer = document.getElementById("product-list-container");
     const filterButtonsContainer = document.getElementById("filter-buttons");
     const searchInput = document.getElementById("search-input");
+    const filterToggle = document.getElementById("filter-toggle");
+    const filterClear = document.getElementById("filter-clear");
+    const countStatus = document.getElementById("kits-count");
+
+    // One spelling per tag, wherever tags are read: lowercase, trimmed, one leading #
+    // removed, "gelcoat" -> "gel-coat", spaces -> "-".
+    function normalizeTag(tag) {
+        let t = String(tag).toLowerCase().trim().replace(/^#/, "").trim();
+        if (t === "gelcoat") t = "gel-coat";
+        return t.replace(/\s+/g, "-");
+    }
 
     // Mobile menu toggle: bound by Library/global-scripts.lbi (guarded by a
     // data-bound check to avoid double-binding). A second, unguarded copy
@@ -145,8 +156,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const itemsForTagExtraction = productListContainer.querySelectorAll(".content ul li");
         itemsForTagExtraction.forEach(item => {
             const tagsStr = item.getAttribute("data-tags") || "";
-            tagsStr.toLowerCase().split(",").forEach(tag => {
-                const trimmedTag = tag.trim().replace(/^#/, "");
+            tagsStr.split(",").forEach(tag => {
+                const trimmedTag = normalizeTag(tag);
                 if (trimmedTag) allTags.add(trimmedTag);
             });
         });
@@ -205,7 +216,33 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Phone filter UI: the Filters (n) label, the Clear button, and the "Showing X of N" line.
+    // All of it is a no-op on pages without these elements.
+    function updateFilterUI() {
+        if (filterToggle) filterToggle.textContent = "Filters (" + activeFilters.length + ")";
+        if (filterClear) filterClear.hidden = activeFilters.length === 0;
+    }
+    function updateCountStatus(items) {
+        if (!countStatus) return;
+        const total = items.length;
+        const shown = Array.from(items).filter(li => li.style.display !== "none").length;
+        countStatus.textContent = shown === 0 ? "No materials match. Clear search or filters." : "Showing " + shown + " of " + total + " materials";
+    }
+    if (filterToggle && filterButtonsContainer) {
+        filterToggle.addEventListener("click", function() {
+            const open = filterButtonsContainer.classList.toggle("is-open");
+            filterToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+    }
+    if (filterClear && filterButtonsContainer) {
+        filterClear.addEventListener("click", function() {
+            const showAll = filterButtonsContainer.querySelector('.filter-btn[data-filter="all"]');
+            if (showAll) showAll.click();
+        });
+    }
+
     function updateItemVisibility() {
+        updateFilterUI();
         if (!productListContainer.querySelector(".content ul li")) return; // Don't run if no items loaded
 
         const items = productListContainer.querySelectorAll(".content ul li");
@@ -213,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         items.forEach(item => {
             const tagsStr = item.getAttribute("data-tags") || "";
-            const tags = tagsStr.toLowerCase().split(",").map(t => t.trim().replace(/^#/, ""));
+            const tags = tagsStr.split(",").map(normalizeTag);
             const name = (item.querySelector("a")?.textContent || item.textContent).toLowerCase();
             const descriptionNode = item.querySelector("em");
             const description = descriptionNode ? descriptionNode.textContent.toLowerCase() : "";
@@ -236,6 +273,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 item.style.display = "none"; 
             }
         });
+
+        updateCountStatus(items);
 
         sections.forEach(button => {
             const content = button.nextElementSibling;

@@ -634,8 +634,16 @@
 
     window.setSaveStatus(statusEl, 'ok', '\u2713 Saved', 5000);
 
-    // Refresh the nav indicator name
-    if (typeof globalAuthRefresh === 'function') globalAuthRefresh();
+    // A new name: update the cached profile and publish the shared auth-change event, so the nav greeting
+    // (global-auth.js) re-renders with it. A password-only save changes no name and publishes nothing.
+    if (newName) {
+      var cachedProfile = (typeof window.getProfile === 'function') ? window.getProfile() : null;
+      if (cachedProfile && typeof cachedProfile === 'object') cachedProfile.full_name = newName;
+      window.dispatchEvent(new CustomEvent('chemcalc:authchange', { detail: {
+        user: (typeof window.getUser === 'function') ? window.getUser() : null,
+        profile: cachedProfile
+      } }));
+    }
   };
 
   // One way to show the result of a save in the account modal. kind: 'pending' | 'ok' | 'error' | 'info'; the colors

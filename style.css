@@ -1339,6 +1339,7 @@ h1 {
   .view-toggle-wrap { max-width: 100%; }
   .view-toggle-wrap .btn-view-toggle { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
 }
+.est-format-help { flex: 1 1 100%; margin: 0; font-size: 0.78rem; line-height: 1.4; color: var(--chrome-ink-600); }
 
 /* Report broken link button (next to Buy) */
 .btn-report-link {
@@ -1775,6 +1776,7 @@ td.col-actions .btn-del-row { display: inline-block; padding: 0 3px; font-size: 
     clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
   }
   .est-rail .view-toggle-wrap { width: 100%; gap: 0.25rem; padding: 0; background: transparent; border: 0; border-radius: 0; }
+  .est-rail .est-format-help { margin-top: 0.5rem; color: rgba(255, 255, 255, 0.65); }
   .est-rail .btn-view-toggle {
     flex: 1 1 auto; padding: 0.5rem 0.75rem; border-radius: 6px; white-space: nowrap;
     font-size: 0.8125rem; color: rgba(255, 255, 255, 0.55);
@@ -2249,6 +2251,8 @@ body.customer-view.fmt-itemized #customerSummary { display: none !important; }
 
   /* PRO: show logo, hide ChemCalc brand */
   body.pro-user .print-logo-img { display: block !important; }
+  /* A Pro user with no logo prints no image */
+  body.pro-user .print-logo-img:not([src]) { display: none !important; }
   body.pro-user .free-only-print { display: none !important; }
   body.pro-user .pro-only-print  { display: flex !important; }
   body.pro-user .print-chemcalc-url { display: none !important; }
@@ -3779,6 +3783,8 @@ body,
 .mp-affiliate-list li{margin-bottom:.4rem;}
 .mp-affiliate-list a{color:var(--chrome-signal-400) !important;font-size:.85rem !important;font-weight:600 !important;}
 .mp-affiliate-disclosure{font-size:.72rem;color:rgba(255,255,255,.45);display:block;line-height:1.4;}
+.mp-kits-bridge{margin:.9rem 0 0;font-size:.85rem;line-height:1.5;color:rgba(255,255,255,.7);}
+.mp-kits-bridge a{color:var(--chrome-signal-400);font-weight:600;text-decoration:underline;}
 
 /* Materials-display bucket-section headings (MEKP/ClothCalc/Awlgrip only).
    The class is emitted only by material-selection.js's
@@ -3949,6 +3955,11 @@ body,
 .site-header-dark .nav a:focus-visible {
   outline: 2px solid var(--chrome-signal-400);
   outline-offset: 2px;
+}
+.site-header-dark .nav a[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: inset 0 -2px 0 var(--chrome-signal-400);
 }
 .site-header-dark .nav-auth-indicator {
   margin-left: auto;
@@ -5340,6 +5351,7 @@ body,
 }
 .home-pro-checklist li{display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:rgba(255,255,255,.85);}
 .home-pro-checklist svg{flex:none;width:1.1rem;height:1.1rem;color:var(--chrome-signal-400);margin-top:.1rem;}
+.home-pro-price{margin:1.25rem 0 0;}
 
 /* ============================================================
    CALCULATORS INDEX PAGE-SPECIFIC STYLES (calculators.html)
@@ -5832,7 +5844,9 @@ h2.trello-setup-title{
 
 .kits-filter-buttons{text-align:center;}
 
-.filter-btn{
+.filter-btn,
+.kits-filter-toggle,
+.kits-filter-clear{
   background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);
   border:1px solid rgba(255,255,255,.12);padding:.5em 1em;margin:.25em;
   cursor:pointer;font-size:.85rem;font-weight:600;border-radius:999px;
@@ -5840,9 +5854,15 @@ h2.trello-setup-title{
   transition:background-color .15s var(--chrome-ease-smooth),color .15s var(--chrome-ease-smooth),border-color .15s var(--chrome-ease-smooth);
 }
 .filter-btn:hover,
-.filter-btn.active{
+.filter-btn.active,
+.kits-filter-toggle:hover,
+.kits-filter-clear:hover,
+.kits-filter-toggle[aria-expanded="true"]{
   background:var(--chrome-signal-400);color:var(--chrome-ink-950);border-color:var(--chrome-signal-400);
 }
+.kits-filter-toggle,
+.kits-filter-clear{display:none;}
+.kits-count{margin:.6rem 0 0;font-size:.82rem;color:rgba(255,255,255,.75);text-align:center;}
 
 /* ---------- Product list panel ---------- */
 .kits-product-panel{
@@ -5892,6 +5912,11 @@ h2.trello-setup-title{
 @media (max-width:575.98px){
   .kits-custom-title{font-size:1.2rem;}
   .kits-toolbar{padding:.85rem 1rem;}
+  .kits-filter-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:.25rem;}
+  .kits-filter-toggle,
+  .kits-filter-clear:not([hidden]){display:inline-block;min-height:44px;}
+  .kits-filter-buttons:not(.is-open){display:none;}
+  .kits-toolbar:has(.kits-filter-buttons.is-open){position:static;}
   /* The first custom-services card renders high enough in the initial
      viewport (scroll 0, 375px) that its right edge would sit under the fixed
      floating cluster's column (#chemcalc-chatbot/.fab-donate/.help-float-btn,
@@ -6532,3 +6557,4 @@ h2.trello-setup-title{
   border:solid var(--chrome-signal-400);border-width:0 2px 2px 0;transform:rotate(40deg);
 }
 .contact-check-input:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
+.form-error{margin:0;font-size:.85rem;font-weight:600;color:#b42318;}

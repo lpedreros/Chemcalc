@@ -295,11 +295,38 @@
     msg.style.display = chk.checked ? 'flex' : 'none';
   }
 
+  // ---------- 5b. Screen-reader announcement of the amount ----------
+  // The status pill is a live region, but the cc and drop amounts are not. #mekpAnnounce is a visually
+  // hidden polite live region: once inputs have settled (600 ms), it is given "Add <cc> cc of MEKP
+  // catalyst, about <drops> drops." read from the rendered hero values, and only when that text changed.
+  // The text at page load is the baseline, so nothing is announced on load.
+  var announceTimer = null;
+  var lastAnnounced = null;
+
+  function announcementText() {
+    var cc = textOf('mekpHeroValue');
+    var drops = textOf('mekpHeroDrops');
+    if (!/^[\d.]+$/.test(cc) || !/^[\d.]+$/.test(drops)) return null;
+    return 'Add ' + cc + ' cc of MEKP catalyst, about ' + drops + ' drops.';
+  }
+
+  function scheduleAnnouncement() {
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(function () {
+      var region = document.getElementById('mekpAnnounce');
+      var text = announcementText();
+      if (!region || text === null || text === lastAnnounced) return;
+      lastAnnounced = text;
+      region.textContent = text;
+    }, 600);
+  }
+
   function renderAll() {
     updateTempAdvisory();
     updateResultsPanel();
     updateSliderGradient();
     updateDuratecLockedMessage();
+    scheduleAnnouncement();
   }
 
   // ---------- 6. Slider auto-sync to recommended % ----------
@@ -399,5 +426,7 @@
 
     applyDefaults();
     renderAll();
+    clearTimeout(announceTimer);          // the load-time render is the baseline, not an announcement
+    lastAnnounced = announcementText();
   });
 })();

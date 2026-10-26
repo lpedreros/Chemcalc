@@ -148,7 +148,7 @@
 <script src="/meta-pixel.js"></script>
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="/supabase-client.js"></script>
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
@@ -285,13 +285,13 @@
       <span class="mp-card-icon mp-card-icon--spaced" aria-hidden="true"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-message-circle"/></svg></span>
       <h3 class="mp-card-title">Custom Link List</h3>
       <p class="mp-card-text">For a modest fee (around $50), I will create a personalized list of affiliate links tailored to your specific repair project needs.</p>
-      <a href="contact.html?subject=Custom%20Link%20List%20Request" class="mp-btn mp-btn--primary mp-btn--stick">Request Custom Link List</a>
+      <a href="contact.html?subject=Custom%20Link%20List%20Request&amp;source=kits-custom-link-list" class="mp-btn mp-btn--primary mp-btn--stick">Request Custom Link List</a>
     </div>
     <div class="mp-card mp-card--stack">
       <span class="mp-card-icon mp-card-icon--spaced" aria-hidden="true"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-beaker"/></svg></span>
       <h3 class="mp-card-title">Assembled Kit Service</h3>
       <p class="mp-card-text">For a higher fee (typically $100&ndash;$150 plus materials &amp; shipping), I can personally source and assemble a complete repair kit specifically for you.</p>
-      <a href="contact.html?subject=Assembled%20Kit%20Service%20Request" class="mp-btn mp-btn--primary mp-btn--stick">Request Assembled Kit</a>
+      <a href="contact.html?subject=Assembled%20Kit%20Service%20Request&amp;source=kits-assembled" class="mp-btn mp-btn--primary mp-btn--stick">Request Assembled Kit</a>
     </div>
   </div>
   <p class="kits-custom-footnote">Alternatively, feel free to browse the recommended materials below and purchase directly using the provided affiliate links. This supports ChemCalc at no extra cost to you.</p>
@@ -302,10 +302,15 @@
   <div id="search-container" class="kits-search-container">
     <input type="text" id="search-input" placeholder="Search recommended materials by name, description, or tag...">
   </div>
+  <div class="kits-filter-bar">
+    <button type="button" id="filter-toggle" class="kits-filter-toggle" aria-expanded="false" aria-controls="filter-buttons">Filters (0)</button>
+    <button type="button" id="filter-clear" class="kits-filter-clear" hidden>Clear filters</button>
+  </div>
   <div id="filter-buttons" class="kits-filter-buttons">
     <button class="filter-btn btn btn-outline-secondary active" data-filter="all">Show All</button>
     <!-- Filter buttons will be dynamically populated by JavaScript -->
   </div>
+  <p id="kits-count" class="kits-count" role="status" aria-live="polite"></p>
 </div>
 
 <!-- Repair Kits List Section -->
@@ -458,7 +463,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. Hide current page link from nav
+    // 1. Mark the current page's link in the nav (aria-current; style.css shows it as active)
     // Build the current page path to match root-relative hrefs (e.g. /index.html)
     var currentPath = window.location.pathname;
     // Normalise bare domain root to /index.html
@@ -466,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var navLinks = document.querySelectorAll("#mainNav a");
     navLinks.forEach(function(link) {
         if (link.getAttribute("href") === currentPath) {
-            link.style.display = "none";
+            link.setAttribute("aria-current", "page");
         }
     });
 
@@ -482,7 +487,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-</script>
-<!-- #EndLibraryItem --></body>
+</script><!-- #EndLibraryItem --></body>
 </html>
 

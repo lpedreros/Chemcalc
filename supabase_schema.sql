@@ -207,10 +207,11 @@ create table if not exists public.affiliate_materials (
   name        text not null,
   url         text,
   section     text not null,      -- which materials-library section this belongs in
-  tags        text[] default '{}',
-  is_favorite boolean default false,
-  created_at  timestamptz default now(),
-  updated_at  timestamptz default now()
+  tags        text[] not null default '{}',
+  is_favorite boolean not null default false,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  grit        integer             -- abrasive grit number; null when not applicable
 );
 
 alter table public.affiliate_materials enable row level security;

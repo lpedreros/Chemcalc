@@ -92,7 +92,7 @@
   <script async custom-element="amp-auto-ads"
         src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
 </script>  -->
-  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@06c7a5e134f116402699f03cda5819e10a0e5787/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
 	<script src="affiliate-click-tracker.js"></script>
 <script src="/global-account-modal.js"></script>
 <!-- #BeginLibraryItem "/Library/head-common.lbi" -->
@@ -181,7 +181,7 @@
 <script src="/meta-pixel.js"></script>
 
 <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="/supabase-client.js"></script>
 <script src="/global-auth.js"></script>
 <!-- #EndLibraryItem -->
@@ -449,6 +449,7 @@
             <p class="mp-result-label">Add this much MEKP catalyst</p>
             <p class="mekp-result-hero"><span id="mekpHeroValue">&mdash;</span><span class="mekp-result-hero-unit">cc</span></p>
             <p class="mekp-result-sub">&asymp; <span id="mekpHeroDrops">&mdash;</span> drops</p>
+            <p id="mekpAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></p>
           </div>
 
           <div class="mp-result-compare">
@@ -479,6 +480,8 @@
             <ul id="affiliateLinksList" class="mp-affiliate-list"></ul>
             <span class="mp-affiliate-disclosure affiliate-disclosure-inline">(Disclosure: Contains affiliate links. We may earn a commission at no extra cost to you.)</span>
           </div>
+
+          <p class="mp-kits-bridge d-print-none">Need a full project list? <a href="/kits.html">Browse Kits &amp; Supplies</a> or <a href="/contact.html?subject=Custom%20Link%20List%20Request&amp;source=mekp-calc">request a custom link list</a>.</p>
 
           <div class="mp-print-cta d-print-none">
             <button id="printButton" class="mp-print-btn">Print Results</button>
@@ -840,7 +843,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    // 1. Hide current page link from nav
+    // 1. Mark the current page's link in the nav (aria-current; style.css shows it as active)
     // Build the current page path to match root-relative hrefs (e.g. /index.html)
     var currentPath = window.location.pathname;
     // Normalise bare domain root to /index.html
@@ -848,7 +851,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var navLinks = document.querySelectorAll("#mainNav a");
     navLinks.forEach(function(link) {
         if (link.getAttribute("href") === currentPath) {
-            link.style.display = "none";
+            link.setAttribute("aria-current", "page");
         }
     });
 
@@ -864,6 +867,5 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
-</script>
-<!-- #EndLibraryItem --></body>
+</script><!-- #EndLibraryItem --></body>
 </html>
