@@ -1,0 +1,86 @@
+[
+ {
+  "label": "mekp default",
+  "page": "mekpcalc.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "MEKP Catalyst",
+   "resultsHtml": "<p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Resin/Gelcoat Volume:</strong> 32 oz</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Ambient Temperature:</strong> 72°F</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>MEKP Method:</strong> Custom percentage</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Recommended MEKP % (based on 72°F): 2.0%</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Using 2.00% (slider)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">MEKP Volume: 18.9 cc (mL)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">MEKP Drops: 379 drops</p><p style=\"margin-bottom: 10px; font-size: 16px;\">65–75°F — the resin behaves exactly as promised, which is rarer than you'd think.</p>",
+   "sourceUrl": "http://127.0.0.1:63044/mekpcalc.html",
+   "calculatorId": "mekp",
+   "marketingOptIn": true
+  }
+ },
+ {
+  "label": "mekp cold (advice shown)",
+  "page": "mekpcalc.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "MEKP Catalyst",
+   "resultsHtml": "<p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Resin/Gelcoat Volume:</strong> 128 oz</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Ambient Temperature:</strong> 45°F</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>MEKP Method:</strong> Custom percentage</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Recommended MEKP % (based on 45°F): 3.0% (Caution!)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Using 3.00% (slider)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">MEKP Volume: 113.6 cc (mL)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">MEKP Drops: 2271 drops</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Below 60°F — the cure doesn't slow, it stops; warm the shop or walk away.</p>",
+   "sourceUrl": "http://127.0.0.1:63044/mekpcalc.html",
+   "calculatorId": "mekp",
+   "marketingOptIn": true
+  }
+ },
+ {
+  "label": "mekp hot",
+  "page": "mekpcalc.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "MEKP Catalyst",
+   "resultsHtml": "<p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Resin/Gelcoat Volume:</strong> 16 oz</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Ambient Temperature:</strong> 95°F</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>MEKP Method:</strong> Custom percentage</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Recommended MEKP % (based on 95°F): 1.0%</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Using 1.00% (slider)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">MEKP Volume: 4.7 cc (mL)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">MEKP Drops: 95 drops</p><p style=\"margin-bottom: 10px; font-size: 16px;\">95°F and above — the catalyzed resin can kick in the can before you've used a drop; don't mix here.</p>",
+   "sourceUrl": "http://127.0.0.1:63044/mekpcalc.html",
+   "calculatorId": "mekp",
+   "marketingOptIn": true
+  }
+ },
+ {
+  "label": "awlgrip area",
+  "page": "awlgrip.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "Awlgrip Paint Mix",
+   "resultsHtml": "<p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Product Line:</strong> Awlcraft 2000/3000 Topcoat</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Application Method:</strong> Spray</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Coating Amount:</strong> 250 ft²</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Awlcraft 2000/3000 Base: 0.59 Gallons</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Awlcat #2 (G3010) Converter: 0.30 Gallons</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Reducer (T0001/T0002/T0003/T0005, 25%): 0.15 Gallons</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Accelerator (Pro-Cure X-98): 6.55 mL</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Factory Product Coverage Rate: 725 ft²/gal • Recommended coats: 3</p>",
+   "sourceUrl": "http://127.0.0.1:63044/awlgrip.html",
+   "calculatorId": "awlgrip",
+   "marketingOptIn": true
+  }
+ },
+ {
+  "label": "alexseal area",
+  "page": "alexseal.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "Alexseal Paint Mix",
+   "resultsHtml": "<p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Product:</strong> Premium Topcoat 501</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Application Method:</strong> Spray</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Coating Amount:</strong> 250 ft²</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Reducer:</strong> 34%</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Accelerator:</strong> Not added</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Premium Topcoat 501 Base: 0.732 gal</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Topcoat Converter Spray (C5051): 0.732 gal</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Reducer: 0.249 gal</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Factory Product Coverage Rate: 146 ft²/gal • Recommended coats: 2-3.</p>",
+   "sourceUrl": "http://127.0.0.1:63044/alexseal.html",
+   "calculatorId": "alexseal",
+   "marketingOptIn": true
+  }
+ },
+ {
+  "label": "epifanes",
+  "page": "epifanespoly.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "Epifanes Polyurethane Mix",
+   "resultsHtml": "<p style=\"margin-bottom: 10px; font-size: 16px;\">Component A (clear): 21.3 mL (cc)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Component B (hardener): 10.7 mL (cc)</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Thinning: Thin 0-15% depending on coat and substrate - see the TDS. Use Epifanes Poly-urethane Brush Thinner or Epifanes PU Slow Reducer.</p>",
+   "sourceUrl": "http://127.0.0.1:63044/epifanespoly.html",
+   "calculatorId": "epifanes",
+   "marketingOptIn": true
+  }
+ },
+ {
+  "label": "clothcalc",
+  "page": "clothcalc.html",
+  "body": {
+   "email": "tester@example.com",
+   "calculatorName": "Fiberglass Cloth Saturation",
+   "resultsHtml": "<p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Dimensions:</strong> 20 x 10 Centimeters</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Resin Type:</strong> Polyester</p><p style=\"margin-bottom: 6px; font-size: 14px; color: #555555;\"><strong>Temperature:</strong> 72°C</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Total resin needed: 0.012 L</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Resin Weight: 0.014 kg</p><p style=\"margin-bottom: 10px; font-size: 16px;\">Estimated Cost: $0.00</p>",
+   "sourceUrl": "http://127.0.0.1:63044/clothcalc.html",
+   "calculatorId": "clothcalc",
+   "marketingOptIn": true
+  }
+ }
+]
