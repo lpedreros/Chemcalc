@@ -11,7 +11,10 @@
      R2 resultsHtml is run through an allowlist sanitizer built from what the real calculators send (only <p> and
         <strong> with a few style properties; links only to ChemCalc hosts)
      R3 sourceUrl is only used when it is a ChemCalc address
-     R4 limits per rolling 24 h, checked BEFORE anything is sent: 3 per recipient, 10 per IP, 50 overall -> 429.
+     R4 limits per rolling 24 h, enforced BEFORE anything is sent: 3 per recipient, 10 per IP, 25 overall -> 429.
+        Each request writes its own log row FIRST and counts AFTER (the count includes its own row), and deletes the row
+        again if it is refused or the email fails. Counting first and writing later let a burst of parallel requests all
+        read the same low count and all pass; with write-first, at most `cap` requests can ever pass, however they interleave.
         Only SHA-256 hashes are stored (table public.email_send_log). Any database failure fails closed (503, nothing sent).
      R5 CORS: only the three ChemCalc origins are echoed (never *)
      R6 generic error bodies; logs hold the first 8 characters of the recipient hash, never the address or the html
@@ -44,7 +47,7 @@ export const CALCULATOR_IDS = ['alexseal', 'awlgrip', 'clothcalc', 'epifanes', '
 // Largest real resultsHtml seen (Alexseal, 910 characters) times three, rounded.
 export const MAX_RESULTS_HTML = 3000;
 const MAX_BODY_CHARS = MAX_RESULTS_HTML + 3000;
-export const LIMITS = { recipient: 3, ip: 10, global: 50 };
+export const LIMITS = { recipient: 3, ip: 10, global: 25 };
 const WINDOW_MS = 24 * 60 * 60 * 1000;
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 // Brevo list the confirmed contacts join. UNVERIFIED: Leo must confirm that list 2 is the right list in the Brevo dashboard.
@@ -334,10 +337,10 @@ async function countSince(d: Deps, filter: string, sinceIso: string): Promise<nu
   return parseInt(m[1], 10);
 }
 
-async function recordSend(d: Deps, recipientHash: string, ipHash: string): Promise<void> {
+async function recordSend(d: Deps, id: string, recipientHash: string, ipHash: string): Promise<void> {
   let res: Response;
   try {
-    res = await rest(d, 'email_send_log', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ recipient_hash: recipientHash, ip_hash: ipHash, kind: 'results' }) });
+    res = await rest(d, 'email_send_log', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id, recipient_hash: recipientHash, ip_hash: ipHash, kind: 'results' }) });
   } catch (e) {
     console.error('send-results: log write failed:', (e as Error).name);
     throw UNAVAILABLE();
@@ -345,6 +348,16 @@ async function recordSend(d: Deps, recipientHash: string, ipHash: string): Promi
   if (!res.ok) {
     console.error('send-results: log write status', res.status);
     throw UNAVAILABLE();
+  }
+}
+
+// Best effort: give this request's slot back (refused, or the email failed). If the delete fails the row stays and costs one slot, which fails safe.
+async function removeRow(d: Deps, id: string): Promise<void> {
+  try {
+    const res = await rest(d, `email_send_log?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });
+    if (!res.ok) console.warn('send-results: could not remove log row, status', res.status);
+  } catch (e) {
+    console.warn('send-results: could not remove log row:', (e as Error).name);
   }
 }
 
@@ -441,20 +454,29 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
 
     const now = (d.now ?? Date.now)();
     const sinceIso = new Date(now - WINDOW_MS).toISOString();
-    const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
+    // Cloudflare's header cannot be set by the caller; x-forwarded-for can, so it is only the fallback.
+    const ip = (req.headers.get('cf-connecting-ip') ?? '').trim()
+      || (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim()
+      || 'unknown';
     const recipientHash = await sha256Hex(v.email.toLowerCase());
     const ipHash = await sha256Hex(ip);
 
-    // Limits first: nothing is sent unless all three are under their cap.
-    if ((await countSince(d, `recipient_hash=eq.${recipientHash}&`, sinceIso)) >= LIMITS.recipient) { console.warn('send-results: recipient limit', recipientHash.slice(0, 8)); throw TOO_MANY(); }
-    if ((await countSince(d, `ip_hash=eq.${ipHash}&`, sinceIso)) >= LIMITS.ip) { console.warn('send-results: ip limit', ipHash.slice(0, 8)); throw TOO_MANY(); }
-    if ((await countSince(d, '', sinceIso)) >= LIMITS.global) { console.warn('send-results: global limit'); throw TOO_MANY(); }
-    await recordSend(d, recipientHash, ipHash);
+    // Write first, count second: this request's own row is part of every count below.
+    const id = crypto.randomUUID();
+    await recordSend(d, id, recipientHash, ipHash);
+    try {
+      if ((await countSince(d, `recipient_hash=eq.${recipientHash}&`, sinceIso)) > LIMITS.recipient) { console.warn('send-results: recipient limit', recipientHash.slice(0, 8)); throw TOO_MANY(); }
+      if ((await countSince(d, `ip_hash=eq.${ipHash}&`, sinceIso)) > LIMITS.ip) { console.warn('send-results: ip limit', ipHash.slice(0, 8)); throw TOO_MANY(); }
+      if ((await countSince(d, '', sinceIso)) > LIMITS.global) { console.warn('send-results: global limit'); throw TOO_MANY(); }
 
-    const tip = await getRandomTip(d, v.calculatorId);
-    const html = buildEmailHtml(v.calculatorName, sanitizeResultsHtml(v.resultsHtml), safeSourceUrl(v.sourceUrl), tip);
-    const subject = `Your ${v.calculatorName.replace(/[\r\n]+/g, ' ')} Results from ChemCalc`;
-    await sendWithResend(d, v.email, subject, html);
+      const tip = await getRandomTip(d, v.calculatorId);
+      const html = buildEmailHtml(v.calculatorName, sanitizeResultsHtml(v.resultsHtml), safeSourceUrl(v.sourceUrl), tip);
+      const subject = `Your ${v.calculatorName.replace(/[\r\n]+/g, ' ')} Results from ChemCalc`;
+      await sendWithResend(d, v.email, subject, html);
+    } catch (e) {
+      await removeRow(d, id);
+      throw e;
+    }
 
     if (v.marketingOptIn) await startDoubleOptIn(d, v.email, v.calculatorName);
     await pruneOldRows(d, now);

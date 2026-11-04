@@ -21,3 +21,7 @@ Table for the `send-results` function's daily limits. Hashes only (SHA-256 of th
 Not verified: behaviour on the real Supabase database (real default privileges, PostgREST). After applying, check with `select grantee, privilege_type from information_schema.role_table_grants where table_name = 'email_send_log';` that only `service_role` appears, with SELECT, INSERT and DELETE.
 
 Labels: Verified = I ran it (PGlite replica). Everything about the live database is Not verified.
+
+## How the function uses the table (updated with the burst fix)
+
+Limits per rolling 24 h: 3 per recipient, 10 per IP, **25 overall** (lowered from 50). Each request inserts its own row first (with a client-generated `id`), then counts, and the count includes its own row; a request passes only when each count is within its cap. A refused request, or one whose email fails, deletes its own row (`DELETE ... ?id=eq.<id>`, best effort; a failed delete leaves one row, which fails safe). This needs only select, insert and delete, so the grants above are unchanged. The migration file's header comment still says "50 overall"; it was not edited (the table does not enforce the caps, the function does).

@@ -3,7 +3,7 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { handle, sanitizeResultsHtml, safeSourceUrl, validate, ALLOWED_ORIGINS, CALCULATOR_IDS, LIMITS, MAX_RESULTS_HTML, BREVO_LIST_ID } from '../../supabase/functions/send-results/handler.ts';
-import { createWorld, ENV, NOW, HOUR, RESEND_KEY, BREVO_KEY, SERVICE_KEY, sha256Hex, resendCalls, brevoCalls, logWrites } from './send_results_fakes.mjs';
+import { createWorld, ENV, NOW, HOUR, RESEND_KEY, BREVO_KEY, SERVICE_KEY, sha256Hex, resendCalls, brevoCalls, logWrites, ownDeletes } from './send_results_fakes.mjs';
 
 const REAL = JSON.parse(readFileSync(new URL('./send_results_real_payloads.json', import.meta.url), 'utf8'));   // 7 bodies captured from the live calculators
 const URL_FN = 'https://proj.supabase.co/functions/v1/send-results';
@@ -246,7 +246,8 @@ test('limits: the 4th email to one recipient inside 24 h gets 429 and nothing is
   assert.equal(r.status, 429);
   assert.deepEqual(await r.json(), { error: 'Too many requests' });
   assert.equal(resendCalls(w).length, 3);
-  assert.equal(logWrites(w).length, 3, 'a refused request is not logged as a send');
+  assert.equal(w.rows.length, 3, 'a refused request leaves no row behind');
+  assert.equal(ownDeletes(w).length, 1, 'it gave its own slot back');
 });
 test('limits: the recipient limit ignores letter case', async () => {
   for (const e of ['a@example.com', 'A@Example.com', 'a@EXAMPLE.COM']) assert.equal((await call(goodBody({ email: e }), { ip: '192.0.2.1' })).status, 200);
@@ -265,7 +266,7 @@ test('limits: 10 per IP, different recipients', async () => {
   assert.equal(r.status, 429);
   assert.equal((await call(goodBody({ email: 'another@example.com' }), { ip: '198.51.100.1' })).status, 200, 'a different IP is unaffected');
 });
-test('limits: 50 per day overall', async () => {
+test('limits: 25 per day overall', async () => {
   w.seed('other', 'otherip', HOUR, LIMITS.global - 1);
   assert.equal((await call(goodBody())).status, 200);
   assert.equal((await call(goodBody({ email: 'next@example.com' }), { ip: '198.51.100.2' })).status, 429);
@@ -280,6 +281,7 @@ test('limits: the IP is the first x-forwarded-for value; "unknown" when there is
 test('limits: the log holds only hashes, never the address or the IP', async () => {
   await call(goodBody());
   assert.equal(w.rows.length, 1);
+  assert.match(w.rows[0].id, /^[0-9a-f-]{36}$/);
   assert.equal(w.rows[0].recipient_hash, await sha256Hex('tester@example.com'));
   assert.match(w.rows[0].recipient_hash, /^[0-9a-f]{64}$/);
   assert.match(w.rows[0].ip_hash, /^[0-9a-f]{64}$/);
@@ -287,13 +289,13 @@ test('limits: the log holds only hashes, never the address or the IP', async () 
   const wire = JSON.stringify(logWrites(w).map((c) => c.body));
   assert.ok(!/tester|example\.com|203\.0\.113/i.test(wire));
 });
-test('limits: order is count, then insert, then send (checked BEFORE Resend)', async () => {
+test('limits: order is insert, then count, then send (own row is counted; checked BEFORE Resend)', async () => {
   await call(goodBody());
   const idx = (pred) => w.calls.findIndex(pred);
   const firstCount = idx((c) => c.method === 'GET' && c.url.includes('email_send_log'));
   const insert = idx((c) => c.method === 'POST' && c.url.includes('email_send_log'));
   const send = idx((c) => c.url === 'https://api.resend.com/emails');
-  assert.ok(firstCount >= 0 && firstCount < insert && insert < send, [firstCount, insert, send].join(','));
+  assert.ok(insert >= 0 && insert < firstCount && firstCount < send, [insert, firstCount, send].join(','));
   assert.equal(w.calls.filter((c) => c.method === 'GET' && c.url.includes('email_send_log')).length, 3, 'recipient, ip and global counts');
 });
 test('limits: a rejected request makes no Resend or Brevo call at all', async () => {
@@ -456,4 +458,102 @@ test('Brevo: a failure (error status or network) only warns; the response is sti
     assert.deepEqual(await r.json(), { success: true, message: 'Email sent successfully' });
     assert.ok(!logs.join('\n').includes(EMAIL));
   }
+});
+
+/* ---------- bursts: parallel requests must not get past the daily limits ---------- */
+// The fake yields 1-5 ms (with jitter) on every request, so the parallel requests really interleave.
+const burst = (n, make) => Promise.all(Array.from({ length: n }, (_, i) => call(...make(i))));
+const summary = (rs) => `${resendCalls(w).length} emails sent, ${rs.filter((r) => r.status === 200).length} x 200, ${rs.filter((r) => r.status === 429).length} x 429, ${w.rows.length} log rows left`;
+
+test('burst: 30 parallel requests for one recipient send at most 3 emails, and the log holds exactly the sent ones', async () => {
+  w.latency = true;
+  const rs = await burst(30, (i) => [goodBody(), { ip: `192.0.2.${i + 1}` }]);
+  console.log('burst same recipient:', summary(rs));
+  assert.ok(resendCalls(w).length <= LIMITS.recipient, `${resendCalls(w).length} emails sent, the cap is ${LIMITS.recipient}`);
+  assert.equal(w.rows.length, resendCalls(w).length, 'no orphaned rows');
+});
+test('burst: 80 parallel requests to different recipients and IPs send at most 25 emails (the overall cap)', async () => {
+  w.latency = true;
+  const rs = await burst(80, (i) => [goodBody({ email: `user${i}@example.com` }), { ip: `198.51.100.${i + 1}` }]);
+  console.log('burst different recipients:', summary(rs));
+  assert.ok(resendCalls(w).length <= LIMITS.global, `${resendCalls(w).length} emails sent, the cap is ${LIMITS.global}`);
+  assert.equal(w.rows.length, resendCalls(w).length);
+});
+test('burst: 30 parallel requests from one IP to different recipients send at most 10 emails', async () => {
+  w.latency = true;
+  const rs = await burst(30, (i) => [goodBody({ email: `user${i}@example.com` }), { ip: '203.0.113.9' }]);
+  console.log('burst same IP:', summary(rs));
+  assert.ok(resendCalls(w).length <= LIMITS.ip, `${resendCalls(w).length} emails sent, the cap is ${LIMITS.ip}`);
+  assert.equal(w.rows.length, resendCalls(w).length);
+});
+test('burst: a calm trickle under the caps all succeeds (the fix does not over-refuse sequential callers)', async () => {
+  w.latency = true;
+  for (let i = 0; i < 3; i++) assert.equal((await call(goodBody(), { ip: `192.0.2.${i + 1}` })).status, 200);
+  assert.equal(w.rows.length, 3);
+});
+
+/* ---------- giving the slot back ---------- */
+test('slot: a Resend failure is a 502, removes its own row, and the next request for that recipient still succeeds', async () => {
+  w.fail.resendStatus = 500;
+  const r = await call(goodBody());
+  assert.equal(r.status, 502);
+  assert.equal(w.rows.length, 0);
+  assert.equal(ownDeletes(w).length, 1);
+  w.fail.resendStatus = 0;
+  for (let i = 0; i < LIMITS.recipient; i++) assert.equal((await call(goodBody(), { ip: `192.0.2.${i + 1}` })).status, 200, 'all three slots are still free');
+});
+test('slot: a count failure is a 503, nothing is sent, and the row is removed', async () => {
+  for (const k of ['countStatus', 'countThrows', 'noContentRange']) {
+    w = createWorld(); w.fail[k] = k === 'countStatus' ? 500 : true;
+    const r = await call(goodBody({ marketingOptIn: true }));
+    assert.equal(r.status, 503, k);
+    assert.equal(resendCalls(w).length, 0, k);
+    assert.equal(brevoCalls(w).length, 0, k);
+    assert.equal(w.rows.length, 0, k);
+  }
+});
+test('slot: if the delete also fails, at most one row is left behind (it costs one slot), and nothing leaks into the logs', async () => {
+  for (const f of [{ deleteOwnStatus: 500 }, { deleteOwnThrows: true }]) {
+    w = createWorld(); logs.length = 0; Object.assign(w.fail, f, { countStatus: 500 });
+    const r = await call(goodBody());
+    assert.equal(r.status, 503);
+    assert.equal(resendCalls(w).length, 0);
+    assert.ok(w.rows.length <= 1, JSON.stringify(f));
+    assert.ok(!logs.join(' ').includes('tester@'));
+  }
+});
+test('slot: an insert failure is a 503, nothing is sent, and no count is attempted', async () => {
+  for (const k of ['insertStatus', 'insertThrows']) {
+    w = createWorld(); w.fail[k] = k === 'insertStatus' ? 500 : true;
+    const r = await call(goodBody());
+    assert.equal(r.status, 503, k);
+    assert.equal(resendCalls(w).length, 0);
+    assert.equal(w.rows.length, 0);
+    assert.equal(w.calls.filter((c) => c.method === 'GET').length, 0, k);
+  }
+});
+
+/* ---------- client IP ---------- */
+test('ip: cf-connecting-ip wins over any x-forwarded-for; without it the first x-forwarded-for value; with neither "unknown"', async () => {
+  await call(goodBody({ email: 'a@example.com' }), { ip: '6.6.6.6', headers: { 'cf-connecting-ip': ' 203.0.113.77 ' } });
+  await call(goodBody({ email: 'b@example.com' }), { ip: '7.7.7.7', headers: { 'cf-connecting-ip': '203.0.113.77' } });
+  await call(goodBody({ email: 'c@example.com' }), { ip: '203.0.113.50, 10.0.0.1' });
+  await call(goodBody({ email: 'd@example.com' }), { ip: null });
+  await call(goodBody({ email: 'e@example.com' }), { ip: '8.8.8.8', headers: { 'cf-connecting-ip': '   ' } });
+  const h = w.rows.map((r) => r.ip_hash);
+  assert.equal(h[0], await sha256Hex('203.0.113.77'));
+  assert.equal(h[1], h[0], 'a different spoofed x-forwarded-for does not change the IP used');
+  assert.equal(h[2], await sha256Hex('203.0.113.50'));
+  assert.equal(h[3], await sha256Hex('unknown'));
+  assert.equal(h[4], await sha256Hex('8.8.8.8'), 'a blank cf-connecting-ip falls back');
+});
+test('ip: spoofing x-forwarded-for cannot dodge the per-IP cap when cf-connecting-ip is present', async () => {
+  for (let i = 0; i < LIMITS.ip; i++) assert.equal((await call(goodBody({ email: `u${i}@example.com` }), { ip: `9.9.9.${i}`, headers: { 'cf-connecting-ip': '203.0.113.88' } })).status, 200);
+  assert.equal((await call(goodBody({ email: 'late@example.com' }), { ip: '1.2.3.4', headers: { 'cf-connecting-ip': '203.0.113.88' } })).status, 429);
+});
+test('ip: the raw IP is never logged', async () => {
+  w.seed(await sha256Hex('tester@example.com'), 'x', HOUR, 3);
+  await call(goodBody(), { ip: '6.6.6.6', headers: { 'cf-connecting-ip': '203.0.113.99' } });
+  assert.ok(logs.length > 0);
+  assert.ok(!/203\.0\.113\.99|6\.6\.6\.6/.test(logs.join(' ')));
 });

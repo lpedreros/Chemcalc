@@ -20,11 +20,13 @@ export function createWorld() {
     rows: [],                 // email_send_log rows: { id, created_at(ISO), recipient_hash, ip_hash, kind }
     calls: [],                // { method, url, headers, body }
     tip: 'Mix in small batches.',
-    fail: { countStatus: 0, countThrows: false, noContentRange: false, insertStatus: 0, insertThrows: false, pruneThrows: false, tipStatus: 0, resendStatus: 0, resendThrows: false, brevoStatus: 201, brevoThrows: false },
+    latency: false,           // true: every request yields 1-5 ms (with jitter) first, so parallel requests really interleave
+    fail: { countStatus: 0, countThrows: false, noContentRange: false, insertStatus: 0, insertThrows: false, pruneThrows: false, deleteOwnStatus: 0, deleteOwnThrows: false, tipStatus: 0, resendStatus: 0, resendThrows: false, brevoStatus: 201, brevoThrows: false },
     seed(recipientHash, ipHash, ageMs, n = 1) {
       for (let i = 0; i < n; i++) w.rows.push({ id: 'seed' + w.rows.length, created_at: new Date(NOW - ageMs).toISOString(), recipient_hash: recipientHash, ip_hash: ipHash, kind: 'results' });
     },
     async fetch(input, init = {}) {
+      if (w.latency) await new Promise((r) => setTimeout(r, 1 + Math.random() * 4));
       const url = String(input);
       const method = init.method || 'GET';
       const headers = Object.fromEntries(Object.entries(init.headers || {}).map(([k, v]) => [k.toLowerCase(), v]));
@@ -51,6 +53,13 @@ export function createWorld() {
           return new Response(null, { status: 201 });
         }
         if (method === 'DELETE') {
+          const own = u.searchParams.get('id');
+          if (own) {   // a request giving its slot back: DELETE ?id=eq.<uuid>
+            if (w.fail.deleteOwnThrows) throw new TypeError('network down');
+            if (w.fail.deleteOwnStatus) return json(w.fail.deleteOwnStatus, { message: 'boom' });
+            w.rows = w.rows.filter((r) => r.id !== own.replace(/^eq\./, ''));
+            return new Response(null, { status: 204 });
+          }
           if (w.fail.pruneThrows) throw new TypeError('network down');
           const before = u.searchParams.get('created_at').replace(/^lt\./, '');
           w.rows = w.rows.filter((r) => r.created_at >= before);
@@ -79,4 +88,5 @@ export function createWorld() {
 
 export const resendCalls = (w) => w.calls.filter((c) => c.url === 'https://api.resend.com/emails');
 export const brevoCalls = (w) => w.calls.filter((c) => c.url.startsWith('https://api.brevo.com'));
+export const ownDeletes = (w) => w.calls.filter((c) => c.method === 'DELETE' && c.url.includes('id=eq.'));
 export const logWrites = (w) => w.calls.filter((c) => c.url.includes('/rest/v1/email_send_log') && c.method === 'POST');
