@@ -21,7 +21,7 @@ export function createWorld() {
     calls: [],                // { method, url, headers, body }
     tip: 'Mix in small batches.',
     latency: false,           // true: every request yields 1-5 ms (with jitter) first, so parallel requests really interleave
-    fail: { countStatus: 0, countThrows: false, noContentRange: false, insertStatus: 0, insertThrows: false, pruneThrows: false, deleteOwnStatus: 0, deleteOwnThrows: false, tipStatus: 0, resendStatus: 0, resendThrows: false, brevoStatus: 201, brevoThrows: false },
+    fail: { countStatus: 0, countThrows: false, noContentRange: false, insertStatus: 0, insertThrows: false, pruneThrows: false, deleteOwnStatus: 0, deleteOwnThrows: false, tipStatus: 0, resendStatus: 0, resendThrows: false, resendTimeout: false, brevoStatus: 201, brevoThrows: false },
     seed(recipientHash, ipHash, ageMs, n = 1) {
       for (let i = 0; i < n; i++) w.rows.push({ id: 'seed' + w.rows.length, created_at: new Date(NOW - ageMs).toISOString(), recipient_hash: recipientHash, ip_hash: ipHash, kind: 'results' });
     },
@@ -72,6 +72,7 @@ export function createWorld() {
       }
       if (url === 'https://api.resend.com/emails') {
         if (w.fail.resendThrows) throw new TypeError('network down');
+        if (w.fail.resendTimeout) throw new DOMException('The operation timed out.', 'TimeoutError');
         if (w.fail.resendStatus) return json(w.fail.resendStatus, { message: 'resend says: ' + RESEND_KEY });
         return json(200, { id: 'em_1' });
       }

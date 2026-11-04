@@ -2,7 +2,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { handle, sanitizeResultsHtml, safeSourceUrl, validate, ALLOWED_ORIGINS, CALCULATOR_IDS, LIMITS, MAX_RESULTS_HTML, BREVO_LIST_ID } from '../../supabase/functions/send-results/handler.ts';
+import { handle, sanitizeResultsHtml, safeSourceUrl, validate, hasLinkLikeText, ALLOWED_ORIGINS, CALCULATOR_IDS, CALCULATOR_NAMES, LIMITS, MAX_RESULTS_HTML, BREVO_LIST_ID } from '../../supabase/functions/send-results/handler.ts';
 import { createWorld, ENV, NOW, HOUR, RESEND_KEY, BREVO_KEY, SERVICE_KEY, sha256Hex, resendCalls, brevoCalls, logWrites, ownDeletes } from './send_results_fakes.mjs';
 
 const REAL = JSON.parse(readFileSync(new URL('./send_results_real_payloads.json', import.meta.url), 'utf8'));   // 7 bodies captured from the live calculators
@@ -169,18 +169,18 @@ test('sanitizer: every on* attribute is dropped, in any case or quoting', () => 
     assert.ok(out.includes('x'));
   }
 });
-test('sanitizer: links are kept only for https chemcalc hosts; every other link becomes plain text', () => {
-  assert.equal(clean('<a href="https://chemcalc.co/kits.html">Kits</a>'), '<a href="https://chemcalc.co/kits.html">Kits</a>');
-  assert.equal(clean('<a href="https://www.chemcalc.co/">x</a>'), '<a href="https://www.chemcalc.co/">x</a>');
-  assert.equal(clean('<a href="https://testing.chemcalc.co/a?b=1">x</a>'), '<a href="https://testing.chemcalc.co/a?b=1">x</a>');
+test('sanitizer: no link survives, not even to a ChemCalc host; the tag goes and its text stays', () => {
+  assert.equal(clean('<a href="https://chemcalc.co/kits.html">Kits</a>'), 'Kits');
+  assert.equal(clean('<a href="https://www.chemcalc.co/">x</a>'), 'x');
+  assert.equal(clean('<a href="https://testing.chemcalc.co/a?b=1">x</a>'), 'x');
   for (const href of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', ' javascript:alert(1)', 'java\tscript:alert(1)', 'jav&#x61;script:alert(1)', '&#106;avascript:alert(1)', 'java&Tab;script:alert(1)', 'data:text/html,<script>a()</script>', 'vbscript:msgbox(1)',
     'http://chemcalc.co/', 'https://evil.example/', 'https://chemcalc.co.evil.example/', 'https://evil.example/chemcalc.co', 'https://user:pw@chemcalc.co/', 'https://chemcalc.co@evil.example/', '//evil.example/', '/relative', 'mailto:a@b.com', 'https://evilchemcalc.co/', '']) {
     const out = clean(`<a href="${href}">click</a>`);
     assert.ok(!/<a\b/i.test(out), href + ' -> ' + out);
-    assert.ok(!/javascript|vbscript|data:|evil/i.test(out), href + ' -> ' + out);
+    assert.ok(!/javascript|vbscript|data:|evil|href/i.test(out), href + ' -> ' + out);
     assert.ok(out.includes('click'), href);
   }
-  assert.ok(!/<a\b/i.test(clean('<a>no href</a>')));
+  assert.equal(clean('<a>no href</a>'), 'no href');
 });
 test('sanitizer: style keeps only the safe properties and scrubs dangerous values', () => {
   assert.equal(clean('<p style="margin-bottom: 6px; font-size: 14px; color: #555555;">x</p>'), '<p style="margin-bottom: 6px; font-size: 14px; color: #555555;">x</p>');
@@ -214,11 +214,12 @@ test('sanitizer: end to end, an attacker body is sanitized before it is emailed'
   assert.ok(h.includes('<p>Hi</p>') && h.includes('Click to claim'));
   for (const bad of ['steal', 'onclick', 'onerror', 'evil.example', '<iframe', '<img', '<script']) assert.ok(!h.includes(bad), bad);
 });
-test('calculatorName is HTML-escaped in the heading and kept plain in the subject', async () => {
+test('calculatorName: the posted value is only shape-checked; heading and subject use the name for the calculator id', async () => {
   await call(goodBody({ calculatorName: `A&B "x" 'y'` }));
   const s = resendCalls(w)[0].body;
-  assert.ok(s.html.includes('Your A&amp;B &quot;x&quot; &#39;y&#39; Results</h2>'));
-  assert.equal(s.subject, `Your A&B "x" 'y' Results from ChemCalc`);
+  assert.ok(s.html.includes('Your MEKP Catalyst Results</h2>'));
+  assert.equal(s.subject, 'Your MEKP Catalyst Results from ChemCalc');
+  assert.ok(!s.html.includes('A&amp;B') && !s.subject.includes('A&B'));
 });
 
 /* ---------- R3 sourceUrl ---------- */
@@ -367,7 +368,7 @@ test('CORS: preflight answers 204 with the allowed headers and calls nothing', a
   assert.equal(r.status, 204);
   assert.equal(r.headers.get('access-control-allow-origin'), 'https://testing.chemcalc.co');
   const allowed = r.headers.get('access-control-allow-headers');
-  for (const h of ['authorization', 'x-client-info', 'apikey', 'content-type']) assert.ok(allowed.includes(h), h);
+  for (const h of ['authorization', 'x-client-info', 'apikey', 'content-type', 'x-retry-count', 'traceparent', 'tracestate', 'baggage']) assert.ok(allowed.includes(h), h);
   assert.ok(r.headers.get('access-control-allow-methods').includes('POST'));
   assert.equal(w.calls.length, 0);
   const bad = await call(null, { method: 'OPTIONS', origin: 'https://evil.example' });
@@ -556,4 +557,151 @@ test('ip: the raw IP is never logged', async () => {
   await call(goodBody(), { ip: '6.6.6.6', headers: { 'cf-connecting-ip': '203.0.113.99' } });
   assert.ok(logs.length > 0);
   assert.ok(!/203\.0\.113\.99|6\.6\.6\.6/.test(logs.join(' ')));
+});
+
+/* ---------- F1: no client IP header ---------- */
+const FRESH = new URL('../../supabase/functions/send-results/handler.ts?isolate=' + Date.now(), import.meta.url).href;   // a new module copy = a new isolate (the warn flag starts false)
+const ipQueries = (w) => w.calls.filter((c) => c.method === 'GET' && c.url.includes('ip_hash='));
+test('no IP headers: the per-IP count is never queried, 25 pass (the overall cap, not 10), and the skip is warned once without any address', async () => {
+  const fresh = await import(FRESH);
+  const send = (email, headers = {}) => fresh.handle(new Request(URL_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://chemcalc.co', ...headers }, body: JSON.stringify(goodBody({ email })) }), { env: ENV, fetch: w.fetch, now: () => NOW });
+  const statuses = [];
+  for (let i = 0; i < 40; i++) statuses.push((await send(`user${i}@example.com`)).status);
+  assert.equal(statuses.filter((s) => s === 200).length, LIMITS.global, 'exactly the overall cap passes');
+  assert.equal(statuses.filter((s) => s === 429).length, 40 - LIMITS.global);
+  assert.equal(resendCalls(w).length, LIMITS.global);
+  assert.equal(ipQueries(w).length, 0, 'the per-IP count is never queried');
+  assert.equal(w.rows[0].ip_hash, await sha256Hex('unknown'));
+  const warns = logs.filter((l) => l.includes('client IP unavailable; per-IP limit skipped'));
+  assert.equal(warns.length, 1, 'warned once per isolate');
+  assert.ok(!logs.join(' ').includes('example.com') && !logs.join(' ').includes('unknown@'), 'no address in the logs');
+  // With an IP header the per-IP cap of 10 still applies (same module copy, so no new warning).
+  w = createWorld(); logs.length = 0;
+  const ok = [];
+  for (let i = 0; i < 12; i++) ok.push((await send(`ipuser${i}@example.com`, { 'cf-connecting-ip': '203.0.113.20' })).status);
+  assert.equal(ok.filter((s) => s === 200).length, LIMITS.ip);
+  assert.deepEqual(ok.slice(10), [429, 429]);
+  assert.ok(ipQueries(w).length > 0);
+  assert.equal(logs.filter((l) => l.includes('client IP unavailable')).length, 0);
+});
+test('no IP headers: the recipient cap still applies', async () => {
+  for (let i = 0; i < LIMITS.recipient; i++) assert.equal((await call(goodBody(), { ip: null })).status, 200);
+  assert.equal((await call(goodBody(), { ip: null })).status, 429);
+});
+
+/* ---------- F2a: fixed display names ---------- */
+test('names: a hostile calculatorName never reaches the subject, heading or Brevo; each id has its fixed name; no id gives "Calculator"', async () => {
+  const hostile = 'FREE GIFT at evil.example/win or write evil@x.example';
+  await call(goodBody({ calculatorName: hostile, marketingOptIn: true }));
+  const s = resendCalls(w)[0].body;
+  assert.equal(s.subject, 'Your MEKP Catalyst Results from ChemCalc');
+  assert.ok(s.html.includes('<h2 style="color:#2c3e50;">Your MEKP Catalyst Results</h2>'));
+  assert.ok(!/evil|FREE GIFT/i.test(s.subject + s.html));
+  assert.ok(!/evil|FREE GIFT/i.test(JSON.stringify(brevoCalls(w)[0].body)));
+  assert.equal(brevoCalls(w)[0].body.attributes.LAST_CALCULATOR_USED, 'MEKP Catalyst');
+  const expected = { mekp: 'MEKP Catalyst', awlgrip: 'Awlgrip Paint Mix', alexseal: 'Alexseal Paint Mix', epifanes: 'Epifanes Polyurethane Mix', clothcalc: 'Fiberglass Cloth Saturation' };
+  assert.deepEqual(CALCULATOR_NAMES, expected);
+  assert.deepEqual([...CALCULATOR_IDS].sort(), Object.keys(expected).sort());
+  for (const [id, name] of Object.entries(expected)) {
+    w = createWorld();
+    await call(goodBody({ calculatorId: id, calculatorName: hostile, marketingOptIn: true }), { ip: '198.51.100.' + (Object.keys(expected).indexOf(id) + 1) });
+    const m = resendCalls(w)[0].body;
+    assert.equal(m.subject, `Your ${name} Results from ChemCalc`, id);
+    assert.ok(m.html.includes(`Your ${name} Results</h2>`), id);
+    assert.equal(brevoCalls(w)[0].body.attributes.LAST_CALCULATOR_USED, name, id);
+  }
+  for (const over of [{ calculatorId: null }, { calculatorId: undefined }]) {
+    w = createWorld();
+    await call(goodBody({ calculatorName: hostile, marketingOptIn: true, ...over }));
+    assert.equal(resendCalls(w)[0].body.subject, 'Your Calculator Results from ChemCalc');
+    assert.ok(resendCalls(w)[0].body.html.includes('Your Calculator Results</h2>'));
+    assert.equal(brevoCalls(w)[0].body.attributes.LAST_CALCULATOR_USED, 'Calculator');
+  }
+  // The posted name is still shape-checked: bad values are still a 400.
+  for (const bad of ['', 'x'.repeat(81), '<b>x</b>', 'a\nb', 5, null]) { w = createWorld(); await expectInvalid(goodBody({ calculatorName: bad })); }
+});
+test('names: the seven real payloads give the same names as before (their posted names equal the fixed ones)', () => {
+  for (const x of REAL) assert.equal(CALCULATOR_NAMES[x.body.calculatorId], x.body.calculatorName, x.label);
+});
+
+/* ---------- F2b: links and addresses in results text ---------- */
+test('links: every link becomes plain text, even to chemcalc.co; the text stays', async () => {
+  const r = await call(goodBody({ resultsHtml: '<p>See <a href="https://chemcalc.co/kits.html">our kits</a> and <a href="https://www.chemcalc.co/">home</a></p>' }));
+  assert.equal(r.status, 200);
+  const h = resendCalls(w)[0].body.html;
+  assert.ok(h.includes('<p>See our kits and home</p>'), h);
+  assert.ok(!h.includes('<a href="https://chemcalc.co/kits.html">our kits</a>'));
+});
+test('links: results text with "://", "www." or "@" (plain, entity-encoded or tag-split) is a 400 and nothing is written or sent', async () => {
+  const bad = [
+    '<p>see http://x.example</p>', '<p>see https://chemcalc.co/kits.html</p>', '<p>HTTPS://X.EXAMPLE</p>', '<p>go to www.x.example</p>', '<p>WWW.X.EXAMPLE</p>', '<p>mail me a@b.co</p>', '<p>@</p>',
+    '<p>a&#64;b.co</p>', '<p>a&#x40;b.co</p>', '<p>a&#X40;b.co</p>', '<p>a&#0064;b.co</p>', '<p>a&#64b.co</p>', '<p>a&commat;b.co</p>',
+    '<p>http&#58;&#47;&#47;x.example</p>', '<p>http&colon;&sol;&sol;x.example</p>', '<p>&#119;&#119;&#119;.x.example</p>', '<p>www&period;x.example</p>',
+    '<p>ht<b></b>tp://x.example</p>', '<p>ht<strong>tp:</strong>//x.example</p>', '<p>ht<img src=x>tp://x.example</p>', '<p>ww<span>w</span>.x.example</p>', '<p>a<b></b>@b.co</p>',
+    '<a href="https://chemcalc.co/">https://chemcalc.co/</a>', '<a href="https://chemcalc.co/">www.chemcalc.co</a>',
+  ];
+  for (const html of bad) {
+    w = createWorld(); logs.length = 0;
+    const r = await call(goodBody({ resultsHtml: html }));
+    assert.equal(r.status, 400, html);
+    assert.deepEqual(await r.json(), { error: 'Invalid request' }, html);
+    assert.equal(w.calls.length, 0, 'nothing written, nothing sent: ' + html);
+  }
+});
+test('links: results text without those tokens still sends (colons, slashes, ampersands, degrees, dashes)', async () => {
+  const good = ['<p>Ratio 4:1</p>', '<p>1/2 oz at 72°F — 2.0%</p>', '<p>Fiber &amp; resin</p>', '<p>cost $5.00 / gal</p>', '<p>a &lt; b</p>', '<p>chemcalc.co</p>', '<p>Factory Product Coverage Rate: 450 ft²/gal • Recommended coats: 2</p>'];
+  for (const html of good) {
+    w = createWorld();
+    const r = await call(goodBody({ resultsHtml: html }));
+    assert.equal(r.status, 200, html);
+    assert.equal(resendCalls(w).length, 1, html);
+  }
+  assert.equal(hasLinkLikeText('<p>plain</p>'), false);
+  assert.equal(hasLinkLikeText('<p>a@b</p>'), true);
+});
+test('links: the seven real payloads are accepted and reach the email byte for byte', async () => {
+  for (const x of REAL) {
+    w = createWorld();
+    assert.equal(hasLinkLikeText(sanitizeResultsHtml(x.body.resultsHtml)), false, x.label);
+    const r = await call(x.body);
+    assert.equal(r.status, 200, x.label);
+    assert.equal(sanitizeResultsHtml(x.body.resultsHtml), x.body.resultsHtml, x.label + ': sanitizer leaves it unchanged');
+    assert.ok(resendCalls(w)[0].body.html.includes(x.body.resultsHtml), x.label + ': byte for byte in the email');
+  }
+});
+
+/* ---------- F5: an unknown Resend outcome keeps the slot ---------- */
+test('slot: Resend answering 500 is a 502 and the row is removed; a timeout or network error is a 502 and the row is KEPT', async () => {
+  w.fail.resendStatus = 500;
+  assert.equal((await call(goodBody())).status, 502);
+  assert.equal(w.rows.length, 0);
+  assert.equal(ownDeletes(w).length, 1);
+  for (const k of ['resendThrows', 'resendTimeout']) {
+    w = createWorld(); w.fail[k] = true;
+    const r = await call(goodBody());
+    assert.equal(r.status, 502, k);
+    assert.deepEqual(await r.json(), { error: 'Email service unavailable' }, k);
+    assert.equal(w.rows.length, 1, k + ': the row is kept');
+    assert.equal(ownDeletes(w).length, 0, k + ': no delete was attempted');
+    // the next requests for that recipient see the kept row: 1 kept + 2 more = 3, the 4th row is over the cap of 3
+    w.fail[k] = false;
+    assert.equal((await call(goodBody(), { ip: '192.0.2.1' })).status, 200);
+    assert.equal((await call(goodBody(), { ip: '192.0.2.2' })).status, 200);
+    assert.equal((await call(goodBody(), { ip: '192.0.2.3' })).status, 429);
+  }
+});
+
+/* ---------- F8: the tip is escaped ---------- */
+test('tip: markup and ampersands in the tip are escaped in the email', async () => {
+  w.tip = 'Use <b>care</b> & "patience" <img src=x onerror=a()>';
+  await call(goodBody());
+  const h = resendCalls(w)[0].body.html;
+  assert.ok(h.includes('Use &lt;b&gt;care&lt;/b&gt; &amp; &quot;patience&quot; &lt;img src=x onerror=a()&gt;'), h);
+  assert.ok(!h.includes('<b>care') && !h.includes('<img'));
+});
+
+/* ---------- F11: CORS ---------- */
+test('CORS: the preflight allows the four optional supabase-js headers, exactly as listed', async () => {
+  const r = await call(null, { method: 'OPTIONS' });
+  assert.equal(r.headers.get('access-control-allow-headers'), 'authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage');
 });

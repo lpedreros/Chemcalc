@@ -1,6 +1,6 @@
 -- ============================================================================
 -- PROPOSED -- NOT APPLIED. Project rnrzjlfpwxzomupnxikt.
--- Send log for the `send-results` Edge Function's daily limits (3 per recipient, 10 per IP, 50 overall, rolling 24 h).
+-- Send log for the `send-results` Edge Function's daily limits (3 per recipient, 10 per IP, 25 overall, rolling 24 h).
 --
 -- What it stores: one row per results email, with SHA-256 HASHES of the lower-cased recipient address and of the caller's IP.
 -- No address, no IP, no email content. The function deletes rows older than 30 days.

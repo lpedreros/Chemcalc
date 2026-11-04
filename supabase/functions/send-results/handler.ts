@@ -9,11 +9,17 @@
    could make it send an email from chemcalc-results@thinkandengage.com to ANY address with ANY html and links. Now:
      R1 every field is validated (one plain address, short name, known calculator id, size cap) -> 400 "Invalid request"
      R2 resultsHtml is run through an allowlist sanitizer built from what the real calculators send (only <p> and
-        <strong> with a few style properties; links only to ChemCalc hosts)
+        <strong> with a few style properties; no links at all: a link tag goes, its text stays)
+     R8 the visible text of resultsHtml (tags removed, entities decoded) may not contain "://", "www." or "@" -> 400, before
+        anything is logged or sent. Real results never do, and it stops the sender address being used to carry a link or
+        an address. The email heading, subject and Brevo attribute use a fixed name derived from calculatorId, never the
+        posted calculatorName (which is only checked for shape).
      R3 sourceUrl is only used when it is a ChemCalc address
      R4 limits per rolling 24 h, enforced BEFORE anything is sent: 3 per recipient, 10 per IP, 25 overall -> 429.
+        The per-IP count is skipped when no client IP header arrives (everyone would share one bucket).
         Each request writes its own log row FIRST and counts AFTER (the count includes its own row), and deletes the row
-        again if it is refused or the email fails. Counting first and writing later let a burst of parallel requests all
+        again if it is refused or Resend definitely rejects the email (a timeout or network error keeps the row: the email
+        may have been sent). Counting first and writing later let a burst of parallel requests all
         read the same low count and all pass; with write-first, at most `cap` requests can ever pass, however they interleave.
         Only SHA-256 hashes are stored (table public.email_send_log). Any database failure fails closed (503, nothing sent).
      R5 CORS: only the three ChemCalc origins are echoed (never *)
@@ -52,13 +58,23 @@ const WINDOW_MS = 24 * 60 * 60 * 1000;
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 // Brevo list the confirmed contacts join. UNVERIFIED: Leo must confirm that list 2 is the right list in the Brevo dashboard.
 export const BREVO_LIST_ID = 2;
+// The name used in the email heading, the subject and the Brevo attribute. Never the posted calculatorName.
+export const CALCULATOR_NAMES: Record<string, string> = {
+  mekp: 'MEKP Catalyst',
+  awlgrip: 'Awlgrip Paint Mix',
+  alexseal: 'Alexseal Paint Mix',
+  epifanes: 'Epifanes Polyurethane Mix',
+  clothcalc: 'Fiberglass Cloth Saturation',
+};
+const DEFAULT_CALCULATOR_NAME = 'Calculator';
 const LINK_HOSTS = ['chemcalc.co', 'www.chemcalc.co', 'testing.chemcalc.co'];
 const SOURCE_PREFIXES = ['https://chemcalc.co/', 'https://www.chemcalc.co/', 'https://testing.chemcalc.co/'];
 const FROM = 'ChemCalc Results <chemcalc-results@thinkandengage.com>';
 
 class HttpError extends Error {
   status: number;
-  constructor(status: number, message: string) { super(message); this.status = status; }
+  keepSlot: boolean;   // true: the outcome is unknown (the email may have gone), so this request's log row stays
+  constructor(status: number, message: string, keepSlot = false) { super(message); this.status = status; this.keepSlot = keepSlot; }
 }
 const INVALID = () => new HttpError(400, 'Invalid request');
 const TOO_MANY = () => new HttpError(429, 'Too many requests');
@@ -70,7 +86,7 @@ function corsHeaders(req: Request, allowed: string[]): Record<string, string> {
   const origin = req.headers.get('Origin');
   const h: Record<string, string> = {
     'Vary': 'Origin',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Max-Age': '7200',
   };
@@ -141,14 +157,15 @@ export function safeSourceUrl(src: string): string {
 
 /* ---------- R2: sanitizer for resultsHtml ---------- */
 // What the real calculators send (7 captured payloads, 5 calculators): only <p style="..."> and <strong>, no links, no images.
+// Links are not allowed at all: <a> is dropped like any other unknown tag (its text stays).
 // Style properties seen: margin-bottom, font-size, color. A few harmless neighbours are allowed so a reworded page does not break.
 
-const ALLOWED_TAGS = new Set(['p', 'strong', 'b', 'em', 'i', 'br', 'span', 'a']);
+const ALLOWED_TAGS = new Set(['p', 'strong', 'b', 'em', 'i', 'br', 'span']);
 const VOID_TAGS = new Set(['br']);
 // Removed together with everything inside them.
 const DROP_WITH_CONTENT = new Set(['script', 'style', 'iframe', 'object', 'embed', 'svg', 'template', 'noscript', 'textarea', 'title', 'head', 'math', 'xmp', 'plaintext']);
 const STYLE_PROPS = new Set(['margin-bottom', 'margin-top', 'font-size', 'font-weight', 'color', 'text-align']);
-const NAMED_ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", colon: ':', tab: '\t', newline: '\n', lpar: '(', rpar: ')' };
+const NAMED_ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", colon: ':', tab: '\t', newline: '\n', lpar: '(', rpar: ')', commat: '@', sol: '/', period: '.' };
 
 function decodeEntities(s: string): string {
   return s.replace(/&(?:#x([0-9a-f]+)|#(\d+)|([a-z]+));?/gi, (m, hex, dec, name) => {
@@ -182,18 +199,6 @@ function safeStyle(value: string): string {
     parts.push(`${prop}: ${val};`);
   }
   return parts.join(' ');
-}
-
-function safeHref(value: string): string | null {
-  const v = value.replace(/[\u0000- \u007f-\u009f]/g, '');
-  if (!/^https:\/\//i.test(v)) return null;
-  try {
-    const u = new URL(v);
-    if (u.protocol !== 'https:' || u.username || u.password || !LINK_HOSTS.includes(u.hostname)) return null;
-    return u.href;
-  } catch {
-    return null;
-  }
 }
 
 const TAG_RE = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)((?:"[^"]*"|'[^']*'|[^'">])*)>/y;
@@ -237,12 +242,6 @@ export function sanitizeResultsHtml(html: string): string {
     }
     const attrs = parseAttrs(m[3]);
     let built = `<${tag}`;
-    if (tag === 'a') {
-      const hrefAttr = attrs.find(([k]) => k === 'href');
-      const href = hrefAttr ? safeHref(hrefAttr[1]) : null;
-      if (!href) continue;                              // any other link becomes plain text (its closing tag is dropped too: not on the stack)
-      built += ` href="${escHtml(href)}"`;
-    }
     const styleAttr = attrs.find(([k]) => k === 'style');
     if (styleAttr) {
       const s = safeStyle(styleAttr[1]);
@@ -256,13 +255,23 @@ export function sanitizeResultsHtml(html: string): string {
   return out;
 }
 
+// The text a reader would see: tags removed, entities decoded. Run on the SANITIZED html.
+export function visibleText(sanitizedHtml: string): string {
+  return decodeEntities(sanitizedHtml.replace(/<[^>]*>/g, ''));
+}
+
+// R8: results text never carries a URL, a web address or an e-mail address.
+export function hasLinkLikeText(sanitizedHtml: string): boolean {
+  return /:\/\/|www\.|@/i.test(visibleText(sanitizedHtml));
+}
+
 /* ---------- the email ---------- */
 
 function buildEmailHtml(calculatorName: string, resultsHtml: string, sourceUrl: string, tip: string): string {
   const tipBlock = tip
     ? `<div style="background:#e8f4f8;border-left:4px solid #3498db;padding:14px 18px;border-radius:4px;margin:24px 0;">
          <p style="margin:0 0 6px 0;font-size:13px;font-weight:700;color:#2c3e50;text-transform:uppercase;letter-spacing:0.05em;">Pro Tip</p>
-         <p style="margin:0;font-size:14px;color:#2c3e50;">${tip}</p>
+         <p style="margin:0;font-size:14px;color:#2c3e50;">${escHtml(tip)}</p>
        </div>`
     : '';
 
@@ -395,8 +404,9 @@ async function sendWithResend(d: Deps, to: string, subject: string, html: string
       signal: AbortSignal.timeout(10000),
     });
   } catch (e) {
+    // Timeout, abort or network failure: Resend may well have sent the email, so the caller keeps this request's slot.
     console.error('send-results: resend unreachable:', (e as Error).name);
-    throw new HttpError(502, 'Email service unavailable');
+    throw new HttpError(502, 'Email service unavailable', true);
   }
   if (!res.ok) {
     console.error('send-results: resend status', res.status);   // the upstream body is never logged or returned
@@ -405,6 +415,7 @@ async function sendWithResend(d: Deps, to: string, subject: string, html: string
 }
 
 let doiSkipLogged = false;
+let ipSkipLogged = false;
 
 // Double opt-in only: Brevo emails the visitor a confirmation and adds them to the list after they click it.
 async function startDoubleOptIn(d: Deps, email: string, calculatorName: string): Promise<void> {
@@ -451,6 +462,10 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
     let body: unknown;
     try { body = JSON.parse(text); } catch { throw INVALID(); }
     const v = validate(body);
+    // The posted calculatorName was only checked for shape; what the email says comes from the id.
+    const calculatorName = (v.calculatorId && CALCULATOR_NAMES[v.calculatorId]) || DEFAULT_CALCULATOR_NAME;
+    const safeHtml = sanitizeResultsHtml(v.resultsHtml);
+    if (hasLinkLikeText(safeHtml)) throw INVALID();
 
     const now = (d.now ?? Date.now)();
     const sinceIso = new Date(now - WINDOW_MS).toISOString();
@@ -466,19 +481,22 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
     await recordSend(d, id, recipientHash, ipHash);
     try {
       if ((await countSince(d, `recipient_hash=eq.${recipientHash}&`, sinceIso)) > LIMITS.recipient) { console.warn('send-results: recipient limit', recipientHash.slice(0, 8)); throw TOO_MANY(); }
-      if ((await countSince(d, `ip_hash=eq.${ipHash}&`, sinceIso)) > LIMITS.ip) { console.warn('send-results: ip limit', ipHash.slice(0, 8)); throw TOO_MANY(); }
+      if (ip === 'unknown') {
+        // No client IP header: every visitor would share one bucket and the site would lock for everyone. Recipient and overall caps still apply.
+        if (!ipSkipLogged) { ipSkipLogged = true; console.warn('send-results: client IP unavailable; per-IP limit skipped'); }
+      } else if ((await countSince(d, `ip_hash=eq.${ipHash}&`, sinceIso)) > LIMITS.ip) { console.warn('send-results: ip limit', ipHash.slice(0, 8)); throw TOO_MANY(); }
       if ((await countSince(d, '', sinceIso)) > LIMITS.global) { console.warn('send-results: global limit'); throw TOO_MANY(); }
 
       const tip = await getRandomTip(d, v.calculatorId);
-      const html = buildEmailHtml(v.calculatorName, sanitizeResultsHtml(v.resultsHtml), safeSourceUrl(v.sourceUrl), tip);
-      const subject = `Your ${v.calculatorName.replace(/[\r\n]+/g, ' ')} Results from ChemCalc`;
+      const html = buildEmailHtml(calculatorName, safeHtml, safeSourceUrl(v.sourceUrl), tip);
+      const subject = `Your ${calculatorName} Results from ChemCalc`;
       await sendWithResend(d, v.email, subject, html);
     } catch (e) {
-      await removeRow(d, id);
+      if (!(e instanceof HttpError && e.keepSlot)) await removeRow(d, id);   // an unknown Resend outcome keeps the slot
       throw e;
     }
 
-    if (v.marketingOptIn) await startDoubleOptIn(d, v.email, v.calculatorName);
+    if (v.marketingOptIn) await startDoubleOptIn(d, v.email, calculatorName);
     await pruneOldRows(d, now);
 
     return reply(200, { success: true, message: 'Email sent successfully' }, cors);
