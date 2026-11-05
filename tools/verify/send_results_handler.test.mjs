@@ -2,7 +2,8 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { handle, sanitizeResultsHtml, safeSourceUrl, validate, hasLinkLikeText, ALLOWED_ORIGINS, CALCULATOR_IDS, CALCULATOR_NAMES, LIMITS, MAX_RESULTS_HTML, BREVO_LIST_ID } from '../../supabase/functions/send-results/handler.ts';
+import { VOCAB, ALLOWED_PUNCT } from '../../supabase/functions/send-results/vocab.ts';
+import { handle, sanitizeResultsHtml, safeSourceUrl, validate, hasLinkLikeText, wordText, outsideVocabulary, ALLOWED_ORIGINS, CALCULATOR_IDS, CALCULATOR_NAMES, LIMITS, MAX_RESULTS_HTML, BREVO_LIST_ID } from '../../supabase/functions/send-results/handler.ts';
 import { createWorld, ENV, NOW, HOUR, RESEND_KEY, BREVO_KEY, SERVICE_KEY, sha256Hex, resendCalls, brevoCalls, logWrites, ownDeletes } from './send_results_fakes.mjs';
 
 const REAL = JSON.parse(readFileSync(new URL('./send_results_real_payloads.json', import.meta.url), 'utf8'));   // 7 bodies captured from the live calculators
@@ -22,7 +23,7 @@ const goodBody = (over = {}) => ({
   email: EMAIL,
   calculatorName: 'MEKP Catalyst',
   calculatorId: 'mekp',
-  resultsHtml: '<p style="margin-bottom: 10px; font-size: 16px;">Add <strong>12 mL</strong></p>',
+  resultsHtml: '<p style="margin-bottom: 10px; font-size: 16px;">MEKP Volume: <strong>18.9</strong> cc (mL)</p>',
   sourceUrl: 'https://chemcalc.co/mekpcalc.html',
   marketingOptIn: false,
   ...over,
@@ -207,11 +208,11 @@ test('sanitizer: output is always balanced and never carries a raw unterminated 
   assert.equal(clean('<p><strong>a</p>b'), '<p><strong>a</strong></p>b');
 });
 test('sanitizer: end to end, an attacker body is sanitized before it is emailed', async () => {
-  const evil = '<p onclick="a()">Hi</p><script>steal()</script><img src=x onerror=a()><a href="https://evil.example/pay">Click to claim</a><iframe src="https://evil.example"></iframe>';
+  const evil = '<p onclick="a()">Total</p><script>steal()</script><img src=x onerror=a()><a href="https://evil.example/pay">Recommended drops</a><iframe src="https://evil.example"></iframe>';
   const r = await call(goodBody({ resultsHtml: evil }));
   assert.equal(r.status, 200);
   const h = resendCalls(w)[0].body.html;
-  assert.ok(h.includes('<p>Hi</p>') && h.includes('Click to claim'));
+  assert.ok(h.includes('<p>Total</p>') && h.includes('Recommended drops'));
   for (const bad of ['steal', 'onclick', 'onerror', 'evil.example', '<iframe', '<img', '<script']) assert.ok(!h.includes(bad), bad);
 });
 test('calculatorName: the posted value is only shape-checked; heading and subject use the name for the calculator id', async () => {
@@ -403,14 +404,14 @@ test('errors: the only status codes are 200, 400, 405, 429, 502, 503; bodies are
 });
 test('logs: nothing logged contains the address, the IP, the results HTML or any key; the hash prefix is logged on a limit', async () => {
   w.seed(await sha256Hex('tester@example.com'), 'x', HOUR, 3);
-  await call(goodBody({ resultsHtml: '<p>SECRETRESULTS</p>' }));
+  await call(goodBody({ resultsHtml: '<p>MEKP Drops: 7777.77 drops</p>' }));
   w.fail.resendStatus = 500;
-  await call(goodBody({ email: 'q@example.com', resultsHtml: '<p>SECRETRESULTS</p>' }), { ip: '198.51.100.5' });
+  await call(goodBody({ email: 'q@example.com', resultsHtml: '<p>MEKP Drops: 7777.77 drops</p>' }), { ip: '198.51.100.5' });
   w.fail.resendStatus = 0; w.fail.countThrows = true;
-  await call(goodBody({ email: 'r@example.com', resultsHtml: '<p>SECRETRESULTS</p>' }), { ip: '198.51.100.6' });
+  await call(goodBody({ email: 'r@example.com', resultsHtml: '<p>MEKP Drops: 7777.77 drops</p>' }), { ip: '198.51.100.6' });
   const all = logs.join('\n');
   assert.ok(logs.length >= 3);
-  for (const s of ['tester@example.com', 'Tester@Example.com', 'q@example.com', 'r@example.com', '203.0.113.7', '198.51.100', 'SECRETRESULTS', RESEND_KEY, BREVO_KEY, SERVICE_KEY, 'resend says'])
+  for (const s of ['tester@example.com', 'Tester@Example.com', 'q@example.com', 'r@example.com', '203.0.113.7', '198.51.100', '7777.77', RESEND_KEY, BREVO_KEY, SERVICE_KEY, 'resend says'])
     assert.ok(!all.includes(s), 'log leaked ' + s);
   assert.ok(all.includes((await sha256Hex('tester@example.com')).slice(0, 8)));
   assert.ok(!all.includes(await sha256Hex('tester@example.com')), 'only the first 8 characters');
@@ -626,11 +627,11 @@ test('names: the seven real payloads give the same names as before (their posted
 
 /* ---------- F2b: links and addresses in results text ---------- */
 test('links: every link becomes plain text, even to chemcalc.co; the text stays', async () => {
-  const r = await call(goodBody({ resultsHtml: '<p>See <a href="https://chemcalc.co/kits.html">our kits</a> and <a href="https://www.chemcalc.co/">home</a></p>' }));
+  const r = await call(goodBody({ resultsHtml: '<p>See <a href="https://chemcalc.co/kits.html">Gallons</a> and <a href="https://www.chemcalc.co/">Liters</a></p>' }));
   assert.equal(r.status, 200);
   const h = resendCalls(w)[0].body.html;
-  assert.ok(h.includes('<p>See our kits and home</p>'), h);
-  assert.ok(!h.includes('<a href="https://chemcalc.co/kits.html">our kits</a>'));
+  assert.ok(h.includes('<p>See Gallons and Liters</p>'), h);
+  assert.ok(!h.includes('<a href="https://chemcalc.co/kits.html">Gallons</a>'));
 });
 test('links: results text with "://", "www." or "@" (plain, entity-encoded or tag-split) is a 400 and nothing is written or sent', async () => {
   const bad = [
@@ -649,7 +650,7 @@ test('links: results text with "://", "www." or "@" (plain, entity-encoded or ta
   }
 });
 test('links: results text without those tokens still sends (colons, slashes, ampersands, degrees, dashes)', async () => {
-  const good = ['<p>Ratio 4:1</p>', '<p>1/2 oz at 72°F — 2.0%</p>', '<p>Fiber &amp; resin</p>', '<p>cost $5.00 / gal</p>', '<p>a &lt; b</p>', '<p>chemcalc.co</p>', '<p>Factory Product Coverage Rate: 450 ft²/gal • Recommended coats: 2</p>'];
+  const good = ['<p>Total: 4:1 Gallons</p>', '<p>1/2 oz of resin — 2.0%</p>', '<p>cost $5.00 / gal</p>', '<p>a &lt; b</p>', '<p>Factory Product Coverage Rate: 450 ft²/gal • Recommended coats: 2</p>'];
   for (const html of good) {
     w = createWorld();
     const r = await call(goodBody({ resultsHtml: html }));
@@ -704,4 +705,80 @@ test('tip: markup and ampersands in the tip are escaped in the email', async () 
 test('CORS: the preflight allows the four optional supabase-js headers, exactly as listed', async () => {
   const r = await call(null, { method: 'OPTIONS' });
   assert.equal(r.headers.get('access-control-allow-headers'), 'authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage');
+});
+
+/* ---------- R9: closed vocabulary ---------- */
+const refusedWithNothingDone = async (htmls, why) => {
+  for (const html of htmls) {
+    w = createWorld(); logs.length = 0;
+    const r = await call(goodBody({ resultsHtml: html }));
+    assert.equal(r.status, 400, `${why}: ${JSON.stringify(html)}`);
+    assert.deepEqual(await r.json(), { error: 'Invalid request' });
+    assert.equal(w.calls.length, 0, `nothing written, nothing sent: ${JSON.stringify(html)}`);
+  }
+};
+const acceptedAndSent = async (htmls) => {
+  for (const html of htmls) {
+    w = createWorld();
+    const r = await call(goodBody({ resultsHtml: html }));
+    assert.equal(r.status, 200, JSON.stringify(html));
+    assert.equal(resendCalls(w).length, 1, JSON.stringify(html));
+  }
+};
+test('vocab: hostile prose is refused (400), nothing written, nothing sent', async () => {
+  await refusedWithNothingDone([
+    '<p>Your account is suspended, verify now</p>', '<p>Call 555-123-4567 now</p>', '<p>evil.com</p>', '<p>EVIL.COM</p>', '<p>visit evil dot com</p>', '<p>chemcalc.co</p>', '<p>a.b</p>',
+    '<p>Click here</p>', '<p>FREE GIFT</p>', '<p>Total Gallons Resin hardener evil</p>', '<p>MEKP Volume: 18.9 cc (mL) refund</p>', '<p>Gallons.Resin</p>', '<p>Gallons<br>evil</p>',
+  ], 'prose');
+});
+test('vocab: character tricks are refused', async () => {
+  await refusedWithNothingDone([
+    '<p>ｅｖｉｌ．ｃｏｍ</p>',     // fullwidth e v i l . c o m
+    '<p>Gal​lons</p>',                                    // zero-width space inside an allowed word
+    '<p>Gаllons</p>', '<p>Gallons раy</p>',      // Cyrillic look-alikes (a, p, a)
+    '<p>Gallons \u{1F600}</p>', '<p>Gallons \\ resin</p>', '<p>Gallons `resin`</p>', '<p>Gallons_resin</p>', '<p>Gallons ~ resin</p>', '<p>Gallons | resin</p>',
+    '<p>Gallons {resin}</p>', '<p>Gallons [resin]</p>', '<p>Gallons = resin</p>', '<p>Gallons * resin</p>', '<p>Gallons ? resin</p>', '<p>Gallons ^ resin</p>', '<p>Gallons + resin</p>',
+    '<p>Gallons "resin"</p>', '<p>Gallons &gt; resin</p>', '<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>', '<p>Gallons resin</p>', '<p>Gallons resin</p>', '<p>Gallons　resin</p>', '<p>Resin &amp; hardener</p>',   // no calculator prints an ampersand
+  ], 'characters');
+});
+test('vocab: entity-encoded, tag-split and mixed-case forms of an invalid word are refused; the same forms of a valid word are accepted', async () => {
+  await refusedWithNothingDone(['<p>Ev&#105;l</p>', '<p>Ev&#x69;l</p>', '<p>ev<b></b>il</p>', '<p>EvIl</p>', '<p>EVIL</p>', '<p>e<strong>v</strong>i<em>l</em></p>', '<p>Gal&#108;ons evil</p>'], 'forms of an invalid word');
+  await acceptedAndSent(['<p>Gal&#108;ons</p>', '<p>Gal&#x6c;ons</p>', '<p>Gal<b></b>lons</p>', '<p>Gal<strong></strong>lons</p>', '<p>GALLONS</p>', '<p>gAlLoNs</p>', '<p>a &lt; b</p>']);
+});
+test('vocab: ordinary calculator wording and number formats still send', async () => {
+  await acceptedAndSent([
+    '<p>Total: 4:1 Gallons</p>', '<p>1/2 oz of resin — 2.0%</p>', '<p>cost $5.00 / gal</p>', '<p>Total: —</p>', '<p>Reducer: &lt; 0.01 mL</p>', '<p>Estimated Cost: $0.23</p>',
+    '<p>Factory Product Coverage Rate: 450 ft²/gal • Recommended coats: 2</p>', '<p>Accelerator (Pro-Cure X-98): 1.41 mL</p>', '<p>Reducer (T0001/T0002/T0003/T0005, 25%): 0.12 Liters</p>',
+    '<p>Recommended MEKP % (based on 72°F): 2.0%</p>', '<p>Gallons</p><p>Resin</p>',
+  ]);
+});
+test('vocab: VOCAB is lower-case ASCII letters only with no duplicates; every word of the 7 real payloads is in it; ALLOWED_PUNCT has no letter, digit or space', () => {
+  const src = readFileSync(new URL('../../supabase/functions/send-results/vocab.ts', import.meta.url), 'utf8');
+  const listed = [...src.slice(0, src.indexOf(']);')).matchAll(/'([^']*)'/g)].map((m) => m[1]);
+  assert.ok(listed.length > 100);
+  assert.equal(new Set(listed).size, listed.length, 'duplicate words in vocab.ts');
+  assert.equal(listed.length, VOCAB.size);
+  for (const wd of VOCAB) assert.match(wd, /^[a-z]+$/, wd);
+  for (const x of REAL) for (const wd of wordText(sanitizeResultsHtml(x.body.resultsHtml)).match(/[A-Za-z]+/g) ?? []) assert.ok(VOCAB.has(wd.toLowerCase()), `${x.label}: ${wd}`);
+  assert.ok(ALLOWED_PUNCT.length > 0);
+  for (const c of ALLOWED_PUNCT) assert.ok(!/[A-Za-z0-9\s]/.test(c), JSON.stringify(c));
+  for (const c of ['@', ':', '/']) assert.ok(c === '@' ? !ALLOWED_PUNCT.includes(c) : ALLOWED_PUNCT.includes(c), c);   // "@" never; ":" and "/" are in real results ("4:1", "ft²/gal")
+});
+test('vocab: the refusal logs one line with one lower-case token (at most 20 letters), a code point or "dot between letters", and nothing else', async () => {
+  const line = /^send-results: text outside closed vocabulary \((word [a-z]{1,20}|character U\+[0-9A-F]{4,6}|dot between letters)\)$/;
+  const cases = [
+    ['<p>Gallons evilverylongwordthatgoesonandon</p>', 'word evilverylongwordthat'],
+    ['<p>Gallons EVIL</p>', 'word evil'],
+    ['<p>Gallons Ж</p>', 'character U+0416'],
+    ['<p>Gallons \u{1F600}</p>', 'character U+1F600'],
+    ['<p>a.b</p>', 'dot between letters'],
+  ];
+  for (const [html, reason] of cases) {
+    w = createWorld(); logs.length = 0;
+    await call(goodBody({ email: 'victim@example.com', resultsHtml: html }));
+    assert.equal(logs.length, 1, 'exactly one log line: ' + logs.join(' | '));
+    assert.match(logs[0], line);
+    assert.equal(logs[0], `send-results: text outside closed vocabulary (${reason})`);
+    assert.ok(!/victim|example\.com|<|203\.0\.113|\bp\b>/.test(logs[0]));
+  }
 });
