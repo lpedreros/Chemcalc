@@ -14,10 +14,6 @@
         anything is logged or sent. Real results never do, and it stops the sender address being used to carry a link or
         an address. The email heading, subject and Brevo attribute use a fixed name derived from calculatorId, never the
         posted calculatorName (which is only checked for shape).
-     R9 the same visible text is held to a CLOSED VOCABULARY (vocab.ts): only words, characters and number formats that the five
-        calculators can print. A character outside letters, digits, spaces and ALLOWED_PUNCT, a "." between two letters (a bare
-        domain), or a word not in VOCAB -> 400, before anything is logged or sent. So the verified sender cannot carry a scam sentence,
-        a phone-number sentence or a bare web address. The words of a calculator's wording change live in vocab.ts.
      R3 sourceUrl is only used when it is a ChemCalc address
      R4 limits per rolling 24 h, enforced BEFORE anything is sent: 3 per recipient, 10 per IP, 25 overall -> 429.
         The per-IP count is skipped when no client IP header arrives (everyone would share one bucket).
@@ -31,11 +27,9 @@
      R7 Brevo: never POST /v3/contacts (that adds people with no confirmation). Double opt-in only, and only when
         BREVO_DOI_TEMPLATE_ID is set; a Brevo failure never blocks the results email
 
-   The only import is ./vocab.ts (a plain data file with no imports of its own): the files run unchanged under Node for the tests
-   (fetch, env and the clock are injected) and under Deno. Deploying this function means THREE files: index.ts, handler.ts, vocab.ts.
+   No imports on purpose (same as the trello function): the file runs unchanged under Node for the tests (fetch, env and
+   the clock are injected).
    ============================================================ */
-
-import { VOCAB, ALLOWED_PUNCT } from './vocab.ts';
 
 export interface Env {
   SUPABASE_URL: string;
@@ -266,32 +260,9 @@ export function visibleText(sanitizedHtml: string): string {
   return decodeEntities(sanitizedHtml.replace(/<[^>]*>/g, ''));
 }
 
-// The text the closed-vocabulary check (R9) reads: like visibleText, but a paragraph or line break counts as a space (the email shows
-// them as separate lines), while inline tags (strong, b, em, i, span) are removed with nothing in their place, so a word split by inline
-// markup is still one word: "Gal<b></b>lons" is "Gallons", and so is "Gal&#108;ons". Run on the SANITIZED html.
-export function wordText(sanitizedHtml: string): string {
-  return decodeEntities(sanitizedHtml.replace(/<\/?(?:p|br)\b[^>]*>/gi, ' ').replace(/<[^>]*>/g, ''));
-}
-
 // R8: results text never carries a URL, a web address or an e-mail address.
 export function hasLinkLikeText(sanitizedHtml: string): boolean {
   return /:\/\/|www\.|@/i.test(visibleText(sanitizedHtml));
-}
-
-// R9: why the text is outside the closed vocabulary, or null when it is inside. The reason is one lower-case token (at most 20 letters), a code
-// point or "dot between letters": never any other part of the text. Run on the SANITIZED html.
-export function outsideVocabulary(sanitizedHtml: string): string | null {
-  const text = wordText(sanitizedHtml);
-  for (const ch of text) {
-    if (/[A-Za-z0-9]/.test(ch) || ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' || ALLOWED_PUNCT.includes(ch)) continue;
-    return 'character U+' + ch.codePointAt(0)!.toString(16).toUpperCase().padStart(4, '0');
-  }
-  if (/[A-Za-z]\.[A-Za-z]/.test(text)) return 'dot between letters';
-  for (const word of text.match(/[A-Za-z]+/g) ?? []) {
-    const w = word.toLowerCase();
-    if (!VOCAB.has(w)) return 'word ' + w.slice(0, 20);
-  }
-  return null;
 }
 
 /* ---------- the email ---------- */
@@ -495,8 +466,6 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
     const calculatorName = (v.calculatorId && CALCULATOR_NAMES[v.calculatorId]) || DEFAULT_CALCULATOR_NAME;
     const safeHtml = sanitizeResultsHtml(v.resultsHtml);
     if (hasLinkLikeText(safeHtml)) throw INVALID();
-    const outside = outsideVocabulary(safeHtml);
-    if (outside) { console.warn('send-results: text outside closed vocabulary (' + outside + ')'); throw INVALID(); }
 
     const now = (d.now ?? Date.now)();
     const sinceIso = new Date(now - WINDOW_MS).toISOString();
