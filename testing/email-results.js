@@ -1,18 +1,20 @@
 // email-results.js
-// Handles the "Email me these results" functionality across all calculators
+// Handles the "Email me these results" functionality across all calculators.
+//
+// Account-only: the send-results function emails the SIGNED-IN visitor's own confirmed address and nothing else, so there is no
+// address box. Signed out, the box offers a Log In / Sign Up button; signed in, it shows the account address and the Email Me button.
+// The request carries no address (the function ignores one anyway); supabase-js sends the visitor's access token with it.
 
 async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderName) {
-    const emailInput = document.getElementById('captureEmailInput');
     const btn = document.getElementById('btnEmailResults');
     const msg = document.getElementById('emailResultsMsg');
 
-    if (!emailInput || !btn || !msg) return;
+    if (!btn || !msg) return;
 
-    const email = emailInput.value.trim();
-    if (!email || !email.includes('@')) {
-        msg.textContent = "Please enter a valid email address.";
-        msg.style.color = "#e74c3c";
-        msg.style.display = "block";
+    // Not signed in (the box normally shows the login button instead, so this is only a backstop): ask them to log in.
+    const auth = (typeof window.getAuthState === 'function') ? window.getAuthState() : null;
+    if (!auth || !auth.user) {
+        if (typeof window.openModal === 'function') window.openModal('loginModal');
         return;
     }
 
@@ -70,7 +72,6 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
 
         const { data, error } = await _sb.functions.invoke('send-results', {
             body: {
-                email: email,
                 calculatorName: calculatorName,
                 resultsHtml: recapHtml + resultsHtml,
                 sourceUrl: window.location.href,
@@ -91,7 +92,6 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
         msg.textContent = "Results sent! Check your inbox.";
         msg.style.color = "#2ecc71";
         msg.style.display = "block";
-        emailInput.value = ""; // clear input
 
         // Log this settled answer immediately (skips the debounce), and
         // AWAIT it -- mark_email_captured() flips the most recent row for
@@ -119,7 +119,13 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
 
     } catch (err) {
         console.error("Error sending email:", err);
-        msg.textContent = "Failed to send. Please try again.";
+        if (err && err.context && err.context.status === 401) {
+            // The session ran out (or never was one): the function only emails a signed-in visitor.
+            msg.textContent = "Please log in to email your results.";
+            if (typeof window.openModal === 'function') window.openModal('loginModal');
+        } else {
+            msg.textContent = "Failed to send. Please try again.";
+        }
         msg.style.color = "#e74c3c";
         msg.style.display = "block";
     } finally {
@@ -133,21 +139,42 @@ async function sendResultsEmail(calculatorName, resultElementIds, recapBuilderNa
 // returns an array of {label, value} pairs assembled from that page's
 // own real inputs -- see sendResultsEmail() above for how/when it's
 // called. Omit it and behavior is unchanged from before this existed.
+//
+// The box is drawn from the visitor's sign-in state (window.getAuthState()) and drawn again on every 'chemcalc:authchange',
+// so logging in or out on the page switches it without a reload.
+function escapeEmailBoxHtml(text) {
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray, recapBuilderName) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     const recapArg = recapBuilderName ? `, '${recapBuilderName}'` : '';
+    const boxStyle = 'background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;';
 
-    const html = `
-        <div class="email-capture-box mt-4 p-3" style="background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+    function signedInUser() {
+        const st = (typeof window.getAuthState === 'function') ? window.getAuthState() : null;
+        return st && st.user && st.user.email ? st.user : null;
+    }
+
+    function boxHtml() {
+        const user = signedInUser();
+        if (!user) {
+            return `
+        <div class="email-capture-box mt-4 p-3" style="${boxStyle}">
             <h6 style="margin-bottom: 10px; color: #2c3e50;">Save Your Results</h6>
-            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">Enter your email to get a copy of these results.</p>
-            <div class="input-group mb-2">
-                <input type="email" id="captureEmailInput" class="form-control" placeholder="your@email.com">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")}${recapArg})">Email Me</button>
-                </div>
+            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">Log in or sign up (it's free) to email these results to yourself.</p>
+            <button type="button" class="btn btn-primary" id="btnEmailLogin" onclick="openModal('loginModal')">Log In / Sign Up</button>
+        </div>
+    `;
+        }
+        return `
+        <div class="email-capture-box mt-4 p-3" style="${boxStyle}">
+            <h6 style="margin-bottom: 10px; color: #2c3e50;">Save Your Results</h6>
+            <p style="font-size: 0.85rem; color: #5f6b6c; margin-bottom: 10px;">We'll email these results to ${escapeEmailBoxHtml(user.email)}.</p>
+            <div class="mb-2">
+                <button class="btn btn-primary" id="btnEmailResults" onclick="sendResultsEmail('${calculatorName}', ${JSON.stringify(resultElementIdsArray).replace(/"/g, "'")}${recapArg})">Email Me</button>
             </div>
             <div class="form-check mb-2">
                 <input type="checkbox" class="form-check-input" id="marketingOptIn">
@@ -156,5 +183,17 @@ function injectEmailCaptureUI(containerId, calculatorName, resultElementIdsArray
             <div id="emailResultsMsg" style="display:none; font-size: 0.85rem; margin-top: 5px;"></div>
         </div>
     `;
-    container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function render() {
+        const existing = container.querySelector(':scope > .email-capture-box');
+        if (existing) existing.outerHTML = boxHtml();
+        else container.insertAdjacentHTML('beforeend', boxHtml());
+    }
+
+    render();
+    if (!container.dataset.emailCaptureBound) {
+        container.dataset.emailCaptureBound = '1';
+        window.addEventListener('chemcalc:authchange', render);
+    }
 }
