@@ -7,7 +7,10 @@
 
    WHY IT WAS REWRITTEN (2026-10-28): the deployed version (v3) was an open mail relay. It had no limits and trusted every field, so anyone
    could make it send an email from chemcalc-results@thinkandengage.com to ANY address with ANY html and links. Now:
-     R1 every field is validated (one plain address, short name, known calculator id, size cap) -> 400 "Invalid request"
+     R10 the caller must be signed in (Supabase Auth, checked with GET /auth/v1/user) with a CONFIRMED address, and that address is the
+        only possible recipient: any "email" in the request body is ignored. No sign-in -> 401 and nothing is logged or sent; the auth
+        service being down, slow or rate-limiting -> 503 (fail closed). So the verified sender cannot be used to email a stranger.
+     R1 every field is validated (short name, known calculator id, size cap) -> 400 "Invalid request"
      R2 resultsHtml is run through an allowlist sanitizer built from what the real calculators send (only <p> and
         <strong> with a few style properties; no links at all: a link tag goes, its text stays)
      R8 the visible text of resultsHtml (tags removed, entities decoded) may not contain "://", "www." or "@" -> 400, before
@@ -79,6 +82,7 @@ class HttpError extends Error {
 const INVALID = () => new HttpError(400, 'Invalid request');
 const TOO_MANY = () => new HttpError(429, 'Too many requests');
 const UNAVAILABLE = () => new HttpError(503, 'Service unavailable');
+const UNAUTHORIZED = () => new HttpError(401, 'Sign in required');
 
 /* ---------- small helpers ---------- */
 
@@ -113,7 +117,6 @@ function escHtml(s: string): string {
 const EMAIL_RE = /^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/;
 
 export interface Request_ {
-  email: string;
   calculatorName: string;
   calculatorId: string | null;
   resultsHtml: string;
@@ -124,8 +127,6 @@ export interface Request_ {
 export function validate(body: unknown): Request_ {
   if (!body || typeof body !== 'object' || Array.isArray(body)) throw INVALID();
   const b = body as Record<string, unknown>;
-  const email = b.email;
-  if (typeof email !== 'string' || email.length > 254 || !EMAIL_RE.test(email)) throw INVALID();
   const name = b.calculatorName;
   if (typeof name !== 'string' || name.length < 1 || name.length > 80 || /[<>\r\n]/.test(name)) throw INVALID();
   let calculatorId: string | null = null;
@@ -136,7 +137,27 @@ export function validate(body: unknown): Request_ {
   const html = b.resultsHtml;
   if (typeof html !== 'string' || html.length < 1 || html.length > MAX_RESULTS_HTML) throw INVALID();
   const sourceUrl = typeof b.sourceUrl === 'string' ? b.sourceUrl : '';
-  return { email, calculatorName: name, calculatorId, resultsHtml: html, sourceUrl, marketingOptIn: b.marketingOptIn === true };
+  return { calculatorName: name, calculatorId, resultsHtml: html, sourceUrl, marketingOptIn: b.marketingOptIn === true };
+}
+
+/* ---------- R10: who is calling ---------- */
+
+// The signed-in visitor's confirmed address, from their access token. Never logs the token or the address.
+async function authenticate(d: Deps, req: Request): Promise<string> {
+  const m = /^Bearer ([A-Za-z0-9._~+\/=-]{20,4096})$/.exec((req.headers.get('Authorization') ?? '').trim());
+  if (!m) throw UNAUTHORIZED();
+  let res: Response;
+  try {
+    res = await d.fetch(d.env.SUPABASE_URL + '/auth/v1/user', { method: 'GET', headers: { apikey: d.env.SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + m[1] }, signal: AbortSignal.timeout(8000) });
+  } catch (e) { console.error('send-results: sign-in check failed:', (e as Error).name); throw UNAVAILABLE(); }
+  if (res.status === 429 || res.status >= 500) { console.error('send-results: sign-in check status', res.status); throw UNAVAILABLE(); }
+  if (!res.ok) throw UNAUTHORIZED();
+  const u = await res.json().catch(() => null) as Record<string, unknown> | null;
+  const email = u && typeof u.email === 'string' ? u.email : '';
+  if (!email || email.length > 254 || !EMAIL_RE.test(email)) throw UNAUTHORIZED();
+  if (typeof u!.email_confirmed_at !== 'string' || !u!.email_confirmed_at) throw UNAUTHORIZED();
+  if (u!.is_anonymous === true) throw UNAUTHORIZED();
+  return email;
 }
 
 /* ---------- R3: the "Return to Calculator" address ---------- */
@@ -456,6 +477,9 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
       throw UNAVAILABLE();
     }
 
+    // Before the body is read and before anything is logged: no sign-in, no work.
+    const accountEmail = await authenticate(d, req);
+
     if (Number(req.headers.get('content-length') ?? 0) > MAX_BODY_CHARS) throw INVALID();
     const text = await req.text();
     if (text.length > MAX_BODY_CHARS) throw INVALID();
@@ -473,7 +497,7 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
     const ip = (req.headers.get('cf-connecting-ip') ?? '').trim()
       || (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim()
       || 'unknown';
-    const recipientHash = await sha256Hex(v.email.toLowerCase());
+    const recipientHash = await sha256Hex(accountEmail.toLowerCase());
     const ipHash = await sha256Hex(ip);
 
     // Write first, count second: this request's own row is part of every count below.
@@ -490,13 +514,13 @@ export async function handle(req: Request, d: Deps): Promise<Response> {
       const tip = await getRandomTip(d, v.calculatorId);
       const html = buildEmailHtml(calculatorName, safeHtml, safeSourceUrl(v.sourceUrl), tip);
       const subject = `Your ${calculatorName} Results from ChemCalc`;
-      await sendWithResend(d, v.email, subject, html);
+      await sendWithResend(d, accountEmail, subject, html);
     } catch (e) {
       if (!(e instanceof HttpError && e.keepSlot)) await removeRow(d, id);   // an unknown Resend outcome keeps the slot
       throw e;
     }
 
-    if (v.marketingOptIn) await startDoubleOptIn(d, v.email, calculatorName);
+    if (v.marketingOptIn) await startDoubleOptIn(d, accountEmail, calculatorName);
     await pruneOldRows(d, now);
 
     return reply(200, { success: true, message: 'Email sent successfully' }, cors);

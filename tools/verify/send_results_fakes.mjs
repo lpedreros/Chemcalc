@@ -13,6 +13,12 @@ export async function sha256Hex(text) {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Sign-in tokens for the fake Supabase Auth endpoint. tokenFor(email) is a valid, confirmed session for that address; w.tokens maps
+// any other token to a fixture ({ status } for an error answer, or { user } for a 200 body).
+export const tokenFor = (email) => 'tok.' + Array.from(new TextEncoder().encode(String(email))).map((b) => b.toString(16).padStart(2, '0')).join('') + '.signature00';
+const emailOfToken = (t) => { const m = /^tok\.([0-9a-f]*)\.signature00$/.exec(t); return m ? new TextDecoder().decode(Uint8Array.from(m[1].match(/../g) ?? [], (h) => parseInt(h, 16))) : null; };
+export const confirmedUser = (email, over = {}) => ({ id: 'u-1', email, email_confirmed_at: '2026-01-01T00:00:00Z', is_anonymous: false, ...over });
+
 const json = (status, body, headers = {}) => new Response(body === undefined ? null : JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...headers } });
 
 export function createWorld() {
@@ -20,8 +26,10 @@ export function createWorld() {
     rows: [],                 // email_send_log rows: { id, created_at(ISO), recipient_hash, ip_hash, kind }
     calls: [],                // { method, url, headers, body }
     tip: 'Mix in small batches.',
+    authCalls: [],            // requests to /auth/v1/user: { url, headers } (kept apart from `calls`, which is the database/Resend/Brevo traffic)
+    tokens: {},               // token -> { status } | { user }, checked before the tokenFor() format
     latency: false,           // true: every request yields 1-5 ms (with jitter) first, so parallel requests really interleave
-    fail: { countStatus: 0, countThrows: false, noContentRange: false, insertStatus: 0, insertThrows: false, pruneThrows: false, deleteOwnStatus: 0, deleteOwnThrows: false, tipStatus: 0, resendStatus: 0, resendThrows: false, resendTimeout: false, brevoStatus: 201, brevoThrows: false },
+    fail: { countStatus: 0, countThrows: false, noContentRange: false, insertStatus: 0, insertThrows: false, pruneThrows: false, deleteOwnStatus: 0, deleteOwnThrows: false, authStatus: 0, authThrows: false, authTimeout: false, authBadJson: false, tipStatus: 0, resendStatus: 0, resendThrows: false, resendTimeout: false, brevoStatus: 201, brevoThrows: false },
     seed(recipientHash, ipHash, ageMs, n = 1) {
       for (let i = 0; i < n; i++) w.rows.push({ id: 'seed' + w.rows.length, created_at: new Date(NOW - ageMs).toISOString(), recipient_hash: recipientHash, ip_hash: ipHash, kind: 'results' });
     },
@@ -30,6 +38,19 @@ export function createWorld() {
       const url = String(input);
       const method = init.method || 'GET';
       const headers = Object.fromEntries(Object.entries(init.headers || {}).map(([k, v]) => [k.toLowerCase(), v]));
+      if (url === SUPABASE_URL + '/auth/v1/user') {
+        w.authCalls.push({ url, method, headers });
+        if (w.fail.authThrows) throw new TypeError('network down');
+        if (w.fail.authTimeout) throw new DOMException('The operation timed out.', 'TimeoutError');
+        if (w.fail.authStatus) return json(w.fail.authStatus, { msg: 'auth says no' });
+        if (method !== 'GET' || headers.apikey !== SERVICE_KEY) return json(401, { msg: 'bad apikey' });
+        const token = /^Bearer (.*)$/.exec(headers.authorization || '')?.[1] ?? '';
+        const fx = w.tokens[token];
+        if (fx) return fx.user !== undefined ? (w.fail.authBadJson ? new Response('not json', { status: 200 }) : json(200, fx.user)) : json(fx.status, { msg: 'no' });
+        const em = emailOfToken(token);
+        if (em === null) return json(401, { msg: 'invalid JWT' });
+        return w.fail.authBadJson ? new Response('not json', { status: 200 }) : json(200, confirmedUser(em));
+      }
       const bodyText = init.body === undefined ? undefined : String(init.body);
       const call = { method, url, headers, body: bodyText === undefined ? undefined : JSON.parse(bodyText) };
       w.calls.push(call);

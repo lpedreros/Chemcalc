@@ -3,19 +3,20 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { handle, sanitizeResultsHtml, safeSourceUrl, validate, hasLinkLikeText, ALLOWED_ORIGINS, CALCULATOR_IDS, CALCULATOR_NAMES, LIMITS, MAX_RESULTS_HTML, BREVO_LIST_ID } from '../../supabase/functions/send-results/handler.ts';
-import { createWorld, ENV, NOW, HOUR, RESEND_KEY, BREVO_KEY, SERVICE_KEY, sha256Hex, resendCalls, brevoCalls, logWrites, ownDeletes } from './send_results_fakes.mjs';
+import { createWorld, ENV, NOW, HOUR, RESEND_KEY, BREVO_KEY, SERVICE_KEY, sha256Hex, resendCalls, brevoCalls, logWrites, ownDeletes, tokenFor, confirmedUser } from './send_results_fakes.mjs';
 
 const REAL = JSON.parse(readFileSync(new URL('./send_results_real_payloads.json', import.meta.url), 'utf8'));   // 7 bodies captured from the live calculators
 const URL_FN = 'https://proj.supabase.co/functions/v1/send-results';
 const EMAIL = 'Tester@Example.com';
 const IP = '203.0.113.7';
 
-let w; let logs;
+let w; let logs; const allLogs = [];   // allLogs: every console line of the whole run, checked at the end for tokens and addresses
 beforeEach(() => {
   w = createWorld();
   logs = [];
-  console.error = (...a) => logs.push(a.map(String).join(' '));
-  console.warn = (...a) => logs.push(a.map(String).join(' '));
+  console.error = (...a) => { logs.push(a.map(String).join(' ')); allLogs.push(a.map(String).join(' ')); };
+  console.warn = (...a) => { logs.push(a.map(String).join(' ')); allLogs.push(a.map(String).join(' ')); };
+  console.log = (...a) => { allLogs.push(a.map(String).join(' ')); };
 });
 
 const goodBody = (over = {}) => ({
@@ -27,10 +28,12 @@ const goodBody = (over = {}) => ({
   marketingOptIn: false,
   ...over,
 });
-const call = (body, { origin = 'https://chemcalc.co', ip = IP, method = 'POST', raw, env = ENV, headers = {} } = {}) =>
+// Signed in as the address the test posts as "email" (so older tests, written when the body chose the recipient, still read naturally):
+// auth: false sends no Authorization header; auth: '<token>' sends that token; the default is a confirmed session for body.email (or EMAIL).
+const call = (body, { origin = 'https://chemcalc.co', ip = IP, method = 'POST', raw, env = ENV, headers = {}, auth } = {}) =>
   handle(new Request(URL_FN, {
     method,
-    headers: { 'Content-Type': 'application/json', ...(origin ? { Origin: origin } : {}), ...(ip ? { 'x-forwarded-for': ip } : {}), ...headers },
+    headers: { 'Content-Type': 'application/json', ...(origin ? { Origin: origin } : {}), ...(ip ? { 'x-forwarded-for': ip } : {}), ...(auth === false || method !== 'POST' ? {} : { Authorization: 'Bearer ' + (auth ?? tokenFor(typeof body?.email === 'string' ? body.email : EMAIL)) }), ...headers },
     body: method === 'POST' ? (raw ?? JSON.stringify(body)) : undefined,
   }), { env, fetch: w.fetch, now: () => NOW });
 const expectInvalid = async (body, opts) => {
@@ -91,17 +94,15 @@ test('real calculator ids are all allowed', () => {
 });
 
 /* ---------- R1 validation ---------- */
-test('validation: bad email shapes are rejected with the generic 400 and nothing is called', async () => {
-  const bad = ['', 'plain', 'a@b', 'a@b.com,c@d.com', 'a@b.com;c@d.com', 'a b@example.com', ' a@example.com', 'a@example.com\n', 'a@example.com\r\nBcc: x@y.com', '<a@example.com>', '"a b"@example.com', 'a@exa mple.com',
-    'Name <a@example.com>', 'a@@example.com', '@example.com', 'a@.com', 'a@example..com', 'a'.repeat(65) + '@example.com', 'a@' + 'b'.repeat(250) + '.com', null, 5, true, ['a@example.com'], { a: 1 }];
-  for (const email of bad) await expectInvalid(goodBody({ email }));
-  await expectInvalid(goodBody({ email: undefined }));
-});
-test('validation: a 254-character address passes the length check boundary, 255 does not', () => {
-  const ok = 'a@' + ('b'.repeat(60) + '.').repeat(3) + 'com';
-  assert.ok(ok.length < 254);
-  assert.equal(validate(goodBody({ email: ok })).email, ok);
-  assert.throws(() => validate(goodBody({ email: 'a@' + 'b'.repeat(253) + '.com' })));
+test('validation: "email" in the body is ignored whatever it holds (the recipient comes from the sign-in)', async () => {
+  const odd = ['', 'plain', 'a@b.com,c@d.com', 'Name <a@example.com>', 'a@example.com\r\nBcc: x@y.com', null, 5, true, ['a@example.com'], { a: 1 }, undefined];
+  for (const email of odd) {
+    w = createWorld();
+    const r = await call(goodBody({ email }), { auth: tokenFor(EMAIL) });
+    assert.equal(r.status, 200, JSON.stringify(email));
+    assert.deepEqual(resendCalls(w)[0].body.to, [EMAIL]);
+  }
+  assert.ok(!('email' in validate(goodBody())), 'validate() no longer returns an address');
 });
 test('validation: calculatorName must be a 1-80 character string without < > CR LF', async () => {
   for (const calculatorName of ['', 'x'.repeat(81), 'A<b>', 'A>B', 'A\nB', 'A\rB', 5, null, ['MEKP'], undefined]) await expectInvalid(goodBody({ calculatorName }));
@@ -375,7 +376,7 @@ test('CORS: preflight answers 204 with the allowed headers and calls nothing', a
   assert.equal(bad.headers.get('access-control-allow-origin'), null);
 });
 test('CORS: error responses carry the CORS headers too, so the page can read them', async () => {
-  const r = await call(goodBody({ email: 'nope' }));
+  const r = await call(goodBody({ calculatorId: 'nope' }));
   assert.equal(r.status, 400);
   assert.equal(r.headers.get('access-control-allow-origin'), 'https://chemcalc.co');
 });
@@ -392,14 +393,15 @@ test('errors: Resend failing is a generic 502 that does not reveal the upstream 
     assert.equal(brevoCalls(w).length, 0, 'no marketing sign-up when the email failed');
   }
 });
-test('errors: the only status codes are 200, 400, 405, 429, 502, 503; bodies are one of the generic messages', async () => {
-  const generic = new Set(['Invalid request', 'Too many requests', 'Service unavailable', 'Email service unavailable', 'Method not allowed']);
+test('errors: the only status codes are 200, 400, 401, 405, 429, 502, 503; bodies are one of the generic messages', async () => {
+  const generic = new Set(['Invalid request', 'Too many requests', 'Service unavailable', 'Email service unavailable', 'Method not allowed', 'Sign in required']);
   const outcomes = [];
-  outcomes.push(await call(goodBody({ email: 'bad' })));
+  outcomes.push(await call(goodBody({ calculatorId: 'bad' })));
+  outcomes.push(await call(goodBody(), { auth: false }));
   outcomes.push(await call(goodBody(), { method: 'GET' }));
   w.fail.countStatus = 500; outcomes.push(await call(goodBody())); w.fail.countStatus = 0;
   w.fail.resendStatus = 500; outcomes.push(await call(goodBody({ email: 'z@example.com' }))); w.fail.resendStatus = 0;
-  for (const r of outcomes) { assert.ok([400, 405, 502, 503].includes(r.status)); assert.ok(generic.has((await r.json()).error)); }
+  for (const r of outcomes) { assert.ok([400, 401, 405, 502, 503].includes(r.status)); assert.ok(generic.has((await r.json()).error)); }
 });
 test('logs: nothing logged contains the address, the IP, the results HTML or any key; the hash prefix is logged on a limit', async () => {
   w.seed(await sha256Hex('tester@example.com'), 'x', HOUR, 3);
@@ -564,7 +566,7 @@ const FRESH = new URL('../../supabase/functions/send-results/handler.ts?isolate=
 const ipQueries = (w) => w.calls.filter((c) => c.method === 'GET' && c.url.includes('ip_hash='));
 test('no IP headers: the per-IP count is never queried, 25 pass (the overall cap, not 10), and the skip is warned once without any address', async () => {
   const fresh = await import(FRESH);
-  const send = (email, headers = {}) => fresh.handle(new Request(URL_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://chemcalc.co', ...headers }, body: JSON.stringify(goodBody({ email })) }), { env: ENV, fetch: w.fetch, now: () => NOW });
+  const send = (email, headers = {}) => fresh.handle(new Request(URL_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://chemcalc.co', Authorization: 'Bearer ' + tokenFor(email), ...headers }, body: JSON.stringify(goodBody({ email })) }), { env: ENV, fetch: w.fetch, now: () => NOW });
   const statuses = [];
   for (let i = 0; i < 40; i++) statuses.push((await send(`user${i}@example.com`)).status);
   assert.equal(statuses.filter((s) => s === 200).length, LIMITS.global, 'exactly the overall cap passes');
@@ -704,4 +706,146 @@ test('tip: markup and ampersands in the tip are escaped in the email', async () 
 test('CORS: the preflight allows the four optional supabase-js headers, exactly as listed', async () => {
   const r = await call(null, { method: 'OPTIONS' });
   assert.equal(r.headers.get('access-control-allow-headers'), 'authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage');
+});
+
+/* ---------- R10: account-only recipient ---------- */
+const OWNER = 'owner@example.com';
+const VICTIM = 'victim@example.com';
+const fixtureToken = (name, entry) => { const t = ('fixture.' + name).padEnd(24, 'x'); w.tokens[t] = entry; return t; };
+const nothingHappened = (why) => {
+  assert.equal(w.rows.length, 0, why + ': no log row');
+  assert.equal(w.calls.length, 0, why + ': no database, Resend or Brevo call');
+  assert.equal(resendCalls(w).length, 0, why + ': nothing sent');
+};
+
+test('auth: no, empty, malformed, too short or too long Authorization -> 401 "Sign in required", nothing logged, nothing sent, no round trip to Auth', async () => {
+  const cases = [{ auth: false }, { auth: false, headers: { Authorization: '' } }, { auth: false, headers: { Authorization: 'Bearer ' } }, { auth: false, headers: { Authorization: 'Bearer' } },
+    { auth: false, headers: { Authorization: 'Basic ' + 'a'.repeat(30) } }, { auth: false, headers: { Authorization: 'bearer ' + 'a'.repeat(30) } }, { auth: false, headers: { Authorization: 'Bearer ' + 'a'.repeat(19) } },
+    { auth: false, headers: { Authorization: 'Bearer ' + 'a'.repeat(4097) } }, { auth: false, headers: { Authorization: 'Bearer ' + 'a'.repeat(30) + ' ' + 'b'.repeat(30) } }, { auth: false, headers: { Authorization: 'Bearer ' + 'a'.repeat(30) + '"' } }];
+  for (const opts of cases) {
+    w = createWorld();
+    const r = await call(goodBody(), opts);
+    assert.equal(r.status, 401, JSON.stringify(opts.headers ?? opts));
+    assert.deepEqual(await r.json(), { error: 'Sign in required' });
+    nothingHappened(JSON.stringify(opts.headers ?? opts));
+    assert.equal(w.authCalls.length, 0, 'a malformed header never reaches the Auth service');
+  }
+});
+test('auth: a token the Auth service rejects (anon/publishable key style, 401, 403, 404) or answers with junk -> 401, nothing logged or sent', async () => {
+  const entries = [['anon401', { status: 401 }], ['f403', { status: 403 }], ['f404', { status: 404 }], ['unknown', undefined]];
+  for (const [name, entry] of entries) {
+    w = createWorld();
+    const token = entry ? fixtureToken(name, entry) : 'eyJhbGciOiJIUzI1NiJ9.anon-key-not-a-session.sig';
+    const r = await call(goodBody(), { auth: token });
+    assert.equal(r.status, 401, name);
+    assert.deepEqual(await r.json(), { error: 'Sign in required' });
+    assert.equal(w.authCalls.length, 1, name);
+    nothingHappened(name);
+  }
+  w = createWorld(); w.fail.authBadJson = true;
+  const r = await call(goodBody(), { auth: fixtureToken('junk', { user: confirmedUser(OWNER) }) });
+  assert.equal(r.status, 401); nothingHappened('junk body');
+});
+test('auth: a valid confirmed user -> 200 and Resend is called once with to exactly [the account address]; the body email is ignored and appears nowhere', async () => {
+  const bodies = [goodBody({ email: undefined }), goodBody({ email: OWNER }), goodBody({ email: VICTIM }), (() => { const b = goodBody(); delete b.email; return b; })()];
+  for (const b of bodies) {
+    w = createWorld(); logs.length = 0;
+    const token = fixtureToken('owner', { user: confirmedUser(OWNER) });
+    const r = await call(b, { auth: token });
+    assert.equal(r.status, 200, JSON.stringify(b.email));
+    assert.deepEqual(await r.json(), { success: true, message: 'Email sent successfully' });
+    assert.equal(resendCalls(w).length, 1);
+    assert.deepEqual(resendCalls(w)[0].body.to, [OWNER]);
+    assert.ok(!JSON.stringify(resendCalls(w)).includes(VICTIM), 'the other address is not in the Resend call');
+    assert.ok(!JSON.stringify(w.calls).includes(VICTIM) && !JSON.stringify(w.rows).includes(VICTIM), 'nor in any other call or row');
+    assert.ok(!logs.join('\n').includes(VICTIM) && !logs.join('\n').includes(OWNER) && !logs.join('\n').includes(token), 'nor in the console');
+    assert.equal(w.rows[0].recipient_hash, await sha256Hex(OWNER));
+    const a = w.authCalls[0];
+    assert.equal(w.authCalls.length, 1);
+    assert.equal(a.method, 'GET');
+    assert.equal(a.headers.apikey, SERVICE_KEY);
+    assert.equal(a.headers.authorization, 'Bearer ' + token);
+  }
+});
+test('auth: an unconfirmed, anonymous or address-less user -> 401, nothing sent', async () => {
+  const bad = { 'confirmed null': { email_confirmed_at: null }, 'confirmed empty': { email_confirmed_at: '' }, 'confirmed missing': { email_confirmed_at: undefined }, 'confirmed number': { email_confirmed_at: 1 },
+    'no email': { email: undefined }, 'empty email': { email: '' }, 'email number': { email: 5 }, anonymous: { is_anonymous: true }, 'bad shape': { email: 'not-an-email' }, 'two addresses': { email: 'a@example.com,b@example.com' }, 'too long': { email: 'a@' + 'b'.repeat(252) + '.com' } };
+  for (const [name, over] of Object.entries(bad)) {
+    w = createWorld();
+    const r = await call(goodBody(), { auth: fixtureToken(name.replace(/\W/g, ''), { user: confirmedUser(OWNER, over) }) });
+    assert.equal(r.status, 401, name);
+    nothingHappened(name);
+  }
+  w = createWorld();
+  assert.equal((await call(goodBody(), { auth: fixtureToken('null', { user: null }) })).status, 401);
+});
+test('auth: the Auth service failing (500, 502, 429, network error, timeout) -> 503, nothing logged, nothing sent', async () => {
+  for (const f of [{ authStatus: 500 }, { authStatus: 502 }, { authStatus: 429 }, { authThrows: true }, { authTimeout: true }]) {
+    w = createWorld(); Object.assign(w.fail, f);
+    const r = await call(goodBody());
+    assert.equal(r.status, 503, JSON.stringify(f));
+    assert.deepEqual(await r.json(), { error: 'Service unavailable' });
+    nothingHappened(JSON.stringify(f));
+  }
+});
+test('auth: the caps are keyed to the account address, the IP and the whole site as before; a refused unauthenticated request uses no slot', async () => {
+  // 4th send from one account in 24 h, whatever the body says
+  for (let i = 0; i < LIMITS.recipient; i++) assert.equal((await call(goodBody({ email: `x${i}@example.com` }), { auth: tokenFor(OWNER), ip: `192.0.2.${i + 1}` })).status, 200);
+  assert.equal((await call(goodBody({ email: VICTIM }), { auth: tokenFor(OWNER), ip: '192.0.2.99' })).status, 429);
+  assert.equal(w.rows.length, LIMITS.recipient, 'the refused request gave its slot back');
+  // a different account is not affected
+  assert.equal((await call(goodBody(), { auth: tokenFor('other@example.com'), ip: '192.0.2.50' })).status, 200);
+  // IP cap
+  w = createWorld();
+  for (let i = 0; i < 12; i++) await call(goodBody(), { auth: false, ip: '203.0.113.5' });   // unauthenticated: no slot used
+  assert.equal(w.rows.length, 0);
+  const st = [];
+  for (let i = 0; i < LIMITS.ip + 1; i++) st.push((await call(goodBody({ email: `ip${i}@example.com` }), { ip: '203.0.113.5' })).status);
+  assert.equal(st.filter((s) => s === 200).length, LIMITS.ip);
+  assert.equal(st[LIMITS.ip], 429);
+  // overall cap
+  w = createWorld();
+  const g = [];
+  for (let i = 0; i < LIMITS.global + 2; i++) g.push((await call(goodBody({ email: `g${i}@example.com` }), { ip: `198.51.100.${i + 1}` })).status);
+  assert.equal(g.filter((s) => s === 200).length, LIMITS.global);
+});
+test('auth: preflight needs no sign-in; 401, 429 and 503 answers carry the CORS headers for an allowed origin', async () => {
+  const pre = await call(null, { method: 'OPTIONS', origin: 'https://testing.chemcalc.co' });
+  assert.equal(pre.status, 204);
+  assert.equal(pre.headers.get('access-control-allow-origin'), 'https://testing.chemcalc.co');
+  assert.equal(w.authCalls.length, 0);
+  const r401 = await call(goodBody(), { auth: false, origin: 'https://chemcalc.co' });
+  assert.equal(r401.status, 401);
+  assert.equal(r401.headers.get('access-control-allow-origin'), 'https://chemcalc.co');
+  w.seed(await sha256Hex(EMAIL.toLowerCase()), 'x', HOUR, 3);
+  const r429 = await call(goodBody(), { origin: 'https://www.chemcalc.co' });
+  assert.equal(r429.status, 429);
+  assert.equal(r429.headers.get('access-control-allow-origin'), 'https://www.chemcalc.co');
+  w.fail.authStatus = 500;
+  const r503 = await call(goodBody(), { origin: 'https://testing.chemcalc.co' });
+  assert.equal(r503.status, 503);
+  assert.equal(r503.headers.get('access-control-allow-origin'), 'https://testing.chemcalc.co');
+});
+test('auth: the Brevo double opt-in receives the account address, never the body address', async () => {
+  const r = await call(goodBody({ email: VICTIM, marketingOptIn: true }), { auth: tokenFor(OWNER) });
+  assert.equal(r.status, 200);
+  assert.equal(brevoCalls(w).length, 1);
+  assert.equal(brevoCalls(w)[0].body.email, OWNER);
+  assert.ok(!JSON.stringify(brevoCalls(w)).includes(VICTIM));
+});
+test('auth: the seven real payloads, sent by a signed-in user, are accepted and give the same sanitized email as before', async () => {
+  for (const x of REAL) {
+    w = createWorld();
+    const r = await call(x.body, { auth: tokenFor(OWNER) });
+    assert.equal(r.status, 200, x.label);
+    assert.deepEqual(resendCalls(w)[0].body.to, [OWNER]);
+    assert.equal(sanitizeResultsHtml(x.body.resultsHtml), x.body.resultsHtml, x.label);
+    assert.ok(resendCalls(w)[0].body.html.includes(x.body.resultsHtml), x.label + ': byte for byte');
+  }
+});
+test('auth: across the whole suite no console line held a token or a full address', () => {
+  const all = allLogs.join('\n');
+  assert.ok(allLogs.length > 20, 'the spy saw the logs');
+  assert.ok(!/tok\.[0-9a-f]+\.signature00|fixture\.|eyJhbGci/.test(all), 'a token reached the console');
+  assert.ok(!/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}/i.test(all), 'an address reached the console');
 });
