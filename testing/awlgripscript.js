@@ -61,6 +61,8 @@ document.addEventListener("DOMContentLoaded", function() {
   // injectEmailCaptureUI (see awlgrip.html) -- the visible spans above
   // hold bare values next to a separate .mp-compare-label element,
   // which injectEmailCaptureUI can't see.
+  var outBasis = document.getElementById("resultBasis");
+  var emailB = document.getElementById("awlgripEmailBasis");
   var emailP = document.getElementById("awlgripEmailPaint");
   var emailC = document.getElementById("awlgripEmailConverter");
   var emailR = document.getElementById("awlgripEmailReducer");
@@ -437,6 +439,16 @@ document.addEventListener("DOMContentLoaded", function() {
     var cVolStr = cVol ? cVol.toFixed(2) : "Err";
     var rVolStr = rVol ? rVol.toFixed(2) : "Err";
 
+    // Imperial results also show the millilitres, straight from baseCC/convCC/redCC (already mL, no conversion), formatted
+    // like the metric display. Metric results are unchanged.
+    function mlNote(str, cc) { return (sysType === "imperial" && str !== "Err") ? " (" + cc.toFixed(2) + " mL)" : ""; }
+    var pText = pVolStr + " " + labels[outUnit] + mlNote(pVolStr, baseCC);
+    var cText = cVolStr + " " + labels[outUnit] + mlNote(cVolStr, convCC);
+    var rText = rVolStr + " " + labels[outUnit] + mlNote(rVolStr, redCC);
+
+    // "Total for N coats": what the amounts add up to. Area mode only -- a paint volume typed in directly is not a total for anything.
+    var basisText = (isArea && cov[paintType] && cov[paintType][methodType]) ? "Total for " + cov[paintType][methodType].k + " coats" : "";
+
     // Product-specific result labels, including real AkzoNobel part
     // numbers so users know exactly what to buy. Base labels never carry
     // a specific color/tint code for Awlgrip Topcoat, Awlcraft 2000/3000,
@@ -476,17 +488,21 @@ document.addEventListener("DOMContentLoaded", function() {
     // .mp-compare-label element per row for the (genuinely per-product
     // dynamic) label, so label and value are written separately here.
     outPLabel.textContent = baseLabel;
-    outP.textContent = pVolStr + " " + labels[outUnit];
+    outP.textContent = pText;
     outCLabel.textContent = convLabel;
-    outC.textContent = cVolStr + " " + labels[outUnit];
+    outC.textContent = cText;
     outRLabel.textContent = redLabel;
-    outR.textContent = rVolStr + " " + labels[outUnit];
+    outR.textContent = rText;
+    outBasis.textContent = basisText;
+    outBasis.style.display = basisText ? "" : "none";
+    emailB.textContent = "Mix basis: " + basisText;
+    emailB.style.display = basisText ? "block" : "none";
 
     // sr-only email mirrors: full labeled sentences, same label/value
     // pair as the visible spans just above.
-    emailP.textContent = baseLabel + ": " + pVolStr + " " + labels[outUnit];
-    emailC.textContent = convLabel + ": " + cVolStr + " " + labels[outUnit];
-    emailR.textContent = redLabel + ": " + rVolStr + " " + labels[outUnit];
+    emailP.textContent = baseLabel + ": " + pText;
+    emailC.textContent = convLabel + ": " + cText;
+    emailR.textContent = redLabel + ": " + rText;
 
     // Show accelerator only for Awlcraft 2000, always in mL for easier
     // measurement. Accelerator name follows the same dynamic-label style
@@ -591,7 +607,8 @@ document.addEventListener("DOMContentLoaded", function() {
         recap: [
           { label: 'Product Line', value: (paint.options[paint.selectedIndex] ? paint.options[paint.selectedIndex].text : '') || '—' },
           { label: 'Application Method', value: (method.options[method.selectedIndex] ? method.options[method.selectedIndex].text : '') || '—' },
-          { label: 'Coating Amount', value: printAmountText }
+          { label: 'Coating Amount', value: printAmountText },
+          { label: 'Mix basis', value: basisText || '—' }
         ],
         primary: { label: outPLabel.textContent, value: outP.textContent, unit: null, sub: null },
         compare: [
@@ -616,6 +633,10 @@ document.addEventListener("DOMContentLoaded", function() {
     emailP.textContent = "Paint Base: " + msg;
     emailC.textContent = "Converter / Catalyst: " + msg;
     emailR.textContent = "Reducer: " + msg;
+    outBasis.textContent = "";
+    outBasis.style.display = "none";
+    emailB.textContent = "Mix basis: —";
+    emailB.style.display = "none";
     outA.style.display = "none";
     outAccelBox.style.display = "none";
     emailA.style.display = "none";
@@ -631,7 +652,8 @@ document.addEventListener("DOMContentLoaded", function() {
         recap: [
           { label: 'Product Line', value: (paint.options[paint.selectedIndex] ? paint.options[paint.selectedIndex].text : '') || '—' },
           { label: 'Application Method', value: (method.options[method.selectedIndex] ? method.options[method.selectedIndex].text : '') || '—' },
-          { label: 'Coating Amount', value: '—' }
+          { label: 'Coating Amount', value: '—' },
+          { label: 'Mix basis', value: '—' }
         ],
         primary: { label: 'Paint Base', value: msg, unit: null, sub: null },
         compare: [

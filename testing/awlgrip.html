@@ -532,6 +532,8 @@
           <h2>Mix Result</h2>
         </div>
         <div class="mp-results-body">
+          <!-- What the amounts below add up to ("Total for N coats"); filled in by calc(), empty when the amount was typed in as paint volume. -->
+          <p class="mp-compare-value-sub" id="resultBasis" style="display:none"></p>
           <div class="mp-result-compare">
             <div class="mp-compare-box">
               <span class="mp-compare-label" id="resultPaintLabel">Paint Base</span>
@@ -564,6 +566,7 @@
                "Email Me Results" copy the label back. Visually hidden
                but still announced to assistive tech in full-sentence
                form. -->
+          <p id="awlgripEmailBasis" class="sr-only" style="display:none;">Mix basis: &mdash;</p>
           <p id="awlgripEmailPaint" class="sr-only">Paint Base: &mdash;</p>
           <p id="awlgripEmailConverter" class="sr-only">Converter / Catalyst: &mdash;</p>
           <p id="awlgripEmailReducer" class="sr-only">Reducer: &mdash;</p>
@@ -907,7 +910,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function() {
-    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['awlgripEmailPaint', 'awlgripEmailConverter', 'awlgripEmailReducer', 'awlgripEmailAccelerator', 'resultCoverage'], 'awlgripEmailRecap');
+    injectEmailCaptureUI('awlgripEmailCapture', 'Awlgrip Paint Mix', ['awlgripEmailBasis', 'awlgripEmailPaint', 'awlgripEmailConverter', 'awlgripEmailReducer', 'awlgripEmailAccelerator', 'resultCoverage'], 'awlgripEmailRecap');
   });
 </script>
 <!-- Bootstrap JS (ensure Popper.js is loaded if needed by Bootstrap v4) -->
