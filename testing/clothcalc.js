@@ -143,7 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} system - The measurement system ("imperial" or "metric").
    * @returns {string} The formatted volume string for display.
    */
-  function formatDisplayVolume(valueLiters, displayUnit, system) {
+  // Returns the primary text and the optional mL part (secondary) apart, so the screen can put the mL on its own line.
+  // Imperial volumes always carry their mL (secondary); metric is unchanged.
+  function volumeParts(valueLiters, displayUnit, system) {
     let primaryDisplay = "";
     let secondaryDisplay = "";
 
@@ -184,6 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 primaryDisplay = `${valueGal.toFixed(3)} gal`;
             }
         }
+        // every imperial volume (not the "< 0.01 mL" text, not zero) also shows its mL -- same valueLiters * 1000, same toFixed(2) as the small-amount case above
+        if (secondaryDisplay === "" && primaryDisplay !== "" && primaryDisplay.charAt(0) !== "<" && valueLiters !== 0) {
+            secondaryDisplay = `(${(valueLiters * 1000).toFixed(2)} mL)`;
+        }
     } else { // Metric system
         if (displayUnit === "l") {
             const valueMl = valueLiters * 1000;
@@ -204,7 +210,28 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
-    return `${primaryDisplay} ${secondaryDisplay}`.trim();
+    return { primary: primaryDisplay, secondary: secondaryDisplay };
+  }
+
+  // One-line text (email mirrors, print recap): "x unit (y mL)".
+  function formatDisplayVolume(valueLiters, displayUnit, system) {
+    const parts = volumeParts(valueLiters, displayUnit, system);
+    return `${parts.primary} ${parts.secondary}`.trim();
+  }
+
+  // On screen: imperial puts the mL on its own line, in a child span that starts with a space so the element's textContent still reads the
+  // one-line text. Metric and anything without an mL part is plain text exactly as before.
+  function setVolumeText(el, valueLiters, displayUnit, system) {
+    const parts = volumeParts(valueLiters, displayUnit, system);
+    if (system === "imperial" && parts.secondary) {
+      el.textContent = parts.primary;
+      const sub = document.createElement("span");
+      sub.className = "mp-compare-value-sub";
+      sub.textContent = " " + parts.secondary;
+      el.appendChild(sub);
+    } else {
+      el.textContent = `${parts.primary} ${parts.secondary}`.trim();
+    }
   }
 
   /**
@@ -867,8 +894,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // the hero has to actually BE the sum the split box decomposes.
     // Poly/Vinylester: unchanged, base resin only.
     const heroVolumeLiters = (resinType === "epoxy") ? (resinVolumeLiters + hardenerVolumeLiters) : resinVolumeLiters;
-    resinVolumeEl.textContent = formatDisplayVolume(heroVolumeLiters, resultUnit, selectedSystem);
-    clothEmailVolumeEl.textContent = "Total resin needed: " + resinVolumeEl.textContent;
+    setVolumeText(resinVolumeEl, heroVolumeLiters, resultUnit, selectedSystem);
+    clothEmailVolumeEl.textContent = "Total resin needed: " + formatDisplayVolume(heroVolumeLiters, resultUnit, selectedSystem);
 
     // Resin Weight box -- same combined-vs-base-only split as the hero,
     // and the same label distinction ("Total Resin Weight" for epoxy vs.
@@ -898,8 +925,27 @@ document.addEventListener("DOMContentLoaded", () => {
       const hardenerVolDisplay = formatDisplayVolume(hardenerVolumeLiters, resultUnit, selectedSystem);
       const resinWeightDisplay = formatDisplayWeight(totalResinKg, weightDisplayUnit, selectedSystem);
       const hardenerWeightDisplay = formatDisplayWeight(hardenerWeightKg, weightDisplayUnit, selectedSystem);
-      hardenerAmountEl.innerHTML = `${resinVolDisplay} : ${hardenerVolDisplay}<span class="mp-compare-value-sub">(${resinWeightDisplay} : ${hardenerWeightDisplay})</span>`;
-      clothEmailHardenerEl.textContent = `${hardenerLabelEl ? hardenerLabelEl.textContent : "Resin : Hardener"}: ${resinVolDisplay} : ${hardenerVolDisplay} (${resinWeightDisplay} : ${hardenerWeightDisplay})`;
+      const resinParts = volumeParts(resinVolumeLiters, resultUnit, selectedSystem);
+      const hardenerParts = volumeParts(hardenerVolumeLiters, resultUnit, selectedSystem);
+      const hardenerLabelText = hardenerLabelEl ? hardenerLabelEl.textContent : "Resin : Hardener";
+      if (selectedSystem === "imperial" && resinParts.secondary && hardenerParts.secondary) {
+        // Imperial: volumes, then the weights line (as before), then one more line with the two mL amounts.
+        const mlOf = (secondary) => secondary.replace(/^\(/, "").replace(/\)$/, "");   // "(11.83 mL)" -> "11.83 mL"
+        const mlLine = `(${mlOf(resinParts.secondary)} : ${mlOf(hardenerParts.secondary)})`;
+        hardenerAmountEl.textContent = `${resinParts.primary} : ${hardenerParts.primary}`;
+        const weightSub = document.createElement("span");
+        weightSub.className = "mp-compare-value-sub";
+        weightSub.textContent = `(${resinWeightDisplay} : ${hardenerWeightDisplay})`;
+        hardenerAmountEl.appendChild(weightSub);
+        const mlSub = document.createElement("span");
+        mlSub.className = "mp-compare-value-sub";
+        mlSub.textContent = mlLine;
+        hardenerAmountEl.appendChild(mlSub);
+        clothEmailHardenerEl.textContent = `${hardenerLabelText}: ${resinParts.primary} : ${hardenerParts.primary} (${resinWeightDisplay} : ${hardenerWeightDisplay}) ${mlLine}`;
+      } else {
+        hardenerAmountEl.innerHTML = `${resinVolDisplay} : ${hardenerVolDisplay}<span class="mp-compare-value-sub">(${resinWeightDisplay} : ${hardenerWeightDisplay})</span>`;
+        clothEmailHardenerEl.textContent = `${hardenerLabelText}: ${resinVolDisplay} : ${hardenerVolDisplay} (${resinWeightDisplay} : ${hardenerWeightDisplay})`;
+      }
       clothEmailHardenerEl.style.display = "block";
     } else {
       if (hardenerBoxEl) hardenerBoxEl.style.display = "none";
