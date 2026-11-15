@@ -226,13 +226,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // together, plus the sr-only "Label: value" mirrors for
   // injectEmailCaptureUI (see build report -- .mp-compare-value alone
   // can't be read as a full sentence, same fix awlgrip.html needed).
-  function setResults(baseLabel, baseValue, hardenerLabel, hardenerValue) {
+  // baseNote/hardenerNote (optional) are the " (y mL)" parts: on screen they sit on their own line in a child span (which starts with a
+  // space, so the element's textContent -- what the print recap reads -- is the one-line "x (y mL)"); the email mirrors get the same one line.
+  function showValue(el, value, note) {
+    el.textContent = value;
+    if (note) {
+      const sub = document.createElement("span");
+      sub.className = "mp-compare-value-sub";
+      sub.textContent = note;
+      el.appendChild(sub);
+    }
+  }
+
+  function setResults(baseLabel, baseValue, hardenerLabel, hardenerValue, baseNote = "", hardenerNote = "") {
     resultBaseLabelEl.textContent = baseLabel;
-    resultBaseDisplay.textContent = baseValue;
+    showValue(resultBaseDisplay, baseValue, baseNote);
     resultHardenerLabelEl.textContent = hardenerLabel;
-    resultHardenerDisplay.textContent = hardenerValue;
-    if (emailBaseEl) emailBaseEl.textContent = baseLabel + ": " + baseValue;
-    if (emailHardenerEl) emailHardenerEl.textContent = hardenerLabel + ": " + hardenerValue;
+    showValue(resultHardenerDisplay, hardenerValue, hardenerNote);
+    if (emailBaseEl) emailBaseEl.textContent = baseLabel + ": " + baseValue + baseNote;
+    if (emailHardenerEl) emailHardenerEl.textContent = hardenerLabel + ": " + hardenerValue + hardenerNote;
   }
 
   function calculateEpifanes() {
@@ -293,7 +305,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const baseValueStr = formatNumber(baseVolumeOutput) + " " + (unitLabels[unit] || unit);
     const hardenerValueStr = formatNumber(hardenerVolumeOutput) + " " + (unitLabels[unit] || unit);
 
-    setResults(baseLabel, baseValueStr, hardenerLabel, hardenerValueStr);
+    // Ounces, quarts and gallons also show the millilitres, from the baseVolumeCcs/hardenerVolumeCcs computed above, in the same
+    // one-decimal format this file uses for a ccs result. ccs (already mL) and liters get none.
+    const showMl = unit === "ounces" || unit === "quarts" || unit === "gallons";
+    const mlNote = (ccs) => " (" + ccs.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " mL)";
+    setResults(baseLabel, baseValueStr, hardenerLabel, hardenerValueStr, showMl ? mlNote(baseVolumeCcs) : "", showMl ? mlNote(hardenerVolumeCcs) : "");
 
     // ── Analytics: log this calculation (fire-and-forget) ──
     // Guard: function already returns early for <= 0, but be explicit
