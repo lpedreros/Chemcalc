@@ -475,9 +475,22 @@ document.addEventListener("DOMContentLoaded", function() {
     // Imperial results also show the millilitres, straight from baseCC/convCC/redCC (already mL, no conversion), formatted
     // like the metric display. Metric results are unchanged.
     function mlNote(str, cc) { return (sysType === "imperial" && str !== "Err") ? " (" + cc.toFixed(2) + " mL)" : ""; }
-    var pText = pVolStr + " " + labels[outUnit] + mlNote(pVolStr, baseCC);
-    var cText = cVolStr + " " + labels[outUnit] + mlNote(cVolStr, convCC);
-    var rText = rVolStr + " " + labels[outUnit] + mlNote(rVolStr, redCC);
+    // On screen the mL goes on its own line (a child span under the volume); the email mirrors and the print recap take the
+    // one-line text, which is exactly what the element's textContent reads (the note starts with a space).
+    var pNote = mlNote(pVolStr, baseCC), cNote = mlNote(cVolStr, convCC), rNote = mlNote(rVolStr, redCC);
+    var pMain = pVolStr + " " + labels[outUnit], cMain = cVolStr + " " + labels[outUnit], rMain = rVolStr + " " + labels[outUnit];
+    var pText = pMain + pNote;
+    var cText = cMain + cNote;
+    var rText = rMain + rNote;
+    function setVolume(el, main, note) {
+      el.textContent = main;
+      if (note) {
+        var sub = document.createElement("span");
+        sub.className = "mp-compare-value-sub";
+        sub.textContent = note;
+        el.appendChild(sub);
+      }
+    }
 
     // "Total for N coats": what the amounts add up to. Area mode only -- a paint volume typed in directly is not a total for anything.
     var basisText = (isArea && cov[paintType] && cov[paintType][methodType])
@@ -523,11 +536,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // .mp-compare-label element per row for the (genuinely per-product
     // dynamic) label, so label and value are written separately here.
     outPLabel.textContent = baseLabel;
-    outP.textContent = pText;
+    setVolume(outP, pMain, pNote);
     outCLabel.textContent = convLabel;
-    outC.textContent = cText;
+    setVolume(outC, cMain, cNote);
     outRLabel.textContent = redLabel;
-    outR.textContent = rText;
+    setVolume(outR, rMain, rNote);
     outBasis.textContent = basisText;
     outBasis.style.display = basisText ? "" : "none";
     emailB.textContent = "Mix basis: " + basisText;
