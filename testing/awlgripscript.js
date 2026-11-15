@@ -28,6 +28,10 @@ document.addEventListener("DOMContentLoaded", function() {
     awlgriphdtclear: { spray: { c: 537.8, k: 2 } }
   };
 
+  // Waste / overspray allowance, % added to the area-based total.
+  // Product decision by Leo 2026-11-13: general retailer guidance (spray 20-30%, roll 10-15%), NOT a manufacturer figure. Default and maximum.
+  var WASTE_DEFAULT = { spray: 25, roll: 15 };
+
   // Products that are spray-only (Roll/Brush disabled)
   var sprayOnlyProducts = ["awlcraft2000", "awlcraftse", "awlgriphdtclear"];
 
@@ -43,6 +47,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var dimensionUnitSelect = document.getElementById("dimensionUnit");
   var calculatedAreaDisplaySpan = document.getElementById("calculatedAreaDisplay");
   var resRow = document.getElementById("resultUnitRow");
+  var wasteRow = document.getElementById("wasteRow");
+  var wasteInput = document.getElementById("wastePercent");
+  var wasteFor = { paint: null, method: null };   // the product/method the waste field was last reset for
   var resU = document.getElementById("resultUnit");
   var method = document.getElementById("methodType");
   var paint = document.getElementById("paintType");
@@ -177,6 +184,28 @@ document.addEventListener("DOMContentLoaded", function() {
     } else {
       resRow.classList.add("d-none");
     }
+    // The waste allowance only applies to an area-based total, so it shows and hides with the result-unit row.
+    if (wasteRow) wasteRow.classList.toggle("d-none", !isAreaInput);
+  }
+
+  // Waste allowance in percent for this method: empty or non-numeric -> the default; below 0 -> 0; above the maximum (= the default) -> the maximum.
+  function wasteDefaultFor(methodType) { return WASTE_DEFAULT[methodType] !== undefined ? WASTE_DEFAULT[methodType] : WASTE_DEFAULT.spray; }
+  function readWaste(methodType) {
+    var max = wasteDefaultFor(methodType);
+    var n = parseFloat(wasteInput ? wasteInput.value : "");
+    if (isNaN(n)) return max;
+    if (n < 0) return 0;
+    if (n > max) return max;
+    return n;
+  }
+  // Value and maximum go back to the method's default whenever the product or method changes (including the forced switch to spray).
+  function syncWasteToSelection(paintType, methodType) {
+    if (!wasteInput) return;
+    if (wasteFor.paint === paintType && wasteFor.method === methodType) return;
+    wasteFor.paint = paintType;
+    wasteFor.method = methodType;
+    wasteInput.max = String(wasteDefaultFor(methodType));
+    wasteInput.value = String(wasteDefaultFor(methodType));
   }
 
   // role:'base' keys -- the actual computed primer/converter/reducer
@@ -320,6 +349,9 @@ document.addEventListener("DOMContentLoaded", function() {
       methodType = method.value; 
     }
 
+    syncWasteToSelection(paintType, methodType);
+    var wastePct = 0;   // set in the area branch below; stays 0 for a typed-in paint volume
+
     // Show/hide Awlcraft 2000/3000 reducer slider
     var reducerPercentRow = document.getElementById("reducerPercentRow");
     if (reducerPercentRow) {
@@ -390,7 +422,8 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
       }
 
-      var totalGallonsMixed = (areaFt2 / coverageInfo.c) * coverageInfo.k;
+      wastePct = readWaste(methodType);
+      var totalGallonsMixed = (areaFt2 / coverageInfo.c) * coverageInfo.k * (1 + wastePct / 100);
       var totalCCMixed = convert(totalGallonsMixed, "gallons", "ccs");
 
       var ratioData = ratios(paintType, methodType);
@@ -447,7 +480,9 @@ document.addEventListener("DOMContentLoaded", function() {
     var rText = rVolStr + " " + labels[outUnit] + mlNote(rVolStr, redCC);
 
     // "Total for N coats": what the amounts add up to. Area mode only -- a paint volume typed in directly is not a total for anything.
-    var basisText = (isArea && cov[paintType] && cov[paintType][methodType]) ? "Total for " + cov[paintType][methodType].k + " coats" : "";
+    var basisText = (isArea && cov[paintType] && cov[paintType][methodType])
+      ? "Total for " + cov[paintType][methodType].k + " coats" + (wastePct > 0 ? ", includes " + wastePct + "% waste" : "")
+      : "";
 
     // Product-specific result labels, including real AkzoNobel part
     // numbers so users know exactly what to buy. Base labels never carry
@@ -567,6 +602,8 @@ document.addEventListener("DOMContentLoaded", function() {
         unitSystem:  sysType,
         acceleratorType: acceleratorType.value
       };
+      // Only an area-based calculation has a waste allowance.
+      if (isArea) _ccInputs.wastePct = { value: wastePct, unit: CC.PCT };
       const _ccResults = {
         // pVol/cVol/rVol are the raw numbers convert() returned, before
         // .toFixed(2) formatted them into pVolStr/cVolStr/rVolStr above
@@ -686,6 +723,13 @@ document.addEventListener("DOMContentLoaded", function() {
   if (reducerSlider) {
     reducerSlider.addEventListener("input", function() {
       if (reducerSliderLabel) reducerSliderLabel.textContent = reducerSlider.value;
+      calc();
+    });
+  }
+  if (wasteInput) {
+    wasteInput.addEventListener("input", calc);
+    wasteInput.addEventListener("change", function() {
+      wasteInput.value = String(readWaste(method.value));   // show the value that is actually used
       calc();
     });
   }

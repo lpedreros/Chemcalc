@@ -519,6 +519,15 @@
               </div>
               <select id="methodType" hidden><option value="spray" selected>Spray</option><option value="roll">Roll / Brush</option></select>
               <p class="mp-field-hint mt-3">Spray-only: Awlcraft 2000/3000, Awlcraft SE, and Awlgrip HDT Clear. Spray or roll/brush: 545 Epoxy Primer and Awlgrip Topcoat.</p>
+
+              <!-- Waste / overspray allowance: area mode only (hidden when the amount is typed in as paint volume). Default and maximum are set by awlgripscript.js (WASTE_DEFAULT). -->
+              <div id="wasteRow" class="mt-3">
+                <div class="mp-input-group">
+                  <label class="mp-input-label" for="wastePercent">Waste / overspray allowance (%)</label>
+                  <input type="number" id="wastePercent" class="mp-input" min="0" max="25" step="1" value="25">
+                </div>
+                <p class="mp-field-hint mt-2">Default is a general allowance for application loss, not a manufacturer figure (retailer guidance: roller/brush 10-15%, spray 20-30%, Wholesale Marine boat paint guide). Lower it only if your technique loses less. Very small jobs lose more to cup, gun and brush residue than a percentage covers; mix a little extra.</p>
+              </div>
             </div>
           </div>
         </section>
