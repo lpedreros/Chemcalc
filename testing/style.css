@@ -6558,3 +6558,10 @@ h2.trello-setup-title{
 }
 .contact-check-input:focus-visible{outline:2px solid var(--chrome-signal-400);outline-offset:2px;}
 .form-error{margin:0;font-size:.85rem;font-weight:600;color:#b42318;}
+
+/* ---------- Amazon Associates statement: chatbot product suggestions, estimator Buy links, products list ---------- */
+/* Small but readable on the light surfaces it sits on (white card, chatbot bubble): --chrome-ink-600 is well above 4.5:1 there. */
+.amazon-disclosure-note{margin:.5rem 0 0;font-size:.75rem;line-height:1.4;color:var(--chrome-ink-600);}
+.chatbot-message p.amazon-disclosure-note{margin:.5rem 0 0;color:var(--chrome-ink-600);}
+/* kits.html already carries the sentence in its own disclosure paragraphs; products.html is also injected there as the fallback list. */
+#product-list-container .products-direct-disclosure{display:none;}

@@ -394,6 +394,7 @@
                 html += '</div>';
             }
             html += '</div>';
+            html += '<p class="amazon-disclosure-note">As an Amazon Associate I earn from qualifying purchases.</p>';
         }
 
         if ((!response.videos || response.videos.length === 0) && 
