@@ -227,8 +227,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var FL_OZ_DUAL_THRESHOLD = 0.5;
   var LITER_DUAL_THRESHOLD_ML = 0.01;
 
-  function formatDisplayVolume(valueCC, displayUnit, system) {
-    if (valueCC === null || isNaN(valueCC)) return "Err";
+  // The primary text plus the optional mL part (secondary), kept apart so the screen can put the mL on its own line.
+  // Imperial volumes always carry their mL amount (secondary); metric is unchanged.
+  function volumeParts(valueCC, displayUnit, system) {
     var primary = "", secondary = "";
     var mlToFlOz = cv.ccs.ounces; // 0.033814
 
@@ -262,6 +263,8 @@ document.addEventListener("DOMContentLoaded", function() {
           primary = (valueCC * cv.ccs.gallons).toFixed(3) + " gal";
         }
       }
+      // every imperial volume (not the "< 0.01 mL" text, not zero) also shows its mL, from the same valueCC, same format as the small-amount case above
+      if (secondary === "" && primary.charAt(0) !== "<" && valOz !== 0) secondary = "(" + valueCC.toFixed(2) + " mL)";
     } else {
       if (displayUnit === "liters") {
         var valL = valueCC * cv.ccs.liters;
@@ -281,7 +284,30 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     }
-    return (primary + " " + secondary).trim();
+    return { primary: primary, secondary: secondary };
+  }
+
+  // One-line text (email mirrors, print recap): "x unit (y mL)".
+  function formatDisplayVolume(valueCC, displayUnit, system) {
+    if (valueCC === null || isNaN(valueCC)) return "Err";
+    var parts = volumeParts(valueCC, displayUnit, system);
+    return (parts.primary + " " + parts.secondary).trim();
+  }
+
+  // On screen: imperial puts the mL on its own line, in a child span that starts with a space so the element's textContent still
+  // reads the one-line text. Metric and everything without an mL part is written as plain text exactly as before.
+  function setVolume(el, valueCC, displayUnit, system) {
+    var text = formatDisplayVolume(valueCC, displayUnit, system);
+    var parts = (system === "imperial" && text !== "Err") ? volumeParts(valueCC, displayUnit, system) : null;
+    if (parts && parts.secondary) {
+      el.textContent = parts.primary;
+      var sub = document.createElement("span");
+      sub.className = "mp-compare-value-sub";
+      sub.textContent = " " + parts.secondary;
+      el.appendChild(sub);
+    } else {
+      el.textContent = text;
+    }
   }
 
   function populateLists() {
@@ -586,9 +612,9 @@ document.addEventListener("DOMContentLoaded", function() {
     var rLabel = reducerReplacedByAccelerator ? "Reducer (replaced by Accelerator)" : "Reducer";
 
     outPLabel.textContent = bLabel;
-    outP.textContent = pVolStr;
+    setVolume(outP, baseCC, outUnit, sysType);
     outCLabel.textContent = cLabel;
-    outC.textContent = cVolStr;
+    setVolume(outC, convCC, outUnit, sysType);
 
     if (reducerReplacedByAccelerator) {
       // Keep the row present (matches the shared print/email markup other
@@ -598,7 +624,7 @@ document.addEventListener("DOMContentLoaded", function() {
       outR.textContent = "—";
     } else {
       outRLabel.textContent = rLabel;
-      outR.textContent = rVolStr;
+      setVolume(outR, redCC, outUnit, sysType);
     }
 
     emailP.textContent = bLabel + ": " + pVolStr;
